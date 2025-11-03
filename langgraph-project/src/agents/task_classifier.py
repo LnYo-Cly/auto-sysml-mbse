@@ -135,6 +135,14 @@ USER_PROMPT_EXTRACT_AND_CLASSIFY = """
 2. 准确分类每个内容片段到对应的SysML图表类型
 3. 提取的内容足够详细，同时尽量简洁
 4. 输出格式符合要求，每个任务有明确的type和content字段
+5. type只有以下7种类型：
+   - Requirement
+   - Block Definition and Internal Block
+   - Activity
+   - State Machine
+   - Use Case
+   - Parameter
+   - Sequence
 """
 
 

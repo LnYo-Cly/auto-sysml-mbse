@@ -426,6 +426,8 @@ PROMPT_JSON_SYSTEM = """
    - 补充相关的上下文信息
 
 请严格按照上述格式生成JSON，确保每个元素都有详细的description字段。
+
+{format_instructions}
 """
 
 
@@ -646,11 +648,12 @@ def process_requirement_task(state: WorkflowState, task_content: str) -> Dict[st
             ("human", "请根据以上推理结果生成JSON。推理内容：\n{cot_result}")
         ])
         
-        json_chain = json_prompt | llm | json_parser
+        json_chain = json_prompt | llm
         
         # 流式输出JSON生成过程
         json_result = ""
         for chunk in json_chain.stream({
+            "format_instructions": json_parser.get_format_instructions(),
             "cot_result": cot_result
         }):
             chunk_content = chunk.content
