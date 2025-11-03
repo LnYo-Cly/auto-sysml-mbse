@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     llm_model: str = os.getenv("LLM_MODEL", "glm-4.6")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     base_url: str = os.getenv("BASE_URL", "https://open.bigmodel.cn/api/paas/v4/chat/completions")
+    max_tokens: int = int(os.getenv("MAX_TOKENS", "65536"))
     
     # 日志配置
     log_level: str = os.getenv("LOG_LEVEL", "INFO")

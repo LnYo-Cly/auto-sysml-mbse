@@ -609,7 +609,8 @@ def process_requirement_task(state: WorkflowState, task_content: str) -> Dict[st
             api_key=settings.openai_api_key,
             base_url=settings.base_url,
             temperature=0.0,
-            streaming=True
+            streaming=True,
+            max_tokens=settings.max_tokens
         )
         
         # ========== 第一阶段：CoT推理 ==========
