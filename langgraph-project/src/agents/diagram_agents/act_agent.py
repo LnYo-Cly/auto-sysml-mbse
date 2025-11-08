@@ -430,7 +430,7 @@ def activity_agent(state: WorkflowState, task_id: str, task_content: str) -> Wor
         return state
 
     # 标记处理中（与系统状态枚举适配）
-    state.assigned_tasks[task_index].status = ProcessStatus.PROCESSING if hasattr(ProcessStatus, "PROCESSING") else ProcessStatus.IN_PROGRESS
+    state.assigned_tasks[task_index].status = ProcessStatus.PROCESSING if hasattr(ProcessStatus, "PROCESSING") else ProcessStatus.PROCESSING
 
     try:
         result = process_activity_task(state, task_content)

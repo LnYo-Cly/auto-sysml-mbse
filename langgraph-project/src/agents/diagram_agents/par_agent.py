@@ -545,7 +545,7 @@ def parameter_agent(state: WorkflowState, task_id: str, task_content: str) -> Wo
         logger.error(f"找不到任务 {task_id}")
         return state
 
-    state.assigned_tasks[task_index].status = ProcessStatus.IN_PROGRESS
+    state.assigned_tasks[task_index].status = ProcessStatus.PROCESSING
 
     try:
         result = process_parameter_task(state, task_content)

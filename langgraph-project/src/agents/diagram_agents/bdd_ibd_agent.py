@@ -382,7 +382,7 @@ def bdd_ibd_agent(state: WorkflowState, task_id: str, task_content: str) -> Work
         logger.error(f"找不到任务 {task_id}")
         return state
 
-    state.assigned_tasks[task_index].status = ProcessStatus.IN_PROGRESS
+    state.assigned_tasks[task_index].status = ProcessStatus.PROCESSING
 
     try:
         result_data = process_bdd_ibd_task(state, task_content)
