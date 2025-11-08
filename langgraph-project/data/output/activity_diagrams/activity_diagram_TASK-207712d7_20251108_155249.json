@@ -1,0 +1,194 @@
+{
+  "model": [
+    {
+      "id": "model-systemstart-uuid",
+      "name": "SystemStartupSelfCheckModel"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-systemstart-uuid",
+      "type": "Package",
+      "name": "SystemStartupSelfCheck",
+      "description": "该包封装了系统启动自检流程的所有组件和活动。",
+      "parentId": "model-systemstart-uuid"
+    },
+    {
+      "id": "blk-bootcmd-uuid",
+      "type": "Block",
+      "name": "BootCommand",
+      "description": "代表开机指令的数据类型。",
+      "parentId": "pkg-systemstart-uuid"
+    },
+    {
+      "id": "blk-statusrep-uuid",
+      "type": "Block",
+      "name": "StatusReport",
+      "description": "代表系统状态报告的数据类型。",
+      "parentId": "pkg-systemstart-uuid"
+    },
+    {
+      "id": "blk-system-uuid",
+      "type": "Block",
+      "name": "System",
+      "description": "代表整个系统，包括所有硬件模块和软件组件。",
+      "parentId": "pkg-systemstart-uuid"
+    },
+    {
+      "id": "act-systemstart-uuid",
+      "type": "Activity",
+      "name": "系统启动自检活动",
+      "description": "这是定义整个系统启动自检流程的主要活动。",
+      "parentId": "pkg-systemstart-uuid",
+      "nodes": [
+        "node-start-boot",
+        "node-check-power",
+        "node-check-sensors",
+        "node-check-actuators",
+        "node-init-control",
+        "node-return-status",
+        "node-enter-idle",
+        "node-end"
+      ],
+      "edges": [
+        "edge-bootcmd-to-power",
+        "edge-power-to-sensors",
+        "edge-sensors-to-actuators",
+        "edge-actuators-to-control",
+        "edge-control-to-return",
+        "edge-return-to-idle",
+        "edge-idle-to-end"
+      ],
+      "groups": [
+        "grp-system-uuid"
+      ]
+    },
+    {
+      "id": "node-start-boot",
+      "type": "InitialNode",
+      "name": "接收开机指令",
+      "description": "流程的起点，代表接收到开机指令。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "node-check-power",
+      "type": "CallBehaviorAction",
+      "name": "检查电源状态",
+      "description": "此动作负责检查电源是否正常。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "node-check-sensors",
+      "type": "CallBehaviorAction",
+      "name": "检查传感器状态",
+      "description": "此动作负责检查传感器是否正常工作。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "node-check-actuators",
+      "type": "CallBehaviorAction",
+      "name": "检查执行器状态",
+      "description": "此动作负责检查执行器是否正常工作。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "node-init-control",
+      "type": "CallBehaviorAction",
+      "name": "初始化控制模块",
+      "description": "此动作负责初始化控制模块。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "node-return-status",
+      "type": "CallBehaviorAction",
+      "name": "返回系统状态",
+      "description": "此动作负责返回系统状态信息。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "node-enter-idle",
+      "type": "CallBehaviorAction",
+      "name": "进入待机状态",
+      "description": "此动作负责将系统置于待机状态。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "node-end",
+      "type": "ActivityFinalNode",
+      "name": "流程结束",
+      "description": "流程的终点，代表自检流程完成。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "grp-system-uuid",
+      "type": "ActivityPartition",
+      "name": "系统分区",
+      "description": "此泳道代表整个系统，包括所有硬件模块和软件组件。",
+      "representsId": "blk-system-uuid",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "edge-bootcmd-to-power",
+      "type": "ControlFlow",
+      "sourceId": "node-start-boot",
+      "targetId": "node-check-power",
+      "guard": "[power_ok]",
+      "description": "从接收开机指令节点到检查电源状态节点的控制流。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "edge-power-to-sensors",
+      "type": "ControlFlow",
+      "sourceId": "node-check-power",
+      "targetId": "node-check-sensors",
+      "guard": "[sensors_ok]",
+      "description": "从检查电源状态节点到检查传感器状态节点的控制流。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "edge-sensors-to-actuators",
+      "type": "ControlFlow",
+      "sourceId": "node-check-sensors",
+      "targetId": "node-check-actuators",
+      "guard": "[actuators_ok]",
+      "description": "从检查传感器状态节点到检查执行器状态节点的控制流。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "edge-actuators-to-control",
+      "type": "ControlFlow",
+      "sourceId": "node-check-actuators",
+      "targetId": "node-init-control",
+      "guard": "[control_ok]",
+      "description": "从检查执行器状态节点到初始化控制模块节点的控制流。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "edge-control-to-return",
+      "type": "ControlFlow",
+      "sourceId": "node-init-control",
+      "targetId": "node-return-status",
+      "guard": "[return_ok]",
+      "description": "从初始化控制模块节点到返回系统状态节点的控制流。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "edge-return-to-idle",
+      "type": "ControlFlow",
+      "sourceId": "node-return-status",
+      "targetId": "node-enter-idle",
+      "guard": "[status_ok]",
+      "description": "从返回系统状态节点到进入待机状态节点的控制流。",
+      "parentId": "act-systemstart-uuid"
+    },
+    {
+      "id": "edge-idle-to-end",
+      "type": "ControlFlow",
+      "sourceId": "node-enter-idle",
+      "targetId": "node-end",
+      "guard": "[idle_ok]",
+      "description": "从进入待机状态节点到流程结束节点的控制流。",
+      "parentId": "act-systemstart-uuid"
+    }
+  ]
+}
