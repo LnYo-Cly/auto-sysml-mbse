@@ -388,6 +388,7 @@ PROMPT_JSON_SYSTEM = """
 - 请严格按照上述 JSON 结构输出完整的参数图模型。
 - 确保所有 ID 引用的正确性。
 - 确保每个元素都包含 `description` 字段。
+- description 字段必须要包含“原文：”和“简化：”两部分内容。
 - 不要在 JSON 之外添加任何解释性文本（可以用 markdown 代码块包裹 JSON）。
 """
 
@@ -476,14 +477,9 @@ def process_parameter_task(state: WorkflowState, task_content: str) -> Dict[str,
         print(f"🧠 阶段1: 参数图分析与推理")
         print(f"{'='*80}\n")
         
-        cot_prompt = ChatPromptTemplate.from_messages([
-            ("system", PROMPT_COT_SYSTEM),
-            ("human", "输入：\n{task_content}\n\n输出：请你一步一步进行推理思考。")
-        ])
-        cot_chain = cot_prompt | llm
-
+        cot_prompt = PROMPT_COT_SYSTEM + "\n\n输入：\n" + task_content + "\n\n输出：请你一步一步进行推理思考。"
         cot_result = ""
-        for chunk in cot_chain.stream({"task_content": task_content}):
+        for chunk in llm.stream(cot_prompt):
             chunk_content = getattr(chunk, "content", "")
             print(chunk_content, end="", flush=True)
             cot_result += chunk_content
@@ -497,14 +493,9 @@ def process_parameter_task(state: WorkflowState, task_content: str) -> Dict[str,
         print(f"📝 阶段2: 生成结构化JSON (参数图)")
         print(f"{'='*80}\n")
 
-        json_prompt = ChatPromptTemplate.from_messages([
-            ("system", PROMPT_JSON_SYSTEM),
-            ("human", "推理结果：\n{cot_result}\n\n请严格按照规则生成JSON。")
-        ])
-        json_chain = json_prompt | llm
-
+        json_prompt = PROMPT_JSON_SYSTEM + "\n\n推理结果：\n" + cot_result + "\n\n请严格按照规则生成JSON。"
         json_str = ""
-        for chunk in json_chain.stream({"cot_result": cot_result}):
+        for chunk in llm.stream(json_prompt):
             chunk_content = getattr(chunk, "content", "")
             print(chunk_content, end="", flush=True)
             json_str += chunk_content

@@ -529,14 +529,10 @@ def process_usecase_task(state: WorkflowState, task_content: str) -> Dict[str, A
         print(f"🧠 阶段1: 用例图分析与推理")
         print(f"{'='*80}\n")
         
-        cot_prompt = ChatPromptTemplate.from_messages([
-            ("system", PROMPT_COT_SYSTEM),
-            ("human", "输入：\n{task_content}\n\n输出：请你一步一步进行推理思考。")
-        ])
-        cot_chain = cot_prompt | llm
 
+        cot_prompt = PROMPT_COT_SYSTEM + "输入：\n"+task_content+"\n\n输出：请你一步一步进行推理思考。"
         cot_result = ""
-        for chunk in cot_chain.stream({"task_content": task_content}):
+        for chunk in llm.stream(cot_prompt):
             chunk_content = getattr(chunk, "content", "")
             print(chunk_content, end="", flush=True)
             cot_result += chunk_content
@@ -550,14 +546,9 @@ def process_usecase_task(state: WorkflowState, task_content: str) -> Dict[str, A
         print(f"📝 阶段2: 生成结构化JSON (用例图)")
         print(f"{'='*80}\n")
 
-        json_prompt = ChatPromptTemplate.from_messages([
-            ("system", PROMPT_JSON_SYSTEM),
-            ("human", "推理结果：\n{cot_result}\n\n请严格按照规则生成JSON。")
-        ])
-        json_chain = json_prompt | llm
-
+        json_prompt = PROMPT_JSON_SYSTEM + "\n\n推理结果：\n" + cot_result + "\n\n请严格按照规则生成JSON。- description 字段必须要包含“原文：”和“简化：”两部分内容。"
         json_str = ""
-        for chunk in json_chain.stream({"cot_result": cot_result}):
+        for chunk in llm.stream(json_prompt):
             chunk_content = getattr(chunk, "content", "")
             print(chunk_content, end="", flush=True)
             json_str += chunk_content

@@ -1,0 +1,165 @@
+{
+  "model": [
+    {
+      "id": "model-unique-id",
+      "name": "TemperatureControlModel",
+      "description": "模型的总体描述，说明其目的和范围。"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-unique-id",
+      "type": "Package",
+      "name": "ParametricDiagram",
+      "parentId": "model-unique-id",
+      "description": "封装温度控制参数图的所有元素。"
+    },
+    {
+      "id": "block1",
+      "type": "Block",
+      "name": "TemperatureControlSystem",
+      "parentId": "pkg-unique-id",
+      "description": "代表空调系统，用于控制温度。"
+    },
+    {
+      "id": "prop1",
+      "type": "Property",
+      "name": "T_current",
+      "propertyKind": "value",
+      "parentId": "block1",
+      "typeId": "Real",
+      "description": "当前温度。"
+    },
+    {
+      "id": "prop2",
+      "type": "Property",
+      "name": "T_target",
+      "propertyKind": "value",
+      "parentId": "block1",
+      "typeId": "Real",
+      "description": "目标温度。"
+    },
+    {
+      "id": "prop3",
+      "type": "Property",
+      "name": "Q",
+      "propertyKind": "value",
+      "parentId": "block1",
+      "typeId": "Real",
+      "description": "制冷或制热量。"
+    },
+    {
+      "id": "prop4",
+      "type": "Property",
+      "name": "t",
+      "propertyKind": "value",
+      "parentId": "block1",
+      "typeId": "Real",
+      "description": "时间。"
+    },
+    {
+      "id": "cb1",
+      "type": "ConstraintBlock",
+      "name": "TemperatureControlEquation",
+      "parentId": "pkg-unique-id",
+      "specification": {
+        "expression": "T_current + (Q * t) = T_target",
+        "language": "Math"
+      },
+      "description": "定义空调系统达到目标温度所需的时间。"
+    },
+    {
+      "id": "param1",
+      "type": "ConstraintParameter",
+      "name": "T_current",
+      "parentId": "cb1",
+      "typeId": "Real",
+      "description": "方程中的当前温度变量。"
+    },
+    {
+      "id": "param2",
+      "type": "ConstraintParameter",
+      "name": "T_target",
+      "parentId": "cb1",
+      "typeId": "Real",
+      "description": "方程中的目标温度变量。"
+    },
+    {
+      "id": "param3",
+      "type": "ConstraintParameter",
+      "name": "Q",
+      "parentId": "cb1",
+      "typeId": "Real",
+      "description": "方程中的制冷或制热量变量。"
+    },
+    {
+      "id": "param4",
+      "type": "ConstraintParameter",
+      "name": "t",
+      "parentId": "cb1",
+      "typeId": "Real",
+      "description": "方程中的时间变量。"
+    },
+    {
+      "id": "cp1",
+      "type": "Property",
+      "name": "TemperatureControlEquation",
+      "propertyKind": "constraint",
+      "parentId": "block1",
+      "typeId": "cb1",
+      "description": "在温度控制系统中实例化温度控制方程。"
+    },
+    {
+      "id": "conn1",
+      "type": "BindingConnector",
+      "parentId": "block1",
+      "end1": {
+        "propertyRefId": "prop1"
+      },
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param1"
+      },
+      "description": "将当前温度值绑定到约束方程中的当前温度参数。"
+    },
+    {
+      "id": "conn2",
+      "type": "BindingConnector",
+      "parentId": "block1",
+      "end1": {
+        "propertyRefId": "prop2"
+      },
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param2"
+      },
+      "description": "将目标温度值绑定到约束方程中的目标温度参数。"
+    },
+    {
+      "id": "conn3",
+      "type": "BindingConnector",
+      "parentId": "block1",
+      "end1": {
+        "propertyRefId": "prop3"
+      },
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param3"
+      },
+      "description": "将制冷或制热量值绑定到约束方程中的制热量参数。"
+    },
+    {
+      "id": "conn4",
+      "type": "BindingConnector",
+      "parentId": "block1",
+      "end1": {
+        "propertyRefId": "prop4"
+      },
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param4"
+      },
+      "description": "将时间值绑定到约束方程中的时间参数。"
+    }
+  ]
+}

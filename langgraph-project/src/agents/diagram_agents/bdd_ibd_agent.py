@@ -214,7 +214,7 @@ PROMPT_JSON_SYSTEM = """
 }
 ```
 """
-PROMPT_JSON_USER = "推理结果：\n{cot_result}\n\n请严格按照JSON格式输出。"
+PROMPT_JSON_USER = "推理结果：\n{cot_result}\n\n请严格按照JSON格式输出。- description 字段必须要包含“原文：”和“简化：”两部分内容。"
 
 # ==================== Pydantic 模型定义 ====================
 
@@ -310,14 +310,9 @@ def process_bdd_ibd_task(state: WorkflowState, task_content: str) -> Dict[str, A
         print(f"🧠 阶段1: BDD/IBD分析与推理")
         print(f"{'='*80}\n")
         
-        cot_prompt = ChatPromptTemplate.from_messages([
-            ("system", PROMPT_COT_SYSTEM),
-            ("human", PROMPT_COT_USER)
-        ])
-        cot_chain = cot_prompt | llm
-        
+        cot_prompt = PROMPT_COT_SYSTEM + PROMPT_COT_USER.format(task_content=task_content)
         cot_result = ""
-        for chunk in cot_chain.stream({"task_content": task_content}):
+        for chunk in llm.stream(cot_prompt):
             chunk_content = chunk.content
             print(chunk_content, end="", flush=True)
             cot_result += chunk_content
@@ -331,14 +326,9 @@ def process_bdd_ibd_task(state: WorkflowState, task_content: str) -> Dict[str, A
         print(f"📝 阶段2: 生成结构化JSON")
         print(f"{'='*80}\n")
 
-        json_prompt = ChatPromptTemplate.from_messages([
-            ("system", PROMPT_JSON_SYSTEM),
-            ("human", PROMPT_JSON_USER)
-        ])
-        json_chain = json_prompt | llm
-
+        json_prompt = PROMPT_JSON_SYSTEM + PROMPT_JSON_USER.format(cot_result=cot_result)
         json_str = ""
-        for chunk in json_chain.stream({"cot_result": cot_result}):
+        for chunk in llm.stream(json_prompt):
             chunk_content = chunk.content
             print(chunk_content, end="", flush=True)
             json_str += chunk_content
