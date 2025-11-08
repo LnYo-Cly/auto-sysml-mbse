@@ -150,11 +150,13 @@ PROMPT_JSON_SYSTEM = """
 ## 最终目标 JSON 格式样例
 ```json
 {
-  "model": {
+  "model": [
+  {
     "id": "model-fan-uuid",
     "name": "FanSystemModel",
     "description": "原文：设计一个`风扇系统包`。简化：代表整个风扇系统的顶层模型。"
-  },
+  }
+  ],
   "elements": [
     {
       "id": "pkg-fan-uuid",
@@ -222,7 +224,7 @@ class BddIbdModel(BaseModel):
     description: Optional[str] = Field(None, description="模型的详细描述")
 
 class BddIbdDiagramOutput(BaseModel):
-    model: BddIbdModel = Field(description="模型对象")
+    model: List[BddIbdModel] = Field(description="模型对象")
     elements: List[Dict[str, Any]] = Field(description="所有图表元素的列表")
 
 # ==================== 辅助函数 ====================
