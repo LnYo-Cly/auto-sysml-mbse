@@ -8,9 +8,9 @@
 - ✅ **文档处理**：读取Word文档并智能分块
 - ✅ **任务分类**：自动识别并分类SysML建模任务
 - ✅ **多图表支持**：支持7种SysML图表类型
-  - 需求图 (Requirement) - 已实现
+  - 需求图 (Requirement) - **已实现**
+  - 活动图 (Activity) - **已实现**
   - 块定义图和内部块图 (Block Definition and Internal Block)
-  - 活动图 (Activity)
   - 状态机图 (State Machine)
   - 用例图 (Use Case)
   - 参数图 (Parametric)
@@ -19,6 +19,8 @@
 - ✅ **质量提升**：两阶段处理确保文档质量（可配置开关）
 - ✅ **智能合并**：自动去重和整合相关内容
 - ✅ **CoT推理**：Chain-of-Thought推理过程可视化
+
+## 📁 项目结构
 
 ## 📁 项目结构
 
@@ -31,7 +33,8 @@ langgraph-project/
 │   │   ├── document_processor.py    # 文档处理Agent
 │   │   ├── task_classifier.py       # 任务分类Agent
 │   │   └── diagram_agents/          # 各类SysML图表Agent
-│   │       └── req_agent.py         # 需求图Agent（CoT+流式）
+│   │       ├── req_agent.py         # 需求图Agent（CoT+流式）
+│   │       └── act_agent.py         # 活动图Agent（CoT+流式）
 │   ├── graph/                       # 工作流模块
 │   │   ├── workflow.py              # 工作流定义
 │   │   └── workflow_state.py        # 工作流状态定义
@@ -42,7 +45,8 @@ langgraph-project/
 ├── data/                            # 数据目录
 │   ├── examples/                    # 示例文档
 │   └── output/                      # 输出目录
-│       └── requirement_diagrams/    # 需求图输出
+│       ├── requirement_diagrams/    # 需求图输出
+│       └── activity_diagrams/       # 活动图输出
 ├── .env                             # 环境变量配置
 ├── .env.example                     # 环境变量示例
 ├── requirements.txt                 # 项目依赖
@@ -202,7 +206,7 @@ graph TB
     F --> G[任务分类Agent<br/>并行处理]
     G --> H{识别任务类型}
     H -->|Requirement| I1[需求图Agent<br/>CoT+流式]
-    H -->|Activity| I2[活动图Agent]
+    H -->|Activity| I2[活动图Agent<br/>CoT+流式]
     H -->|BDD/IBD| I3[块定义图Agent]
     H -->|State Machine| I4[状态机图Agent]
     H -->|Use Case| I5[用例图Agent]
@@ -219,8 +223,10 @@ graph TB
     
     style C fill:#e1f5ff
     style E fill:#e1f5ff
-    style I1 fill:#fff4e1
+    style I1 fill:#dcedc8
+    style I2 fill:#dcedc8
 ```
+
 
 ## 🎯 核心Agent详解
 
