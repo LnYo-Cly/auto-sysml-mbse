@@ -45,7 +45,7 @@
         "node-check-power",
         "node-check-sensors",
         "node-check-actuators",
-        "node-init-control",
+        "node-initialize-control",
         "node-return-status",
         "node-enter-idle",
         "node-end"
@@ -92,7 +92,7 @@
       "parentId": "act-systemstart-uuid"
     },
     {
-      "id": "node-init-control",
+      "id": "node-initialize-control",
       "type": "CallBehaviorAction",
       "name": "初始化控制模块",
       "description": "此动作负责初始化控制模块。",
@@ -133,8 +133,8 @@
       "sourceId": "node-start-boot",
       "targetId": "node-check-power",
       "guard": "[power_ok]",
-      "description": "从接收开机指令节点到检查电源状态节点的控制流。",
-      "parentId": "act-systemstart-uuid"
+      "parentId": "act-systemstart-uuid",
+      "description": "从接收开机指令节点到检查电源状态节点的控制流。"
     },
     {
       "id": "edge-power-to-sensors",
@@ -142,8 +142,8 @@
       "sourceId": "node-check-power",
       "targetId": "node-check-sensors",
       "guard": "[sensors_ok]",
-      "description": "从检查电源状态节点到检查传感器状态节点的控制流。",
-      "parentId": "act-systemstart-uuid"
+      "parentId": "act-systemstart-uuid",
+      "description": "从检查电源状态节点到检查传感器状态节点的控制流。"
     },
     {
       "id": "edge-sensors-to-actuators",
@@ -151,26 +151,26 @@
       "sourceId": "node-check-sensors",
       "targetId": "node-check-actuators",
       "guard": "[actuators_ok]",
-      "description": "从检查传感器状态节点到检查执行器状态节点的控制流。",
-      "parentId": "act-systemstart-uuid"
+      "parentId": "act-systemstart-uuid",
+      "description": "从检查传感器状态节点到检查执行器状态节点的控制流。"
     },
     {
       "id": "edge-actuators-to-control",
       "type": "ControlFlow",
       "sourceId": "node-check-actuators",
-      "targetId": "node-init-control",
+      "targetId": "node-initialize-control",
       "guard": "[control_ok]",
-      "description": "从检查执行器状态节点到初始化控制模块节点的控制流。",
-      "parentId": "act-systemstart-uuid"
+      "parentId": "act-systemstart-uuid",
+      "description": "从检查执行器状态节点到初始化控制模块节点的控制流。"
     },
     {
       "id": "edge-control-to-return",
       "type": "ControlFlow",
-      "sourceId": "node-init-control",
+      "sourceId": "node-initialize-control",
       "targetId": "node-return-status",
       "guard": "[return_ok]",
-      "description": "从初始化控制模块节点到返回系统状态节点的控制流。",
-      "parentId": "act-systemstart-uuid"
+      "parentId": "act-systemstart-uuid",
+      "description": "从初始化控制模块节点到返回系统状态节点的控制流。"
     },
     {
       "id": "edge-return-to-idle",
@@ -178,8 +178,8 @@
       "sourceId": "node-return-status",
       "targetId": "node-enter-idle",
       "guard": "[status_ok]",
-      "description": "从返回系统状态节点到进入待机状态节点的控制流。",
-      "parentId": "act-systemstart-uuid"
+      "parentId": "act-systemstart-uuid",
+      "description": "从返回系统状态节点到进入待机状态节点的控制流。"
     },
     {
       "id": "edge-idle-to-end",
@@ -187,8 +187,8 @@
       "sourceId": "node-enter-idle",
       "targetId": "node-end",
       "guard": "[idle_ok]",
-      "description": "从进入待机状态节点到流程结束节点的控制流。",
-      "parentId": "act-systemstart-uuid"
+      "parentId": "act-systemstart-uuid",
+      "description": "从进入待机状态节点到流程结束节点的控制流。"
     }
   ]
 }

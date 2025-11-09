@@ -1,0 +1,246 @@
+{
+  "model": [
+    {
+      "id": "model-air-con-sm-uuid",
+      "name": "空调系统模型",
+      "type": "Model"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-air-con-control-uuid",
+      "type": "Package",
+      "name": "空调控制包",
+      "parentId": "model-air-con-sm-uuid",
+      "description": {
+        "原文": "上下文块: AirConditioningSystem。",
+        "简化": "主应用包，包含空调控制器和状态机定义。"
+      }
+    },
+    {
+      "id": "pkg-air-con-behaviors-uuid",
+      "type": "Package",
+      "name": "空调行为库",
+      "parentId": "model-air-con-sm-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "行为库包，存储所有可被状态和转换调用的具体活动。"
+      }
+    },
+    {
+      "id": "blk-air-con-system-uuid",
+      "type": "Block",
+      "name": "空调系统",
+      "parentId": "pkg-air-con-control-uuid",
+      "classifierBehaviorId": "sm-air-con-uuid",
+      "description": {
+        "原文": "上下文块: AirConditioningSystem。",
+        "简化": "空调系统的核心控制器，其行为由状态机定义。"
+      }
+    },
+    {
+      "id": "sm-air-con-uuid",
+      "type": "StateMachine",
+      "name": "空调状态机",
+      "parentId": "blk-air-con-system-uuid",
+      "description": {
+        "原文": "空调系统状态机。",
+        "简化": "定义空调系统的完整生命周期和行为逻辑。"
+      }
+    },
+    {
+      "id": "region-air-con-main-uuid",
+      "type": "Region",
+      "name": "主区域",
+      "parentId": "sm-air-con-uuid",
+      "description": {
+        "原文": "空调系统的行为模型定义了从‘关闭’到‘待机’再到‘运行’的完整生命周期，包括各种状态和转换条件。",
+        "简化": "状态机的主要活动区域，包含所有顶层状态和转换。"
+      }
+    },
+    {
+      "id": "state-off-uuid",
+      "type": "State",
+      "name": "关闭",
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "状态定义: 状态名称: Off。描述: 空调系统关闭状态。",
+        "简化": "空调系统完全关闭，不执行任何操作的状态。"
+      }
+    },
+    {
+      "id": "state-standby-uuid",
+      "type": "State",
+      "name": "待机",
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "状态定义: 状态名称: Standby。描述: 空调系统待机状态。",
+        "简化": "空调系统处于准备运行状态，执行初始化和监测操作。"
+      }
+    },
+    {
+      "id": "state-running-uuid",
+      "type": "State",
+      "name": "运行",
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "状态定义: 状态名称: Running。描述: 空调系统运行状态。",
+        "简化": "空调系统正在执行制冷或制热操作，调节温度和湿度。"
+      }
+    },
+    {
+      "id": "ps-main-initial-uuid",
+      "type": "Pseudostate",
+      "kind": "initial",
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "状态机的起始点，系统启动时的入口。"
+      }
+    },
+    {
+      "id": "trans-initial-to-off-uuid",
+      "type": "Transition",
+      "sourceId": "ps-main-initial-uuid",
+      "targetId": "state-off-uuid",
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "系统启动时自动进入关闭状态的转换。"
+      }
+    },
+    {
+      "id": "trans-off-to-standby-uuid",
+      "type": "Transition",
+      "sourceId": "state-off-uuid",
+      "targetId": "state-standby-uuid",
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "转换: Off --[power_on]--> Standby。",
+        "简化": "接通电源后从关闭状态转换到待机状态。"
+      }
+    },
+    {
+      "id": "trans-standby-to-running-uuid",
+      "type": "Transition",
+      "sourceId": "state-standby-uuid",
+      "targetId": "state-running-uuid",
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "转换: Standby --[temperature_change] / [humidity_change]--> Running。",
+        "简化": "当环境参数发生变化时，从待机状态转换到运行状态。"
+      }
+    },
+    {
+      "id": "trans-running-to-off-uuid",
+      "type": "Transition",
+      "sourceId": "state-running-uuid",
+      "targetId": "state-off-uuid",
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "转换: Running --[power_off]--> Off。",
+        "简化": "断开电源后从运行状态转换到关闭状态。"
+      }
+    },
+    {
+      "id": "event-power-on-uuid",
+      "type": "Event",
+      "name": "power_on",
+      "parentId": "pkg-air-con-control-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "接通电源时触发的事件。"
+      }
+    },
+    {
+      "id": "event-temperature-change-uuid",
+      "type": "Event",
+      "name": "temperature_change",
+      "parentId": "pkg-air-con-control-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "环境温度发生变化时触发的事件。"
+      }
+    },
+    {
+      "id": "event-humidity-change-uuid",
+      "type": "Event",
+      "name": "humidity_change",
+      "parentId": "pkg-air-con-control-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "环境湿度发生变化时触发的事件。"
+      }
+    },
+    {
+      "id": "event-power-off-uuid",
+      "type": "Event",
+      "name": "power_off",
+      "parentId": "pkg-air-con-control-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "断开电源时触发的事件。"
+      }
+    },
+    {
+      "id": "act-close-all-executors-uuid",
+      "type": "Activity",
+      "name": "关闭所有执行器",
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: entry: 关闭所有执行器。",
+        "简化": "关闭空调系统中所有执行器的具体操作活动。"
+      }
+    },
+    {
+      "id": "act-initialize-sensors-executors-uuid",
+      "type": "Activity",
+      "name": "初始化传感器和执行器",
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: entry: 初始化传感器和执行器。",
+        "简化": "初始化空调系统中的传感器和执行器的具体操作活动。"
+      }
+    },
+    {
+      "id": "act-monitor-env-params-uuid",
+      "type": "Activity",
+      "name": "监测环境参数",
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: do: 监测环境参数。",
+        "简化": "持续监测环境温度和湿度的具体操作活动。"
+      }
+    },
+    {
+      "id": "act-start-cooling-heating-uuid",
+      "type": "Activity",
+      "name": "启动制冷或制热系统",
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: entry: 启动制冷或制热系统。",
+        "简化": "启动空调系统中的制冷或制热系统的具体操作活动。"
+      }
+    },
+    {
+      "id": "act-adjust-temperature-humidity-uuid",
+      "type": "Activity",
+      "name": "调节温度和湿度",
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: do: 调节温度和湿度。",
+        "简化": "根据环境参数调节空调系统中的温度和湿度的具体操作活动。"
+      }
+    },
+    {
+      "id": "act-stop-cooling-heating-uuid",
+      "type": "Activity",
+      "name": "关闭制冷或制热系统",
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: exit: 关闭制冷或制热系统。",
+        "简化": "关闭空调系统中的制冷或制热系统的具体操作活动。"
+      }
+    }
+  ]
+}

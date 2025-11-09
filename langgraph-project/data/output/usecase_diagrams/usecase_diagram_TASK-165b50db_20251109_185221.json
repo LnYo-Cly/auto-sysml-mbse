@@ -1,0 +1,54 @@
+{
+  "model": [
+    {
+      "id": "model-air-con-control-uc-uuid",
+      "name": "空调控制系统用例模型"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-air-con-control-main-uuid",
+      "type": "Package",
+      "name": "主要用例",
+      "parentId": "model-air-con-control-uc-uuid",
+      "description": "原文：空调控制系统案例。简化：包含空调控制系统的所有核心用例和参与者。"
+    },
+    {
+      "id": "actor-driver-uuid",
+      "type": "Actor",
+      "name": "驾驶员",
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **参与者**: Primary: 驾驶员。简化：空调系统的主要操作者，负责控制空调系统的各项功能。"
+    },
+    {
+      "id": "actor-touch-screen-uuid",
+      "type": "Actor",
+      "name": "车载触摸屏",
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **参与者**: Secondary: 车载触摸屏。简化：驾驶员与空调系统交互的界面，用于显示和控制空调设置。"
+    },
+    {
+      "id": "uc-control-air-con-uuid",
+      "type": "UseCase",
+      "name": "控制空调系统",
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **用例名称**: ControlAirConditioning。简化：系统提供的核心功能，允许用户控制空调系统的各项设置。"
+    },
+    {
+      "id": "assoc-driver-control-uuid",
+      "type": "Association",
+      "sourceId": "actor-driver-uuid",
+      "targetId": "uc-control-air-con-uuid",
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **参与者**: Primary: 驾驶员。简化：驾驶员是控制空调系统的主要参与者。"
+    },
+    {
+      "id": "assoc-touch-screen-control-uuid",
+      "type": "Association",
+      "sourceId": "actor-touch-screen-uuid",
+      "targetId": "uc-control-air-con-uuid",
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **参与者**: Secondary: 车载触摸屏。简化：车载触摸屏是驾驶员与空调系统交互的界面。"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ from graph.workflow_state import WorkflowState, ProcessStatus
 from agents.requirement_expander import expand_requirement
 from agents.document_processor import process_document
 from agents.task_classifier import classify_and_assign_tasks
+from agents.fusion_agent import fusion_agent
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,21 @@ def should_classify_tasks(state: WorkflowState) -> str:
     return END
 
 
+def should_run_fusion(state: WorkflowState) -> str:
+    """决定是否需要运行融合流程"""
+    # 检查是否有已完成的任务
+    if state.assigned_tasks:
+        completed_tasks = [
+            t for t in state.assigned_tasks 
+            if t.status == ProcessStatus.COMPLETED
+        ]
+        if completed_tasks:
+            logger.info(f"✅ 发现 {len(completed_tasks)} 个已完成任务，进入融合阶段")
+            return "fusion"
+    
+    logger.info("⚠️ 没有已完成的任务，跳过融合阶段")
+    return END
+
 def create_workflow() -> StateGraph:
     """创建LangGraph工作流"""
     
@@ -32,6 +48,7 @@ def create_workflow() -> StateGraph:
     workflow.add_node("requirement_expansion", expand_requirement)
     workflow.add_node("document_processing", process_document)
     workflow.add_node("task_classification", classify_and_assign_tasks)
+    workflow.add_node("fusion", fusion_agent)
     
     # 设置入口点
     workflow.set_entry_point("requirement_expansion")
@@ -55,9 +72,18 @@ def create_workflow() -> StateGraph:
             END: END
         }
     )
+
+    workflow.add_conditional_edges(
+        "task_classification",
+        should_run_fusion,
+        {
+            "fusion": "fusion",
+            END: END
+        }
+    )
     
     # 任务分类 → 结束
-    workflow.add_edge("task_classification", END)
+    workflow.add_edge("fusion", END)
     
     # 编译工作流
     return workflow.compile()

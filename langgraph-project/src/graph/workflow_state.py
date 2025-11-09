@@ -52,6 +52,24 @@ class WorkflowState(BaseModel):
     
     # 状态
     status: ProcessStatus = Field(default=ProcessStatus.PENDING, description="处理状态")
-    
+
+    # ==================== 融合阶段 ====================
+    fusion_status: Optional[str] = Field(
+        default=None, 
+        description="融合状态: None/skipped/completed/failed"
+    )
+    fusion_output_path: Optional[str] = Field(
+        default=None, 
+        description="融合后模型的输出路径"
+    )
+    fusion_statistics: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="融合统计信息（处理元素数、相似元素数等）"
+    )
+    fusion_message: Optional[str] = Field(
+        default=None,
+        description="融合过程的消息或错误信息"
+    )
+
     class Config:
         arbitrary_types_allowed = True

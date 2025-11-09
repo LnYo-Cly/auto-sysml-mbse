@@ -12,28 +12,28 @@
       "type": "Package",
       "name": "车载系统",
       "parentId": "model-user-set-temp-uuid",
-      "description": "包含用户设置温度场景的包。"
+      "description": "原文：无明确提及，但根据上下文推断。简化：包含用户设置温度场景的包。"
     },
     {
       "id": "actor-user-uuid",
       "type": "Actor",
       "name": "用户",
       "parentId": "pkg-vehicle-sys-uuid",
-      "description": "通过触摸屏设置温度的用户，系统外部参与者。"
+      "description": "原文：*   **涉及的生命线**: `[User]`。简化：通过触摸屏设置温度的用户，系统外部参与者。"
     },
     {
       "id": "block-touchscreen-uuid",
       "type": "Block",
       "name": "触摸屏",
       "parentId": "pkg-vehicle-sys-uuid",
-      "description": "用户用于设置温度的触摸屏设备。"
+      "description": "原文：*   **涉及的生命线**: `[TouchScreen]`。简化：用户用于设置温度的触摸屏设备。"
     },
     {
       "id": "block-aircondsys-uuid",
       "type": "Block",
       "name": "空调系统",
       "parentId": "pkg-vehicle-sys-uuid",
-      "description": "控制车内温度的空调系统。"
+      "description": "原文：*   **涉及的生命线**: `[AirConditioningSystem]`。简化：控制车内温度的空调系统。"
     },
     {
       "id": "prop-interaction-targetTemp-uuid",
@@ -41,30 +41,14 @@
       "name": "p_targetTemp",
       "typeId": "Double",
       "parentId": "interaction-user-set-temp-uuid",
-      "description": "交互中用户设置的目标温度属性。"
+      "description": "原文：无明确提及，但根据上下文推断。简化：交互中用户设置的目标温度属性。"
     },
     {
       "id": "interaction-user-set-temp-uuid",
       "type": "Interaction",
       "name": "UserSetsTemperature",
       "parentId": "pkg-vehicle-sys-uuid",
-      "description": "描述用户设置温度的交互流程。",
-      "lifelineIds": [
-        "ll-user-uuid",
-        "ll-touchscreen-uuid",
-        "ll-aircondsys-uuid"
-      ],
-      "messageIds": [
-        "msg-settemp-uuid",
-        "msg-sendtemp-uuid",
-        "msg-adjustsys-uuid",
-        "msg-sendtempandhum-uuid",
-        "msg-displayinfo-uuid"
-      ],
-      "fragmentIds": [],
-      "ownedAttributeIds": [
-        "prop-interaction-targetTemp-uuid"
-      ]
+      "description": "原文：*   **场景名称**: UserSetsTemperature。简化：描述用户设置温度的交互流程。"
     },
     {
       "id": "ll-user-uuid",
@@ -72,7 +56,7 @@
       "name": "L1-用户",
       "parentId": "interaction-user-set-temp-uuid",
       "representsId": "prop-interaction-targetTemp-uuid",
-      "description": "代表用户参与者的生命线，贯穿整个设置温度交互。"
+      "description": "原文：*   **涉及的生命线**: `[User]`。简化：代表用户参与者的生命线，贯穿整个设置温度交互。"
     },
     {
       "id": "ll-touchscreen-uuid",
@@ -80,7 +64,7 @@
       "name": "L2-触摸屏",
       "parentId": "interaction-user-set-temp-uuid",
       "representsId": "block-touchscreen-uuid",
-      "description": "代表触摸屏设备的生命线，负责接收用户输入。"
+      "description": "原文：*   **涉及的生命线**: `[TouchScreen]`。简化：代表触摸屏设备的生命线，负责接收用户输入。"
     },
     {
       "id": "ll-aircondsys-uuid",
@@ -88,7 +72,7 @@
       "name": "L3-空调系统",
       "parentId": "interaction-user-set-temp-uuid",
       "representsId": "block-aircondsys-uuid",
-      "description": "代表空调系统实例的生命线，负责调整温度。"
+      "description": "原文：*   **涉及的生命线**: `[AirConditioningSystem]`。简化：代表空调系统实例的生命线，负责调整温度。"
     },
     {
       "id": "msg-settemp-uuid",
@@ -98,7 +82,7 @@
       "sendEventId": "fragment-send-settemp-uuid",
       "receiveEventId": "fragment-recv-settemp-uuid",
       "messageSort": "synchCall",
-      "description": "用户通过触摸屏设置目标温度。"
+      "description": "原文：1. 用户在触摸屏上设置目标温度。简化：用户通过触摸屏设置目标温度。"
     },
     {
       "id": "fragment-send-settemp-uuid",
@@ -106,7 +90,7 @@
       "parentId": "interaction-user-set-temp-uuid",
       "coveredId": "ll-user-uuid",
       "messageId": "msg-settemp-uuid",
-      "description": "设置温度消息的发送事件。"
+      "description": "原文：用户设置温度。简化：设置温度消息的发送事件。"
     },
     {
       "id": "fragment-recv-settemp-uuid",
@@ -114,7 +98,7 @@
       "parentId": "interaction-user-set-temp-uuid",
       "coveredId": "ll-touchscreen-uuid",
       "messageId": "msg-settemp-uuid",
-      "description": "设置温度消息的接收事件。"
+      "description": "原文：触摸屏接收温度设置。简化：设置温度消息的接收事件。"
     },
     {
       "id": "msg-sendtemp-uuid",
@@ -124,7 +108,7 @@
       "sendEventId": "fragment-send-sendtemp-uuid",
       "receiveEventId": "fragment-recv-sendtemp-uuid",
       "messageSort": "synchCall",
-      "description": "触摸屏将用户设置的温度发送给空调系统。"
+      "description": "原文：2. 触摸屏发送温度设置到AirConditioningSystem。简化：触摸屏将用户设置的温度发送给空调系统。"
     },
     {
       "id": "fragment-send-sendtemp-uuid",
@@ -132,7 +116,7 @@
       "parentId": "interaction-user-set-temp-uuid",
       "coveredId": "ll-touchscreen-uuid",
       "messageId": "msg-sendtemp-uuid",
-      "description": "发送温度设置消息的发送事件。"
+      "description": "原文：触摸屏发送温度设置。简化：发送温度设置消息的发送事件。"
     },
     {
       "id": "fragment-recv-sendtemp-uuid",
@@ -140,7 +124,7 @@
       "parentId": "interaction-user-set-temp-uuid",
       "coveredId": "ll-aircondsys-uuid",
       "messageId": "msg-sendtemp-uuid",
-      "description": "发送温度设置消息的接收事件。"
+      "description": "原文：空调系统接收温度设置。简化：发送温度设置消息的接收事件。"
     },
     {
       "id": "msg-adjustsys-uuid",
@@ -150,7 +134,7 @@
       "sendEventId": "fragment-send-adjustsys-uuid",
       "receiveEventId": "fragment-recv-adjustsys-uuid",
       "messageSort": "synchCall",
-      "description": "空调系统根据目标温度调整制冷或制热系统。"
+      "description": "原文：3. AirConditioningSystem调整制冷或制热系统以匹配目标温度。简化：空调系统根据目标温度调整制冷或制热系统。"
     },
     {
       "id": "fragment-send-adjustsys-uuid",
@@ -158,7 +142,7 @@
       "parentId": "interaction-user-set-temp-uuid",
       "coveredId": "ll-aircondsys-uuid",
       "messageId": "msg-adjustsys-uuid",
-      "description": "调整系统消息的发送事件。"
+      "description": "原文：空调系统调整系统。简化：调整系统消息的发送事件。"
     },
     {
       "id": "fragment-recv-adjustsys-uuid",
@@ -166,7 +150,7 @@
       "parentId": "interaction-user-set-temp-uuid",
       "coveredId": "ll-aircondsys-uuid",
       "messageId": "msg-adjustsys-uuid",
-      "description": "调整系统消息的接收事件。"
+      "description": "原文：空调系统接收调整系统。简化：调整系统消息的接收事件。"
     },
     {
       "id": "msg-sendtempandhum-uuid",
@@ -176,7 +160,7 @@
       "sendEventId": "fragment-send-sendtempandhum-uuid",
       "receiveEventId": "fragment-recv-sendtempandhum-uuid",
       "messageSort": "synchCall",
-      "description": "空调系统将当前温度和湿度信息发送给触摸屏。"
+      "description": "原文：4. AirConditioningSystem向触摸屏发送当前温度和湿度信息。简化：空调系统将当前温度和湿度信息发送给触摸屏。"
     },
     {
       "id": "fragment-send-sendtempandhum-uuid",
@@ -184,36 +168,12 @@
       "parentId": "interaction-user-set-temp-uuid",
       "coveredId": "ll-aircondsys-uuid",
       "messageId": "msg-sendtempandhum-uuid",
-      "description": "发送温度和湿度信息消息的发送事件。"
+      "description": "原文：空调系统发送温度和湿度信息。简化：发送温度和湿度信息消息的发送事件。"
     },
     {
       "id": "fragment-recv-sendtempandhum-uuid",
       "type": "MessageOccurrenceSpecification",
-      "parentId": "interaction-user-set-temp-uuid",
-      "coveredId": "ll-touchscreen-uuid",
-      "messageId": "msg-sendtempandhum-uuid",
-      "description": "发送温度和湿度信息消息的接收事件。"
-    },
-    {
-      "id": "msg-displayinfo-uuid",
-      "type": "Message",
-      "name": "显示信息",
-      "parentId": "interaction-user-set-temp-uuid",
-      "sendEventId": "fragment-send-displayinfo-uuid",
-      "receiveEventId": "fragment-recv-displayinfo-uuid",
-      "messageSort": "synchCall",
-      "description": "触摸屏将当前温度和湿度信息显示给用户。"
-    },
-    {
-      "id": "fragment-send-displayinfo-uuid",
-      "type": "MessageOccurrenceSpecification",
-      "parentId": "interaction-user-set-temp-uuid",
-      "coveredId": "ll-touchscreen-uuid",
-      "messageId": "msg-displayinfo-uuid",
-      "description": "显示信息消息的发送事件。"
-    },
-    {
-      "description": " 元素：Unnamed（自动生成）"
+      "description": "消息事件：关联消息 ?（自动生成）"
     }
   ]
 }

@@ -3,7 +3,7 @@
     {
       "id": "model-unique-id",
       "name": "TemperatureControlModel",
-      "description": "模型的总体描述，说明其目的和范围。"
+      "description": "原文：温度控制方程。简化：模型的总体描述，说明其目的和范围。"
     }
   ],
   "elements": [
@@ -12,14 +12,14 @@
       "type": "Package",
       "name": "ParametricDiagram",
       "parentId": "model-unique-id",
-      "description": "封装温度控制参数图的所有元素。"
+      "description": "原文：温度控制方程。简化：封装温度控制参数图的所有元素。"
     },
     {
       "id": "block1",
       "type": "Block",
       "name": "TemperatureControlSystem",
       "parentId": "pkg-unique-id",
-      "description": "代表空调系统，用于控制温度。"
+      "description": "原文：温度控制方程。简化：代表空调系统，用于控制温度。"
     },
     {
       "id": "prop1",
@@ -28,7 +28,7 @@
       "propertyKind": "value",
       "parentId": "block1",
       "typeId": "Real",
-      "description": "当前温度。"
+      "description": "原文：T_current。简化：当前温度。"
     },
     {
       "id": "prop2",
@@ -37,7 +37,7 @@
       "propertyKind": "value",
       "parentId": "block1",
       "typeId": "Real",
-      "description": "目标温度。"
+      "description": "原文：T_target。简化：目标温度。"
     },
     {
       "id": "prop3",
@@ -46,7 +46,7 @@
       "propertyKind": "value",
       "parentId": "block1",
       "typeId": "Real",
-      "description": "制冷或制热量。"
+      "description": "原文：Q。简化：制冷或制热量。"
     },
     {
       "id": "prop4",
@@ -55,7 +55,7 @@
       "propertyKind": "value",
       "parentId": "block1",
       "typeId": "Real",
-      "description": "时间。"
+      "description": "原文：t。简化：时间。"
     },
     {
       "id": "cb1",
@@ -66,7 +66,7 @@
         "expression": "T_current + (Q * t) = T_target",
         "language": "Math"
       },
-      "description": "定义空调系统达到目标温度所需的时间。"
+      "description": "原文：T_current + (Q * t) = T_target。简化：定义空调系统达到目标温度所需的时间。"
     },
     {
       "id": "param1",
@@ -74,7 +74,7 @@
       "name": "T_current",
       "parentId": "cb1",
       "typeId": "Real",
-      "description": "方程中的当前温度变量。"
+      "description": "原文：T_current。简化：方程中的当前温度变量。"
     },
     {
       "id": "param2",
@@ -82,7 +82,7 @@
       "name": "T_target",
       "parentId": "cb1",
       "typeId": "Real",
-      "description": "方程中的目标温度变量。"
+      "description": "原文：T_target。简化：方程中的目标温度变量。"
     },
     {
       "id": "param3",
@@ -90,7 +90,7 @@
       "name": "Q",
       "parentId": "cb1",
       "typeId": "Real",
-      "description": "方程中的制冷或制热量变量。"
+      "description": "原文：Q。简化：方程中的制冷或制热量变量。"
     },
     {
       "id": "param4",
@@ -98,7 +98,7 @@
       "name": "t",
       "parentId": "cb1",
       "typeId": "Real",
-      "description": "方程中的时间变量。"
+      "description": "原文：t。简化：方程中的时间变量。"
     },
     {
       "id": "cp1",
@@ -107,7 +107,7 @@
       "propertyKind": "constraint",
       "parentId": "block1",
       "typeId": "cb1",
-      "description": "在温度控制系统中实例化温度控制方程。"
+      "description": "原文：此方程用于计算空调系统达到目标温度所需的时间。简化：在温度控制系统中实例化温度控制方程。"
     },
     {
       "id": "conn1",
@@ -120,7 +120,7 @@
         "partRefId": "cp1",
         "portRefId": "param1"
       },
-      "description": "将当前温度值绑定到约束方程中的当前温度参数。"
+      "description": "原文：T_current。简化：将当前温度值绑定到约束方程中的当前温度参数。"
     },
     {
       "id": "conn2",
@@ -133,7 +133,7 @@
         "partRefId": "cp1",
         "portRefId": "param2"
       },
-      "description": "将目标温度值绑定到约束方程中的目标温度参数。"
+      "description": "原文：T_target。简化：将目标温度值绑定到约束方程中的目标温度参数。"
     },
     {
       "id": "conn3",
@@ -146,7 +146,7 @@
         "partRefId": "cp1",
         "portRefId": "param3"
       },
-      "description": "将制冷或制热量值绑定到约束方程中的制热量参数。"
+      "description": "原文：Q。简化：将制冷或制热量值绑定到约束方程中的制热量参数。"
     },
     {
       "id": "conn4",
@@ -159,7 +159,7 @@
         "partRefId": "cp1",
         "portRefId": "param4"
       },
-      "description": "将时间值绑定到约束方程中的时间参数。"
+      "description": "原文：t。简化：将时间值绑定到约束方程中的时间参数。"
     }
   ]
 }
