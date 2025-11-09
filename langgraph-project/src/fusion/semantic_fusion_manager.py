@@ -10,8 +10,8 @@ from flask import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from connections import config
-from connections.database_connectors import get_pg_connection
-from connections.embedding_client import OllamaEmbeddingClient
+from connections.database_connectors import get_pg_connection, setup_pgvector_table
+from connections.embedding_client import OllamaEmbeddingClient, GLMEmbeddingClient
 from fusion.llm_arbiter import LLMArbiter # <--- 导入新的仲裁者
 
 # 定义相似度结果的数据结构
@@ -22,17 +22,48 @@ class SemanticFusionManager:
     负责通过向量相似度来识别潜在的重复实体。
     """
     # 余弦相似度阈值，只有高于此值的才被认为是强相似
-    SIMILARITY_THRESHOLD = 0.95
+    SIMILARITY_THRESHOLD = 0.80
 
     def __init__(self):
         """初始化管理器，连接pgvector并准备Ollama客户端。"""
         self.pg_conn = get_pg_connection()
-        self.embed_client = OllamaEmbeddingClient()
+        self.embed_client = GLMEmbeddingClient()
         self.llm_arbiter = LLMArbiter() # <--- 在这里初始化仲裁者
         if not self.pg_conn or not self.embed_client.client:
             raise ConnectionError("无法初始化SemanticFusionManager，请检查数据库或Ollama连接。")
+        # ✅ 初始化时检查并创建表
+        self._ensure_table_exists()
         print("SemanticFusionManager 初始化成功。")
-    
+
+    def _ensure_table_exists(self):
+        """
+        检查 pgvector 表是否存在，如果不存在则创建
+        """
+        try:
+            with self.pg_conn.cursor() as cursor:
+                # 检查表是否存在
+                cursor.execute("""
+                    SELECT EXISTS (
+                        SELECT FROM information_schema.tables 
+                        WHERE table_name = %s
+                    );
+                """, (config.PG_VECTOR_TABLE_NAME,))
+                
+                table_exists = cursor.fetchone()[0]
+                
+                if not table_exists:
+                    print(f"⚠️ 表 '{config.PG_VECTOR_TABLE_NAME}' 不存在，正在创建...")
+                    if setup_pgvector_table(self.pg_conn):
+                        print(f"✅ 表 '{config.PG_VECTOR_TABLE_NAME}' 创建成功")
+                    else:
+                        raise Exception(f"无法创建表 '{config.PG_VECTOR_TABLE_NAME}'")
+                else:
+                    print(f"✅ 表 '{config.PG_VECTOR_TABLE_NAME}' 已存在")
+                    
+        except Exception as e:
+            print(f"❌ 检查表失败: {e}")
+            raise
+
     def find_similar_element(self, element: Dict[str, Any], canonical_key: str) -> SemanticSearchResult:
         """
         在向量数据库中查找与给定元素语义上最相似的实体。
@@ -47,6 +78,8 @@ class SemanticFusionManager:
         element_name = element.get('name')
         element_type = element.get('type')
         
+        print("\n开始语义相似性检查")
+
         # 如果元素没有名称或类型，则无法进行有意义的语义比较
         if not element_name or not element_type:
             return (False, None, None)
@@ -59,6 +92,7 @@ class SemanticFusionManager:
         else:
             text_to_embed = f"A {element_type} named {element_name}"
         
+        print(f"  text_to_embed: {text_to_embed}")
         embedding = self.embed_client.get_embedding(text_to_embed)
         if not embedding:
             print(f"  - 警告: 无法为 '{element_name}' 生成向量，跳过语义检查。")
@@ -101,6 +135,7 @@ class SemanticFusionManager:
                     return (True, similar_key, similarity_score)
 
         # 未找到强相似实体
+    
         return (False, None, None)
 
     def store_element_embedding(self, element: Dict[str, Any], canonical_key: str):
@@ -111,19 +146,12 @@ class SemanticFusionManager:
             element (Dict[str, Any]): 要存储的元素对象。
             canonical_key (str): 该元素的规范键。
         """
-                # ========== 添加调试打印 ==========
-        print(f"\n[DEBUG] store_element_embedding 被调用")
-        print(f"  canonical_key: {canonical_key}")
-        print(f"  element 类型: {type(element)}")
-        print(f"  element 内容: {element}")
 
         
         element_name = element.get('name')
         element_type = element.get('type')
         element_desc = element.get('description', '')  # 获取 description，如果没有则为空字符串
-        print(f"  element_name: {element_name} (类型: {type(element_name)})")
-        print(f"  element_type: {element_type} (类型: {type(element_type)})")
-        print(f"  element_desc: {element_desc} (类型: {type(element_desc)})")
+
 
         # 没有 name 就用 canonical_key 的最后一部分
         if not element_name:

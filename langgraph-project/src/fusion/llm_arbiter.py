@@ -32,10 +32,10 @@ class LLMArbiter:
                 model=settings.llm_model,
                 openai_api_base=settings.base_url,
                 openai_api_key=settings.openai_api_key,
-                temperature=0.1
+                temperature=0.2
             )
-            self.client = ollama.Client(host=config.OLLAMA_HOST)
-            self.client.list()
+            # self.client = ollama.Client(host=config.OLLAMA_HOST)
+            # self.client.list()
             # 创建输出解析器
             self.parser = PydanticOutputParser(pydantic_object=EntityComparisonResult)
             
@@ -55,7 +55,6 @@ class LLMArbiter:
             
             print(f"✅ LLMArbiter 初始化成功，使用模型 '{settings.llm_model}'")
             
-            print(f"✅ LLMArbiter 初始化成功，使用模型 '{self.model}'。")
         except Exception as e:
             print(f"❌ LLMArbiter 初始化失败: {e}")
             self.client = None
@@ -135,11 +134,12 @@ class LLMArbiter:
         Returns:
             如果LLM认为是同一个实体，返回True，否则返回False。
         """
-        if not self.client:
+        # if not self.client:
+        #     print("  - LLMArbiter未初始化，默认判断为不同实体。")
+        #     return False
+        if not self.llm:
             print("  - LLMArbiter未初始化，默认判断为不同实体。")
             return False
-        if not self.llm:
-            return False, "LLMArbiter未初始化"
         
         prompt = self._construct_prompt(entity1_key, entity1_desc, entity2_key, entity2_desc)
         

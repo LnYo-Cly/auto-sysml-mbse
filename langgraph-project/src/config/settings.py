@@ -10,8 +10,10 @@ class Settings(BaseSettings):
     
     # LLM配置
     llm_model: str = os.getenv("LLM_MODEL", "glm-4.6")
+    embedding_model: str = os.getenv("EMBEDDING_MODEL", "embedding-3")
+    embedding_dimensions: int = int(os.getenv("EMBEDDING_DIMENSIONS", "1024"))
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
-    base_url: str = os.getenv("BASE_URL", "https://open.bigmodel.cn/api/paas/v4/chat/completions")
+    base_url: str = os.getenv("BASE_URL", "https://open.bigmodel.cn/api/paas/v4")
     max_tokens: int = int(os.getenv("MAX_TOKENS", "65536"))
     
     # 日志配置

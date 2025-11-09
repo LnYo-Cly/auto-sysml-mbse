@@ -6,7 +6,7 @@ import neo4j
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from connections import config
-
+from config.settings import settings
 # 使用缓存来存储数据库驱动和连接，避免重复创建
 _neo4j_driver = None
 _pg_connection = None
@@ -102,7 +102,7 @@ def setup_pgvector_table(conn):
                 element_name TEXT,
                 element_type VARCHAR(255),
                 element_description TEXT,
-                embedding vector({config.VECTOR_DIMENSION})
+                embedding vector({settings.embedding_dimensions})
             );
             """
             cursor.execute(create_table_query)
