@@ -17,6 +17,14 @@ class Settings(BaseSettings):
     base_url: str = os.getenv("BASE_URL", "https://open.bigmodel.cn/api/paas/v4")
     max_tokens: int = int(os.getenv("MAX_TOKENS", "65536"))
     
+    # ollama 配置
+    ollama_host: str = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+    ollama_embedding_model: str = os.getenv("OLLAMA_EMBEDDING_MODEL", "dengcao/Qwen3-Embedding-0.6B:Q8_0")
+    ollama_embedding_dimensions: int = int(os.getenv("OLLAMA_EMBEDDING_DIMENSIONS", "1024"))
+
+    # embedding 选择
+    embedding_service: str = os.getenv("EMBEDDING_SERVICE", "ollama")  # 可选值: "ollama", "glm"
+
     # 日志配置
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
     
