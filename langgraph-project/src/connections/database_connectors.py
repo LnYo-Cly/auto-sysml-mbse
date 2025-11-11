@@ -96,13 +96,19 @@ def setup_pgvector_table(conn):
             
             print(f"  - 正在创建表 '{config.PG_VECTOR_TABLE_NAME}'...")
             # 创建一个表来存储元素的规范键和对应的向量
+
+            if settings.embedding_service == "ollama":
+                embedding_dimensions = settings.ollama_embedding_dimensions
+            elif settings.embedding_service == "glm":
+                embedding_dimensions = settings.embedding_dimensions
+
             create_table_query = f"""
             CREATE TABLE IF NOT EXISTS {config.PG_VECTOR_TABLE_NAME} (
                 canonical_key VARCHAR(1024) PRIMARY KEY,
                 element_name TEXT,
                 element_type VARCHAR(255),
                 element_description TEXT,
-                embedding vector({settings.embedding_dimensions})
+                embedding vector({embedding_dimensions})
             );
             """
             cursor.execute(create_table_query)

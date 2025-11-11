@@ -13,12 +13,12 @@ class OllamaEmbeddingClient:
     专门用于生成文本嵌入（向量）。
     """
     def __init__(self):
-        self.model = config.EMBEDDING_MODEL
+        self.model = settings.ollama_embedding_model
         try:
-            self.client = ollama.Client(host=config.OLLAMA_HOST)
+            self.client = ollama.Client(host=settings.ollama_host)
             # 尝试与服务器通信以验证连接
             self.client.list()
-            print(f"✅ Ollama 客户端初始化成功，已连接到 {config.OLLAMA_HOST}。")
+            print(f"✅ Ollama 客户端初始化成功，已连接到 {settings.ollama_host}。")
         except Exception as e:
             print(f"❌ Ollama 客户端初始化失败: {e}")
             print("  请确保您已通过 'ollama serve' 命令启动了Ollama服务。")

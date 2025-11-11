@@ -13,6 +13,8 @@ from connections import config
 from connections.database_connectors import get_pg_connection, setup_pgvector_table
 from connections.embedding_client import OllamaEmbeddingClient, GLMEmbeddingClient
 from fusion.llm_arbiter import LLMArbiter # <--- 导入新的仲裁者
+from config.settings import settings
+
 
 # 定义相似度结果的数据结构
 SemanticSearchResult = Tuple[bool, Optional[str], Optional[float]]
@@ -27,7 +29,12 @@ class SemanticFusionManager:
     def __init__(self):
         """初始化管理器，连接pgvector并准备Ollama客户端。"""
         self.pg_conn = get_pg_connection()
-        self.embed_client = GLMEmbeddingClient()
+        # self.embed_client = GLMEmbeddingClient()
+        if settings.embedding_service == "ollama":
+            self.embed_client = OllamaEmbeddingClient()
+        elif settings.embedding_service == "glm":
+            self.embed_client = GLMEmbeddingClient()
+
         self.llm_arbiter = LLMArbiter() # <--- 在这里初始化仲裁者
         if not self.pg_conn or not self.embed_client.client:
             raise ConnectionError("无法初始化SemanticFusionManager，请检查数据库或Ollama连接。")
