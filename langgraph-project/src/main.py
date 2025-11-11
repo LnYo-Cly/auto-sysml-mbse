@@ -317,7 +317,21 @@ def main():
                 print(f"   ❌ 融合失败: {final_state.fusion_message}")
             elif final_state.fusion_status == "skipped":
                 print(f"   ⚠️ 已跳过融合: {final_state.fusion_message}")
-                
+                    
+        # 显示XML生成结果
+        if final_state.xml_generation_status:
+            print(f"\n🔨 XML生成状态: {final_state.xml_generation_status}")
+            if final_state.xml_generation_status == "completed":
+                print(f"   ✅ XMI输出: {final_state.xml_output_path}")
+                if final_state.xml_statistics:
+                    stats = final_state.xml_statistics
+                    print(f"   📊 文件大小: {stats.get('file_size_kb', 'N/A')} KB")
+            elif final_state.xml_generation_status == "failed":
+                print(f"   ❌ XML生成失败: {final_state.xml_generation_message}")
+            elif final_state.xml_generation_status == "skipped":
+                print(f"   ⚠️ 已跳过XML生成: {final_state.xml_generation_message}")
+      
+          
         print("\n📂 输出文件保存在: data/output/")
         
     else:

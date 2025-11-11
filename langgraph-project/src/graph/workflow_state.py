@@ -70,6 +70,24 @@ class WorkflowState(BaseModel):
         default=None,
         description="融合过程的消息或错误信息"
     )
+    
+    # ==================== XML生成阶段 ====================
+    xml_generation_status: Optional[str] = Field(
+        default=None,
+        description="XML生成状态: None/skipped/completed/failed"
+    )
+    xml_output_path: Optional[str] = Field(
+        default=None,
+        description="生成的XMI文件路径"
+    )
+    xml_statistics: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="XML生成统计信息（文件大小、生成时间等）"
+    )
+    xml_generation_message: Optional[str] = Field(
+        default=None,
+        description="XML生成过程的消息或错误信息"
+    )
 
     class Config:
         arbitrary_types_allowed = True

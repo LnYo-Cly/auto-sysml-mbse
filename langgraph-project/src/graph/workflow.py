@@ -5,6 +5,8 @@ from agents.requirement_expander import expand_requirement
 from agents.document_processor import process_document
 from agents.task_classifier import classify_and_assign_tasks
 from agents.fusion_agent import fusion_agent
+from agents.xml_generator_agent import xml_generator_agent
+
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +24,14 @@ def should_classify_tasks(state: WorkflowState) -> str:
         return "task_classification"
     return END
 
+def should_generate_xml(state: WorkflowState) -> str:
+    """决定是否需要生成XML"""
+    if state.fusion_status == "completed":
+        logger.info("✅ 融合完成，进入XML生成阶段")
+        return "xml_generation"
+    
+    logger.info("⚠️ 融合未完成，跳过XML生成阶段")
+    return END
 
 def should_run_fusion(state: WorkflowState) -> str:
     """决定是否需要运行融合流程"""
@@ -49,6 +59,7 @@ def create_workflow() -> StateGraph:
     workflow.add_node("document_processing", process_document)
     workflow.add_node("task_classification", classify_and_assign_tasks)
     workflow.add_node("fusion", fusion_agent)
+    workflow.add_node("xml_generation", xml_generator_agent)
     
     # 设置入口点
     workflow.set_entry_point("requirement_expansion")
@@ -73,6 +84,7 @@ def create_workflow() -> StateGraph:
         }
     )
 
+    # 多sysml任务处理 → 融合
     workflow.add_conditional_edges(
         "task_classification",
         should_run_fusion,
@@ -81,9 +93,19 @@ def create_workflow() -> StateGraph:
             END: END
         }
     )
+
+    # 融合 → XML生成
+    workflow.add_conditional_edges(
+        "fusion",
+        should_generate_xml,
+        {
+            "xml_generation": "xml_generation",
+            END: END
+        }
+    )
     
     # 任务分类 → 结束
-    workflow.add_edge("fusion", END)
+    workflow.add_edge("xml_generation", END)
     
     # 编译工作流
     return workflow.compile()
