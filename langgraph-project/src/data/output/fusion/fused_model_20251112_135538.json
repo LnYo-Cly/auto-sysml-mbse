@@ -11,25 +11,29 @@
       "parentId": "master-model",
       "description": "该包封装了系统启动自检流程的所有组件和活动。",
       "name": "SystemStartupSelfCheck",
-      "id": "pkg-systemstart-uuid"
+      "id": "pkg-systemstart-uuid",
+      "type": "Package"
     },
     {
       "parentId": "pkg-systemstart-uuid",
       "description": "代表开机指令的数据类型。",
       "name": "BootCommand",
-      "id": "blk-bootcmd-uuid"
+      "id": "blk-bootcmd-uuid",
+      "type": "Block"
     },
     {
       "parentId": "pkg-systemstart-uuid",
       "description": "代表系统状态报告的数据类型。",
       "name": "StatusReport",
-      "id": "blk-statusrep-uuid"
+      "id": "blk-statusrep-uuid",
+      "type": "Block"
     },
     {
       "parentId": "pkg-systemstart-uuid",
       "description": "代表整个系统，包括所有硬件模块和软件组件。",
       "name": "System",
-      "id": "blk-system-uuid"
+      "id": "blk-system-uuid",
+      "type": "Block"
     },
     {
       "parentId": "pkg-systemstart-uuid",
@@ -57,62 +61,72 @@
       "groups": [
         "grp-system-uuid"
       ],
-      "id": "act-systemstart-uuid"
+      "id": "act-systemstart-uuid",
+      "type": "Activity"
     },
     {
       "parentId": "act-systemstart-uuid",
       "description": "流程的起点，代表接收到开机指令。",
       "name": "接收开机指令",
-      "id": "node-start-boot"
+      "id": "node-start-boot",
+      "type": "InitialNode"
     },
     {
       "parentId": "act-systemstart-uuid",
       "description": "此动作负责检查电源是否正常。",
       "name": "检查电源状态",
-      "id": "node-check-power"
+      "id": "node-check-power",
+      "type": "CallBehaviorAction"
     },
     {
       "parentId": "act-systemstart-uuid",
       "description": "此动作负责检查传感器是否正常工作。",
       "name": "检查传感器状态",
-      "id": "node-check-sensors"
+      "id": "node-check-sensors",
+      "type": "CallBehaviorAction"
     },
     {
       "parentId": "act-systemstart-uuid",
       "description": "此动作负责检查执行器是否正常工作。",
       "name": "检查执行器状态",
-      "id": "node-check-actuators"
+      "id": "node-check-actuators",
+      "type": "CallBehaviorAction"
     },
     {
       "parentId": "act-systemstart-uuid",
       "description": "此动作负责初始化控制模块。",
       "name": "初始化控制模块",
-      "id": "node-initialize-control"
+      "id": "node-initialize-control",
+      "type": "CallBehaviorAction"
     },
     {
       "parentId": "act-systemstart-uuid",
       "description": "此动作负责返回系统状态信息。",
       "name": "返回系统状态",
-      "id": "node-return-status"
+      "id": "node-return-status",
+      "type": "CallBehaviorAction"
     },
     {
       "parentId": "act-systemstart-uuid",
       "description": "此动作负责将系统置于待机状态。",
       "name": "进入待机状态",
-      "id": "node-enter-idle"
+      "id": "node-enter-idle",
+      "type": "CallBehaviorAction"
     },
     {
       "parentId": "act-systemstart-uuid",
       "description": "流程的终点，代表自检流程完成。",
       "name": "流程结束",
-      "id": "node-end"
+      "id": "node-end",
+      "type": "ActivityFinalNode"
     },
     {
       "parentId": "act-systemstart-uuid",
       "representsId": "blk-system-uuid",
       "description": "此泳道代表整个系统，包括所有硬件模块和软件组件。",
       "name": "系统分区",
-      "id": "grp-system-uuid"
+      "id": "grp-system-uuid",
+      "type": "ActivityPartition"
     },
     {
       "parentId": "act-systemstart-uuid",
@@ -120,7 +134,8 @@
       "description": "从接收开机指令节点到检查电源状态节点的控制流。",
       "targetId": "node-check-power",
       "sourceId": "node-start-boot",
-      "id": "edge-bootcmd-to-power"
+      "id": "edge-bootcmd-to-power",
+      "type": "ControlFlow"
     },
     {
       "parentId": "act-systemstart-uuid",
@@ -128,7 +143,8 @@
       "description": "从检查电源状态节点到检查传感器状态节点的控制流。",
       "targetId": "node-check-sensors",
       "sourceId": "node-check-power",
-      "id": "edge-power-to-sensors"
+      "id": "edge-power-to-sensors",
+      "type": "ControlFlow"
     },
     {
       "parentId": "act-systemstart-uuid",
@@ -136,7 +152,8 @@
       "description": "从检查传感器状态节点到检查执行器状态节点的控制流。",
       "targetId": "node-check-actuators",
       "sourceId": "node-check-sensors",
-      "id": "edge-sensors-to-actuators"
+      "id": "edge-sensors-to-actuators",
+      "type": "ControlFlow"
     },
     {
       "parentId": "act-systemstart-uuid",
@@ -144,7 +161,8 @@
       "description": "从检查执行器状态节点到初始化控制模块节点的控制流。",
       "targetId": "node-initialize-control",
       "sourceId": "node-check-actuators",
-      "id": "edge-actuators-to-control"
+      "id": "edge-actuators-to-control",
+      "type": "ControlFlow"
     },
     {
       "parentId": "act-systemstart-uuid",
@@ -152,7 +170,8 @@
       "description": "从初始化控制模块节点到返回系统状态节点的控制流。",
       "targetId": "node-return-status",
       "sourceId": "node-initialize-control",
-      "id": "edge-control-to-return"
+      "id": "edge-control-to-return",
+      "type": "ControlFlow"
     },
     {
       "parentId": "act-systemstart-uuid",
@@ -160,7 +179,8 @@
       "description": "从返回系统状态节点到进入待机状态节点的控制流。",
       "targetId": "node-enter-idle",
       "sourceId": "node-return-status",
-      "id": "edge-return-to-idle"
+      "id": "edge-return-to-idle",
+      "type": "ControlFlow"
     },
     {
       "parentId": "act-systemstart-uuid",
@@ -168,12 +188,14 @@
       "description": "从进入待机状态节点到流程结束节点的控制流。",
       "targetId": "node-end",
       "sourceId": "node-enter-idle",
-      "id": "edge-idle-to-end"
+      "id": "edge-idle-to-end",
+      "type": "ControlFlow"
     },
     {
       "description": "包含车载空调系统的功能需求，包括温度控制、能耗管理和系统可靠性等",
       "name": "空调系统功能",
       "id": "pkg-aircon-func-uuid",
+      "type": "Package",
       "parentId": "master-model"
     },
     {
@@ -182,7 +204,8 @@
       "text": "系统应能够根据用户设定和外部环境自动调节车内温度，包括制冷、制热和除湿功能，并通过CAN总线与车辆其他系统进行数据交换",
       "description": "原文：系统应能够根据用户设定和外部环境自动调节车内温度，包括制冷、制热和除湿功能，并通过CAN总线与车辆其他系统进行数据交换。简化：该需求要求空调系统能够自动调节车内温度，并与其他车辆系统进行数据交换，以提供舒适的乘坐环境。",
       "name": "空调系统控制",
-      "id": "req-aircon-control-uuid"
+      "id": "req-aircon-control-uuid",
+      "type": "Requirement"
     },
     {
       "reqId": "REQ-FUN-002",
@@ -190,7 +213,8 @@
       "text": "系统应能够将车内温度控制在设定温度的±0.5°C范围内，并通过PID控制算法实现精确调节",
       "description": "原文：系统应能够将车内温度控制在设定温度的±0.5°C范围内，并通过PID控制算法实现精确调节。简化：该需求要求空调系统能够精确控制车内温度，以提供舒适的乘坐环境。",
       "name": "温度控制精度",
-      "id": "req-aircon-precision-uuid"
+      "id": "req-aircon-precision-uuid",
+      "type": "Requirement"
     },
     {
       "reqId": "REQ-FUN-003",
@@ -198,7 +222,8 @@
       "text": "系统应通过智能算法优化制冷和制热过程，以最小化能耗，并实现节能模式",
       "description": "原文：系统应通过智能算法优化制冷和制热过程，以最小化能耗，并实现节能模式。简化：该需求要求空调系统能够通过智能算法优化能耗，以降低运营成本和环境影响。",
       "name": "能耗管理",
-      "id": "req-aircon-energy-uuid"
+      "id": "req-aircon-energy-uuid",
+      "type": "Requirement"
     },
     {
       "reqId": "REQ-NFN-001",
@@ -206,7 +231,8 @@
       "text": "系统在接收到温度调整指令后，应在2秒内开始响应，并通过实时监控确保系统响应时间不超过3秒",
       "description": "原文：系统在接收到温度调整指令后，应在2秒内开始响应，并通过实时监控确保系统响应时间不超过3秒。简化：该需求要求空调系统能够快速响应温度调整指令，以提供良好的用户体验。",
       "name": "响应时间",
-      "id": "req-aircon-response-uuid"
+      "id": "req-aircon-response-uuid",
+      "type": "Requirement"
     },
     {
       "reqId": "REQ-NFN-002",
@@ -214,37 +240,43 @@
       "text": "系统的平均无故障时间（MTBF）应大于10,000小时，并通过冗余设计提高系统的可靠性",
       "description": "原文：系统的平均无故障时间（MTBF）应大于10,000小时，并通过冗余设计提高系统的可靠性。简化：该需求要求空调系统具有高可靠性，以减少维护成本并确保行车安全。",
       "name": "系统可靠性",
-      "id": "req-aircon-reliability-uuid"
+      "id": "req-aircon-reliability-uuid",
+      "type": "Requirement"
     },
     {
       "parentId": "pkg-aircon-func-uuid",
       "description": "原文：空调控制系统负责根据用户设定和外部环境自动调节车内温度。职责：实现制冷、制热和除湿功能，并通过CAN总线与其他车辆系统进行数据交换。组成：包括温度传感器、执行器、PID控制器和通信模块。技术：采用先进的控制算法和传感器技术。",
       "name": "空调控制系统",
-      "id": "blk-aircon-control-uuid"
+      "id": "blk-aircon-control-uuid",
+      "type": "Block"
     },
     {
       "parentId": "pkg-aircon-func-uuid",
       "description": "原文：空调系统控制测试用于验证空调系统是否能够根据用户设定和外部环境自动调节车内温度。测试目的：验证制冷、制热和除湿功能以及与车辆其他系统的数据交换。测试方法：模拟不同温度和湿度条件，测试系统响应和调节效果。预期结果：系统能够准确调节车内温度，并与其他系统进行有效数据交换。",
       "name": "空调系统控制测试",
-      "id": "tc-aircon-control-uuid"
+      "id": "tc-aircon-control-uuid",
+      "type": "TestCase"
     },
     {
       "parentId": "pkg-aircon-func-uuid",
       "description": "原文：温度控制精度测试用于验证空调系统是否能够将车内温度控制在设定温度的±0.5°C范围内。测试目的：验证PID控制算法的精确性。测试方法：设定不同温度，测试系统调节精度。预期结果：系统能够将车内温度控制在设定温度的±0.5°C范围内。",
       "name": "温度控制精度测试",
-      "id": "tc-aircon-precision-uuid"
+      "id": "tc-aircon-precision-uuid",
+      "type": "TestCase"
     },
     {
       "parentId": "pkg-aircon-func-uuid",
       "description": "原文：能耗管理测试用于验证空调系统是否能够通过智能算法优化制冷和制热过程，以最小化能耗。测试目的：验证节能模式的效率。测试方法：在不同工况下测试系统能耗。预期结果：系统在节能模式下能够实现≥20%的能耗降低。",
       "name": "能耗管理测试",
-      "id": "tc-aircon-energy-uuid"
+      "id": "tc-aircon-energy-uuid",
+      "type": "TestCase"
     },
     {
       "parentId": "pkg-aircon-func",
       "description": "测试用例：响应时间测试，用于验证需求",
       "name": "响应时间测试",
-      "id": "tc-aircon-response-uuid"
+      "id": "tc-aircon-response-uuid",
+      "type": "TestCase"
     },
     {
       "parentId": "master-model",
@@ -253,7 +285,8 @@
         "简化": "主应用包，包含空调控制器和状态机定义。"
       },
       "name": "空调控制包",
-      "id": "pkg-air-con-control-uuid"
+      "id": "pkg-air-con-control-uuid",
+      "type": "Package"
     },
     {
       "parentId": "master-model",
@@ -262,7 +295,8 @@
         "简化": "行为库包，存储所有可被状态和转换调用的具体活动。"
       },
       "name": "空调行为库",
-      "id": "pkg-air-con-behaviors-uuid"
+      "id": "pkg-air-con-behaviors-uuid",
+      "type": "Package"
     },
     {
       "classifierBehaviorId": "sm-air-con-uuid",
@@ -272,7 +306,8 @@
         "简化": "空调系统的核心控制器，其行为由状态机定义。"
       },
       "name": "空调系统",
-      "id": "blk-air-con-system-uuid"
+      "id": "blk-air-con-system-uuid",
+      "type": "Block"
     },
     {
       "parentId": "blk-air-con-system-uuid",
@@ -281,7 +316,8 @@
         "简化": "定义空调系统的完整生命周期和行为逻辑。"
       },
       "name": "空调状态机",
-      "id": "sm-air-con-uuid"
+      "id": "sm-air-con-uuid",
+      "type": "StateMachine"
     },
     {
       "parentId": "sm-air-con-uuid",
@@ -290,7 +326,8 @@
         "简化": "状态机的主要活动区域，包含所有顶层状态和转换。"
       },
       "name": "主区域",
-      "id": "region-air-con-main-uuid"
+      "id": "region-air-con-main-uuid",
+      "type": "Region"
     },
     {
       "parentId": "region-air-con-main-uuid",
@@ -299,7 +336,8 @@
         "简化": "空调系统完全关闭，不执行任何操作的状态。"
       },
       "name": "关闭",
-      "id": "state-off-uuid"
+      "id": "state-off-uuid",
+      "type": "State"
     },
     {
       "parentId": "region-air-con-main-uuid",
@@ -308,7 +346,8 @@
         "简化": "空调系统处于准备运行状态，执行初始化和监测操作。"
       },
       "name": "待机",
-      "id": "state-standby-uuid"
+      "id": "state-standby-uuid",
+      "type": "State"
     },
     {
       "parentId": "region-air-con-main-uuid",
@@ -317,7 +356,8 @@
         "简化": "空调系统正在执行制冷或制热操作，调节温度和湿度。"
       },
       "name": "运行",
-      "id": "state-running-uuid"
+      "id": "state-running-uuid",
+      "type": "State"
     },
     {
       "parentId": "region-air-con-main-uuid",
@@ -326,7 +366,8 @@
         "简化": "状态机的起始点，系统启动时的入口。"
       },
       "kind": "initial",
-      "id": "ps-main-initial-uuid"
+      "id": "ps-main-initial-uuid",
+      "type": "Pseudostate"
     },
     {
       "parentId": "region-air-con-main-uuid",
@@ -336,7 +377,8 @@
       },
       "targetId": "state-off-uuid",
       "sourceId": "ps-main-initial-uuid",
-      "id": "trans-initial-to-off-uuid"
+      "id": "trans-initial-to-off-uuid",
+      "type": "Transition"
     },
     {
       "parentId": "region-air-con-main-uuid",
@@ -346,7 +388,8 @@
       },
       "targetId": "state-standby-uuid",
       "sourceId": "state-off-uuid",
-      "id": "trans-off-to-standby-uuid"
+      "id": "trans-off-to-standby-uuid",
+      "type": "Transition"
     },
     {
       "parentId": "region-air-con-main-uuid",
@@ -356,7 +399,8 @@
       },
       "targetId": "state-running-uuid",
       "sourceId": "state-standby-uuid",
-      "id": "trans-standby-to-running-uuid"
+      "id": "trans-standby-to-running-uuid",
+      "type": "Transition"
     },
     {
       "parentId": "region-air-con-main-uuid",
@@ -366,7 +410,8 @@
       },
       "targetId": "state-off-uuid",
       "sourceId": "state-running-uuid",
-      "id": "trans-running-to-off-uuid"
+      "id": "trans-running-to-off-uuid",
+      "type": "Transition"
     },
     {
       "parentId": "pkg-air-con-control-uuid",
@@ -375,7 +420,8 @@
         "简化": "接通电源时触发的事件。"
       },
       "name": "power_on",
-      "id": "event-power-on-uuid"
+      "id": "event-power-on-uuid",
+      "type": "Event"
     },
     {
       "parentId": "pkg-air-con-control-uuid",
@@ -384,7 +430,8 @@
         "简化": "环境温度发生变化时触发的事件。"
       },
       "name": "temperature_change",
-      "id": "event-temperature-change-uuid"
+      "id": "event-temperature-change-uuid",
+      "type": "Event"
     },
     {
       "parentId": "pkg-air-con-control-uuid",
@@ -393,7 +440,8 @@
         "简化": "环境湿度发生变化时触发的事件。"
       },
       "name": "humidity_change",
-      "id": "event-humidity-change-uuid"
+      "id": "event-humidity-change-uuid",
+      "type": "Event"
     },
     {
       "parentId": "pkg-air-con-control-uuid",
@@ -402,7 +450,8 @@
         "简化": "断开电源时触发的事件。"
       },
       "name": "power_off",
-      "id": "event-power-off-uuid"
+      "id": "event-power-off-uuid",
+      "type": "Event"
     },
     {
       "parentId": "pkg-air-con-behaviors-uuid",
@@ -411,7 +460,8 @@
         "简化": "关闭空调系统中所有执行器的具体操作活动。"
       },
       "name": "关闭所有执行器",
-      "id": "act-close-all-executors-uuid"
+      "id": "act-close-all-executors-uuid",
+      "type": "Activity"
     },
     {
       "parentId": "pkg-air-con-behaviors-uuid",
@@ -420,7 +470,8 @@
         "简化": "初始化空调系统中的传感器和执行器的具体操作活动。"
       },
       "name": "初始化传感器和执行器",
-      "id": "act-initialize-sensors-executors-uuid"
+      "id": "act-initialize-sensors-executors-uuid",
+      "type": "Activity"
     },
     {
       "parentId": "pkg-air-con-behaviors-uuid",
@@ -429,7 +480,8 @@
         "简化": "持续监测环境温度和湿度的具体操作活动。"
       },
       "name": "监测环境参数",
-      "id": "act-monitor-env-params-uuid"
+      "id": "act-monitor-env-params-uuid",
+      "type": "Activity"
     },
     {
       "parentId": "pkg-air-con-behaviors-uuid",
@@ -438,7 +490,8 @@
         "简化": "启动空调系统中的制冷或制热系统的具体操作活动。"
       },
       "name": "启动制冷或制热系统",
-      "id": "act-start-cooling-heating-uuid"
+      "id": "act-start-cooling-heating-uuid",
+      "type": "Activity"
     },
     {
       "parentId": "pkg-air-con-behaviors-uuid",
@@ -447,7 +500,8 @@
         "简化": "根据环境参数调节空调系统中的温度和湿度的具体操作活动。"
       },
       "name": "调节温度和湿度",
-      "id": "act-adjust-temperature-humidity-uuid"
+      "id": "act-adjust-temperature-humidity-uuid",
+      "type": "Activity"
     },
     {
       "parentId": "pkg-air-con-behaviors-uuid",
@@ -456,57 +510,66 @@
         "简化": "关闭空调系统中的制冷或制热系统的具体操作活动。"
       },
       "name": "关闭制冷或制热系统",
-      "id": "act-stop-cooling-heating-uuid"
+      "id": "act-stop-cooling-heating-uuid",
+      "type": "Activity"
     },
     {
       "parentId": "master-model",
       "description": "原文：空调控制系统案例。简化：包含空调控制系统的所有核心用例和参与者。",
       "name": "主要用例",
-      "id": "pkg-air-con-control-main-uuid"
+      "id": "pkg-air-con-control-main-uuid",
+      "type": "Package"
     },
     {
       "parentId": "pkg-air-con-control-main-uuid",
       "description": "原文：*   **参与者**: Primary: 驾驶员。简化：空调系统的主要操作者，负责控制空调系统的各项功能。",
       "name": "驾驶员",
-      "id": "actor-driver-uuid"
+      "id": "actor-driver-uuid",
+      "type": "Actor"
     },
     {
       "parentId": "pkg-air-con-control-main-uuid",
       "description": "原文：*   **参与者**: Secondary: 车载触摸屏。简化：驾驶员与空调系统交互的界面，用于显示和控制空调设置。",
       "name": "车载触摸屏",
-      "id": "actor-touch-screen-uuid"
+      "id": "actor-touch-screen-uuid",
+      "type": "Actor"
     },
     {
       "parentId": "pkg-air-con-control-main-uuid",
       "description": "原文：*   **用例名称**: ControlAirConditioning。简化：系统提供的核心功能，允许用户控制空调系统的各项设置。",
       "name": "控制空调系统",
-      "id": "uc-control-air-con-uuid"
+      "id": "uc-control-air-con-uuid",
+      "type": "UseCase"
     },
     {
       "parentId": "pkg-air-con-control-main-uuid",
       "description": "原文：*   **参与者**: Primary: 驾驶员。简化：驾驶员是控制空调系统的主要参与者。",
       "targetId": "uc-control-air-con-uuid",
       "sourceId": "actor-driver-uuid",
-      "id": "assoc-driver-control-uuid"
+      "id": "assoc-driver-control-uuid",
+      "type": "Association"
     },
     {
       "parentId": "pkg-air-con-control-main-uuid",
       "description": "原文：*   **参与者**: Secondary: 车载触摸屏。简化：车载触摸屏是驾驶员与空调系统交互的界面。",
       "targetId": "uc-control-air-con-uuid",
       "sourceId": "actor-touch-screen-uuid",
-      "id": "assoc-touch-screen-control-uuid"
+      "id": "assoc-touch-screen-control-uuid",
+      "type": "Association"
     },
     {
       "parentId": "master-model",
       "description": "原文：温度控制方程。简化：封装温度控制参数图的所有元素。",
       "name": "ParametricDiagram",
-      "id": "pkg-unique-id"
+      "id": "pkg-unique-id",
+      "type": "Package"
     },
     {
       "parentId": "pkg-unique-id",
       "description": "原文：温度控制方程。简化：代表空调系统，用于控制温度。",
       "name": "TemperatureControlSystem",
-      "id": "block1"
+      "id": "block1",
+      "type": "Block"
     },
     {
       "parentId": "block1",
@@ -514,7 +577,17 @@
       "name": "T_current",
       "typeId": "Real",
       "propertyKind": "value",
-      "id": "prop1"
+      "id": "prop1",
+      "type": "Property"
+    },
+    {
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：T_target。简化：目标温度。",
+      "name": "T_target",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop2",
+      "type": "Property"
     },
     {
       "parentId": "block1",
@@ -522,7 +595,8 @@
       "name": "T_target",
       "typeId": "Real",
       "propertyKind": "value",
-      "id": "prop2"
+      "id": "prop2",
+      "type": "Property"
     },
     {
       "parentId": "block1",
@@ -530,7 +604,8 @@
       "name": "Q",
       "typeId": "Real",
       "propertyKind": "value",
-      "id": "prop3"
+      "id": "prop3",
+      "type": "Property"
     },
     {
       "parentId": "block1",
@@ -538,7 +613,8 @@
       "name": "t",
       "typeId": "Real",
       "propertyKind": "value",
-      "id": "prop4"
+      "id": "prop4",
+      "type": "Property"
     },
     {
       "parentId": "pkg-unique-id",
@@ -548,35 +624,40 @@
         "expression": "T_current + (Q * t) = T_target",
         "language": "Math"
       },
-      "id": "cb1"
+      "id": "cb1",
+      "type": "ConstraintBlock"
     },
     {
       "parentId": "cb1",
       "description": "原文：T_current。简化：方程中的当前温度变量。",
       "name": "T_current",
       "typeId": "Real",
-      "id": "param1"
+      "id": "param1",
+      "type": "ConstraintParameter"
     },
     {
       "parentId": "cb1",
       "description": "原文：T_target。简化：方程中的目标温度变量。",
       "name": "T_target",
       "typeId": "Real",
-      "id": "param2"
+      "id": "param2",
+      "type": "ConstraintParameter"
     },
     {
       "parentId": "cb1",
       "description": "原文：Q。简化：方程中的制冷或制热量变量。",
       "name": "Q",
       "typeId": "Real",
-      "id": "param3"
+      "id": "param3",
+      "type": "ConstraintParameter"
     },
     {
       "parentId": "cb1",
       "description": "原文：t。简化：方程中的时间变量。",
       "name": "t",
       "typeId": "Real",
-      "id": "param4"
+      "id": "param4",
+      "type": "ConstraintParameter"
     },
     {
       "parentId": "block1",
@@ -584,7 +665,8 @@
       "name": "TemperatureControlEquation",
       "typeId": "cb1",
       "propertyKind": "constraint",
-      "id": "cp1"
+      "id": "cp1",
+      "type": "Property"
     },
     {
       "parentId": "block1",
@@ -596,7 +678,8 @@
       "end1": {
         "propertyRefId": "prop1"
       },
-      "id": "conn1"
+      "id": "conn1",
+      "type": "BindingConnector"
     },
     {
       "parentId": "block1",
@@ -608,7 +691,8 @@
       "end1": {
         "propertyRefId": "prop2"
       },
-      "id": "conn2"
+      "id": "conn2",
+      "type": "BindingConnector"
     },
     {
       "parentId": "block1",
@@ -620,7 +704,8 @@
       "end1": {
         "propertyRefId": "prop3"
       },
-      "id": "conn3"
+      "id": "conn3",
+      "type": "BindingConnector"
     },
     {
       "parentId": "block1",
@@ -632,65 +717,67 @@
       "end1": {
         "propertyRefId": "prop4"
       },
-      "id": "conn4"
+      "id": "conn4",
+      "type": "BindingConnector"
     },
     {
       "parentId": "master-model",
       "description": "原文：无明确提及，但根据上下文推断。简化：包含用户设置温度场景的包。",
       "name": "车载系统",
-      "id": "pkg-vehicle-sys-uuid"
+      "id": "pkg-vehicle-sys-uuid",
+      "type": "Package"
     },
     {
       "parentId": "pkg-vehicle-sys-uuid",
       "description": "原文：*   **涉及的生命线**: `[User]`。简化：通过触摸屏设置温度的用户，系统外部参与者。",
       "name": "用户",
-      "id": "actor-user-uuid"
+      "id": "actor-user-uuid",
+      "type": "Actor"
     },
     {
       "parentId": "pkg-vehicle-sys-uuid",
       "description": "原文：*   **涉及的生命线**: `[TouchScreen]`。简化：用户用于设置温度的触摸屏设备。",
       "name": "触摸屏",
-      "id": "block-touchscreen-uuid"
+      "id": "block-touchscreen-uuid",
+      "type": "Block"
     },
     {
       "parentId": "pkg-vehicle-sys-uuid",
       "description": "原文：*   **涉及的生命线**: `[AirConditioningSystem]`。简化：控制车内温度的空调系统。",
       "name": "空调系统",
-      "id": "block-aircondsys-uuid"
-    },
-    {
-      "parentId": "interaction-user-set-temp-uuid",
-      "description": "原文：无明确提及，但根据上下文推断。简化：交互中用户设置的目标温度属性。",
-      "name": "p_targetTemp",
-      "typeId": "Double",
-      "id": "prop-interaction-targetTemp-uuid"
+      "id": "block-aircondsys-uuid",
+      "type": "Block"
     },
     {
       "parentId": "pkg-vehicle-sys-uuid",
       "description": "原文：*   **场景名称**: UserSetsTemperature。简化：描述用户设置温度的交互流程。",
       "name": "UserSetsTemperature",
-      "id": "interaction-user-set-temp-uuid"
+      "id": "interaction-user-set-temp-uuid",
+      "type": "Interaction"
     },
     {
       "parentId": "interaction-user-set-temp-uuid",
       "representsId": "prop-interaction-targetTemp-uuid",
       "description": "原文：*   **涉及的生命线**: `[User]`。简化：代表用户参与者的生命线，贯穿整个设置温度交互。",
       "name": "L1-用户",
-      "id": "ll-user-uuid"
+      "id": "ll-user-uuid",
+      "type": "Lifeline"
     },
     {
       "parentId": "interaction-user-set-temp-uuid",
       "representsId": "block-touchscreen-uuid",
       "description": "原文：*   **涉及的生命线**: `[TouchScreen]`。简化：代表触摸屏设备的生命线，负责接收用户输入。",
       "name": "L2-触摸屏",
-      "id": "ll-touchscreen-uuid"
+      "id": "ll-touchscreen-uuid",
+      "type": "Lifeline"
     },
     {
       "parentId": "interaction-user-set-temp-uuid",
       "representsId": "block-aircondsys-uuid",
       "description": "原文：*   **涉及的生命线**: `[AirConditioningSystem]`。简化：代表空调系统实例的生命线，负责调整温度。",
       "name": "L3-空调系统",
-      "id": "ll-aircondsys-uuid"
+      "id": "ll-aircondsys-uuid",
+      "type": "Lifeline"
     },
     {
       "parentId": "interaction-user-set-temp-uuid",
@@ -699,21 +786,24 @@
       "name": "设置温度",
       "messageSort": "synchCall",
       "receiveEventId": "fragment-recv-settemp-uuid",
-      "id": "msg-settemp-uuid"
+      "id": "msg-settemp-uuid",
+      "type": "Message"
     },
     {
       "coveredId": "ll-user-uuid",
       "parentId": "interaction-user-set-temp-uuid",
       "description": "原文：用户设置温度。简化：设置温度消息的发送事件。",
       "messageId": "msg-settemp-uuid",
-      "id": "fragment-send-settemp-uuid"
+      "id": "fragment-send-settemp-uuid",
+      "type": "MessageOccurrenceSpecification"
     },
     {
       "coveredId": "ll-touchscreen-uuid",
       "parentId": "interaction-user-set-temp-uuid",
       "description": "原文：触摸屏接收温度设置。简化：设置温度消息的接收事件。",
       "messageId": "msg-settemp-uuid",
-      "id": "fragment-recv-settemp-uuid"
+      "id": "fragment-recv-settemp-uuid",
+      "type": "MessageOccurrenceSpecification"
     },
     {
       "parentId": "interaction-user-set-temp-uuid",
@@ -722,21 +812,24 @@
       "name": "发送温度设置",
       "messageSort": "synchCall",
       "receiveEventId": "fragment-recv-sendtemp-uuid",
-      "id": "msg-sendtemp-uuid"
+      "id": "msg-sendtemp-uuid",
+      "type": "Message"
     },
     {
       "coveredId": "ll-touchscreen-uuid",
       "parentId": "interaction-user-set-temp-uuid",
       "description": "原文：触摸屏发送温度设置。简化：发送温度设置消息的发送事件。",
       "messageId": "msg-sendtemp-uuid",
-      "id": "fragment-send-sendtemp-uuid"
+      "id": "fragment-send-sendtemp-uuid",
+      "type": "MessageOccurrenceSpecification"
     },
     {
       "coveredId": "ll-aircondsys-uuid",
       "parentId": "interaction-user-set-temp-uuid",
       "description": "原文：空调系统接收温度设置。简化：发送温度设置消息的接收事件。",
       "messageId": "msg-sendtemp-uuid",
-      "id": "fragment-recv-sendtemp-uuid"
+      "id": "fragment-recv-sendtemp-uuid",
+      "type": "MessageOccurrenceSpecification"
     },
     {
       "parentId": "interaction-user-set-temp-uuid",
@@ -745,21 +838,24 @@
       "name": "调整系统",
       "messageSort": "synchCall",
       "receiveEventId": "fragment-recv-adjustsys-uuid",
-      "id": "msg-adjustsys-uuid"
+      "id": "msg-adjustsys-uuid",
+      "type": "Message"
     },
     {
       "coveredId": "ll-aircondsys-uuid",
       "parentId": "interaction-user-set-temp-uuid",
       "description": "原文：空调系统调整系统。简化：调整系统消息的发送事件。",
       "messageId": "msg-adjustsys-uuid",
-      "id": "fragment-send-adjustsys-uuid"
+      "id": "fragment-send-adjustsys-uuid",
+      "type": "MessageOccurrenceSpecification"
     },
     {
       "coveredId": "ll-aircondsys-uuid",
       "parentId": "interaction-user-set-temp-uuid",
       "description": "原文：空调系统接收调整系统。简化：调整系统消息的接收事件。",
       "messageId": "msg-adjustsys-uuid",
-      "id": "fragment-recv-adjustsys-uuid"
+      "id": "fragment-recv-adjustsys-uuid",
+      "type": "MessageOccurrenceSpecification"
     },
     {
       "parentId": "interaction-user-set-temp-uuid",
@@ -768,18 +864,21 @@
       "name": "发送温度和湿度信息",
       "messageSort": "synchCall",
       "receiveEventId": "fragment-recv-sendtempandhum-uuid",
-      "id": "msg-sendtempandhum-uuid"
+      "id": "msg-sendtempandhum-uuid",
+      "type": "Message"
     },
     {
       "coveredId": "ll-aircondsys-uuid",
       "parentId": "interaction-user-set-temp-uuid",
       "description": "原文：空调系统发送温度和湿度信息。简化：发送温度和湿度信息消息的发送事件。",
       "messageId": "msg-sendtempandhum-uuid",
-      "id": "fragment-send-sendtempandhum-uuid"
+      "id": "fragment-send-sendtempandhum-uuid",
+      "type": "MessageOccurrenceSpecification"
     },
     {
       "description": "消息事件：关联消息 ?（自动生成）",
-      "id": "fragment-recv-sendtempandhum-uuid"
+      "id": "fragment-recv-sendtempandhum-uuid",
+      "type": "MessageOccurrenceSpecification"
     }
   ]
 }

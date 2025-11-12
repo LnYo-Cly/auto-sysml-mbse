@@ -80,6 +80,7 @@ def run_workflow(用户输入: str = "", 文档路径: str = "") -> WorkflowStat
         initial_state.status = ProcessStatus.FAILED
         return initial_state
 
+
 def run_fusion_only(json_dir: str = None) -> WorkflowState:
     """
     仅运行融合流程（跳过需求扩展、文档处理、任务分类）
@@ -139,7 +140,7 @@ def run_fusion_only(json_dir: str = None) -> WorkflowState:
     for f in json_files:
         logger.info(f"   - {os.path.basename(f)}")
     
-    # 为每个JSON文件创建一个模拟的任务（用于兼容 fusion_agent 的逻辑）
+    # 为每个JSON文件创建一个模拟的任务
     for idx, json_file in enumerate(json_files):
         # 从文件名推断图类型
         basename = os.path.basename(json_file).lower()
@@ -180,6 +181,122 @@ def run_fusion_only(json_dir: str = None) -> WorkflowState:
         return initial_state
 
 
+def run_fusion_and_xml(json_dir: str = None) -> WorkflowState:
+    """
+    运行融合 + XML生成流程
+    
+    参数:
+        json_dir: JSON文件目录（可选，默认使用 data/output/ 下的所有图）
+        
+    返回:
+        工作流状态
+    """
+    logger.info("=" * 80)
+    logger.info("运行融合 + XML生成流程")
+    logger.info("=" * 80)
+    
+    from agents.fusion_agent import fusion_agent
+    from agents.xml_generator_agent import xml_generator_agent
+    
+    # 先执行融合
+    fusion_state = run_fusion_only(json_dir)
+    
+    # 检查融合是否成功
+    if fusion_state.fusion_status != "completed":
+        logger.warning("⚠️ 融合未完成，跳过XML生成")
+        return fusion_state
+    
+    # 执行XML生成
+    try:
+        logger.info("\n" + "=" * 80)
+        logger.info("开始XML生成")
+        logger.info("=" * 80)
+        final_state = xml_generator_agent(fusion_state)
+        return final_state
+    except Exception as e:
+        logger.error(f"XML生成出错: {str(e)}", exc_info=True)
+        fusion_state.xml_generation_status = "failed"
+        fusion_state.xml_generation_message = str(e)
+        return fusion_state
+
+
+def run_xml_only(fusion_json_path: str = None) -> WorkflowState:
+    """
+    仅运行XML生成（使用已有的融合JSON文件）
+    
+    参数:
+        fusion_json_path: 融合JSON文件路径（可选，默认使用最新的融合文件）
+        
+    返回:
+        工作流状态
+    """
+    logger.info("=" * 80)
+    logger.info("仅运行XML生成流程")
+    logger.info("=" * 80)
+    
+    from agents.xml_generator_agent import xml_generator_agent
+    
+    # 查找融合JSON文件
+    if fusion_json_path is None:
+        # 自动查找最新的融合文件
+        base_output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "output")
+        fusion_dir = os.path.join(base_output_dir, "fusion")
+        
+        if not os.path.exists(fusion_dir):
+            logger.error(f"❌ 融合目录不存在: {fusion_dir}")
+            initial_state = WorkflowState(
+                input_short_req="",
+                input_doc_path="",
+                xml_generation_status="failed",
+                xml_generation_message="融合目录不存在"
+            )
+            return initial_state
+        
+        # 查找所有融合JSON文件
+        fusion_files = glob.glob(os.path.join(fusion_dir, "fused_model_*.json"))
+        
+        if not fusion_files:
+            logger.error("❌ 未找到融合JSON文件")
+            initial_state = WorkflowState(
+                input_short_req="",
+                input_doc_path="",
+                xml_generation_status="failed",
+                xml_generation_message="未找到融合JSON文件"
+            )
+            return initial_state
+        
+        # 使用最新的文件
+        fusion_json_path = max(fusion_files, key=os.path.getmtime)
+        logger.info(f"✅ 找到融合文件: {fusion_json_path}")
+    else:
+        if not os.path.exists(fusion_json_path):
+            logger.error(f"❌ 指定的融合文件不存在: {fusion_json_path}")
+            initial_state = WorkflowState(
+                input_short_req="",
+                input_doc_path="",
+                xml_generation_status="failed",
+                xml_generation_message=f"文件不存在: {fusion_json_path}"
+            )
+            return initial_state
+    
+    # 创建状态并设置融合信息
+    initial_state = WorkflowState(
+        input_short_req="",
+        input_doc_path="",
+        fusion_status="completed",
+        fusion_output_path=fusion_json_path
+    )
+    
+    # 执行XML生成
+    try:
+        final_state = xml_generator_agent(initial_state)
+        return final_state
+    except Exception as e:
+        logger.error(f"XML生成出错: {str(e)}", exc_info=True)
+        initial_state.xml_generation_status = "failed"
+        initial_state.xml_generation_message = str(e)
+        return initial_state
+
 
 def main():
     """主函数"""
@@ -192,10 +309,12 @@ def main():
     print("2. 读取已有文档（Word/Markdown/文本文件）")
     print("3. 混合模式（先扩展需求，再读取补充文档）")
     print("4. 仅运行融合（使用已生成的JSON文件）")
+    print("5. 运行融合 + XML生成（使用已生成的JSON文件）")
+    print("6. 仅运行XML生成（使用已有的融合JSON文件）")
 
-    choice = input("\n请选择 (1/2/3/4): ").strip()
+    choice = input("\n请选择 (1/2/3/4/5/6): ").strip()
 
-    # ✅ 新增：选项4 - 直接融合
+    # 选项4 - 仅融合
     if choice == "4":
         print("\n" + "=" * 80)
         print("🔗 仅运行融合流程")
@@ -236,6 +355,109 @@ def main():
         print("=" * 80)
         return
     
+    # 选项5 - 融合 + XML生成
+    elif choice == "5":
+        print("\n" + "=" * 80)
+        print("🔗 运行融合 + XML生成流程")
+        print("=" * 80)
+        
+        use_custom_dir = input("\n是否指定JSON目录？(y/n，默认n自动扫描data/output): ").strip().lower()
+        
+        if use_custom_dir == "y":
+            json_dir = input("请输入JSON文件目录路径: ").strip()
+            if not os.path.isdir(json_dir):
+                print(f"❌ 错误: 目录不存在: {json_dir}")
+                return
+            final_state = run_fusion_and_xml(json_dir=json_dir)
+        else:
+            final_state = run_fusion_and_xml()
+        
+        # 输出结果
+        print("\n" + "=" * 80)
+        
+        # 显示融合结果
+        if final_state.fusion_status == "completed":
+            print("✅ 融合完成！")
+            print(f"   📂 融合输出: {final_state.fusion_output_path}")
+            if final_state.fusion_statistics:
+                stats = final_state.fusion_statistics
+                print(f"\n   📊 融合统计:")
+                print(f"      - 总元素数: {stats.get('total_elements', 'N/A')}")
+                print(f"      - 处理元素: {stats.get('processed_elements', 'N/A')}")
+                print(f"      - 相似元素: {stats.get('similar_elements', 'N/A')}")
+                print(f"      - 融合后元素: {stats.get('total_fused_elements', 'N/A')}")
+        elif final_state.fusion_status == "failed":
+            print("❌ 融合失败!")
+            print(f"   错误信息: {final_state.fusion_message}")
+            print("=" * 80)
+            return
+        elif final_state.fusion_status == "skipped":
+            print("⚠️ 融合已跳过")
+            print(f"   原因: {final_state.fusion_message}")
+            print("=" * 80)
+            return
+        
+        # 显示XML生成结果
+        print("\n" + "-" * 80)
+        if final_state.xml_generation_status == "completed":
+            print("✅ XML生成完成！")
+            print(f"   📂 XMI输出: {final_state.xml_output_path}")
+            if final_state.xml_statistics:
+                stats = final_state.xml_statistics
+                print(f"\n   📊 XML统计:")
+                print(f"      - 文件大小: {stats.get('file_size_kb', 'N/A')} KB")
+                print(f"      - 生成时间: {stats.get('generation_time', 'N/A')}")
+        elif final_state.xml_generation_status == "failed":
+            print("❌ XML生成失败!")
+            print(f"   错误信息: {final_state.xml_generation_message}")
+        elif final_state.xml_generation_status == "skipped":
+            print("⚠️ XML生成已跳过")
+            print(f"   原因: {final_state.xml_generation_message}")
+        
+        print("=" * 80)
+        return
+    
+    # 选项6 - 仅XML生成
+    elif choice == "6":
+        print("\n" + "=" * 80)
+        print("🔨 仅运行XML生成流程")
+        print("=" * 80)
+        
+        use_custom_file = input("\n是否指定融合JSON文件？(y/n，默认n使用最新文件): ").strip().lower()
+        
+        if use_custom_file == "y":
+            fusion_json_path = input("请输入融合JSON文件路径: ").strip()
+            if not os.path.isfile(fusion_json_path):
+                print(f"❌ 错误: 文件不存在: {fusion_json_path}")
+                return
+            final_state = run_xml_only(fusion_json_path=fusion_json_path)
+        else:
+            final_state = run_xml_only()
+        
+        # 输出XML生成结果
+        print("\n" + "=" * 80)
+        if final_state.xml_generation_status == "completed":
+            print("✅ XML生成完成！")
+            print("=" * 80)
+            print(f"✅ XMI输出: {final_state.xml_output_path}")
+            if final_state.xml_statistics:
+                stats = final_state.xml_statistics
+                print(f"\n📊 统计信息:")
+                print(f"   - 文件大小: {stats.get('file_size_kb', 'N/A')} KB")
+                print(f"   - 生成时间: {stats.get('generation_time', 'N/A')}")
+            print(f"\n💡 提示: 可以使用 MagicDraw/Cameo 导入此XMI文件")
+        elif final_state.xml_generation_status == "failed":
+            print("❌ XML生成失败!")
+            print("=" * 80)
+            print(f"错误信息: {final_state.xml_generation_message}")
+        elif final_state.xml_generation_status == "skipped":
+            print("⚠️ XML生成已跳过")
+            print("=" * 80)
+            print(f"原因: {final_state.xml_generation_message}")
+        print("=" * 80)
+        return
+    
+    # 原有的选项 1/2/3 - 完整工作流
     用户输入 = ""
     文档路径 = ""
     
@@ -267,7 +489,7 @@ def main():
         print("❌ 错误: 必须提供需求描述或文档路径")
         return
     
-    # 运行工作流
+    # 运行完整工作流
     final_state = run_workflow(用户输入=用户输入, 文档路径=文档路径)
     
     # 输出结果
@@ -331,7 +553,6 @@ def main():
             elif final_state.xml_generation_status == "skipped":
                 print(f"   ⚠️ 已跳过XML生成: {final_state.xml_generation_message}")
       
-          
         print("\n📂 输出文件保存在: data/output/")
         
     else:

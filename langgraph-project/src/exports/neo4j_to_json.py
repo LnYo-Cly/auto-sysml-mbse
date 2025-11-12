@@ -55,6 +55,14 @@ class JsonReverser:
 
         # 2. 恢复原始ID，并移除内部使用的属性
         processed_element['id'] = processed_element.pop('original_id', 'missing_original_id')
+        
+        # --- 核心修正：从规范键中重建'type'字段 ---
+        if 'type' not in processed_element:
+            canonical_key = element_props.get('canonicalKey')
+            if canonical_key and '::' in canonical_key:
+                element_type = canonical_key.split('::', 1)[0]
+                processed_element['type'] = element_type
+
         processed_element.pop('canonicalKey', None)
         
         # 3. 设置正确的 parentId
