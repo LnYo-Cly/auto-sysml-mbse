@@ -277,17 +277,21 @@ def validate_descriptions(result: Dict[str, Any]) -> Dict[str, Any]:
     if not result or "elements" not in result:
         return result
     
+    # 处理 elements 数组
     for elem in result.get("elements", []):
         if "description" not in elem or not elem.get("description"):
             elem_type = elem.get("type", "Element")
             elem_name = elem.get("name", "未命名")
             elem["description"] = f"自动生成的描述: 这是一个 {elem_type} 类型的元素，名为 '{elem_name}'。"
             logger.warning(f"⚠️ 自动补充 description: id={elem.get('id','unknown')} type={elem_type}")
-            
-    if "model" in result and ("description" not in result["model"] or not result["model"].get("description")):
-        result["model"]["description"] = "自动生成的模型描述。"
-        logger.warning(f"⚠️ 自动补充 model description")
-
+    
+    # 处理 model 字段 - 修复：model 是列表，需要遍历
+    if "model" in result and isinstance(result["model"], list):
+        for model_item in result["model"]:
+            if isinstance(model_item, dict) and ("description" not in model_item or not model_item.get("description")):
+                model_item["description"] = f"自动生成的模型描述: {model_item.get('name', '未命名模型')}。"
+                logger.warning(f"⚠️ 自动补充 model description: id={model_item.get('id','unknown')}")
+    
     return result
 
 # ==================== 主处理函数 ====================
