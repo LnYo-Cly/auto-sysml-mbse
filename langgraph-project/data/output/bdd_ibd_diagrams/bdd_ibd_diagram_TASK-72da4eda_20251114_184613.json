@@ -1,0 +1,383 @@
+{
+  "model": [
+    {
+      "id": "model-uav-system-uuid",
+      "name": "UAVSystemModel",
+      "description": "原文：系统顶层架构设计理念：本系统采用分层模块化架构...。简化：代表整个无人机系统的顶层模型。"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-uav-core-uuid",
+      "type": "Package",
+      "name": "UAVCorePackage",
+      "parentId": "model-uav-system-uuid",
+      "description": "原文：系统顶层架构设计理念...。简化：包含无人机核心功能块和定义的包。"
+    },
+    {
+      "id": "sig-fault-detection-uuid",
+      "type": "Signal",
+      "name": "FaultSignal",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：fault_detection: FaultSignal。简化：用于故障检测的信号类型。"
+    },
+    {
+      "id": "sig-emergency-status-uuid",
+      "type": "Signal",
+      "name": "EmergencyStatus",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：emergency_status: EmergencyStatus。简化：用于紧急状态通信的信号类型。"
+    },
+    {
+      "id": "vt-real-percent-uuid",
+      "type": "ValueType",
+      "name": "RealPercent",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：processorLoad: Real [%] {0..100} = 65。简化：表示百分比(0-100)的实数类型。"
+    },
+    {
+      "id": "vt-integer-hz-uuid",
+      "type": "ValueType",
+      "name": "IntegerHz",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：controlFrequency: Integer [Hz] {100..500} = 200。简化：表示频率(Hz)的整数类型。"
+    },
+    {
+      "id": "enum-flight-mode-uuid",
+      "type": "Enumeration",
+      "name": "FlightMode",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：operationMode: FlightMode {MANUAL, GPS, AUTO, RTL, LOITER} = AUTO。简化：定义飞行模式的枚举。"
+    },
+    {
+      "id": "enum-sensor-health-uuid",
+      "type": "Enumeration",
+      "name": "SensorHealthStatus",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：sensorHealth: SensorHealthStatus {OK, DEGRADED, FAILED} = OK。简化：定义传感器健康状态的枚举。"
+    },
+    {
+      "id": "enum-algorithm-type-uuid",
+      "type": "Enumeration",
+      "name": "AlgorithmType",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：fusionAlgorithm: AlgorithmType {EKF, UKF, Complementary} = EKF。简化：定义融合算法类型的枚举。"
+    },
+    {
+      "id": "enum-calibration-state-uuid",
+      "type": "Enumeration",
+      "name": "CalibrationState",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：calibrationStatus: CalibrationState {UNCALIBRATED, CALIBRATING, CALIBRATED} = CALIBRATED。简化：定义校准状态的枚举。"
+    },
+    {
+      "id": "blk-flight-controller-uuid",
+      "type": "Block",
+      "name": "FlightController",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：作为无人机的大脑，飞行控制器负责处理所有传感器数据，运行控制算法，并生成电机控制指令。简化：系统的核心控制块。"
+    },
+    {
+      "id": "blk-power-management-unit-uuid",
+      "type": "Block",
+      "name": "PowerManagementUnit",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：电源管理单元负责整个系统的供电分配和电池状态监控...。简化：负责电源管理和分配的块。"
+    },
+    {
+      "id": "blk-sensor-fusion-module-uuid",
+      "type": "Block",
+      "name": "SensorFusionModule",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：传感器融合模块集成多源传感器数据...。简化：负责多传感器数据融合的块。"
+    },
+    {
+      "id": "blk-communication-system-uuid",
+      "type": "Block",
+      "name": "CommunicationSystem",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：通信系统负责无人机与地面站之间的双向数据交换...。简化：负责通信链路管理的块。"
+    },
+    {
+      "id": "blk-propulsion-system-uuid",
+      "type": "Block",
+      "name": "PropulsionSystem",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：PropulsionSystem ... 驱动无刷电机 ... 提供飞行推力。简化：负责推进和电机控制的块。"
+    },
+    {
+      "id": "blk-gps-imu-sensor-uuid",
+      "type": "Block",
+      "name": "GPS_IMU_Sensor",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：GPS/IMU传感器...。简化：提供位置和惯性测量数据的传感器块。"
+    },
+    {
+      "id": "blk-motor-uuid",
+      "type": "Block",
+      "name": "Motor",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：... 电机 ...。简化：被推进系统驱动的电机块。"
+    },
+    {
+      "id": "blk-servo-uuid",
+      "type": "Block",
+      "name": "Servo",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：... 舵机 ...。简化：控制舵面的舵机块。"
+    },
+    {
+      "id": "blk-onboard-camera-uuid",
+      "type": "Block",
+      "name": "OnboardCamera",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：... 机载摄像头 ...。简化：捕获视频的摄像头块。"
+    },
+    {
+      "id": "blk-video-transmission-system-uuid",
+      "type": "Block",
+      "name": "VideoTransmissionSystem",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：... 5.8GHz图传系统 ...。简化：传输视频的图传系统块。"
+    },
+    {
+      "id": "blk-ground-control-station-uuid",
+      "type": "Block",
+      "name": "GroundControlStation",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：... 地面控制站 ...。简化：地面控制站块。"
+    },
+    {
+      "id": "blk-tof-sensor-uuid",
+      "type": "Block",
+      "name": "TOF_Sensor",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：... TOF传感器（前向和下视）...。简化：提供距离测量的TOF传感器块。"
+    },
+    {
+      "id": "blk-battery-management-system-uuid",
+      "type": "Block",
+      "name": "BatteryManagementSystem",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：... 6S锂聚合物电池管理系统 ...。简化：管理电池的BMS块。"
+    },
+    {
+      "id": "blk-remote-control-link-uuid",
+      "type": "Block",
+      "name": "RemoteControlLink",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：... 2.4GHz遥控链路 ...。简化：遥控链路块。"
+    },
+    {
+      "id": "blk-video-transmission-link-uuid",
+      "type": "Block",
+      "name": "VideoTransmissionLink",
+      "parentId": "pkg-uav-core-uuid",
+      "description": "原文：系统组件：... 5.8GHz图传链路 ...。简化：图传链路块。"
+    },
+    {
+      "id": "prop-fc-processorload",
+      "type": "Property",
+      "name": "processorLoad",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-percent-uuid",
+      "description": "原文：processorLoad: Real [%] {0..100} = 65。简化：处理器负载百分比。"
+    },
+    {
+      "id": "prop-fc-controlfreq",
+      "type": "Property",
+      "name": "controlFrequency",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-integer-hz-uuid",
+      "description": "原文：controlFrequency: Integer [Hz] {100..500} = 200。简化：控制频率。"
+    },
+    {
+      "id": "prop-fc-opmode",
+      "type": "Property",
+      "name": "operationMode",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "value",
+      "typeId": "enum-flight-mode-uuid",
+      "description": "原文：operationMode: FlightMode {MANUAL, GPS, AUTO, RTL, LOITER} = AUTO。简化：当前飞行模式。"
+    },
+    {
+      "id": "prop-fc-navacc",
+      "type": "Property",
+      "name": "navigationAccuracy",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "value",
+      "description": "原文：navigationAccuracy: Real [m] = 0.5。简化：导航精度（米）。"
+    },
+    {
+      "id": "prop-fc-attacc",
+      "type": "Property",
+      "name": "attitudeAccuracy",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "value",
+      "description": "原文：attitudeAccuracy: Real [°] = 0.1。简化：姿态精度（度）。"
+    },
+    {
+      "id": "op-fc-calcatt",
+      "type": "Operation",
+      "name": "calculateAttitude",
+      "parentId": "blk-flight-controller-uuid",
+      "description": "原文：calculateAttitude(imuData: IMUData): Attitude。简化：计算姿态。"
+    },
+    {
+      "id": "op-fc-execnav",
+      "type": "Operation",
+      "name": "executeNavigation",
+      "parentId": "blk-flight-controller-uuid",
+      "description": "原文：executeNavigation(waypoints: Waypoint[]): NavigationStatus。简化：执行导航。"
+    },
+    {
+      "id": "op-fc-setmode",
+      "type": "Operation",
+      "name": "setFlightMode",
+      "parentId": "blk-flight-controller-uuid",
+      "description": "原文：setFlightMode(mode: FlightMode): Boolean。简化：设置飞行模式。"
+    },
+    {
+      "id": "op-fc-monhealth",
+      "type": "Operation",
+      "name": "monitorSystemHealth",
+      "parentId": "blk-flight-controller-uuid",
+      "description": "原文：monitorSystemHealth(): HealthStatus。简化：监控系统健康状态。"
+    },
+    {
+      "id": "op-fc-handlefault",
+      "type": "Operation",
+      "name": "handleFault",
+      "parentId": "blk-flight-controller-uuid",
+      "description": "原文：handleFault(fault: FaultCode): RecoveryAction。简化：处理故障。"
+    },
+    {
+      "id": "prop-fc-mainproc",
+      "type": "Property",
+      "name": "mainProcessor",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "part",
+      "typeId": "blk-arm-cortex-m7-uuid",
+      "associationId": "assoc-fc-mainproc",
+      "description": "原文：mainProcessor: ARM Cortex-M7 @ 400MHz。简化：主处理器部件。"
+    },
+    {
+      "id": "prop-fc-sensorproc",
+      "type": "Property",
+      "name": "sensorProcessor",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "part",
+      "typeId": "blk-arm-cortex-m4-uuid",
+      "associationId": "assoc-fc-sensorproc",
+      "description": "原文：sensorProcessor: ARM Cortex-M4 @ 200MHz。简化：传感器处理器部件。"
+    },
+    {
+      "id": "prop-fc-memory",
+      "type": "Property",
+      "name": "memoryModule",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "part",
+      "typeId": "blk-flash-memory-uuid",
+      "associationId": "assoc-fc-memory",
+      "description": "原文：memoryModule: FlashMemory 2MB + SRAM 1MB。简化：内存模块部件。"
+    },
+    {
+      "id": "prop-fc-interface",
+      "type": "Property",
+      "name": "interfaceController",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "part",
+      "typeId": "blk-comm-interface-uuid",
+      "associationId": "assoc-fc-interface",
+      "description": "原文：interfaceController: CommunicationInterface (双CAN, 4xUART, 2xSPI, I2C)。简化：接口控制器部件。"
+    },
+    {
+      "id": "prop-fc-watchdog",
+      "type": "Property",
+      "name": "watchdogTimer",
+      "parentId": "blk-flight-controller-uuid",
+      "propertyKind": "part",
+      "typeId": "blk-watchdog-timer-uuid",
+      "associationId": "assoc-fc-watchdog",
+      "description": "原文：watchdogTimer: IndependentWatchdog 32-bit。简化：看门狗定时器部件。"
+    },
+    {
+      "id": "prop-pmu-battcap",
+      "type": "Property",
+      "name": "batteryCapacity",
+      "parentId": "blk-power-management-unit-uuid",
+      "propertyKind": "value",
+      "description": "原文：batteryCapacity: Real [mAh] {0..10000} = 6000。简化：电池容量。"
+    },
+    {
+      "id": "prop-pmu-rempower",
+      "type": "Property",
+      "name": "remainingPower",
+      "parentId": "blk-power-management-unit-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-percent-uuid",
+      "description": "原文：remainingPower: Real [%] {0..100} = 85。简化：剩余电量百分比。"
+    },
+    {
+      "id": "prop-pmu-dischrate",
+      "type": "Property",
+      "name": "dischargeRate",
+      "parentId": "blk-power-management-unit-uuid",
+      "propertyKind": "value",
+      "description": "原文：dischargeRate: Real [C] {0..5} = 2.5。简化：放电率。"
+    },
+    {
+      "id": "prop-pmu-batttemp",
+      "type": "Property",
+      "name": "batteryTemperature",
+      "parentId": "blk-power-management-unit-uuid",
+      "propertyKind": "value",
+      "description": "原文：batteryTemperature: Real [°C] {-20..60} = 25。简化：电池温度。"
+    },
+    {
+      "id": "prop-pmu-cyclecnt",
+      "type": "Property",
+      "name": "cycleCount",
+      "parentId": "blk-power-management-unit-uuid",
+      "propertyKind": "value",
+      "description": "原文：cycleCount: Integer {0..1000} = 50。简化：循环计数。"
+    },
+    {
+      "id": "op-pmu-monbatt",
+      "type": "Operation",
+      "name": "monitorBattery",
+      "parentId": "blk-power-management-unit-uuid",
+      "description": "原文：monitorBattery(): BatteryStatus。简化：监控电池状态。"
+    },
+    {
+      "id": "op-pmu-distpower",
+      "type": "Operation",
+      "name": "distributePower",
+      "parentId": "blk-power-management-unit-uuid",
+      "description": "原文：distributePower(load: PowerLoad): Boolean。简化：分配电源。"
+    },
+    {
+      "id": "op-pmu-lowpowerprot",
+      "type": "Operation",
+      "name": "enableLowPowerProtection",
+      "parentId": "blk-power-management-unit-uuid",
+      "description": "原文：enableLowPowerProtection(): Void。简化：启用低电量保护。"
+    },
+    {
+      "id": "op-pmu-calcremtime",
+      "type": "Operation",
+      "name": "calculateRemainingTime",
+      "parentId": "blk-power-management-unit-uuid",
+      "description": "原文：calculateRemainingTime(): Real。简化：计算剩余时间。"
+    },
+    {
+      "id": "op-pmu-balancecells",
+      "type": "Operation",
+      "name": "balanceCells",
+      "parentId": "blk-power-management-unit-uuid",
+      "description": "原文：balanceCells(): BalanceStatus。简化：平衡电芯。"
+    }
+  ]
+}

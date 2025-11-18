@@ -628,9 +628,14 @@ def process_requirement_task(state: WorkflowState, task_content: str) -> Dict[st
         # 流式输出CoT推理过程
         cot_result = ""
         for chunk in cot_chain.stream({"task_content": task_content}):
-            chunk_content = chunk.content
-            print(chunk_content, end="", flush=True)
-            cot_result += chunk_content
+            if(hasattr(chunk, "reasoning_content")):
+                print(getattr(chunk, "reasoning_content"), end="", flush=True)
+            elif(hasattr(chunk, "reason_content")):
+                print(getattr(chunk, "reason_content"), end="", flush=True)
+            else:
+                chunk_content = chunk.content
+                print(chunk_content, end="", flush=True)
+                cot_result += chunk_content
         
         print(f"\n\n{'='*80}")
         print(f"✅ 推理完成")
@@ -657,9 +662,14 @@ def process_requirement_task(state: WorkflowState, task_content: str) -> Dict[st
             "format_instructions": json_parser.get_format_instructions(),
             "cot_result": cot_result
         }):
-            chunk_content = chunk.content
-            print(chunk_content, end="", flush=True)
-            json_result += chunk_content
+            if(hasattr(chunk, "reasoning_content")):
+                print(getattr(chunk, "reasoning_content"), end="", flush=True)
+            elif(hasattr(chunk, "reason_content")):
+                print(getattr(chunk, "reason_content"), end="", flush=True)
+            else:
+                chunk_content = chunk.content
+                print(chunk_content, end="", flush=True)
+                json_result += chunk_content
         
         print(f"\n\n{'='*80}")
         print(f"✅ JSON生成完成")

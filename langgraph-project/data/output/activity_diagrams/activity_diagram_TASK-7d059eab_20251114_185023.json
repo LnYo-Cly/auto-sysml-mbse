@@ -1,0 +1,306 @@
+{
+  "model": [
+    {
+      "id": "model-uav-flight-uuid",
+      "name": "UAVFlightControlModel"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-uav-flight-uuid",
+      "type": "Package",
+      "name": "UAVFlightControlSystem",
+      "parentId": "model-uav-flight-uuid",
+      "description": "原文：自主飞行控制流程：接收飞行计划→GPS/IMU传感器融合定位→驱动电机和舵机实现导航飞行；避障处理流程：TOF传感器检测障碍物→自动悬停或规划绕行路径；电池管理流程：实时监测电池参数→电量低于阈值触发返航或强制着陆。简化：该包封装了无人机自主飞行控制系统的所有核心流程和组件。"
+    },
+    {
+      "id": "blk-mission-plan-uuid",
+      "type": "Block",
+      "name": "MissionPlan",
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：IN: flight_mission: MissionPlan。简化：代表飞行任务计划数据对象。"
+    },
+    {
+      "id": "blk-mission-report-uuid",
+      "type": "Block",
+      "name": "MissionReport",
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：OUT: mission_report: MissionReport。简化：代表任务执行报告数据对象。"
+    },
+    {
+      "id": "blk-fault-signal-uuid",
+      "type": "Block",
+      "name": "FaultSignal",
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：IN: fault_detection: FaultSignal。简化：代表故障检测信号数据对象。"
+    },
+    {
+      "id": "blk-emergency-status-uuid",
+      "type": "Block",
+      "name": "EmergencyStatus",
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：OUT: emergency_status: EmergencyStatus。简化：代表应急状态数据对象。"
+    },
+    {
+      "id": "blk-flight-controller-uuid",
+      "type": "Block",
+      "name": "FlightController",
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：自主飞行控制流程：接收飞行计划→GPS/IMU传感器融合定位→驱动电机和舵机实现导航飞行。简化：代表飞行控制系统的核心控制器。"
+    },
+    {
+      "id": "blk-sensor-system-uuid",
+      "type": "Block",
+      "name": "SensorSystem",
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：GPS/IMU传感器融合定位；TOF传感器检测障碍物；实时监测电池参数。简化：代表负责各种传感器数据采集和处理的系统。"
+    },
+    {
+      "id": "blk-actuator-system-uuid",
+      "type": "Block",
+      "name": "ActuatorSystem",
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：驱动电机和舵机实现导航飞行。简化：代表负责执行飞行控制的电机和舵机系统。"
+    },
+    {
+      "id": "act-main-flight-uuid",
+      "type": "Activity",
+      "name": "自主航线飞行流程",
+      "parentId": "pkg-uav-flight-uuid",
+      "nodes": [
+        "node-start-flight-uuid",
+        "node-validate-mission-uuid",
+        "node-preflight-check-uuid",
+        "node-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-payload-operation-uuid",
+        "node-monitor-status-uuid",
+        "node-return-home-uuid",
+        "node-landing-uuid",
+        "node-generate-report-uuid",
+        "node-end-flight-uuid",
+        "node-battery-decision-uuid",
+        "node-merge-emergency-uuid"
+      ],
+      "edges": [
+        "edge-cf-start-validate-uuid",
+        "edge-cf-validate-preflight-uuid",
+        "edge-cf-preflight-takeoff-uuid",
+        "edge-cf-takeoff-navigate-uuid",
+        "edge-of-mission-input-uuid",
+        "edge-of-report-output-uuid"
+      ],
+      "groups": [
+        "part-flight-control-uuid",
+        "part-sensor-uuid",
+        "part-actuator-uuid"
+      ],
+      "description": "原文：活动名称: 自主航线飞行流程。简化：这是定义无人机从起飞到着陆完整任务执行的主要活动。"
+    },
+    {
+      "id": "act-emergency-uuid",
+      "type": "Activity",
+      "name": "应急处理流程",
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：活动名称: 应急处理流程。简化：这是处理飞行过程中各种异常情况的应急响应活动。"
+    },
+    {
+      "id": "part-flight-control-uuid",
+      "type": "ActivityPartition",
+      "name": "飞行控制分区",
+      "representsId": "blk-flight-controller-uuid",
+      "parentId": "act-main-flight-uuid",
+      "nodeIds": [
+        "node-validate-mission-uuid",
+        "node-preflight-check-uuid",
+        "node-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-payload-operation-uuid",
+        "node-return-home-uuid",
+        "node-landing-uuid",
+        "node-generate-report-uuid"
+      ],
+      "description": "原文：自主飞行控制流程：接收飞行计划→GPS/IMU传感器融合定位→驱动电机和舵机实现导航飞行。简化：此泳道代表由飞行控制器执行的所有导航和控制活动。"
+    },
+    {
+      "id": "part-sensor-uuid",
+      "type": "ActivityPartition",
+      "name": "传感器分区",
+      "representsId": "blk-sensor-system-uuid",
+      "parentId": "act-main-flight-uuid",
+      "nodeIds": [
+        "node-monitor-status-uuid",
+        "node-battery-decision-uuid"
+      ],
+      "description": "原文：GPS/IMU传感器融合定位；TOF传感器检测障碍物；实时监测电池参数。简化：此泳道代表由传感器系统执行的所有数据采集和监控活动。"
+    },
+    {
+      "id": "part-actuator-uuid",
+      "type": "ActivityPartition",
+      "name": "执行器分区",
+      "representsId": "blk-actuator-system-uuid",
+      "parentId": "act-main-flight-uuid",
+      "nodeIds": [
+        "node-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-landing-uuid"
+      ],
+      "description": "原文：驱动电机和舵机实现导航飞行。简化：此泳道代表由执行器系统执行的所有物理控制活动。"
+    },
+    {
+      "id": "node-start-flight-uuid",
+      "type": "InitialNode",
+      "name": "开始飞行任务",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：接收并验证飞行任务数据。简化：流程的起点，代表开始执行飞行任务。"
+    },
+    {
+      "id": "node-validate-mission-uuid",
+      "type": "CallBehaviorAction",
+      "name": "接收并验证飞行任务数据",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：接收并验证飞行任务数据（完整性检查、安全性评估）。简化：验证飞行任务的完整性和安全性。"
+    },
+    {
+      "id": "node-preflight-check-uuid",
+      "type": "CallBehaviorAction",
+      "name": "执行起飞前自检程序",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：执行起飞前自检程序（传感器校准、电机测试、通信链路验证）。简化：执行起飞前的各项系统自检。"
+    },
+    {
+      "id": "node-takeoff-uuid",
+      "type": "CallBehaviorAction",
+      "name": "自动起飞",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：自动起飞至预设高度（爬升率2m/s，姿态稳定控制）。简化：控制无人机自动起飞到预设高度。"
+    },
+    {
+      "id": "node-navigate-waypoint-uuid",
+      "type": "CallBehaviorAction",
+      "name": "导航至航点",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：按顺序导航至各航点（L1导航算法，前视距离调整）。简化：使用导航算法控制无人机飞向各个航点。"
+    },
+    {
+      "id": "node-payload-operation-uuid",
+      "type": "CallBehaviorAction",
+      "name": "执行任务载荷操作",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：在航点执行任务载荷操作（相机触发、传感器数据采集）。简化：在航点位置执行特定的载荷操作。"
+    },
+    {
+      "id": "node-monitor-status-uuid",
+      "type": "CallBehaviorAction",
+      "name": "实时监控飞行状态",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：实时监控飞行状态和环境条件（电池状态、障碍物检测、气象条件）。简化：持续监控飞行状态和环境条件。"
+    },
+    {
+      "id": "node-return-home-uuid",
+      "type": "CallBehaviorAction",
+      "name": "启动返航程序",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：在最后一个航点启动返航程序（RTL模式激活）。简化：激活返航模式，控制无人机返回起飞点。"
+    },
+    {
+      "id": "node-landing-uuid",
+      "type": "CallBehaviorAction",
+      "name": "执行自动着陆",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：执行自动着陆序列（下降率1m/s，地面效应补偿）。简化：控制无人机安全自动着陆。"
+    },
+    {
+      "id": "node-generate-report-uuid",
+      "type": "CallBehaviorAction",
+      "name": "生成任务执行报告",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：生成任务执行报告（飞行数据统计、异常事件记录）。简化：生成包含飞行统计和异常记录的任务报告。"
+    },
+    {
+      "id": "node-end-flight-uuid",
+      "type": "ActivityFinalNode",
+      "name": "任务完成",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：生成任务执行报告。简化：流程的终点，代表飞行任务成功完成。"
+    },
+    {
+      "id": "node-battery-decision-uuid",
+      "type": "DecisionNode",
+      "name": "电池状态决策",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：电池管理流程：实时监测电池参数→电量低于阈值触发返航或强制着陆。简化：根据电池电量状态决定继续飞行、返航或紧急着陆。"
+    },
+    {
+      "id": "node-merge-emergency-uuid",
+      "type": "MergeNode",
+      "name": "合并应急处理",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：当系统检测到异常情况时，此流程确保无人机能够安全应对。简化：将应急处理流程合并回主流程。"
+    },
+    {
+      "id": "pin-mission-in-uuid",
+      "type": "InputPin",
+      "name": "in_飞行任务",
+      "typeId": "blk-mission-plan-uuid",
+      "parentId": "node-validate-mission-uuid",
+      "description": "原文：IN: flight_mission: MissionPlan。简化：作为\"接收并验证飞行任务数据\"动作的输入，接收飞行任务计划。"
+    },
+    {
+      "id": "pin-report-out-uuid",
+      "type": "OutputPin",
+      "name": "out_任务报告",
+      "typeId": "blk-mission-report-uuid",
+      "parentId": "node-generate-report-uuid",
+      "description": "原文：OUT: mission_report: MissionReport。简化：作为\"生成任务执行报告\"动作的输出，产生任务执行报告。"
+    },
+    {
+      "id": "edge-cf-start-validate-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-start-flight-uuid",
+      "targetId": "node-validate-mission-uuid",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：接收并验证飞行任务数据。简化：从开始节点到任务验证的控制流转。"
+    },
+    {
+      "id": "edge-cf-validate-preflight-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-validate-mission-uuid",
+      "targetId": "node-preflight-check-uuid",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：步骤序列: 1. 接收并验证飞行任务数据 2. 执行起飞前自检程序。简化：从任务验证到自检程序的控制流转。"
+    },
+    {
+      "id": "edge-cf-preflight-takeoff-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-preflight-check-uuid",
+      "targetId": "node-takeoff-uuid",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：步骤序列: 2. 执行起飞前自检程序 3. 自动起飞至预设高度。简化：从自检完成到自动起飞的控制流转。"
+    },
+    {
+      "id": "edge-cf-takeoff-navigate-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-takeoff-uuid",
+      "targetId": "node-navigate-waypoint-uuid",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：步骤序列: 3. 自动起飞至预设高度 4. 按顺序导航至各航点。简化：从起飞完成到开始导航的控制流转。"
+    },
+    {
+      "id": "edge-of-mission-input-uuid",
+      "type": "ObjectFlow",
+      "sourceId": "node-start-flight-uuid",
+      "targetId": "pin-mission-in-uuid",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：IN: flight_mission: MissionPlan。简化：将MissionPlan对象流输入到验证任务数据动作。"
+    },
+    {
+      "id": "edge-of-report-output-uuid",
+      "type": "ObjectFlow",
+      "sourceId": "pin-report-out-uuid",
+      "targetId": "node-end-flight-uuid",
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：OUT: mission_report: MissionReport。简化：将MissionReport对象流从生成报告动作输出。"
+    }
+  ]
+}

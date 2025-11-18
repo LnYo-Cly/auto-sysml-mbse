@@ -480,6 +480,11 @@ def process_parameter_task(state: WorkflowState, task_content: str) -> Dict[str,
         cot_prompt = PROMPT_COT_SYSTEM + "\n\n输入：\n" + task_content + "\n\n输出：请你一步一步进行推理思考。"
         cot_result = ""
         for chunk in llm.stream(cot_prompt):
+          if(hasattr(chunk, "reasoning_content")):
+              print(getattr(chunk, "reasoning_content"), end="", flush=True)
+          elif(hasattr(chunk, "reason_content")):
+              print(getattr(chunk, "reason_content"), end="", flush=True)
+          else:
             chunk_content = getattr(chunk, "content", "")
             print(chunk_content, end="", flush=True)
             cot_result += chunk_content
@@ -496,9 +501,14 @@ def process_parameter_task(state: WorkflowState, task_content: str) -> Dict[str,
         json_prompt = PROMPT_JSON_SYSTEM + "\n\n推理结果：\n" + cot_result + "\n\n请严格按照规则生成JSON。"
         json_str = ""
         for chunk in llm.stream(json_prompt):
-            chunk_content = getattr(chunk, "content", "")
-            print(chunk_content, end="", flush=True)
-            json_str += chunk_content
+            if(hasattr(chunk, "reasoning_content")):
+                print(getattr(chunk, "reasoning_content"), end="", flush=True)
+            elif(hasattr(chunk, "reason_content")):
+                print(getattr(chunk, "reason_content"), end="", flush=True)
+            else:
+              chunk_content = getattr(chunk, "content", "")
+              print(chunk_content, end="", flush=True)
+              json_str += chunk_content
 
         print(f"\n\n{'='*80}")
         print(f"✅ JSON生成完成")

@@ -1,0 +1,286 @@
+{
+  "model": [
+    {
+      "id": "model-uav-system-uuid",
+      "name": "无人机系统模型",
+      "type": "Model"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-uav-control-uuid",
+      "type": "Package",
+      "name": "无人机控制包",
+      "parentId": "model-uav-system-uuid",
+      "description": "原文：电池状态管理...避障状态。简化：主应用包，包含无人机飞行控制器及其状态机定义。"
+    },
+    {
+      "id": "pkg-uav-behaviors-uuid",
+      "type": "Package",
+      "name": "无人机行为库",
+      "parentId": "model-uav-system-uuid",
+      "description": "原文：隐含状态和转换会执行具体操作。简化：行为库包，存储所有可被状态机调用的具体活动（如执行返航、执行着陆等）。"
+    },
+    {
+      "id": "blk-flight-controller-uuid",
+      "type": "Block",
+      "name": "飞行控制器",
+      "parentId": "pkg-uav-control-uuid",
+      "classifierBehaviorId": "sm-flight-uuid",
+      "description": "原文：电池状态管理...避障状态。简化：无人机的核心控制单元，其行为由电池状态管理和避障状态机定义。"
+    },
+    {
+      "id": "sm-flight-uuid",
+      "type": "StateMachine",
+      "name": "飞行状态机",
+      "parentId": "blk-flight-controller-uuid",
+      "description": "原文：电池状态管理...避障状态。简化：定义飞行控制器行为的完整状态机，包含电池管理和避障两个并发区域。"
+    },
+    {
+      "id": "region-battery-uuid",
+      "type": "Region",
+      "name": "电池管理区域",
+      "parentId": "sm-flight-uuid",
+      "description": "原文：电池状态管理：正常飞行状态→电量低于20%触发返航状态→电量低于15%强制着陆状态。简化：管理无人机电池电量的区域，根据电量水平触发状态转换。"
+    },
+    {
+      "id": "region-obstacle-avoidance-uuid",
+      "type": "Region",
+      "name": "避障区域",
+      "parentId": "sm-flight-uuid",
+      "description": "原文：避障状态：正常飞行→检测到障碍物→悬停状态→绕行状态→恢复正常飞行。简化：处理无人机遇到障碍物时避障行为的区域。"
+    },
+    {
+      "id": "ps-batt-initial-uuid",
+      "type": "Pseudostate",
+      "kind": "initial",
+      "parentId": "region-battery-uuid",
+      "description": "原文：正常飞行状态是起点。简化：电池管理区域的起始点，系统启动后进入正常飞行状态。"
+    },
+    {
+      "id": "ps-oa-initial-uuid",
+      "type": "Pseudostate",
+      "kind": "initial",
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：正常飞行是起点。简化：避障区域的起始点，系统启动后进入正常飞行状态。"
+    },
+    {
+      "id": "state-normal-flight-batt-uuid",
+      "type": "State",
+      "name": "正常飞行",
+      "parentId": "region-battery-uuid",
+      "description": "原文：正常飞行状态。简化：电池电量充足时的默认飞行状态。"
+    },
+    {
+      "id": "state-return-home-uuid",
+      "type": "State",
+      "name": "返航",
+      "parentId": "region-battery-uuid",
+      "entry": {
+        "wrapperActivityId": "wrapper-entry-return-home-uuid",
+        "calledBehaviorId": "act-execute-return-home-uuid"
+      },
+      "doActivity": {
+        "wrapperActivityId": "wrapper-do-return-home-uuid",
+        "calledBehaviorId": "act-navigate-to-home-uuid"
+      },
+      "description": "原文：电量低于20%触发返航状态。简化：低电量警告状态，无人机自动返回起飞点。"
+    },
+    {
+      "id": "state-forced-landing-uuid",
+      "type": "State",
+      "name": "强制着陆",
+      "parentId": "region-battery-uuid",
+      "description": "原文：电量低于15%强制着陆状态。简化：严重低电量状态，无人机立即执行着陆程序。"
+    },
+    {
+      "id": "state-normal-flight-oa-uuid",
+      "type": "State",
+      "name": "正常飞行",
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：正常飞行。简化：无障碍物时的默认飞行状态。"
+    },
+    {
+      "id": "state-hover-uuid",
+      "type": "State",
+      "name": "悬停",
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：悬停状态。简化：检测到障碍物后暂停前进，保持当前位置。"
+    },
+    {
+      "id": "state-circumvent-uuid",
+      "type": "State",
+      "name": "绕行",
+      "parentId": "region-obstacle-avoidance-uuid",
+      "doActivity": {
+        "wrapperActivityId": "wrapper-do-circumvent-uuid",
+        "calledBehaviorId": "act-perform-circumvention-uuid"
+      },
+      "description": "原文：绕行状态。简化：执行绕过障碍物的机动动作。"
+    },
+    {
+      "id": "trans-batt-initial-to-normal-uuid",
+      "type": "Transition",
+      "sourceId": "ps-batt-initial-uuid",
+      "targetId": "state-normal-flight-batt-uuid",
+      "parentId": "region-battery-uuid",
+      "description": "原文：正常飞行状态是起点。简化：系统启动后自动进入电池维度的正常飞行状态。"
+    },
+    {
+      "id": "trans-normal-to-return-uuid",
+      "type": "Transition",
+      "sourceId": "state-normal-flight-batt-uuid",
+      "targetId": "state-return-home-uuid",
+      "parentId": "region-battery-uuid",
+      "triggerIds": [
+        "event-low-battery-warning-uuid"
+      ],
+      "guard": {
+        "expression": "电量 < 20%",
+        "language": "English"
+      },
+      "effect": {
+        "wrapperActivityId": "wrapper-effect-t2-uuid",
+        "calledBehaviorId": "act-log-low-battery-uuid"
+      },
+      "description": "原文：电量低于20%触发返航状态。简化：当电池电量低于20%时，从正常飞行转换到返航状态。"
+    },
+    {
+      "id": "trans-return-to-forcedlanding-uuid",
+      "type": "Transition",
+      "sourceId": "state-return-home-uuid",
+      "targetId": "state-forced-landing-uuid",
+      "parentId": "region-battery-uuid",
+      "triggerIds": [
+        "event-critical-battery-uuid"
+      ],
+      "guard": {
+        "expression": "电量 < 15%",
+        "language": "English"
+      },
+      "description": "原文：电量低于15%强制着陆状态。简化：当电池电量进一步下降至15%时，从返航状态转换到强制着陆状态。"
+    },
+    {
+      "id": "trans-oa-initial-to-normal-uuid",
+      "type": "Transition",
+      "sourceId": "ps-oa-initial-uuid",
+      "targetId": "state-normal-flight-oa-uuid",
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：正常飞行是起点。简化：系统启动后自动进入避障维度的正常飞行状态。"
+    },
+    {
+      "id": "trans-normal-to-hover-uuid",
+      "type": "Transition",
+      "sourceId": "state-normal-flight-oa-uuid",
+      "targetId": "state-hover-uuid",
+      "parentId": "region-obstacle-avoidance-uuid",
+      "triggerIds": [
+        "event-obstacle-detected-uuid"
+      ],
+      "description": "原文：检测到障碍物→悬停状态。简化：当传感器检测到前方有障碍物时，从正常飞行转换到悬停状态。"
+    },
+    {
+      "id": "trans-hover-to-circumvent-uuid",
+      "type": "Transition",
+      "sourceId": "state-hover-uuid",
+      "targetId": "state-circumvent-uuid",
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：悬停状态→绕行状态。简化：悬停评估后，启动绕行机动。"
+    },
+    {
+      "id": "trans-circumvent-to-normal-uuid",
+      "type": "Transition",
+      "sourceId": "state-circumvent-uuid",
+      "targetId": "state-normal-flight-oa-uuid",
+      "parentId": "region-obstacle-avoidance-uuid",
+      "triggerIds": [
+        "event-obstacle-cleared-uuid"
+      ],
+      "description": "原文：绕行状态→恢复正常飞行。简化：成功绕过障碍物后，恢复正常的飞行状态。"
+    },
+    {
+      "id": "event-low-battery-warning-uuid",
+      "type": "Event",
+      "name": "低电量警告事件",
+      "parentId": "pkg-uav-control-uuid",
+      "description": "原文：电量低于20%触发。简化：电池监测系统在电量低于20%时发出的事件。"
+    },
+    {
+      "id": "event-critical-battery-uuid",
+      "type": "Event",
+      "name": "严重低电量事件",
+      "parentId": "pkg-uav-control-uuid",
+      "description": "原文：电量低于15%强制着陆。简化：电池监测系统在电量低于15%时发出的紧急事件。"
+    },
+    {
+      "id": "event-obstacle-detected-uuid",
+      "type": "Event",
+      "name": "检测到障碍物事件",
+      "parentId": "pkg-uav-control-uuid",
+      "description": "原文：检测到障碍物。简化：避障传感器检测到前方有障碍物时触发的事件。"
+    },
+    {
+      "id": "event-obstacle-cleared-uuid",
+      "type": "Event",
+      "name": "障碍物已清除事件",
+      "parentId": "pkg-uav-control-uuid",
+      "description": "原文：恢复正常飞行。简化：传感器确认障碍物已成功绕过，路径畅通时触发的事件。"
+    },
+    {
+      "id": "act-execute-return-home-uuid",
+      "type": "Activity",
+      "name": "执行返航程序",
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在\"返航状态\"中。简化：计算返航路径并启动返航飞行的具体活动。"
+    },
+    {
+      "id": "act-navigate-to-home-uuid",
+      "type": "Activity",
+      "name": "持续导航至Home点",
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在\"返航状态\"中。简化：持续监控并调整飞行路径以确保返回起飞点。"
+    },
+    {
+      "id": "act-perform-circumvention-uuid",
+      "type": "Activity",
+      "name": "执行绕障机动",
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在\"绕行状态\"中。简化：计算并执行绕过障碍物的飞行路径。"
+    },
+    {
+      "id": "act-log-low-battery-uuid",
+      "type": "Activity",
+      "name": "记录低电量事件",
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在转换中。简化：记录低电量警告和状态转换的日志活动。"
+    },
+    {
+      "id": "wrapper-entry-return-home-uuid",
+      "type": "Activity",
+      "name": "进入返航状态包装活动",
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在状态进入行为中。简化：包装调用执行返航程序活动的包装器活动。"
+    },
+    {
+      "id": "wrapper-do-return-home-uuid",
+      "type": "Activity",
+      "name": "返航状态执行活动包装器",
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在状态执行行为中。简化：包装调用持续导航至Home点活动的包装器活动。"
+    },
+    {
+      "id": "wrapper-do-circumvent-uuid",
+      "type": "Activity",
+      "name": "绕行状态执行活动包装器",
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在状态执行行为中。简化：包装调用执行绕障机动活动的包装器活动。"
+    },
+    {
+      "id": "wrapper-effect-t2-uuid",
+      "type": "Activity",
+      "name": "转换效果包装器",
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在转换效果中。简化：包装调用记录低电量事件活动的包装器活动。"
+    }
+  ]
+}

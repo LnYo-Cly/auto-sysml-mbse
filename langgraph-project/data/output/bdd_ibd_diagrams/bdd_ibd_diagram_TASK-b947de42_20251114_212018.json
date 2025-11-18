@@ -1,0 +1,1336 @@
+{
+  "model": [
+    {
+      "id": "model-uav-system",
+      "name": "UAVSystemModel",
+      "description": "原文：系统中识别的结构组件包括: 飞行控制器(FCU)、IMU(MPU-9250, 采样率1kHz)、GPS模块(u-blox NEO-M8N, 定位精度2.5m CEP)、多光谱相机(MicaSense RedEdge-MX, 5个波段: 蓝475nm、绿560nm、红668nm、红边717nm、近红外842nm)、数传电台(传输速率115.2kbps)、机载存储(64GB Class 10 UHS-I microSD卡)、电机、电调(ESC)。简化：代表整个无人机系统的顶层模型。"
+    }
+  ],
+  "elements": [
+    {
+      "id": "val-attitude",
+      "type": "ValueType",
+      "name": "Attitude",
+      "parentId": "model-uav-system",
+      "description": "原文：currentAttitude: Attitude [degrees] {-180..180,精度0.1°}。简化：姿态数据类型，包含滚转、俯仰、偏航角度。"
+    },
+    {
+      "id": "val-gps-coordinate",
+      "type": "ValueType",
+      "name": "GPS_Coordinate",
+      "parentId": "model-uav-system",
+      "description": "原文：targetWaypoint: GPS_Coordinate {lat:double[-90..90],lon:double[-180..180],alt:float[-1000..10000]}。简化：GPS坐标数据类型，包含纬度、经度、海拔。"
+    },
+    {
+      "id": "val-imu-data",
+      "type": "ValueType",
+      "name": "IMU_Data",
+      "parentId": "model-uav-system",
+      "description": "原文：calculateControlOutput(imuData: IMU_Data, gpsData: GPS_Data): PWM_Signal。简化：IMU传感器数据类型，包含时间戳、加速度计和陀螺仪数据。"
+    },
+    {
+      "id": "val-gps-data",
+      "type": "ValueType",
+      "name": "GPS_Data",
+      "parentId": "model-uav-system",
+      "description": "原文：calculateControlOutput(imuData: IMU_Data, gpsData: GPS_Data): PWM_Signal。简化：GPS数据类型，包含定位类型、卫星数量、水平精度因子。"
+    },
+    {
+      "id": "val-pwm-signal",
+      "type": "ValueType",
+      "name": "PWM_Signal",
+      "parentId": "model-uav-system",
+      "description": "原文：calculateControlOutput(imuData: IMU_Data, gpsData: GPS_Data): PWM_Signal。简化：PWM信号数据类型。"
+    },
+    {
+      "id": "val-esc-data",
+      "type": "ValueType",
+      "name": "ESC_Data",
+      "parentId": "model-uav-system",
+      "description": "原文：escTelemetry: ESC_Data {voltage:float,current:float,temperature:float}。简化：电调遥测数据类型，包含电压、电流、温度。"
+    },
+    {
+      "id": "val-rc-signal-status",
+      "type": "ValueType",
+      "name": "RC_Signal_Status",
+      "parentId": "model-uav-system",
+      "description": "原文：checkRCSignal(): RC_Signal_Status {lost:bool,quality:uint8_t}。简化：RC信号状态数据类型，包含丢失状态和质量。"
+    },
+    {
+      "id": "val-image-data",
+      "type": "ValueType",
+      "name": "ImageData",
+      "parentId": "model-uav-system",
+      "description": "原文：captureImage(triggerSource: TriggerType): ImageData {timestamp:uint64_t,gps:GPS_Coordinate}。简化：图像数据类型，包含时间戳和GPS坐标。"
+    },
+    {
+      "id": "val-mission-report",
+      "type": "ValueType",
+      "name": "MissionReport",
+      "parentId": "model-uav-system",
+      "description": "原文：MissionReport {success:bool,imagesCaptured:uint16_t}。简化：任务报告数据类型，包含成功状态和捕获图像数量。"
+    },
+    {
+      "id": "val-image-data-set",
+      "type": "ValueType",
+      "name": "ImageDataSet",
+      "parentId": "model-uav-system",
+      "description": "原文：ImageDataSet {format:GeoTIFF,count:uint16_t}。简化：图像数据集数据类型，包含格式和数量。"
+    },
+    {
+      "id": "enu-system-mode",
+      "type": "Enumeration",
+      "name": "SystemMode",
+      "parentId": "model-uav-system",
+      "description": "原文：systemMode: SystemMode {BOOT, STANDBY, MANUAL, AUTO_MISSION, AUTO_LOITER, RTL, FAILSAFE}。简化：系统运行模式的枚举。"
+    },
+    {
+      "id": "blk-uav-system",
+      "type": "Block",
+      "name": "UAVSystem",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：内部结构: 组成部分: fc1: FlightControllerUnit, pms1: PowerManagementSystem, sfm1: SensorFusionModule, ps1: PropulsionSystem, dlm1: DataLinkModule, mp1: MissionPayload。简化：无人机系统块，包含所有子系统作为部分。"
+    },
+    {
+      "id": "blk-fcu",
+      "type": "Block",
+      "name": "FlightControllerUnit",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：FlightControllerUnit: 概述 - 作为无人机的大脑，飞行控制器单元负责处理所有传感器数据，运行核心控制算法，并协调所有子系统的行为。简化：飞行控制器块，负责数据处理、控制算法和系统协调。"
+    },
+    {
+      "id": "blk-pms",
+      "type": "Block",
+      "name": "PowerManagementSystem",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：PowerManagementSystem 块: 属性: batteryVoltage, batteryCapacityRemaining, etc. 简化：电源管理系统块，负责电源分配和电池管理。"
+    },
+    {
+      "id": "blk-sfm",
+      "type": "Block",
+      "name": "SensorFusionModule",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：SensorFusionModule 块: 属性: fusedPosition, fusedVelocity, etc. 简化：传感器融合模块块，负责融合传感器数据并提供导航数据。"
+    },
+    {
+      "id": "blk-ps",
+      "type": "Block",
+      "name": "PropulsionSystem",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：PropulsionSystem 块: 属性: motorSpeed, motorTemperature, etc. 简化：推进系统块，负责电机控制和推进。"
+    },
+    {
+      "id": "blk-dlm",
+      "type": "Block",
+      "name": "DataLinkModule",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：DataLinkModule 块: 属性: linkQuality, dataRate, etc. 简化：数据链模块块，负责通信和数据传输。"
+    },
+    {
+      "id": "blk-mp",
+      "type": "Block",
+      "name": "MissionPayload",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：MissionPayload: 关键属性: cameraTriggerInterval, gimbalOrientation, etc. 简化：任务载荷块，负责有效载荷操作如相机控制。"
+    },
+    {
+      "id": "blk-imu",
+      "type": "Block",
+      "name": "IMU",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：IMU(MPU-9250, 采样率1kHz)。简化：惯性测量单元块，提供加速度计和陀螺仪数据。"
+    },
+    {
+      "id": "blk-gps",
+      "type": "Block",
+      "name": "GPSModule",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：GPS模块(u-blox NEO-M8N, 定位精度2.5m CEP)。简化：GPS模块块，提供位置数据。"
+    },
+    {
+      "id": "blk-motor",
+      "type": "Block",
+      "name": "Motor",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：电机。简化：电机块，提供推进力。"
+    },
+    {
+      "id": "blk-esc",
+      "type": "Block",
+      "name": "ESC",
+      "parentId": "model-uav-system",
+      "isAbstract": false,
+      "description": "原文：电调(ESC)。简化：电子调速器块，控制电机速度。"
+    },
+    {
+      "id": "prop-uav-fc1",
+      "type": "Property",
+      "name": "fc1",
+      "parentId": "blk-uav-system",
+      "propertyKind": "part",
+      "typeId": "blk-fcu",
+      "associationId": "assoc-uav-fcu",
+      "description": "原文：内部结构: 组成部分: fc1: FlightControllerUnit。简化：UAVSystem的FlightControllerUnit部分。"
+    },
+    {
+      "id": "prop-uav-pms1",
+      "type": "Property",
+      "name": "pms1",
+      "parentId": "blk-uav-system",
+      "propertyKind": "part",
+      "typeId": "blk-pms",
+      "associationId": "assoc-uav-pms",
+      "description": "原文：内部结构: 组成部分: pms1: PowerManagementSystem。简化：UAVSystem的PowerManagementSystem部分。"
+    },
+    {
+      "id": "prop-uav-sfm1",
+      "type": "Property",
+      "name": "sfm1",
+      "parentId": "blk-uav-system",
+      "propertyKind": "part",
+      "typeId": "blk-sfm",
+      "associationId": "assoc-uav-sfm",
+      "description": "原文：内部结构: 组成部分: sfm1: SensorFusionModule。简化：UAVSystem的SensorFusionModule部分。"
+    },
+    {
+      "id": "prop-uav-ps1",
+      "type": "Property",
+      "name": "ps1",
+      "parentId": "blk-uav-system",
+      "propertyKind": "part",
+      "typeId": "blk-ps",
+      "associationId": "assoc-uav-ps",
+      "description": "原文：内部结构: 组成部分: ps1: PropulsionSystem。简化：UAVSystem的PropulsionSystem部分。"
+    },
+    {
+      "id": "prop-uav-dlm1",
+      "type": "Property",
+      "name": "dlm1",
+      "parentId": "blk-uav-system",
+      "propertyKind": "part",
+      "typeId": "blk-dlm",
+      "associationId": "assoc-uav-dlm",
+      "description": "原文：内部结构: 组成部分: dlm1: DataLinkModule。简化：UAVSystem的DataLinkModule部分。"
+    },
+    {
+      "id": "prop-uav-mp1",
+      "type": "Property",
+      "name": "mp1",
+      "parentId": "blk-uav-system",
+      "propertyKind": "part",
+      "typeId": "blk-mp",
+      "associationId": "assoc-uav-mp",
+      "description": "原文：内部结构: 组成部分: mp1: MissionPayload。简化：UAVSystem的MissionPayload部分。"
+    },
+    {
+      "id": "prop-fcu-current-attitude",
+      "type": "Property",
+      "name": "currentAttitude",
+      "parentId": "blk-fcu",
+      "propertyKind": "value",
+      "typeId": "val-attitude",
+      "description": "原文：currentAttitude: Attitude [degrees] {-180..180,精度0.1°}。简化：当前姿态属性。"
+    },
+    {
+      "id": "prop-fcu-target-waypoint",
+      "type": "Property",
+      "name": "targetWaypoint",
+      "parentId": "blk-fcu",
+      "propertyKind": "value",
+      "typeId": "val-gps-coordinate",
+      "description": "原文：targetWaypoint: GPS_Coordinate {lat:double[-90..90],lon:double[-180..180],alt:float[-1000..10000]}。简化：目标航点属性。"
+    },
+    {
+      "id": "prop-fcu-system-mode",
+      "type": "Property",
+      "name": "systemMode",
+      "parentId": "blk-fcu",
+      "propertyKind": "value",
+      "typeId": "enu-system-mode",
+      "description": "原文：systemMode: SystemMode {BOOT, STANDBY, MANUAL, AUTO_MISSION, AUTO_LOITER, RTL, FAILSAFE}。简化：系统模式属性。"
+    },
+    {
+      "id": "prop-fcu-control-freq",
+      "type": "Property",
+      "name": "controlFrequency",
+      "parentId": "blk-fcu",
+      "propertyKind": "value",
+      "typeId": "uint16_t",
+      "description": "原文：controlFrequency: uint16_t [Hz] {100..1000}。简化：控制频率属性。"
+    },
+    {
+      "id": "prop-fcu-uav-system",
+      "type": "Property",
+      "name": "_uavSystem",
+      "parentId": "blk-fcu",
+      "propertyKind": "reference",
+      "typeId": "blk-uav-system",
+      "associationId": "assoc-uav-fcu",
+      "visibility": "private",
+      "description": "原文：内部结构: 组成部分: fc1: FlightControllerUnit。简化：对包含此FlightControllerUnit的UAVSystem的反向引用。"
+    },
+    {
+      "id": "prop-pms-battery-voltage",
+      "type": "Property",
+      "name": "batteryVoltage",
+      "parentId": "blk-pms",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：batteryVoltage: Real [V] {0..25.2,精度0.01V}。简化：电池电压属性。"
+    },
+    {
+      "id": "prop-pms-battery-capacity",
+      "type": "Property",
+      "name": "batteryCapacityRemaining",
+      "parentId": "blk-pms",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：batteryCapacityRemaining: Real [%] {0..100,精度1%}。简化：电池剩余容量属性。"
+    },
+    {
+      "id": "prop-pms-total-current",
+      "type": "Property",
+      "name": "totalCurrentDraw",
+      "parentId": "blk-pms",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：totalCurrentDraw: Real [A] {0..60,精度0.1A}。简化：总电流消耗属性。"
+    },
+    {
+      "id": "prop-pms-battery-temp",
+      "type": "Property",
+      "name": "batteryTemperature",
+      "parentId": "blk-pms",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：batteryTemperature: Real [°C] {-20..80,精度1°C}。简化：电池温度属性。"
+    },
+    {
+      "id": "prop-pms-cycle-count",
+      "type": "Property",
+      "name": "cycleCount",
+      "parentId": "blk-pms",
+      "propertyKind": "value",
+      "typeId": "uint16_t",
+      "description": "原文：cycleCount: uint16_t {0..1000}。简化：电池循环次数属性。"
+    },
+    {
+      "id": "prop-pms-uav-system",
+      "type": "Property",
+      "name": "_uavSystem",
+      "parentId": "blk-pms",
+      "propertyKind": "reference",
+      "typeId": "blk-uav-system",
+      "associationId": "assoc-uav-pms",
+      "visibility": "private",
+      "description": "原文：内部结构: 组成部分: pms1: PowerManagementSystem。简化：对包含此PowerManagementSystem的UAVSystem的反向引用。"
+    },
+    {
+      "id": "prop-sfm-fused-position",
+      "type": "Property",
+      "name": "fusedPosition",
+      "parentId": "blk-sfm",
+      "propertyKind": "value",
+      "typeId": "val-gps-coordinate",
+      "description": "原文：fusedPosition: GPS_Coordinate {lat:double,lon:double,alt:float,精度:水平2.5m,垂直1.0m}。简化：融合位置属性。"
+    },
+    {
+      "id": "prop-sfm-fused-velocity",
+      "type": "Property",
+      "name": "fusedVelocity",
+      "parentId": "blk-sfm",
+      "propertyKind": "value",
+      "typeId": "Velocity",
+      "description": "原文：fusedVelocity: Velocity [m/s] {vx:float,vy:float,vz:float,精度0.1m/s}。简化：融合速度属性。"
+    },
+    {
+      "id": "prop-sfm-fused-attitude",
+      "type": "Property",
+      "name": "fusedAttitude",
+      "parentId": "blk-sfm",
+      "propertyKind": "value",
+      "typeId": "val-attitude",
+      "description": "原文：fusedAttitude: Attitude [degrees] {roll:float,pitch:float,yaw:float,精度:滚转/俯仰0.5°,偏航1.0°}。简化：融合姿态属性。"
+    },
+    {
+      "id": "prop-sfm-fusion-health",
+      "type": "Property",
+      "name": "fusionHealth",
+      "parentId": "blk-sfm",
+      "propertyKind": "value",
+      "typeId": "uint8_t",
+      "description": "原文：fusionHealth: uint8_t {0..100}。简化：融合健康状态属性。"
+    },
+    {
+      "id": "prop-sfm-sensor-covariance",
+      "type": "Property",
+      "name": "sensorCovariance",
+      "parentId": "blk-sfm",
+      "propertyKind": "value",
+      "typeId": "Matrix3x3",
+      "description": "原文：sensorCovariance: Matrix3x3。简化：传感器协方差属性。"
+    },
+    {
+      "id": "prop-sfm-imu",
+      "type": "Property",
+      "name": "imu",
+      "parentId": "blk-sfm",
+      "propertyKind": "reference",
+      "typeId": "blk-imu",
+      "associationId": "assoc-sfm-imu",
+      "description": "原文：readIMUData(): IMU_Data。简化：对IMU的引用。"
+    },
+    {
+      "id": "prop-sfm-gps",
+      "type": "Property",
+      "name": "gpsModule",
+      "parentId": "blk-sfm",
+      "propertyKind": "reference",
+      "typeId": "blk-gps",
+      "associationId": "assoc-sfm-gps",
+      "description": "原文：readGPSData(): GPS_Data。简化：对GPSModule的引用。"
+    },
+    {
+      "id": "prop-sfm-uav-system",
+      "type": "Property",
+      "name": "_uavSystem",
+      "parentId": "blk-sfm",
+      "propertyKind": "reference",
+      "typeId": "blk-uav-system",
+      "associationId": "assoc-uav-sfm",
+      "visibility": "private",
+      "description": "原文：内部结构: 组成部分: sfm1: SensorFusionModule。简化：对包含此SensorFusionModule的UAVSystem的反向引用。"
+    },
+    {
+      "id": "prop-ps-motor-speed",
+      "type": "Property",
+      "name": "motorSpeed",
+      "parentId": "blk-ps",
+      "propertyKind": "value",
+      "typeId": "Integer",
+      "description": "原文：motorSpeed: Integer [RPM] {0..20000,精度100RPM}。简化：电机速度属性。"
+    },
+    {
+      "id": "prop-ps-motor-temp",
+      "type": "Property",
+      "name": "motorTemperature",
+      "parentId": "blk-ps",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：motorTemperature: Real [°C] {-40..120,精度2°C}。简化：电机温度属性。"
+    },
+    {
+      "id": "prop-ps-thrust-output",
+      "type": "Property",
+      "name": "thrustOutput",
+      "parentId": "blk-ps",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：thrustOutput: Real [N] {0..150,精度1N}。简化：推力输出属性。"
+    },
+    {
+      "id": "prop-ps-esc-telemetry",
+      "type": "Property",
+      "name": "escTelemetry",
+      "parentId": "blk-ps",
+      "propertyKind": "value",
+      "typeId": "val-esc-data",
+      "description": "原文：escTelemetry: ESC_Data {voltage:float,current:float,temperature:float}。简化：电调遥测属性。"
+    },
+    {
+      "id": "prop-ps-motor",
+      "type": "Property",
+      "name": "motor",
+      "parentId": "blk-ps",
+      "propertyKind": "part",
+      "typeId": "blk-motor",
+      "multiplicity": 4,
+      "associationId": "assoc-ps-motor",
+      "description": "原文：PropulsionSystem {motorCount:4}。简化：电机部件，数量4。"
+    },
+    {
+      "id": "prop-ps-esc",
+      "type": "Property",
+      "name": "esc",
+      "parentId": "blk-ps",
+      "propertyKind": "part",
+      "typeId": "blk-esc",
+      "multiplicity": 4,
+      "associationId": "assoc-ps-esc",
+      "description": "原文：PropulsionSystem {motorCount:4}。简化：电调部件，数量4。"
+    },
+    {
+      "id": "prop-ps-uav-system",
+      "type": "Property",
+      "name": "_uavSystem",
+      "parentId": "blk-ps",
+      "propertyKind": "reference",
+      "typeId": "blk-uav-system",
+      "associationId": "assoc-uav-ps",
+      "visibility": "private",
+      "description": "原文：内部结构: 组成部分: ps1: PropulsionSystem。简化：对包含此PropulsionSystem的UAVSystem的反向引用。"
+    },
+    {
+      "id": "prop-dlm-link-quality",
+      "type": "Property",
+      "name": "linkQuality",
+      "parentId": "blk-dlm",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：linkQuality: Real [dBm] {-120..0,精度1dBm}。简化：链路质量属性。"
+    },
+    {
+      "id": "prop-dlm-data-rate",
+      "type": "Property",
+      "name": "dataRate",
+      "parentId": "blk-dlm",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：dataRate: Real [kbps] {0..100,精度1kbps}。简化：数据速率属性。"
+    },
+    {
+      "id": "prop-dlm-packet-loss",
+      "type": "Property",
+      "name": "packetLoss",
+      "parentId": "blk-dlm",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：packetLoss: Real [%] {0..100,精度0.1%}。简化：丢包率属性。"
+    },
+    {
+      "id": "prop-dlm-rssi",
+      "type": "Property",
+      "name": "rssi",
+      "parentId": "blk-dlm",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：rssi: Real [dBm] {-120..0}。简化：接收信号强度指示属性。"
+    },
+    {
+      "id": "prop-dlm-encryption-status",
+      "type": "Property",
+      "name": "encryptionStatus",
+      "parentId": "blk-dlm",
+      "propertyKind": "value",
+      "typeId": "bool",
+      "description": "原文：encryptionStatus: bool。简化：加密状态属性。"
+    },
+    {
+      "id": "prop-dlm-uav-system",
+      "type": "Property",
+      "name": "_uavSystem",
+      "parentId": "blk-dlm",
+      "propertyKind": "reference",
+      "typeId": "blk-uav-system",
+      "associationId": "assoc-uav-dlm",
+      "visibility": "private",
+      "description": "原文：内部结构: 组成部分: dlm1: DataLinkModule。简化：对包含此DataLinkModule的UAVSystem的反向引用。"
+    },
+    {
+      "id": "prop-mp-camera-trigger-interval",
+      "type": "Property",
+      "name": "cameraTriggerInterval",
+      "parentId": "blk-mp",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：cameraTriggerInterval: Real [s] {0.1..10.0,精度0.01s}。简化：相机触发间隔属性。"
+    },
+    {
+      "id": "prop-mp-gimbal-orientation",
+      "type": "Property",
+      "name": "gimbalOrientation",
+      "parentId": "blk-mp",
+      "propertyKind": "value",
+      "typeId": "val-attitude",
+      "description": "原文：gimbalOrientation: Attitude [degrees] {-180..180,精度0.1°}。简化：云台方向属性。"
+    },
+    {
+      "id": "prop-mp-storage-usage",
+      "type": "Property",
+      "name": "storageUsage",
+      "parentId": "blk-mp",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：storageUsage: Real [GB] {0..64,精度0.1GB}。简化：存储使用量属性。"
+    },
+    {
+      "id": "prop-mp-image-count",
+      "type": "Property",
+      "name": "imageCount",
+      "parentId": "blk-mp",
+      "propertyKind": "value",
+      "typeId": "uint32_t",
+      "description": "原文：imageCount: uint32_t {0..10000}。简化：图像计数属性。"
+    },
+    {
+      "id": "prop-mp-payload-temp",
+      "type": "Property",
+      "name": "payloadTemperature",
+      "parentId": "blk-mp",
+      "propertyKind": "value",
+      "typeId": "Real",
+      "description": "原文：payloadTemperature: Real [°C] {-10..60}。简化：载荷温度属性。"
+    },
+    {
+      "id": "prop-mp-uav-system",
+      "type": "Property",
+      "name": "_uavSystem",
+      "parentId": "blk-mp",
+      "propertyKind": "reference",
+      "typeId": "blk-uav-system",
+      "associationId": "assoc-uav-mp",
+      "visibility": "private",
+      "description": "原文：内部结构: 组成部分: mp1: MissionPayload。简化：对包含此MissionPayload的UAVSystem的反向引用。"
+    },
+    {
+      "id": "prop-imu-sfm",
+      "type": "Property",
+      "name": "_sfm",
+      "parentId": "blk-imu",
+      "propertyKind": "reference",
+      "typeId": "blk-sfm",
+      "associationId": "assoc-sfm-imu",
+      "visibility": "private",
+      "description": "原文：readIMUData(): IMU_Data。简化：对使用此IMU的SensorFusionModule的反向引用。"
+    },
+    {
+      "id": "prop-gps-sfm",
+      "type": "Property",
+      "name": "_sfm",
+      "parentId": "blk-gps",
+      "propertyKind": "reference",
+      "typeId": "blk-sfm",
+      "associationId": "assoc-sfm-gps",
+      "visibility": "private",
+      "description": "原文：readGPSData(): GPS_Data。简化：对使用此GPSModule的SensorFusionModule的反向引用。"
+    },
+    {
+      "id": "prop-motor-ps",
+      "type": "Property",
+      "name": "_ps",
+      "parentId": "blk-motor",
+      "propertyKind": "reference",
+      "typeId": "blk-ps",
+      "associationId": "assoc-ps-motor",
+      "visibility": "private",
+      "description": "原文：PropulsionSystem {motorCount:4}。简化：对包含此Motor的PropulsionSystem的反向引用。"
+    },
+    {
+      "id": "prop-esc-ps",
+      "type": "Property",
+      "name": "_ps",
+      "parentId": "blk-esc",
+      "propertyKind": "reference",
+      "typeId": "blk-ps",
+      "associationId": "assoc-ps-esc",
+      "visibility": "private",
+      "description": "原文：PropulsionSystem {motorCount:4}。简化：对包含此ESC的PropulsionSystem的反向引用。"
+    },
+    {
+      "id": "op-fcu-calc-ctrl-out",
+      "type": "Operation",
+      "name": "calculateControlOutput",
+      "parentId": "blk-fcu",
+      "parameters": [
+        {
+          "name": "imuData",
+          "typeId": "val-imu-data"
+        },
+        {
+          "name": "gpsData",
+          "typeId": "val-gps-data"
+        }
+      ],
+      "returnTypeId": "val-pwm-signal",
+      "description": "原文：calculateControlOutput(imuData: IMU_Data, gpsData: GPS_Data): PWM_Signal {updateRate:400Hz}。简化：计算控制输出操作。"
+    },
+    {
+      "id": "op-fcu-exec-failsafe",
+      "type": "Operation",
+      "name": "executeFailsafeAction",
+      "parentId": "blk-fcu",
+      "parameters": [
+        {
+          "name": "failsafeTrigger",
+          "typeId": "FailsafeType"
+        },
+        {
+          "name": "severity",
+          "typeId": "uint8_t"
+        }
+      ],
+      "returnTypeId": "Status",
+      "description": "原文：executeFailsafeAction(failsafeTrigger: FailsafeType, severity: uint8_t): Status。简化：执行故障安全操作。"
+    },
+    {
+      "id": "op-fcu-update-state",
+      "type": "Operation",
+      "name": "updateStateMachine",
+      "parentId": "blk-fcu",
+      "parameters": [
+        {
+          "name": "event",
+          "typeId": "SystemEvent"
+        },
+        {
+          "name": "priority",
+          "typeId": "uint8_t"
+        }
+      ],
+      "returnTypeId": "void",
+      "description": "原文：updateStateMachine(event: SystemEvent, priority: uint8_t): void。简化：更新状态机操作。"
+    },
+    {
+      "id": "op-fcu-validate-sensor",
+      "type": "Operation",
+      "name": "validateSensorData",
+      "parentId": "blk-fcu",
+      "parameters": [
+        {
+          "name": "sensorType",
+          "typeId": "SensorID"
+        },
+        {
+          "name": "data",
+          "typeId": "SensorData"
+        }
+      ],
+      "returnTypeId": "bool",
+      "description": "原文：validateSensorData(sensorType: SensorID, data: SensorData): bool。简化：验证传感器数据操作。"
+    },
+    {
+      "id": "op-pms-distribute-power",
+      "type": "Operation",
+      "name": "distributePower",
+      "parentId": "blk-pms",
+      "parameters": [
+        {
+          "name": "load",
+          "typeId": "PowerLoad"
+        },
+        {
+          "name": "priority",
+          "typeId": "uint8_t"
+        }
+      ],
+      "returnTypeId": "Voltage",
+      "description": "原文：distributePower(load: PowerLoad, priority: uint8_t): Voltage。简化：分配电源操作。"
+    },
+    {
+      "id": "op-pms-get-battery-health",
+      "type": "Operation",
+      "name": "getBatteryHealth",
+      "parentId": "blk-pms",
+      "returnTypeId": "BatteryStatus",
+      "description": "原文：getBatteryHealth(): BatteryStatus {SOH:float,internalResistance:float}。简化：获取电池健康状态操作。"
+    },
+    {
+      "id": "op-pms-shutdown-rail",
+      "type": "Operation",
+      "name": "shutdownPowerRail",
+      "parentId": "blk-pms",
+      "parameters": [
+        {
+          "name": "rail",
+          "typeId": "PowerRail"
+        },
+        {
+          "name": "emergency",
+          "typeId": "bool"
+        }
+      ],
+      "returnTypeId": "void",
+      "description": "原文：shutdownPowerRail(rail: PowerRail, emergency: bool): void。简化：关闭电源轨操作。"
+    },
+    {
+      "id": "op-pms-estimate-time",
+      "type": "Operation",
+      "name": "estimateRemainingFlightTime",
+      "parentId": "blk-pms",
+      "parameters": [
+        {
+          "name": "powerProfile",
+          "typeId": "PowerProfile"
+        }
+      ],
+      "returnTypeId": "float",
+      "description": "原文：estimateRemainingFlightTime(powerProfile: PowerProfile): float。简化：估计剩余飞行时间操作。"
+    },
+    {
+      "id": "op-sfm-read-imu",
+      "type": "Operation",
+      "name": "readIMUData",
+      "parentId": "blk-sfm",
+      "returnTypeId": "val-imu-data",
+      "description": "原文：readIMUData(): IMU_Data {timestamp:uint32_t,accel:Vector3f,gyro:Vector3f}。简化：读取IMU数据操作。"
+    },
+    {
+      "id": "op-sfm-read-gps",
+      "type": "Operation",
+      "name": "readGPSData",
+      "parentId": "blk-sfm",
+      "returnTypeId": "val-gps-data",
+      "description": "原文：readGPSData(): GPS_Data {fixType:uint8_t,satellites:uint8_t,hdop:float}。简化：读取GPS数据操作。"
+    },
+    {
+      "id": "op-sfm-run-fusion",
+      "type": "Operation",
+      "name": "runFusionAlgorithm",
+      "parentId": "blk-sfm",
+      "returnTypeId": "FusedNavData",
+      "description": "原文：runFusionAlgorithm(): FusedNavData {updateRate:100Hz}。简化：运行融合算法操作。"
+    },
+    {
+      "id": "op-sfm-calibrate",
+      "type": "Operation",
+      "name": "calibrateSensors",
+      "parentId": "blk-sfm",
+      "parameters": [
+        {
+          "name": "calibrationType",
+          "typeId": "CalibMode"
+        }
+      ],
+      "returnTypeId": "Status",
+      "description": "原文：calibrateSensors(calibrationType: CalibMode): Status。简化：校准传感器操作。"
+    },
+    {
+      "id": "op-ps-set-motor-speed",
+      "type": "Operation",
+      "name": "setMotorSpeed",
+      "parentId": "blk-ps",
+      "parameters": [
+        {
+          "name": "pwmSignal",
+          "typeId": "val-pwm-signal"
+        },
+        {
+          "name": "motorID",
+          "typeId": "uint8_t"
+        }
+      ],
+      "returnTypeId": "void",
+      "description": "原文：setMotorSpeed(pwmSignal: PWM_Signal, motorID: uint8_t): void。简化：设置电机速度操作。"
+    },
+    {
+      "id": "op-ps-get-motor-telemetry",
+      "type": "Operation",
+      "name": "getMotorTelemetry",
+      "parentId": "blk-ps",
+      "returnTypeId": "MotorTelemetry",
+      "description": "原文：getMotorTelemetry(): MotorTelemetry {updateRate:50Hz}。简化：获取电机遥测操作。"
+    },
+    {
+      "id": "op-ps-calibrate-esc",
+      "type": "Operation",
+      "name": "calibrateESCs",
+      "parentId": "blk-ps",
+      "returnTypeId": "Status",
+      "description": "原文：calibrateESCs(): Status。简化：校准电调操作。"
+    },
+    {
+      "id": "op-ps-emergency-stop",
+      "type": "Operation",
+      "name": "emergencyStop",
+      "parentId": "blk-ps",
+      "parameters": [
+        {
+          "name": "motorID",
+          "typeId": "uint8_t"
+        }
+      ],
+      "returnTypeId": "void",
+      "description": "原文：emergencyStop(motorID: uint8_t): void。简化：紧急停止操作。"
+    },
+    {
+      "id": "op-dlm-transmit-telemetry",
+      "type": "Operation",
+      "name": "transmitTelemetry",
+      "parentId": "blk-dlm",
+      "parameters": [
+        {
+          "name": "telemetryData",
+          "typeId": "TelemetryPacket"
+        },
+        {
+          "name": "priority",
+          "typeId": "uint8_t"
+        }
+      ],
+      "returnTypeId": "Status",
+      "description": "原文：transmitTelemetry(telemetryData: TelemetryPacket, priority: uint8_t): Status。简化：传输遥测操作。"
+    },
+    {
+      "id": "op-dlm-receive-cmd",
+      "type": "Operation",
+      "name": "receiveCommand",
+      "parentId": "blk-dlm",
+      "parameters": [
+        {
+          "name": "timeout",
+          "typeId": "uint16_t"
+        }
+      ],
+      "returnTypeId": "MAVLink_Message",
+      "description": "原文：receiveCommand(timeout: uint16_t): MAVLink_Message。简化：接收命令操作。"
+    },
+    {
+      "id": "op-dlm-check-rc",
+      "type": "Operation",
+      "name": "checkRCSignal",
+      "parentId": "blk-dlm",
+      "returnTypeId": "val-rc-signal-status",
+      "description": "原文：checkRCSignal(): RC_Signal_Status {lost:bool,quality:uint8_t}。简化：检查RC信号操作。"
+    },
+    {
+      "id": "op-dlm-switch-freq",
+      "type": "Operation",
+      "name": "switchFrequency",
+      "parentId": "blk-dlm",
+      "parameters": [
+        {
+          "name": "band",
+          "typeId": "FrequencyBand"
+        }
+      ],
+      "returnTypeId": "Status",
+      "description": "原文：switchFrequency(band: FrequencyBand): Status。简化：切换频率操作。"
+    },
+    {
+      "id": "op-mp-capture-image",
+      "type": "Operation",
+      "name": "captureImage",
+      "parentId": "blk-mp",
+      "parameters": [
+        {
+          "name": "triggerSource",
+          "typeId": "TriggerType"
+        }
+      ],
+      "returnTypeId": "val-image-data",
+      "description": "原文：captureImage(triggerSource: TriggerType): ImageData {timestamp:uint64_t,gps:GPS_Coordinate}。简化：捕获图像操作。"
+    },
+    {
+      "id": "op-mp-stabilize-gimbal",
+      "type": "Operation",
+      "name": "stabilizeGimbal",
+      "parentId": "blk-mp",
+      "parameters": [
+        {
+          "name": "attitudeRef",
+          "typeId": "val-attitude"
+        },
+        {
+          "name": "mode",
+          "typeId": "GimbalMode"
+        }
+      ],
+      "returnTypeId": "void",
+      "description": "原文：stabilizeGimbal(attitudeRef: Attitude, mode: GimbalMode): void。简化：稳定云台操作。"
+    },
+    {
+      "id": "op-mp-transfer-data",
+      "type": "Operation",
+      "name": "transferDataToStorage",
+      "parentId": "blk-mp",
+      "parameters": [
+        {
+          "name": "image",
+          "typeId": "val-image-data"
+        },
+        {
+          "name": "compression",
+          "typeId": "CompressType"
+        }
+      ],
+      "returnTypeId": "Status",
+      "description": "原文：transferDataToStorage(image: ImageData, compression: CompressType): Status。简化：传输数据到存储操作。"
+    },
+    {
+      "id": "op-mp-perform-calib",
+      "type": "Operation",
+      "name": "performRadiometricCalibration",
+      "parentId": "blk-mp",
+      "returnTypeId": "CalibrationData",
+      "description": "原文：performRadiometricCalibration(): CalibrationData。简化：执行辐射定标操作。"
+    },
+    {
+      "id": "port-fcu-sensor-in",
+      "type": "ProxyPort",
+      "parentId": "blk-fcu",
+      "description": "原文：[sfm1.navDataPort] <SPI> [fc1.sensorInputPort]。简化：传感器输入端口。"
+    },
+    {
+      "id": "port-fcu-motor-ctrl",
+      "type": "ProxyPort",
+      "parentId": "blk-fcu",
+      "description": "原文：[fc1.motorControlPort] --CAN 2.0B--> [ps1.escCommandPort]。简化：电机控制端口。"
+    },
+    {
+      "id": "port-fcu-telemetry-in",
+      "type": "ProxyPort",
+      "parentId": "blk-fcu",
+      "description": "原文：[pms1.batteryTelemetryPort] <I2C> [fc1.telemetryInputPort]。简化：遥测输入端口。"
+    },
+    {
+      "id": "port-fcu-cmd-in",
+      "type": "ProxyPort",
+      "parentId": "blk-fcu",
+      "description": "原文：[dlm1.commandOutputPort] <UART> [fc1.commandInputPort]。简化：命令输入端口。"
+    },
+    {
+      "id": "port-fcu-telemetry-out",
+      "type": "ProxyPort",
+      "parentId": "blk-fcu",
+      "description": "原文：[fc1.telemetryOutputPort] <UART> [dlm1.telemetryInputPort]。简化：遥测输出端口。"
+    },
+    {
+      "id": "port-fcu-payload-cmd",
+      "type": "ProxyPort",
+      "parentId": "blk-fcu",
+      "description": "原文：[fc1.payloadCommandPort] <UART> [mp1.controlPort]。简化：载荷命令端口。"
+    },
+    {
+      "id": "port-fcu-power-in",
+      "type": "ProxyPort",
+      "parentId": "blk-fcu",
+      "description": "原文：[pms1.powerOut] --12AWG Power Cable--> [fc1.powerIn]。简化：电源输入端口。"
+    },
+    {
+      "id": "port-pms-power-out",
+      "type": "ProxyPort",
+      "parentId": "blk-pms",
+      "description": "原文：[pms1.powerOut] --12AWG Power Cable--> ...。简化：电源输出端口。"
+    },
+    {
+      "id": "port-pms-battery-telemetry",
+      "type": "ProxyPort",
+      "parentId": "blk-pms",
+      "description": "原文：[pms1.batteryTelemetryPort] <I2C> [fc1.telemetryInputPort]。简化：电池遥测端口。"
+    },
+    {
+      "id": "port-sfm-nav-data",
+      "type": "ProxyPort",
+      "parentId": "blk-sfm",
+      "description": "原文：[sfm1.navDataPort] <SPI> [fc1.sensorInputPort]。简化：导航数据端口。"
+    },
+    {
+      "id": "port-ps-esc-cmd",
+      "type": "ProxyPort",
+      "parentId": "blk-ps",
+      "description": "原文：[fc1.motorControlPort] --CAN 2.0B--> [ps1.escCommandPort]。简化：ESC命令端口。"
+    },
+    {
+      "id": "port-ps-power-in",
+      "type": "ProxyPort",
+      "parentId": "blk-ps",
+      "description": "原文：[pms1.powerOut] --12AWG Power Cable--> [ps1.powerIn]。简化：电源输入端口。"
+    },
+    {
+      "id": "port-dlm-cmd-out",
+      "type": "ProxyPort",
+      "parentId": "blk-dlm",
+      "description": "原文：[dlm1.commandOutputPort] <UART> [fc1.commandInputPort]。简化：命令输出端口。"
+    },
+    {
+      "id": "port-dlm-telemetry-in",
+      "type": "ProxyPort",
+      "parentId": "blk-dlm",
+      "description": "原文：[fc1.telemetryOutputPort] <UART> [dlm1.telemetryInputPort]。简化：遥测输入端口。"
+    },
+    {
+      "id": "port-dlm-payload-data-in",
+      "type": "ProxyPort",
+      "parentId": "blk-dlm",
+      "description": "原文：[mp1.dataOutputPort] <USB 2.0> [dlm1.payloadDataInputPort]。简化：载荷数据输入端口。"
+    },
+    {
+      "id": "port-dlm-power-in",
+      "type": "ProxyPort",
+      "parentId": "blk-dlm",
+      "description": "原文：[pms1.powerOut] --12AWG Power Cable--> [dlm1.powerIn]。简化：电源输入端口。"
+    },
+    {
+      "id": "port-mp-control",
+      "type": "ProxyPort",
+      "parentId": "blk-mp",
+      "description": "原文：[fc1.payloadCommandPort] <UART> [mp1.controlPort]。简化：控制端口。"
+    },
+    {
+      "id": "port-mp-data-out",
+      "type": "ProxyPort",
+      "parentId": "blk-mp",
+      "description": "原文：[mp1.dataOutputPort] <USB 2.0> [dlm1.payloadDataInputPort]。简化：数据输出端口。"
+    },
+    {
+      "id": "port-mp-power-in",
+      "type": "ProxyPort",
+      "parentId": "blk-mp",
+      "description": "原文：[pms1.powerOut] --12AWG Power Cable--> [mp1.powerIn]。简化：电源输入端口。"
+    },
+    {
+      "id": "assoc-uav-fcu",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-uav-fc1",
+        "prop-fcu-uav-system"
+      ],
+      "description": "原文：内部结构: 组成部分: fc1: FlightControllerUnit。简化：UAVSystem和FlightControllerUnit之间的关联。"
+    },
+    {
+      "id": "assoc-uav-pms",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-uav-pms1",
+        "prop-pms-uav-system"
+      ],
+      "description": "原文：内部结构: 组成部分: pms1: PowerManagementSystem。简化：UAVSystem和PowerManagementSystem之间的关联。"
+    },
+    {
+      "id": "assoc-uav-sfm",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-uav-sfm1",
+        "prop-sfm-uav-system"
+      ],
+      "description": "原文：内部结构: 组成部分: sfm1: SensorFusionModule。简化：UAVSystem和SensorFusionModule之间的关联。"
+    },
+    {
+      "id": "assoc-uav-ps",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-uav-ps1",
+        "prop-ps-uav-system"
+      ],
+      "description": "原文：内部结构: 组成部分: ps1: PropulsionSystem。简化：UAVSystem和PropulsionSystem之间的关联。"
+    },
+    {
+      "id": "assoc-uav-dlm",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-uav-dlm1",
+        "prop-dlm-uav-system"
+      ],
+      "description": "原文：内部结构: 组成部分: dlm1: DataLinkModule。简化：UAVSystem和DataLinkModule之间的关联。"
+    },
+    {
+      "id": "assoc-uav-mp",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-uav-mp1",
+        "prop-mp-uav-system"
+      ],
+      "description": "原文：内部结构: 组成部分: mp1: MissionPayload。简化：UAVSystem和MissionPayload之间的关联。"
+    },
+    {
+      "id": "assoc-sfm-imu",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-sfm-imu",
+        "prop-imu-sfm"
+      ],
+      "description": "原文：readIMUData(): IMU_Data。简化：SensorFusionModule和IMU之间的关联。"
+    },
+    {
+      "id": "assoc-sfm-gps",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-sfm-gps",
+        "prop-gps-sfm"
+      ],
+      "description": "原文：readGPSData(): GPS_Data。简化：SensorFusionModule和GPSModule之间的关联。"
+    },
+    {
+      "id": "assoc-ps-motor",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-ps-motor",
+        "prop-motor-ps"
+      ],
+      "description": "原文：PropulsionSystem {motorCount:4}。简化：PropulsionSystem和Motor之间的关联。"
+    },
+    {
+      "id": "assoc-ps-esc",
+      "type": "Association",
+      "parentId": "model-uav-system",
+      "memberEndIds": [
+        "prop-ps-esc",
+        "prop-esc-ps"
+      ],
+      "description": "原文：PropulsionSystem {motorCount:4}。简化：PropulsionSystem和ESC之间的关联。"
+    },
+    {
+      "id": "conn-uav-sfm-fcu-nav",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-sfm1",
+        "portRefId": "port-sfm-nav-data"
+      },
+      "end2": {
+        "partRefId": "prop-uav-fc1",
+        "portRefId": "port-fcu-sensor-in"
+      },
+      "description": "原文：[sfm1.navDataPort] <SPI> [fc1.sensorInputPort] {dataRate:2Mbps,frame:SPI_Mode3}。简化：SensorFusionModule和FlightControllerUnit之间的导航数据连接器。"
+    },
+    {
+      "id": "conn-uav-fcu-ps-esc",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-fc1",
+        "portRefId": "port-fcu-motor-ctrl"
+      },
+      "end2": {
+        "partRefId": "prop-uav-ps1",
+        "portRefId": "port-ps-esc-cmd"
+      },
+      "description": "原文：[fc1.motorControlPort] --CAN 2.0B--> [ps1.escCommandPort] {bitrate:1Mbps,messageID:0x100}。简化：FlightControllerUnit和PropulsionSystem之间的ESC命令连接器。"
+    },
+    {
+      "id": "conn-uav-pms-fcu-power",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-pms1",
+        "portRefId": "port-pms-power-out"
+      },
+      "end2": {
+        "partRefId": "prop-uav-fc1",
+        "portRefId": "port-fcu-power-in"
+      },
+      "description": "原文：[pms1.powerOut] --12AWG Power Cable--> [fc1.powerIn] {voltage:22.2V,maxCurrent:45A}。简化：PowerManagementSystem和FlightControllerUnit之间的电源连接器。"
+    },
+    {
+      "id": "conn-uav-pms-ps-power",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-pms1",
+        "portRefId": "port-pms-power-out"
+      },
+      "end2": {
+        "partRefId": "prop-uav-ps1",
+        "portRefId": "port-ps-power-in"
+      },
+      "description": "原文：[pms1.powerOut] --12AWG Power Cable--> [ps1.powerIn] {voltage:22.2V,maxCurrent:45A}。简化：PowerManagementSystem和PropulsionSystem之间的电源连接器。"
+    },
+    {
+      "id": "conn-uav-pms-dlm-power",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-pms1",
+        "portRefId": "port-pms-power-out"
+      },
+      "end2": {
+        "partRefId": "prop-uav-dlm1",
+        "portRefId": "port-dlm-power-in"
+      },
+      "description": "原文：[pms1.powerOut] --12AWG Power Cable--> [dlm1.powerIn] {voltage:22.2V,maxCurrent:45A}。简化：PowerManagementSystem和DataLinkModule之间的电源连接器。"
+    },
+    {
+      "id": "conn-uav-pms-mp-power",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-pms1",
+        "portRefId": "port-pms-power-out"
+      },
+      "end2": {
+        "partRefId": "prop-uav-mp1",
+        "portRefId": "port-mp-power-in"
+      },
+      "description": "原文：[pms1.powerOut] --12AWG Power Cable--> [mp1.powerIn] {voltage:22.2V,maxCurrent:45A}。简化：PowerManagementSystem和MissionPayload之间的电源连接器。"
+    },
+    {
+      "id": "conn-uav-pms-fcu-telemetry",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-pms1",
+        "portRefId": "port-pms-battery-telemetry"
+      },
+      "end2": {
+        "partRefId": "prop-uav-fc1",
+        "portRefId": "port-fcu-telemetry-in"
+      },
+      "description": "原文：[pms1.batteryTelemetryPort] <I2C> [fc1.telemetryInputPort] {address:0x36,updateRate:10Hz}。简化：PowerManagementSystem和FlightControllerUnit之间的电池遥测连接器。"
+    },
+    {
+      "id": "conn-uav-dlm-fcu-cmd",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-dlm1",
+        "portRefId": "port-dlm-cmd-out"
+      },
+      "end2": {
+        "partRefId": "prop-uav-fc1",
+        "portRefId": "port-fcu-cmd-in"
+      },
+      "description": "原文：[dlm1.commandOutputPort] <UART> [fc1.commandInputPort] {baudrate:921600,parity:None}。简化：DataLinkModule和FlightControllerUnit之间的命令连接器。"
+    },
+    {
+      "id": "conn-uav-fcu-dlm-telemetry",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-fc1",
+        "portRefId": "port-fcu-telemetry-out"
+      },
+      "end2": {
+        "partRefId": "prop-uav-dlm1",
+        "portRefId": "port-dlm-telemetry-in"
+      },
+      "description": "原文：[fc1.telemetryOutputPort] <UART> [dlm1.telemetryInputPort] {baudrate:921600,parity:None}。简化：FlightControllerUnit和DataLinkModule之间的遥测连接器。"
+    },
+    {
+      "id": "conn-uav-fcu-mp-cmd",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-fc1",
+        "portRefId": "port-fcu-payload-cmd"
+      },
+      "end2": {
+        "partRefId": "prop-uav-mp1",
+        "portRefId": "port-mp-control"
+      },
+      "description": "原文：[fc1.payloadCommandPort] <UART> [mp1.controlPort] {baudrate:115200,parity:None}。简化：FlightControllerUnit和MissionPayload之间的命令连接器。"
+    },
+    {
+      "id": "conn-uav-mp-dlm-data",
+      "type": "AssemblyConnector",
+      "parentId": "blk-uav-system",
+      "end1": {
+        "partRefId": "prop-uav-mp1",
+        "portRefId": "port-mp-data-out"
+      },
+      "end2": {
+        "partRefId": "prop-uav-dlm1",
+        "portRefId": "port-dlm-payload-data-in"
+      },
+      "description": "原文：[mp1.dataOutputPort] <USB 2.0> [dlm1.payloadDataInputPort] {speed:480Mbps,burstSize:16KB}。简化：MissionPayload和DataLinkModule之间的数据连接器。"
+    }
+  ]
+}

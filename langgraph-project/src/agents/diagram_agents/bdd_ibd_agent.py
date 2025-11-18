@@ -317,9 +317,14 @@ def process_bdd_ibd_task(state: WorkflowState, task_content: str) -> Dict[str, A
         cot_prompt = PROMPT_COT_SYSTEM + PROMPT_COT_USER.format(task_content=task_content)
         cot_result = ""
         for chunk in llm.stream(cot_prompt):
-            chunk_content = chunk.content
-            print(chunk_content, end="", flush=True)
-            cot_result += chunk_content
+            if(hasattr(chunk, "reasoning_content")):
+                print(getattr(chunk, "reasoning_content"), end="", flush=True)
+            elif(hasattr(chunk, "reason_content")):
+                print(getattr(chunk, "reason_content"), end="", flush=True)
+            else:
+                chunk_content = chunk.content
+                print(chunk_content, end="", flush=True)
+                cot_result += chunk_content
         
         print(f"\n\n{'='*80}")
         print(f"✅ 推理完成")
@@ -333,9 +338,14 @@ def process_bdd_ibd_task(state: WorkflowState, task_content: str) -> Dict[str, A
         json_prompt = PROMPT_JSON_SYSTEM + PROMPT_JSON_USER.format(cot_result=cot_result)
         json_str = ""
         for chunk in llm.stream(json_prompt):
-            chunk_content = chunk.content
-            print(chunk_content, end="", flush=True)
-            json_str += chunk_content
+            if(hasattr(chunk, "reasoning_content")):
+                print(getattr(chunk, "reasoning_content"), end="", flush=True)
+            elif(hasattr(chunk, "reason_content")):
+                print(getattr(chunk, "reason_content"), end="", flush=True)
+            else:
+                chunk_content = chunk.content
+                print(chunk_content, end="", flush=True)
+                json_str += chunk_content
 
         print(f"\n\n{'='*80}")
         print(f"✅ JSON生成完成")

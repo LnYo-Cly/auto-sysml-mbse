@@ -15,6 +15,7 @@ from json_repair import repair_json
 
 from graph.workflow_state import WorkflowState, ProcessStatus
 from config.settings import settings
+from model.OpenAiWithReason import CustomChatOpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -533,6 +534,11 @@ def process_usecase_task(state: WorkflowState, task_content: str) -> Dict[str, A
         cot_prompt = PROMPT_COT_SYSTEM + "输入：\n"+task_content+"\n\n输出：请你一步一步进行推理思考。"
         cot_result = ""
         for chunk in llm.stream(cot_prompt):
+          if(hasattr(chunk, "reasoning_content")):
+              print(getattr(chunk, "reasoning_content"), end="", flush=True)
+          elif(hasattr(chunk, "reason_content")):
+              print(getattr(chunk, "reason_content"), end="", flush=True)
+          else:
             chunk_content = getattr(chunk, "content", "")
             print(chunk_content, end="", flush=True)
             cot_result += chunk_content
@@ -549,6 +555,11 @@ def process_usecase_task(state: WorkflowState, task_content: str) -> Dict[str, A
         json_prompt = PROMPT_JSON_SYSTEM + "\n\n推理结果：\n" + cot_result + "\n\n请严格按照规则生成JSON。- description 字段必须要包含“原文：”和“简化：”两部分内容。"
         json_str = ""
         for chunk in llm.stream(json_prompt):
+          if(hasattr(chunk, "reasoning_content")):
+              print(getattr(chunk, "reasoning_content"), end="", flush=True)
+          elif(hasattr(chunk, "reason_content")):
+              print(getattr(chunk, "reason_content"), end="", flush=True)
+          else:
             chunk_content = getattr(chunk, "content", "")
             print(chunk_content, end="", flush=True)
             json_str += chunk_content

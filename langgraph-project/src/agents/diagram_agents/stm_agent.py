@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+from model.OpenAiWithReason import CustomChatOpenAI
 from json_repair import repair_json
 
 from graph.workflow_state import WorkflowState, ProcessStatus
@@ -685,7 +686,7 @@ def validate_descriptions(result: Dict[str, Any]) -> Dict[str, Any]:
 def process_state_machine_task(state: WorkflowState, task_content: str) -> Dict[str, Any]:
     logger.info("🎯 开始处理状态机图任务")
     try:
-        llm = ChatOpenAI(
+        llm = CustomChatOpenAI(
             model=settings.llm_model,
             api_key=settings.openai_api_key,
             base_url=settings.base_url,
@@ -702,6 +703,11 @@ def process_state_machine_task(state: WorkflowState, task_content: str) -> Dict[
         cot_prompt = PROMPT_COT_SYSTEM + "\n\n" + f"输入：\n{task_content}\n\n输出：请你一步一步进行推理思考。"
         cot_result = ""
         for chunk in llm.stream(cot_prompt):
+          if(hasattr(chunk, "reasoning_content")):
+              print(getattr(chunk, "reasoning_content"), end="", flush=True)
+          elif(hasattr(chunk, "reason_content")):
+              print(getattr(chunk, "reason_content"), end="", flush=True)
+          else:
             chunk_content = getattr(chunk, "content", "")
             print(chunk_content, end="", flush=True)
             cot_result += chunk_content
@@ -718,6 +724,11 @@ def process_state_machine_task(state: WorkflowState, task_content: str) -> Dict[
         json_prompt = PROMPT_JSON_SYSTEM + "\n\n" + f"推理结果：\n{cot_result}\n\n请严格按照规则生成JSON。- description 字段必须要包含“原文：”和“简化：”两部分内容。"
         json_str = ""
         for chunk in llm.stream(json_prompt):
+          if(hasattr(chunk, "reasoning_content")):
+              print(getattr(chunk, "reasoning_content"), end="", flush=True)
+          elif(hasattr(chunk, "reason_content")):
+              print(getattr(chunk, "reason_content"), end="", flush=True)
+          else:
             chunk_content = getattr(chunk, "content", "")
             print(chunk_content, end="", flush=True)
             json_str += chunk_content

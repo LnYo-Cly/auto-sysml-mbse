@@ -1,0 +1,469 @@
+{
+  "model": [
+    {
+      "id": "model-uav-agri-survey-uuid",
+      "name": "无人机农业测绘系统需求模型"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-functional-req-uuid",
+      "type": "Package",
+      "name": "功能需求包",
+      "description": "包含无人机农业测绘系统的功能需求，如自主飞行控制、数据采集、状态监控和安全处理"
+    },
+    {
+      "id": "pkg-nonfunctional-req-uuid",
+      "type": "Package",
+      "name": "非功能需求包",
+      "description": "包含无人机农业测绘系统的非功能需求，如性能、可靠性、环境适应性和续航能力"
+    },
+    {
+      "id": "pkg-system-blocks-uuid",
+      "type": "Package",
+      "name": "系统模块包",
+      "description": "包含无人机系统的核心模块，如飞行控制、动力管理、传感器融合、推进系统和数据链"
+    },
+    {
+      "id": "req-autonomous-flight-uuid",
+      "type": "Requirement",
+      "name": "自主飞行控制",
+      "reqId": "REQ-FUN-001",
+      "text": "系统应能接收并解析来自地面控制站（GCS）的飞行计划（包含一系列WGS-84坐标系下的GPS坐标和高度指令）。飞行控制器（FCU）应采用自适应PID控制算法，结合来自IMU（MPU-9250，采样率1kHz）和GPS模块（u-blox NEO-M8N，定位精度2.5m CEP）的实时数据，通过四元数姿态表示法动态调整四个电机的转速。航迹跟踪精度要求：水平误差≤1.0m（2σ），垂直误差≤0.5m（2σ）。控制频率不低于400Hz。",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应能接收并解析来自地面控制站（GCS）的飞行计划（包含一系列WGS-84坐标系下的GPS坐标和高度指令）。飞行控制器（FCU）应采用自适应PID控制算法，结合来自IMU（MPU-9250，采样率1kHz）和GPS模块（u-blox NEO-M8N，定位精度2.5m CEP）的实时数据，通过四元数姿态表示法动态调整四个电机的转速。航迹跟踪精度要求：水平误差≤1.0m（2σ），垂直误差≤0.5m（2σ）。控制频率不低于400Hz。简化：该需求要求无人机能够自动执行飞行任务，精确跟踪预设航点，确保飞行路径的准确性和稳定性。背景：用于农业测绘任务，减少人工操作误差，符合精准农业ASABE EP-542标准。"
+    },
+    {
+      "id": "req-multispectral-data-uuid",
+      "type": "Requirement",
+      "name": "多光谱数据采集与存储",
+      "reqId": "REQ-FUN-002",
+      "text": "系统应在飞行过程中，根据预设的触发条件（到达特定航点±3m范围内或固定时间间隔2-5s可调），控制多光谱相机（MicaSense RedEdge-MX，5个波段：蓝475nm、绿560nm、红668nm、红边717nm、近红外842nm）进行拍照。空间分辨率要求：在120m飞行高度下达到8cm/像素。采集到的图像数据（每张约12MB，格式为16位GeoTIFF+XML元数据）应被UTC时间戳和DGPS位置（精度≤10cm）标记，并通过数传电台（传输速率115.2kbps）实时传输至地面站。同时，数据应存储在机载的64GB Class 10 UHS-I microSD卡中，存储容量需支持至少5000张原始图像。",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应在飞行过程中，根据预设的触发条件（到达特定航点±3m范围内或固定时间间隔2-5s可调），控制多光谱相机（MicaSense RedEdge-MX，5个波段：蓝475nm、绿560nm、红668nm、红边717nm、近红外842nm）进行拍照。空间分辨率要求：在120m飞行高度下达到8cm/像素。采集到的图像数据（每张约12MB，格式为16位GeoTIFF+XML元数据）应被UTC时间戳和DGPS位置（精度≤10cm）标记，并通过数传电台（传输速率115.2kbps）实时传输至地面站。同时，数据应存储在机载的64GB Class 10 UHS-I microSD卡中，存储容量需支持至少5000张原始图像。简化：该需求要求无人机在飞行中自动采集多光谱图像数据，并确保数据的完整存储和传输。背景：用于分析作物健康状况，为精准农业决策提供数据支持，符合NDVI植被指数计算规范。"
+    },
+    {
+      "id": "req-real-time-telemetry-uuid",
+      "type": "Requirement",
+      "name": "实时状态监控与遥测",
+      "reqId": "REQ-FUN-003",
+      "text": "系统应通过MAVLink 2.0协议，以10Hz±1Hz的频率向地面控制站发送遥测数据包。数据包内容必须包括：GPS位置（经纬度精度1e-7度，海拔精度0.1m）、姿态角（滚转、俯仰精度0.1°，偏航精度0.5°）、空速（量程0-30m/s，精度0.5m/s）、电池电压（量程0-25.2V，精度±0.1V）、电池剩余电量（精度±5%）、电机转速（量程0-20000RPM，精度±100RPM）和信号链路强度（量程-120至0dBm，精度±3dB）。数据丢包率应小于1%。",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应通过MAVLink 2.0协议，以10Hz±1Hz的频率向地面控制站发送遥测数据包。数据包内容必须包括：GPS位置（经纬度精度1e-7度，海拔精度0.1m）、姿态角（滚转、俯仰精度0.1°，偏航精度0.5°）、空速（量程0-30m/s，精度0.5m/s）、电池电压（量程0-25.2V，精度±0.1V）、电池剩余电量（精度±5%）、电机转速（量程0-20000RPM，精度±100RPM）和信号链路强度（量程-120至0dBm，精度±3dB）。数据丢包率应小于1%。简化：该需求要求无人机实时传输飞行状态和系统健康数据到地面站，确保操作员能监控和干预。背景：为操作员提供态势感知，便于监控和干预，符合ASTM F38.01无人机遥测标准。"
+    },
+    {
+      "id": "req-safety-return-uuid",
+      "type": "Requirement",
+      "name": "安全故障处理与自动返航",
+      "reqId": "REQ-FUN-004",
+      "text": "当检测到以下任一条件时，系统应自动触发失效保护模式并执行返航着陆（RTL）程序：1) 与地面站的RC控制信号丢失持续超过5.0±0.5秒；2) 电池电压低于预设的3.4V/单体（对于4S电池组，即总电压低于13.6V±0.2V）；3) GPS卫星数少于8颗持续30秒。RTL程序包括：爬升至预设安全高度（50±5m，可配置）、以5m/s速度飞向并降落在预设的'家'位置（Home Position，精度半径2m内）。着陆过程应包含3m高度悬停3秒的确认阶段。",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：当检测到以下任一条件时，系统应自动触发失效保护模式并执行返航着陆（RTL）程序：1) 与地面站的RC控制信号丢失持续超过5.0±0.5秒；2) 电池电压低于预设的3.4V/单体（对于4S电池组，即总电压低于13.6V±0.2V）；3) GPS卫星数少于8颗持续30秒。RTL程序包括：爬升至预设安全高度（50±5m，可配置）、以5m/s速度飞向并降落在预设的'家'位置（Home Position，精度半径2m内）。着陆过程应包含3m高度悬停3秒的确认阶段。简化：该需求要求无人机在紧急情况下自动执行安全返航程序，防止坠机。背景：最大限度地保证飞行器本体和地面人员、财产的安全，符合FAA Part 107安全规范。"
+    },
+    {
+      "id": "req-control-response-uuid",
+      "type": "Requirement",
+      "name": "飞行控制响应时间",
+      "reqId": "REQ-NFN-001",
+      "text": "从IMU传感器读取数据到计算并输出PWM信号至电调（ESC）的完整控制回路延迟必须小于8毫秒（P95值），最大延迟不超过10毫秒。姿态控制带宽不低于20Hz，位置控制带宽不低于5Hz。",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：从IMU传感器读取数据到计算并输出PWM信号至电调（ESC）的完整控制回路延迟必须小于8毫秒（P95值），最大延迟不超过10毫秒。姿态控制带宽不低于20Hz，位置控制带宽不低于5Hz。简化：该需求要求飞行控制系统具有低延迟和高带宽，确保快速响应以维持飞行稳定性。背景：用于应对突发气流扰动，确保飞行稳定性和控制精度。"
+    },
+    {
+      "id": "req-system-reliability-uuid",
+      "type": "Requirement",
+      "name": "系统可靠性",
+      "reqId": "REQ-NFN-002",
+      "text": "系统在单次30分钟的任务周期内，其关键功能（如飞行控制、通信、动力）的可靠性（可用性）应不低于99.95%。平均故障间隔时间（MTBF）应大于800小时，平均修复时间（MTTR）小于30分钟。系统应实现故障容错等级FTL-2（单点故障不导致系统失效）。",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：系统在单次30分钟的任务周期内，其关键功能（如飞行控制、通信、动力）的可靠性（可用性）应不低于99.95%。平均故障间隔时间（MTBF）应大于800小时，平均修复时间（MTTR）小于30分钟。系统应实现故障容错等级FTL-2（单点故障不导致系统失效）。简化：该需求要求系统具有高可靠性和容错能力，确保任务顺利完成。背景：关键功能必须高度可用，防止单点故障导致系统失效。"
+    },
+    {
+      "id": "req-environmental-adaptability-uuid",
+      "type": "Requirement",
+      "name": "环境适应性",
+      "reqId": "REQ-NFN-003",
+      "text": "系统应能在以下环境条件下正常运行：环境温度范围-15°C至50°C（操作温度），存储温度-30°C至60°C；最大抗风能力为12米/秒（6级风，阵风15m/s）；防护等级至少为IP54（防尘、防溅水）；相对湿度范围5%至95%无冷凝。电磁兼容性应符合FCC Part 15和CE EN 300328标准。",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：系统应能在以下环境条件下正常运行：环境温度范围-15°C至50°C（操作温度），存储温度-30°C至60°C；最大抗风能力为12米/秒（6级风，阵风15m/s）；防护等级至少为IP54（防尘、防溅水）；相对湿度范围5%至95%无冷凝。电磁兼容性应符合FCC Part 15和CE EN 300328标准。简化：该需求要求无人机能在各种环境条件下稳定运行，并符合电磁兼容标准。背景：确保系统在恶劣环境下的可靠性，适应农业测绘的多样化场景。"
+    },
+    {
+      "id": "req-endurance-payload-uuid",
+      "type": "Requirement",
+      "name": "续航与载重能力",
+      "reqId": "REQ-NFN-004",
+      "text": "在最大载重5.0±0.2公斤（包括相机、云台等有效载荷）的条件下，系统使用16000mAh 6S锂聚合物电池（标称电压22.2V），应能实现不少于30分钟的有效飞行时间（从起飞到着陆，保留15%的安全电量）。悬停功耗不超过800W，最大爬升功耗不超过1500W。单次任务覆盖面积应不小于100公顷（在120m飞行高度下）。",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：在最大载重5.0±0.2公斤（包括相机、云台等有效载荷）的条件下，系统使用16000mAh 6S锂聚合物电池（标称电压22.2V），应能实现不少于30分钟的有效飞行时间（从起飞到着陆，保留15%的安全电量）。悬停功耗不超过800W，最大爬升功耗不超过1500W。单次任务覆盖面积应不小于100公顷（在120m飞行高度下）。简化：该需求要求无人机在满载条件下具有足够的续航能力和覆盖面积。背景：用于农业测绘任务，确保作业效率和任务完成率。"
+    },
+    {
+      "id": "blk-flight-control-uuid",
+      "type": "Block",
+      "name": "飞行控制系统",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：飞行控制系统是无人机的大脑和神经中枢，负责姿态稳定、导航制导、任务执行和故障安全处理。核心职责: 运行姿态控制算法（PID控制，更新率400Hz），执行导航制导逻辑（支持多点航线、自动起降、定点悬停），管理飞行任务（航点、区域扫描、跟随模式），实现故障安全处理（触发RTL或迫降）。职责：负责无人机的整体飞行控制、导航和任务管理。组成：包括姿态控制模块、导航模块、任务管理模块。技术：采用自适应PID控制算法和四元数姿态表示法。"
+    },
+    {
+      "id": "blk-power-management-uuid",
+      "type": "Block",
+      "name": "动力管理系统",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：动力管理系统负责为整个无人机提供稳定、可靠的电力供应，并实时监控电池健康状况，集成智能电池管理算法，符合IEC 62133电芯安全标准。核心职责: 通过电源分配板（PDB，效率>95%）将主电池电压分配至各子系统，通过库仑计芯片实时采集电池电压、电流和估算剩余容量（精度±3%），实现过压（>25.5V）、欠压（<19V）、过流（>45A）硬件保护，支持电池健康状态（SOH）估算和循环次数统计。职责：管理电力分配和电池监控。组成：包括电源分配板、电池管理单元。技术：采用库仑计芯片和硬件保护电路。"
+    },
+    {
+      "id": "blk-sensor-fusion-uuid",
+      "type": "Block",
+      "name": "传感器融合模块",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：传感器融合模块汇集并处理来自多种异构传感器的原始数据，为飞行控制器提供精确、可靠的姿态、位置和速度信息，采用扩展卡尔曼滤波（EKF2）算法，支持多传感器冗余。核心职责: 从IMU读取原始数据（采样率1kHz），从GPS模块接收位置、速度和时间信息（更新率10Hz），从气压计获取高度数据，从磁力计获取航向信息，运行EKF2传感器融合算法（状态向量15维，更新率100Hz）。职责：处理传感器数据以提供融合后的状态信息。组成：包括IMU、GPS、气压计、磁力计接口和融合算法。技术：采用EKF2算法和多传感器冗余设计。"
+    },
+    {
+      "id": "blk-propulsion-system-uuid",
+      "type": "Block",
+      "name": "推进系统",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：推进系统是无人机的执行机构，它将飞控的计算指令转化为实际的升力和力矩，通过精确控制四个无刷电机和螺旋桨的转速来实现飞行器的运动，采用BLDC电机和32位电调，支持DShot600数字协议。核心职责: 接收来自飞控的PWM/DShot控制信号（更新率400Hz），通过电子调速器驱动无刷电机以目标转速旋转，提供电机转速反馈（精度±50RPM），实现电机温度监控和过载保护，支持螺旋桨推力系数校准。职责：控制电机和螺旋桨以产生推力。组成：包括电机、电调、螺旋桨。技术：采用BLDC电机和DShot600数字协议。"
+    },
+    {
+      "id": "blk-datalink-uuid",
+      "type": "Block",
+      "name": "数据链模块",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据链模块是无人机与外部世界（主要是地面控制站）通信的桥梁，负责双向传输控制指令、遥测数据和任务载荷数据，采用双频段冗余设计，支持AES-256加密。核心职责: 通过数传电台以MAVLink 2.0协议与地面站通信（最大传输距离10km），通过RC接收机接收来自遥控器的直接操控指令（更新率50Hz），实现链路质量监控和自动频段切换，支持数据加密和身份认证，提供通信延迟统计（平均延迟<100ms）。职责：处理无人机与地面站之间的通信。组成：包括数传电台、RC接收机。技术：采用MAVLink 2.0协议和AES-256加密。"
+    },
+    {
+      "id": "tc-hil-test-uuid",
+      "type": "TestCase",
+      "name": "硬件在环测试",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：硬件在环测试（HIL）用于验证自主飞行控制需求。测试目的：验证飞行控制算法在模拟环境中的性能。测试方法：使用硬件在环仿真平台，模拟传感器输入和电机输出，测试控制回路的响应时间和精度。预期结果：控制回路延迟小于8毫秒（P95），航迹跟踪精度符合要求。"
+    },
+    {
+      "id": "tc-flight-test-uuid",
+      "type": "TestCase",
+      "name": "实飞验证",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：实飞验证用于验证自主飞行控制需求。测试目的：验证无人机在实际飞行中的自主控制能力。测试方法：在真实环境中执行预设飞行计划，记录飞行数据并分析航迹跟踪精度。预期结果：水平误差≤1.0m，垂直误差≤0.5m。"
+    },
+    {
+      "id": "tc-trajectory-analysis-uuid",
+      "type": "TestCase",
+      "name": "航迹分析",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：航迹分析用于验证自主飞行控制需求。测试目的：分析飞行路径的准确性。测试方法：后处理飞行日志数据，比较实际航迹与预设航点。预期结果：航迹偏差在允许范围内。"
+    },
+    {
+      "id": "tc-multispectral-functional-test-uuid",
+      "type": "TestCase",
+      "name": "多光谱数据采集功能测试",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：功能测试用于验证多光谱数据采集与存储需求。测试目的：验证相机触发和数据采集功能。测试方法：模拟飞行条件，触发相机拍照，检查图像数据和元数据。预期结果：图像按预设条件采集，数据完整存储和传输。"
+    },
+    {
+      "id": "tc-multispectral-demo-uuid",
+      "type": "TestCase",
+      "name": "多光谱数据采集现场演示",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证多光谱数据采集与存储需求。测试目的：在实际任务中演示数据采集能力。测试方法：在真实农业场景中飞行，采集多光谱图像。预期结果：成功采集并传输图像数据，满足分辨率要求。"
+    },
+    {
+      "id": "tc-data-integrity-check-uuid",
+      "type": "TestCase",
+      "name": "数据完整性校验",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据完整性校验用于验证多光谱数据采集与存储需求。测试目的：确保采集的数据完整无误。测试方法：检查存储的图像文件，验证时间戳、位置信息和文件格式。预期结果：所有数据完整，元数据准确。"
+    },
+    {
+      "id": "tc-mavlink-conformance-uuid",
+      "type": "TestCase",
+      "name": "MAVLink协议一致性测试",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：协议一致性测试用于验证实时状态监控与遥测需求。测试目的：验证MAVLink协议的正确实现。测试方法：使用协议分析工具，检查遥测数据包的格式和频率。预期结果：数据包符合MAVLink 2.0标准，频率10Hz±1Hz。"
+    },
+    {
+      "id": "tc-telemetry-integrity-uuid",
+      "type": "TestCase",
+      "name": "遥测数据完整性验证",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据完整性验证用于验证实时状态监控与遥测需求。测试目的：确保遥测数据准确无误。测试方法：比较发送和接收的数据，检查丢包率和数据准确性。预期结果：丢包率小于1%，数据内容正确。"
+    },
+    {
+      "id": "tc-telemetry-demo-uuid",
+      "type": "TestCase",
+      "name": "遥测现场演示",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证实时状态监控与遥测需求。测试目的：在实际飞行中演示遥测功能。测试方法：操作无人机飞行，监控地面站接收的遥测数据。预期结果：遥测数据实时更新，所有参数在预期范围内。"
+    },
+    {
+      "id": "tc-fault-injection-uuid",
+      "type": "TestCase",
+      "name": "安全故障注入测试",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：故障注入测试用于验证安全故障处理与自动返航需求。测试目的：验证系统在故障条件下的响应。测试方法：模拟信号丢失、低电池电压等故障，观察自动返航行为。预期结果：系统正确触发RTL程序，安全着陆。"
+    },
+    {
+      "id": "tc-safety-analysis-uuid",
+      "type": "TestCase",
+      "name": "安全案例分析",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：安全案例分析用于验证安全故障处理与自动返航需求。测试目的：分析系统安全设计的有效性。测试方法：审查设计文档，进行风险分析。预期结果：系统符合安全规范，单点故障不导致失效。"
+    },
+    {
+      "id": "tc-rtl-demo-uuid",
+      "type": "TestCase",
+      "name": "自动返航现场演示",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证安全故障处理与自动返航需求。测试目的：在实际飞行中演示自动返航功能。测试方法：故意触发故障条件，观察返航过程。预期结果：无人机自动返航并安全着陆。"
+    },
+    {
+      "id": "tc-control-performance-uuid",
+      "type": "TestCase",
+      "name": "控制响应性能测试",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：性能测试用于验证飞行控制响应时间需求。测试目的：测量控制回路延迟和带宽。测试方法：使用高精度计时器，记录从IMU读取到PWM输出的时间。预期结果：延迟小于8毫秒（P95），带宽符合要求。"
+    },
+    {
+      "id": "tc-latency-measurement-uuid",
+      "type": "TestCase",
+      "name": "控制延迟测量",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：延迟测量用于验证飞行控制响应时间需求。测试目的：精确测量控制回路延迟。测试方法：在实验室环境中，使用示波器或专用设备测量信号时间。预期结果：最大延迟不超过10毫秒。"
+    },
+    {
+      "id": "tc-reliability-test-uuid",
+      "type": "TestCase",
+      "name": "系统可靠性测试",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于系统可靠性需求创建测试。测试目的：验证系统可靠性和容错能力。测试方法：进行长时间运行测试，注入故障，测量MTBF和MTTR。预期结果：可靠性不低于99.95%，MTBF>800小时。"
+    },
+    {
+      "id": "tc-environmental-test-uuid",
+      "type": "TestCase",
+      "name": "环境适应性测试",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于环境适应性需求创建测试。测试目的：验证系统在极端环境下的性能。测试方法：在温湿度 chamber 中测试，进行抗风测试，检查防护等级。预期结果：系统在指定温度、湿度、风力下正常运行，符合IP54。"
+    },
+    {
+      "id": "tc-emc-test-uuid",
+      "type": "TestCase",
+      "name": "EMC测试",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：电磁兼容性应符合FCC Part 15和CE EN 300328标准。测试目的：验证电磁兼容性。测试方法：在认证实验室进行辐射和传导发射测试。预期结果：通过FCC和CE标准。"
+    },
+    {
+      "id": "tc-endurance-test-uuid",
+      "type": "TestCase",
+      "name": "续航与载重测试",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于续航与载重能力需求创建测试。测试目的：验证飞行时间和载重能力。测试方法：在满载条件下进行飞行测试，记录飞行时间和功耗。预期结果：飞行时间不少于30分钟，功耗在范围内。"
+    },
+    {
+      "id": "rel-satisfy-fc-autonomous-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-flight-control-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：飞行控制系统负责姿态稳定、导航制导、任务执行。飞行控制系统通过运行PID控制算法和导航逻辑满足自主飞行控制需求，实现了航点跟踪和姿态稳定，采用自适应PID控制算法和四元数姿态表示法。"
+    },
+    {
+      "id": "rel-satisfy-fc-safety-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-flight-control-uuid",
+      "requirementId": "req-safety-return-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：飞行控制系统实现故障安全处理（触发RTL或迫降）。飞行控制系统通过监控故障条件并执行RTL程序满足安全故障处理与自动返航需求，确保了飞行安全，符合FAA Part 107规范。"
+    },
+    {
+      "id": "rel-satisfy-pm-telemetry-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-power-management-uuid",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：动力管理系统实时监控电池健康状况。动力管理系统通过采集电池电压、电流和剩余容量数据满足实时状态监控与遥测需求，提供了电池状态信息，精度符合要求。"
+    },
+    {
+      "id": "rel-satisfy-pm-safety-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-power-management-uuid",
+      "requirementId": "req-safety-return-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：动力管理系统实现欠压保护。动力管理系统通过检测低电池电压并触发保护措施满足安全故障处理与自动返航需求，防止电池过度放电，确保安全返航。"
+    },
+    {
+      "id": "rel-satisfy-sf-autonomous-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-sensor-fusion-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：传感器融合模块为飞行控制器提供精确、可靠的姿态、位置和速度信息。传感器融合模块通过EKF2算法处理传感器数据满足自主飞行控制需求，提供了高精度的状态估计，支持航迹跟踪。"
+    },
+    {
+      "id": "rel-satisfy-ps-autonomous-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-propulsion-system-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：推进系统将飞控的计算指令转化为实际的升力和力矩。推进系统通过控制电机转速满足自主飞行控制需求，实现了飞行器的运动控制，采用BLDC电机和DShot600协议。"
+    },
+    {
+      "id": "rel-satisfy-dl-telemetry-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-datalink-uuid",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据链模块负责双向传输控制指令、遥测数据和任务载荷数据。数据链模块通过MAVLink协议传输遥测数据满足实时状态监控与遥测需求，确保了数据的实时传输，丢包率小于1%。"
+    },
+    {
+      "id": "rel-satisfy-dl-safety-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-datalink-uuid",
+      "requirementId": "req-safety-return-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据链模块实现链路质量监控。数据链模块通过检测信号丢失满足安全故障处理与自动返航需求，触发了自动返航程序，确保通信中断时的安全响应。"
+    },
+    {
+      "id": "rel-verify-hil-autonomous-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-hil-test-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：硬件在环测试（HIL）用于验证自主飞行控制需求。通过硬件在环测试验证自主飞行控制需求，确保控制算法在模拟环境中的性能符合要求，包括延迟和精度测试。"
+    },
+    {
+      "id": "rel-verify-flight-autonomous-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-flight-test-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：实飞验证用于验证自主飞行控制需求。通过实飞验证验证自主飞行控制需求，确保无人机在实际飞行中的航迹跟踪精度，水平误差≤1.0m，垂直误差≤0.5m。"
+    },
+    {
+      "id": "rel-verify-trajectory-autonomous-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-trajectory-analysis-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：航迹分析用于验证自主飞行控制需求。通过航迹分析验证自主飞行控制需求，确保飞行路径的准确性，后处理日志数据比较实际与预设航点。"
+    },
+    {
+      "id": "rel-verify-functional-multispectral-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-multispectral-functional-test-uuid",
+      "requirementId": "req-multispectral-data-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：功能测试用于验证多光谱数据采集与存储需求。通过功能测试验证多光谱数据采集与存储需求，确保相机触发和数据采集功能正常，图像数据完整。"
+    },
+    {
+      "id": "rel-verify-demo-multispectral-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-multispectral-demo-uuid",
+      "requirementId": "req-multispectral-data-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证多光谱数据采集与存储需求。通过现场演示验证多光谱数据采集与存储需求，确保在实际任务中数据采集能力，满足空间分辨率要求。"
+    },
+    {
+      "id": "rel-verify-integrity-multispectral-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-data-integrity-check-uuid",
+      "requirementId": "req-multispectral-data-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据完整性校验用于验证多光谱数据采集与存储需求。通过数据完整性校验验证多光谱数据采集与存储需求，确保采集的数据完整无误，包括时间戳和位置信息。"
+    },
+    {
+      "id": "rel-verify-conformance-telemetry-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-mavlink-conformance-uuid",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：协议一致性测试用于验证实时状态监控与遥测需求。通过协议一致性测试验证实时状态监控与遥测需求，确保MAVLink协议的正确实现，数据包格式和频率符合标准。"
+    },
+    {
+      "id": "rel-verify-integrity-telemetry-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-telemetry-integrity-uuid",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据完整性验证用于验证实时状态监控与遥测需求。通过数据完整性验证验证实时状态监控与遥测需求，确保遥测数据准确无误，丢包率小于1%。"
+    },
+    {
+      "id": "rel-verify-demo-telemetry-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-telemetry-demo-uuid",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证实时状态监控与遥测需求。通过现场演示验证实时状态监控与遥测需求，确保在实际飞行中遥测功能正常，数据实时更新。"
+    },
+    {
+      "id": "rel-verify-fault-safety-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-fault-injection-uuid",
+      "requirementId": "req-safety-return-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：故障注入测试用于验证安全故障处理与自动返航需求。通过故障注入测试验证安全故障处理与自动返航需求，确保系统在故障条件下的正确响应，触发RTL程序。"
+    },
+    {
+      "id": "rel-verify-analysis-safety-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-safety-analysis-uuid",
+      "requirementId": "req-safety-return-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：安全案例分析用于验证安全故障处理与自动返航需求。通过安全案例分析验证安全故障处理与自动返航需求，确保系统安全设计的有效性，符合FAA Part 107规范。"
+    },
+    {
+      "id": "rel-verify-demo-safety-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-rtl-demo-uuid",
+      "requirementId": "req-safety-return-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证安全故障处理与自动返航需求。通过现场演示验证安全故障处理与自动返航需求，确保自动返航功能在实际飞行中正常工作，安全着陆。"
+    },
+    {
+      "id": "rel-verify-performance-response-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-control-performance-uuid",
+      "requirementId": "req-control-response-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：性能测试用于验证飞行控制响应时间需求。通过性能测试验证飞行控制响应时间需求，确保控制回路延迟小于8毫秒（P95），带宽符合要求。"
+    },
+    {
+      "id": "rel-verify-latency-response-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-latency-measurement-uuid",
+      "requirementId": "req-control-response-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：延迟测量用于验证飞行控制响应时间需求。通过延迟测量验证飞行控制响应时间需求，确保最大延迟不超过10毫秒，使用高精度设备测量信号时间。"
+    },
+    {
+      "id": "rel-verify-reliability-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-reliability-test-uuid",
+      "requirementId": "req-system-reliability-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于系统可靠性需求创建测试。通过系统可靠性测试验证系统可靠性需求，确保关键功能可用性不低于99.95%，MTBF>800小时，MTTR<30分钟。"
+    },
+    {
+      "id": "rel-verify-environmental-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-environmental-test-uuid",
+      "requirementId": "req-environmental-adaptability-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于环境适应性需求创建测试。通过环境适应性测试验证环境适应性需求，确保系统在温度、湿度、风力等极端条件下正常运行，符合IP54防护等级。"
+    },
+    {
+      "id": "rel-verify-emc-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-emc-test-uuid",
+      "requirementId": "req-environmental-adaptability-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：电磁兼容性应符合FCC Part 15和CE EN 300328标准。通过EMC测试验证环境适应性需求中的电磁兼容性部分，确保系统通过FCC和CE标准，无干扰问题。"
+    },
+    {
+      "id": "rel-verify-endurance-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-endurance-test-uuid",
+      "requirementId": "req-endurance-payload-uuid",
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于续航与载重能力需求创建测试。通过续航与载重测试验证续航与载重能力需求，确保在满载条件下飞行时间不少于30分钟，功耗在范围内。"
+    }
+  ]
+}

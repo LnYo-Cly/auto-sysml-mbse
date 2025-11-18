@@ -1,0 +1,452 @@
+{
+  "model": [
+    {
+      "id": "model-uav-unique-id",
+      "name": "UAVSystemModel",
+      "description": "原文：飞行性能参数...CommunicationModule...PropulsionSystem...自主航线飞行流程性能参数。简化：无人机系统参数图模型，描述各模块间的性能约束关系。"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-uav-unique-id",
+      "type": "Package",
+      "name": "ParametricDiagram",
+      "parentId": "model-uav-unique-id",
+      "description": "原文：飞行性能参数...CommunicationModule...PropulsionSystem...自主航线飞行流程性能参数。简化：封装无人机系统参数图的所有元素。"
+    },
+    {
+      "id": "block1",
+      "type": "Block",
+      "name": "CommunicationModule",
+      "parentId": "pkg-uav-unique-id",
+      "description": "原文：CommunicationModule关键属性范围约束。简化：代表无人机的通信模块，包含通信质量、信号强度、数据速率等参数。"
+    },
+    {
+      "id": "prop1",
+      "type": "Property",
+      "name": "linkQuality",
+      "propertyKind": "value",
+      "parentId": "block1",
+      "typeId": "Real",
+      "description": "原文：linkQuality: Real [%] {0..100}。简化：通信链路质量百分比。"
+    },
+    {
+      "id": "prop2",
+      "type": "Property",
+      "name": "signalStrength",
+      "propertyKind": "value",
+      "parentId": "block1",
+      "typeId": "Real",
+      "description": "原文：signalStrength: Real [dBm] {-120..0}。简化：信号强度，单位dBm。"
+    },
+    {
+      "id": "prop3",
+      "type": "Property",
+      "name": "dataRate",
+      "propertyKind": "value",
+      "parentId": "block1",
+      "typeId": "Real",
+      "description": "原文：dataRate: Real [Mbps] {1..50}。简化：数据速率，单位Mbps。"
+    },
+    {
+      "id": "prop4",
+      "type": "Property",
+      "name": "packetLoss",
+      "propertyKind": "value",
+      "parentId": "block1",
+      "typeId": "Real",
+      "description": "原文：packetLoss: Real [%] {0..100}。简化：数据包丢失率百分比。"
+    },
+    {
+      "id": "prop5",
+      "type": "Property",
+      "name": "retryCount",
+      "propertyKind": "value",
+      "parentId": "block1",
+      "typeId": "Integer",
+      "description": "原文：retryCount: Integer {0..10}。简化：重传次数。"
+    },
+    {
+      "id": "block2",
+      "type": "Block",
+      "name": "PropulsionSystem",
+      "parentId": "pkg-uav-unique-id",
+      "description": "原文：PropulsionSystem关键属性范围约束。简化：代表无人机的推进系统，包含电机转速、推力输出、温度等参数。"
+    },
+    {
+      "id": "prop6",
+      "type": "Property",
+      "name": "motorRPM",
+      "propertyKind": "value",
+      "parentId": "block2",
+      "typeId": "Integer",
+      "description": "原文：motorRPM: Integer [RPM] {0..20000}。简化：电机转速，单位RPM。"
+    },
+    {
+      "id": "prop7",
+      "type": "Property",
+      "name": "thrustOutput",
+      "propertyKind": "value",
+      "parentId": "block2",
+      "typeId": "Real",
+      "description": "原文：thrustOutput: Real [N] {0..50}。简化：推力输出，单位牛顿。"
+    },
+    {
+      "id": "prop8",
+      "type": "Property",
+      "name": "motorTemperature",
+      "propertyKind": "value",
+      "parentId": "block2",
+      "typeId": "Real",
+      "description": "原文：motorTemperature: Real [°C] {-40..120}。简化：电机温度，单位摄氏度。"
+    },
+    {
+      "id": "prop9",
+      "type": "Property",
+      "name": "efficiency",
+      "propertyKind": "value",
+      "parentId": "block2",
+      "typeId": "Real",
+      "description": "原文：efficiency: Real [%] {0..100}。简化：电机效率百分比。"
+    },
+    {
+      "id": "prop10",
+      "type": "Property",
+      "name": "vibrationLevel",
+      "propertyKind": "value",
+      "parentId": "block2",
+      "typeId": "Real",
+      "description": "原文：vibrationLevel: Real [g] {0..10}。简化：振动水平，单位g。"
+    },
+    {
+      "id": "block3",
+      "type": "Block",
+      "name": "FlightPerformance",
+      "parentId": "pkg-uav-unique-id",
+      "description": "原文：飞行性能参数：最大水平飞行速度15m/s，最大续航时间30分钟...悬停精度垂直±0.1m/水平±0.3m，最大爬升率5m/s，最大下降率3m/s。简化：封装无人机的飞行性能参数。"
+    },
+    {
+      "id": "prop11",
+      "type": "Property",
+      "name": "maxHorizontalSpeed",
+      "propertyKind": "value",
+      "parentId": "block3",
+      "typeId": "Real",
+      "description": "原文：最大水平飞行速度15m/s。简化：最大水平飞行速度。"
+    },
+    {
+      "id": "prop12",
+      "type": "Property",
+      "name": "maxEndurance",
+      "propertyKind": "value",
+      "parentId": "block3",
+      "typeId": "Real",
+      "description": "原文：最大续航时间30分钟。简化：最大续航时间。"
+    },
+    {
+      "id": "prop13",
+      "type": "Property",
+      "name": "maxWindResistance",
+      "propertyKind": "value",
+      "parentId": "block3",
+      "typeId": "Real",
+      "description": "原文：最大抗风能力10m/s。简化：最大抗风能力。"
+    },
+    {
+      "id": "prop14",
+      "type": "Property",
+      "name": "maxOperatingAltitude",
+      "propertyKind": "value",
+      "parentId": "block3",
+      "typeId": "Real",
+      "description": "原文：最大作业海拔4000米。简化：最大作业海拔。"
+    },
+    {
+      "id": "prop15",
+      "type": "Property",
+      "name": "hoverAccuracyVertical",
+      "propertyKind": "value",
+      "parentId": "block3",
+      "typeId": "Real",
+      "description": "原文：悬停精度垂直±0.1m。简化：垂直悬停精度。"
+    },
+    {
+      "id": "prop16",
+      "type": "Property",
+      "name": "hoverAccuracyHorizontal",
+      "propertyKind": "value",
+      "parentId": "block3",
+      "typeId": "Real",
+      "description": "原文：悬停精度水平±0.3m。简化：水平悬停精度。"
+    },
+    {
+      "id": "prop17",
+      "type": "Property",
+      "name": "maxClimbRate",
+      "propertyKind": "value",
+      "parentId": "block3",
+      "typeId": "Real",
+      "description": "原文：最大爬升率5m/s。简化：最大爬升率。"
+    },
+    {
+      "id": "prop18",
+      "type": "Property",
+      "name": "maxDescentRate",
+      "propertyKind": "value",
+      "parentId": "block3",
+      "typeId": "Real",
+      "description": "原文：最大下降率3m/s。简化：最大下降率。"
+    },
+    {
+      "id": "block4",
+      "type": "Block",
+      "name": "AutonomousFlight",
+      "parentId": "pkg-uav-unique-id",
+      "description": "原文：自主航线飞行流程性能参数。简化：代表自主飞行控制模块，包含爬升率、下降率、电池电量等参数。"
+    },
+    {
+      "id": "prop19",
+      "type": "Property",
+      "name": "climbRate",
+      "propertyKind": "value",
+      "parentId": "block4",
+      "typeId": "Real",
+      "description": "原文：爬升率2m/s。简化：自主飞行爬升率。"
+    },
+    {
+      "id": "prop20",
+      "type": "Property",
+      "name": "descentRate",
+      "propertyKind": "value",
+      "parentId": "block4",
+      "typeId": "Real",
+      "description": "原文：下降率1m/s。简化：自主飞行下降率。"
+    },
+    {
+      "id": "prop21",
+      "type": "Property",
+      "name": "batteryLevel",
+      "propertyKind": "value",
+      "parentId": "block4",
+      "typeId": "Real",
+      "description": "原文：电池电量>30% (前置条件)。简化：电池电量阈值。"
+    },
+    {
+      "id": "prop22",
+      "type": "Property",
+      "name": "dataExchangeRate",
+      "propertyKind": "value",
+      "parentId": "block4",
+      "typeId": "Real",
+      "description": "原文：数据交换10Mbps。简化：数据交换速率。"
+    },
+    {
+      "id": "prop23",
+      "type": "Property",
+      "name": "debugOutputRate",
+      "propertyKind": "value",
+      "parentId": "block4",
+      "typeId": "Real",
+      "description": "原文：调试输出115200bps。简化：调试输出速率。"
+    },
+    {
+      "id": "prop24",
+      "type": "Property",
+      "name": "configStorageRate",
+      "propertyKind": "value",
+      "parentId": "block4",
+      "typeId": "Real",
+      "description": "原文：配置存储400kHz。简化：配置存储速率。"
+    },
+    {
+      "id": "prop25",
+      "type": "Property",
+      "name": "commBusRate",
+      "propertyKind": "value",
+      "parentId": "block4",
+      "typeId": "Real",
+      "description": "原文：通信总线1Mbps。简化：通信总线速率。"
+    },
+    {
+      "id": "cb1",
+      "type": "ConstraintBlock",
+      "name": "ClimbRateConstraint",
+      "parentId": "pkg-uav-unique-id",
+      "specification": {
+        "expression": "climbRate <= maxClimbRate",
+        "language": "Math"
+      },
+      "description": "原文：爬升率2m/s...最大爬升率5m/s。简化：确保自主飞行的爬升率不超过最大允许爬升率。"
+    },
+    {
+      "id": "param1",
+      "type": "ConstraintParameter",
+      "name": "climbRate",
+      "parentId": "cb1",
+      "typeId": "Real",
+      "description": "原文：爬升率2m/s。简化：自主飞行的实际爬升率。"
+    },
+    {
+      "id": "param2",
+      "type": "ConstraintParameter",
+      "name": "maxClimbRate",
+      "parentId": "cb1",
+      "typeId": "Real",
+      "description": "原文：最大爬升率5m/s。简化：系统允许的最大爬升率。"
+    },
+    {
+      "id": "cb2",
+      "type": "ConstraintBlock",
+      "name": "DescentRateConstraint",
+      "parentId": "pkg-uav-unique-id",
+      "specification": {
+        "expression": "descentRate <= maxDescentRate",
+        "language": "Math"
+      },
+      "description": "原文：下降率1m/s...最大下降率3m/s。简化：确保自主飞行的下降率不超过最大允许下降率。"
+    },
+    {
+      "id": "param3",
+      "type": "ConstraintParameter",
+      "name": "descentRate",
+      "parentId": "cb2",
+      "typeId": "Real",
+      "description": "原文：下降率1m/s。简化：自主飞行的实际下降率。"
+    },
+    {
+      "id": "param4",
+      "type": "ConstraintParameter",
+      "name": "maxDescentRate",
+      "parentId": "cb2",
+      "typeId": "Real",
+      "description": "原文：最大下降率3m/s。简化：系统允许的最大下降率。"
+    },
+    {
+      "id": "cb3",
+      "type": "ConstraintBlock",
+      "name": "BatteryLevelConstraint",
+      "parentId": "pkg-uav-unique-id",
+      "specification": {
+        "expression": "batteryLevel > 30",
+        "language": "Math"
+      },
+      "description": "原文：电池电量>30% (前置条件)。简化：确保电池电量满足自主飞行的最低要求。"
+    },
+    {
+      "id": "param5",
+      "type": "ConstraintParameter",
+      "name": "batteryLevel",
+      "parentId": "cb3",
+      "typeId": "Real",
+      "description": "原文：电池电量>30%。简化：当前电池电量百分比。"
+    },
+    {
+      "id": "cb4",
+      "type": "ConstraintBlock",
+      "name": "DataRateConstraint",
+      "parentId": "pkg-uav-unique-id",
+      "specification": {
+        "expression": "dataExchangeRate <= dataRate",
+        "language": "Math"
+      },
+      "description": "原文：数据交换10Mbps...dataRate: Real [Mbps] {1..50}。简化：确保数据交换速率不超过通信模块的最大数据速率。"
+    },
+    {
+      "id": "param6",
+      "type": "ConstraintParameter",
+      "name": "dataExchangeRate",
+      "parentId": "cb4",
+      "typeId": "Real",
+      "description": "原文：数据交换10Mbps。简化：自主飞行的数据交换速率。"
+    },
+    {
+      "id": "param7",
+      "type": "ConstraintParameter",
+      "name": "dataRate",
+      "parentId": "cb4",
+      "typeId": "Real",
+      "description": "原文：dataRate: Real [Mbps] {1..50}。简化：通信模块的最大数据速率。"
+    },
+    {
+      "id": "cp1",
+      "type": "Property",
+      "name": "ClimbRateConstraint",
+      "propertyKind": "constraint",
+      "parentId": "block4",
+      "typeId": "cb1",
+      "description": "原文：爬升率2m/s...最大爬升率5m/s。简化：在自主飞行模块中实例化爬升率约束。"
+    },
+    {
+      "id": "cp2",
+      "type": "Property",
+      "name": "DescentRateConstraint",
+      "propertyKind": "constraint",
+      "parentId": "block4",
+      "typeId": "cb2",
+      "description": "原文：下降率1m/s...最大下降率3m/s。简化：在自主飞行模块中实例化下降率约束。"
+    },
+    {
+      "id": "cp3",
+      "type": "Property",
+      "name": "BatteryLevelConstraint",
+      "propertyKind": "constraint",
+      "parentId": "block4",
+      "typeId": "cb3",
+      "description": "原文：电池电量>30% (前置条件)。简化：在自主飞行模块中实例化电池电量约束。"
+    },
+    {
+      "id": "cp4",
+      "type": "Property",
+      "name": "DataRateConstraint",
+      "propertyKind": "constraint",
+      "parentId": "block4",
+      "typeId": "cb4",
+      "description": "原文：数据交换10Mbps...dataRate: Real [Mbps] {1..50}。简化：在自主飞行模块中实例化数据速率约束。"
+    },
+    {
+      "id": "conn1",
+      "type": "BindingConnector",
+      "parentId": "block4",
+      "end1": {
+        "propertyRefId": "prop19"
+      },
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param1"
+      },
+      "description": "原文：爬升率2m/s。简化：将自主飞行的实际爬升率绑定到约束方程中的爬升率参数。"
+    },
+    {
+      "id": "conn2",
+      "type": "BindingConnector",
+      "parentId": "block4",
+      "end1": {
+        "propertyRefId": "prop17"
+      },
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param2"
+      },
+      "description": "原文：最大爬升率5m/s。简化：将系统最大爬升率绑定到约束方程中的最大爬升率参数。"
+    },
+    {
+      "id": "conn3",
+      "type": "BindingConnector",
+      "parentId": "block4",
+      "end1": {
+        "propertyRefId": "prop20"
+      },
+      "end2": {
+        "partRefId": "cp2",
+        "portRefId": "param3"
+      },
+      "description": "原文：下降率1m/s。简化：将自主飞行的实际下降率绑定到约束方程中的下降率参数。"
+    },
+    {
+      "id": "conn4",
+      "type": "BindingConnector",
+      "parentId": "block4",
+      "description": "自动生成的描述: 这是一个类型为 'BindingConnector'，名称为 'Unnamed' 的元素。"
+    }
+  ]
+}

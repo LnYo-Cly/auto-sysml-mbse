@@ -8,6 +8,7 @@ import datetime
 
 from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain_openai import ChatOpenAI
+from model.OpenAiWithReason import CustomChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 
 from graph.workflow_state import WorkflowState, ProcessStatus
@@ -244,18 +245,22 @@ def expand_requirement(state: WorkflowState) -> WorkflowState:
             ("human", USER_PROMPT_INITIAL)
         ])
         
-        initial_llm = ChatOpenAI(
+        initial_llm = CustomChatOpenAI(
             model=settings.llm_model,
             api_key=settings.openai_api_key,
             base_url=settings.base_url,
             temperature=0.4
         )
         
-        initial_chain = initial_prompt | initial_llm | StrOutputParser()
+        initial_chain = initial_prompt | initial_llm 
         initial_content = ""
         for chunk in initial_chain.stream({"requirement": state.input_short_req}):
-            initial_content += chunk
-            print(chunk, end="", flush=True)
+            reasoning = chunk.additional_kwargs.get("reasoning_content")
+            if(reasoning):
+                print(reasoning, end="", flush=True)
+            else:
+                initial_content += chunk.content
+                print(chunk.content, end="", flush=True)
 
         if state.save_stages:
             save_doc_to_file(initial_content, "初始扩展文档")
@@ -269,18 +274,22 @@ def expand_requirement(state: WorkflowState) -> WorkflowState:
                 HumanMessagePromptTemplate.from_template(USER_PROMPT_ENHANCE)
             ])
             
-            enhance_llm = ChatOpenAI(
+            enhance_llm = CustomChatOpenAI(
                 model=settings.llm_model,
                 api_key=settings.openai_api_key,
                 base_url=settings.base_url,
                 temperature=0.1
             )
             
-            enhance_chain = enhance_prompt | enhance_llm | StrOutputParser()
+            enhance_chain = enhance_prompt | enhance_llm
             enhanced_content = ""
             for chunk in enhance_chain.stream({"initial_content": initial_content}):
-                enhanced_content += chunk
-                print(chunk, end="", flush=True)
+                reasoning = chunk.additional_kwargs.get("reasoning_content")
+                if(reasoning):
+                    print(reasoning, end="", flush=True)
+                else:
+                    enhanced_content += chunk.content
+                    print(chunk.content, end="", flush=True)
 
             if state.save_stages:
                 save_doc_to_file(enhanced_content, "质量提升文档")

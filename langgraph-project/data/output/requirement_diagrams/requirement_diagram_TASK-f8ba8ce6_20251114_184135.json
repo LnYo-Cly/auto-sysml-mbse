@@ -1,0 +1,209 @@
+{
+  "model": [
+    {
+      "id": "model-uav-system-uuid",
+      "name": "无人机系统需求模型"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-functional-uuid",
+      "type": "Package",
+      "name": "功能需求包",
+      "description": "包含无人机核心功能相关的需求，如自主飞行、视频传输、电池管理、避障等"
+    },
+    {
+      "id": "pkg-nonfunctional-uuid",
+      "type": "Package",
+      "name": "非功能需求包",
+      "description": "包含无人机性能、通信、环境适应性、可靠性等非功能性需求"
+    },
+    {
+      "id": "req-autonomous-flight-uuid",
+      "type": "Requirement",
+      "name": "自主飞行控制",
+      "reqId": "REQ-FUN-001",
+      "text": "系统应能接收地面控制站发送的飞行计划（包含航点坐标、高度、速度），通过GPS/IMU传感器融合确定自身位置和姿态，并驱动电机和舵机实现自主导航飞行。支持RTK-GPS定位，水平定位精度达到±1cm+1ppm，垂直定位精度±1.5cm+1ppm。飞行控制频率不低于200Hz，姿态控制精度优于0.1°。验收标准：航点跟踪误差<0.5m，高度保持误差<0.2m，速度控制误差<0.1m/s。优先级：High",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：系统应能接收地面控制站发送的飞行计划，通过GPS/IMU传感器融合确定自身位置和姿态，并驱动电机和舵机实现自主导航飞行。简化：该需求定义了无人机自主飞行的核心能力，包括飞行计划接收、精确定位导航和飞行控制执行，是实现自动化作业的基础。背景：支持RTK-GPS高精度定位，要求飞行控制频率200Hz以上，姿态控制精度0.1°以内。"
+    },
+    {
+      "id": "req-video-transmission-uuid",
+      "type": "Requirement",
+      "name": "实时视频传输",
+      "reqId": "REQ-FUN-002",
+      "text": "机载摄像头采集1080p@30fps视频流，通过H.264编码后，经由5.8GHz图传系统以<100ms端到端延迟发送至地面站显示。支持自适应码率控制，码率范围2-10Mbps可调。视频传输采用FEC前向纠错和ARQ自动重传机制，确保在20%丢包率下仍可正常解码。验收标准：视频延迟<100ms，解码成功率>99.5%，PSNR>35dB。优先级：High",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：机载摄像头采集1080p@30fps视频流，通过H.264编码后，经由5.8GHz图传系统以<100ms端到端延迟发送至地面站显示。简化：该需求要求实现高质量、低延迟的视频采集、编码和传输系统，为地面操作人员提供实时视觉反馈。背景：采用先进的纠错机制确保在恶劣通信环境下的传输可靠性。"
+    },
+    {
+      "id": "req-battery-management-uuid",
+      "type": "Requirement",
+      "name": "智能电池管理",
+      "reqId": "REQ-FUN-003",
+      "text": "实时监测6S锂聚合物电池的电压、电流、温度和剩余电量，采样频率1kHz，电压测量精度±5mV，电流测量精度±10mA。当电量低于20%或单体电压低于3.3V时自动触发返航，低于15%强制着陆。支持电池健康状态(SOH)估算，精度±3%。验收标准：SOC估算误差<3%，过压/欠压保护响应时间<100ms。优先级：High",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：实时监测6S锂聚合物电池的电压、电流、温度和剩余电量，当电量低于20%或单体电压低于3.3V时自动触发返航。简化：该需求定义了智能电池监控和安全保护机制，确保飞行安全并延长电池寿命。背景：高精度监测和智能决策算法防止电池过放，保障飞行安全。"
+    },
+    {
+      "id": "req-obstacle-avoidance-uuid",
+      "type": "Requirement",
+      "name": "避障与应急处理",
+      "reqId": "REQ-FUN-004",
+      "text": "通过前向和下视TOF传感器检测5米范围内的障碍物，检测角度水平±75°，垂直±60°，检测精度±2cm。当检测到障碍物时，自动悬停或规划绕行路径。避障决策周期<50ms，支持动态障碍物跟踪和预测。验收标准：避障成功率>99.9%，误报率<0.1%，响应时间<100ms。优先级：Medium",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：通过前向和下视TOF传感器检测5米范围内的障碍物，当检测到障碍物时，自动悬停或规划绕行路径。简化：该需求要求无人机具备实时环境感知和智能避障能力，提升飞行安全性。背景：快速决策周期和动态障碍物跟踪确保在复杂环境中的安全飞行。"
+    },
+    {
+      "id": "req-flight-performance-uuid",
+      "type": "Requirement",
+      "name": "飞行性能",
+      "reqId": "REQ-NFN-001",
+      "text": "最大水平飞行速度15m/s，最大续航时间30分钟，最大抗风能力10m/s，最大作业海拔4000米。悬停精度：垂直±0.1m，水平±0.3m。最大爬升率5m/s，最大下降率3m/s。验收标准：所有性能指标在95%置信区间内满足要求。优先级：High",
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：最大水平飞行速度15m/s，最大续航时间30分钟，最大抗风能力10m/s，最大作业海拔4000米。简化：该需求定义了无人机的核心飞行性能指标，包括速度、续航、抗风能力和作业高度等关键参数。背景：这些指标直接影响无人机的应用场景和作业能力。"
+    },
+    {
+      "id": "req-communication-reliability-uuid",
+      "type": "Requirement",
+      "name": "通信可靠性",
+      "reqId": "REQ-NFN-002",
+      "text": "遥控链路使用2.4GHz频段，控制距离≥2km，丢包率<1%，采用DSSS扩频技术。图传链路使用5.8GHz，传输距离≥1km，延迟<100ms，支持MIMO 2x2。通信系统具备自动频点切换和功率控制功能。验收标准：控制链路BER<10⁻⁶，图传链路PER<10⁻³。优先级：High",
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：遥控链路使用2.4GHz频段，控制距离≥2km，丢包率<1%，采用DSSS扩频技术。简化：该需求定义了无人机通信系统的可靠性和性能要求，确保控制指令和视频数据的稳定传输。背景：采用先进的扩频技术和自动频点切换机制提升抗干扰能力。"
+    },
+    {
+      "id": "req-environmental-adaptability-uuid",
+      "type": "Requirement",
+      "name": "环境适应性",
+      "reqId": "REQ-NFN-003",
+      "text": "工作温度范围-10°C至+40°C，存储温度-20°C至+60°C，防护等级IP43，能够在小雨（降雨量<2.5mm/h）和中等湿度（<85%RH）环境下短时工作。抗振动等级：5-500Hz，1.5Grms。优先级：High",
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：工作温度范围-10°C至+40°C，存储温度-20°C至+60°C，防护等级IP43，能够在小雨和中等湿度环境下短时工作。简化：该需求定义了无人机在各种环境条件下的适应能力，确保在恶劣气候下的可靠运行。背景：符合工业级环境适应性标准，扩展无人机的应用范围。"
+    },
+    {
+      "id": "req-system-reliability-uuid",
+      "type": "Requirement",
+      "name": "系统可靠性",
+      "reqId": "REQ-NFN-004",
+      "text": "平均无故障时间(MTBF) ≥ 1000小时，平均修复时间(MTTR) ≤ 30分钟。关键系统（如飞控）采用双冗余设计，传感器采用三冗余投票机制。系统可用性≥99.9%。验收标准：在95%置信水平下满足可靠性指标。优先级：High",
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：平均无故障时间(MTBF) ≥ 1000小时，平均修复时间(MTTR) ≤ 30分钟。关键系统采用双冗余设计，传感器采用三冗余投票机制。简化：该需求定义了无人机系统的整体可靠性要求，通过冗余设计和快速维护确保高可用性。背景：基于航空安全标准，采用多重冗余机制提升系统容错能力。"
+    },
+    {
+      "id": "blk-flight-control-uuid",
+      "type": "Block",
+      "name": "飞行控制系统",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：通过GPS/IMU传感器融合确定自身位置和姿态，并驱动电机和舵机实现自主导航飞行。职责：负责无人机的自主导航、姿态控制和飞行路径跟踪。组成：包含GPS/IMU传感器融合模块、飞行控制算法模块、电机驱动模块。技术：采用RTK-GPS定位技术和200Hz控制频率实现高精度飞行控制。"
+    },
+    {
+      "id": "blk-video-transmission-uuid",
+      "type": "Block",
+      "name": "视频传输系统",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：机载摄像头采集1080p@30fps视频流，通过H.264编码后，经由5.8GHz图传系统发送至地面站。职责：负责视频采集、编码、传输和解码显示。组成：包含摄像头模块、H.264编码器、5.8GHz图传模块、地面接收站。技术：采用自适应码率控制、FEC前向纠错和ARQ自动重传机制确保传输质量。"
+    },
+    {
+      "id": "blk-battery-management-uuid",
+      "type": "Block",
+      "name": "电池管理系统",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：实时监测6S锂聚合物电池的电压、电流、温度和剩余电量。职责：负责电池状态监测、电量估算和安全保护。组成：包含电压电流传感器、温度传感器、SOC/SOH估算算法、保护电路。技术：采用1kHz采样频率和高精度测量实现智能电池管理。"
+    },
+    {
+      "id": "blk-obstacle-avoidance-uuid",
+      "type": "Block",
+      "name": "避障系统",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：通过前向和下视TOF传感器检测5米范围内的障碍物，自动悬停或规划绕行路径。职责：负责环境感知、障碍物检测和避障决策。组成：包含TOF传感器阵列、障碍物检测算法、路径规划模块。技术：采用多传感器融合和快速决策算法实现实时避障。"
+    },
+    {
+      "id": "blk-communication-system-uuid",
+      "type": "Block",
+      "name": "通信系统",
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：遥控链路使用2.4GHz频段，图传链路使用5.8GHz，支持自动频点切换和功率控制。职责：负责控制指令传输和视频数据传输。组成：包含2.4GHz遥控模块、5.8GHz图传模块、频点管理模块。技术：采用DSSS扩频技术和MIMO 2x2提升通信可靠性。"
+    },
+    {
+      "id": "tc-autonomous-flight-test-uuid",
+      "type": "TestCase",
+      "name": "自主飞行性能测试",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：验收标准：航点跟踪误差<0.5m，高度保持误差<0.2m，速度控制误差<0.1m/s。测试目的：验证自主飞行控制的精度和稳定性。测试方法：在预设航点路径上进行多次飞行测试，测量实际飞行轨迹与计划轨迹的偏差。预期结果：所有精度指标在95%置信区间内满足要求。"
+    },
+    {
+      "id": "tc-video-transmission-test-uuid",
+      "type": "TestCase",
+      "name": "视频传输质量测试",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：验收标准：视频延迟<100ms，解码成功率>99.5%，PSNR>35dB。测试目的：验证视频传输系统的延迟、可靠性和画质。测试方法：在不同距离和干扰环境下测试视频传输性能，测量端到端延迟和图像质量。预期结果：在指定条件下所有指标达标，20%丢包率下仍可正常解码。"
+    },
+    {
+      "id": "tc-battery-management-test-uuid",
+      "type": "TestCase",
+      "name": "电池管理功能测试",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：验收标准：SOC估算误差<3%，过压/欠压保护响应时间<100ms。测试目的：验证电池监测精度和安全保护机制。测试方法：模拟不同电池状态，测试SOC估算精度和保护功能响应。预期结果：高精度监测和快速保护响应，确保飞行安全。"
+    },
+    {
+      "id": "tc-obstacle-avoidance-test-uuid",
+      "type": "TestCase",
+      "name": "避障性能测试",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：验收标准：避障成功率>99.9%，误报率<0.1%，响应时间<100ms。测试目的：验证避障系统的检测准确性和响应速度。测试方法：设置不同障碍物场景，测试避障决策和路径规划能力。预期结果：高成功率避障，快速响应动态障碍物。"
+    },
+    {
+      "id": "tc-communication-link-test-uuid",
+      "type": "TestCase",
+      "name": "通信链路测试",
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：验收标准：控制链路BER<10⁻⁶，图传链路PER<10⁻³。测试目的：验证通信系统的可靠性和性能指标。测试方法：在不同距离和干扰条件下测试通信链路质量。预期结果：满足误码率和丢包率要求，支持自动频点切换。"
+    },
+    {
+      "id": "tc-environmental-test-uuid",
+      "type": "TestCase",
+      "name": "环境适应性测试",
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：基于MIL-STD-810H的环境适应性测试。测试目的：验证无人机在极限环境下的工作能力。测试方法：在高温、低温、潮湿、振动等环境下测试系统功能。预期结果：在极限环境下功能正常，性能下降不超过10%。"
+    },
+    {
+      "id": "tc-system-reliability-test-uuid",
+      "type": "TestCase",
+      "name": "系统可靠性测试",
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：基于IEC 61508的可靠性分析和FMEA。测试目的：验证系统可靠性和冗余机制有效性。测试方法：长时间运行测试和故障注入测试，验证MTBF和MTTR指标。预期结果：满足可靠性要求，冗余机制有效工作。"
+    },
+    {
+      "id": "rel-satisfy-flight-control-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-flight-control-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：通过GPS/IMU传感器融合确定自身位置和姿态，并驱动电机和舵机实现自主导航飞行。飞行控制系统通过集成RTK-GPS、IMU传感器和200Hz控制算法来满足自主飞行控制需求，实现了高精度的航点跟踪和姿态控制，确保飞行路径的精确执行。"
+    },
+    {
+      "id": "rel-satisfy-video-transmission-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-video-transmission-uuid",
+      "requirementId": "req-video-transmission-uuid",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：机载摄像头采集1080p@30fps视频流，通过H.264编码后，经由5.8GHz图传系统发送至地面站。视频传输系统通过H.264编码、5.8GHz无线传输和自适应码率控制技术来满足实时视频传输需求，采用FEC和ARQ机制确保在恶劣信道条件下的可靠传输。"
+    },
+    {
+      "id": "rel-satisfy-battery-management-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-battery-management-uuid",
+      "requirementId": "req-battery-management-uuid",
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：实时监测6S锂聚合物电池的电压、电流、温度和剩余电量。电池管理系统通过1kHz高精度采样和智能算法来满足智能电池管理需求，实现精确的SOC/SOH估算和自动安全保护，确保电池安全和飞行续航。"
+    },
+    {
+      "id": "rel-satisfy-obstacle-avoidance-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-obstacle-avoidance-uuid",
+      "requirementId": "req-obstacle-avoidance-uuid",
+      "description": "满足关系：模块实现需求"
+    }
+  ]
+}

@@ -1,0 +1,586 @@
+{
+  "model": [
+    {
+      "id": "model-autonomous-mapping-uuid",
+      "name": "AutonomousMappingMissionModel"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-autonomous-mapping-uuid",
+      "type": "Package",
+      "name": "AutonomousMappingMission",
+      "description": "原文：活动名称: 自主测绘任务执行流程; 简化：该包封装了自主测绘任务的所有相关组件和活动，包括飞行控制、数据采集和传感器融合。"
+    },
+    {
+      "id": "blk-mavlink-command-uuid",
+      "type": "Block",
+      "name": "MAVLink_Command",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：IN: start_mission_command: MAVLink_Command {msgid:76,component:1}; 简化：代表MAVLink命令消息，用于开始任务。"
+    },
+    {
+      "id": "blk-flight-plan-uuid",
+      "type": "Block",
+      "name": "FlightPlan",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：mission_plan: FlightPlan {waypointCount:50..500,CRS:WGS84}; 简化：代表飞行计划，包含航点数量坐标系统信息。"
+    },
+    {
+      "id": "blk-mission-report-uuid",
+      "type": "Block",
+      "name": "MissionReport",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：OUT: mission_status: MissionReport {success:bool,imagesCaptured:uint16_t}; 简化：代表任务报告，包含成功状态和采集图像数量。"
+    },
+    {
+      "id": "blk-image-data-uuid",
+      "type": "Block",
+      "name": "ImageDataSet",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：OUT: collected_imagery: ImageDataSet {format:GeoTIFF,count:uint16_t}; 简化：代表采集的图像数据集，包含格式和数量。"
+    },
+    {
+      "id": "blk-sensor-data-uuid",
+      "type": "Block",
+      "name": "SensorData",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：从IMU读取原始数据，从GPS模块接收位置、速度和时间信息，从气压计获取高度数据，从磁力计获取航向信息；简化：代表传感器融合后的数据，用于导航和控制。"
+    },
+    {
+      "id": "blk-flight-controller-uuid",
+      "type": "Block",
+      "name": "FlightController",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：飞行控制器接收并解析'开始任务'指令；简化：代表飞行控制器，负责控制无人机飞行和任务执行。"
+    },
+    {
+      "id": "blk-sensor-fusion-uuid",
+      "type": "Block",
+      "name": "SensorFusionModule",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：传感器融合模块活动流程; 简化：代表传感器融合模块，负责处理多传感器数据。"
+    },
+    {
+      "id": "blk-data-link-uuid",
+      "type": "Block",
+      "name": "DataLinkModule",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：通过数据链模块尝试实时下传；简化：代表数据链模块，负责数据传输到地面站。"
+    },
+    {
+      "id": "blk-payload-uuid",
+      "type": "Block",
+      "name": "PayloadModule",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：任务载荷模块执行拍照操作；简化：代表任务载荷模块，负责数据采集（如拍照）。"
+    },
+    {
+      "id": "blk-motor-system-uuid",
+      "type": "Block",
+      "name": "MotorSystem",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：等待所有电机初始化完成；简化：代表电机系统，负责无人机推进和起飞/着陆。"
+    },
+    {
+      "id": "act-main-mission-uuid",
+      "type": "Activity",
+      "name": "自主测绘任务执行流程",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "nodes": [
+        "node-start-mission-uuid",
+        "node-validate-command-uuid",
+        "node-unlock-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-check-waypoint-uuid",
+        "node-trigger-data-uuid",
+        "node-data-transmission-uuid",
+        "node-loop-execution-uuid",
+        "node-return-land-uuid",
+        "node-end-report-uuid",
+        "node-validate-decision-uuid",
+        "node-waypoint-decision-uuid",
+        "node-loop-merge-uuid",
+        "node-data-fork-uuid",
+        "node-motor-join-uuid",
+        "node-end-mission-uuid",
+        "cbuf-flight-plan-uuid",
+        "cbuf-image-data-uuid",
+        "cbuf-mission-report-uuid"
+      ],
+      "edges": [
+        "edge-start-validate-uuid",
+        "edge-validate-decision-uuid",
+        "edge-validate-success-uuid",
+        "edge-validate-fail-uuid",
+        "edge-takeoff-navigate-uuid",
+        "edge-navigate-check-uuid",
+        "edge-check-trigger-uuid",
+        "edge-check-navigate-uuid",
+        "edge-trigger-transmission-uuid",
+        "edge-transmission-loop-uuid",
+        "edge-loop-navigate-uuid",
+        "edge-loop-return-uuid",
+        "edge-return-report-uuid",
+        "edge-report-end-uuid",
+        "edge-command-validate-uuid",
+        "edge-plan-validate-uuid",
+        "edge-sensor-navigate-uuid",
+        "edge-image-transmission-uuid",
+        "edge-report-output-uuid"
+      ],
+      "groups": [
+        "grp-flight-controller-uuid",
+        "grp-sensor-fusion-uuid",
+        "grp-data-link-uuid",
+        "grp-payload-uuid",
+        "grp-motor-system-uuid"
+      ],
+      "description": "原文：活动名称: 自主测绘任务执行流程; 简化：这是定义整个自主测绘任务执行流程的主要活动，涵盖从任务开始到结束的所有步骤。"
+    },
+    {
+      "id": "act-autonomous-flight-uuid",
+      "type": "Activity",
+      "name": "自主飞行控制",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：自主飞行控制: 接收并解析来自地面控制站的飞行计划, 采用自适应PID控制算法结合IMU和GPS数据动态调整电机转速。简化：此子活动负责飞行控制，包括解析计划和调整电机。"
+    },
+    {
+      "id": "act-multispectral-data-uuid",
+      "type": "Activity",
+      "name": "多光谱数据采集",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：多光谱数据采集: 根据触发条件控制多光谱相机拍照, 存储图像数据到机载存储, 并通过数传电台实时传输至地面站。简化：此子活动负责数据采集、存储和传输。"
+    },
+    {
+      "id": "act-safety-fault-uuid",
+      "type": "Activity",
+      "name": "安全故障处理",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：安全故障处理: 执行返航着陆(RTL)程序, 包括爬升至安全高度、飞向家位置、悬停确认、着陆。简化：此子活动负责在故障时执行返航和着陆。"
+    },
+    {
+      "id": "act-sensor-fusion-uuid",
+      "type": "Activity",
+      "name": "传感器融合模块活动流程",
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：传感器融合模块活动流程: 从IMU读取原始数据，从GPS模块接收位置、速度和时间信息，从气压计获取高度数据，从磁力计获取航向信息，运行EKF2传感器融合算法。简化：此子活动负责融合多传感器数据。"
+    },
+    {
+      "id": "node-start-mission-uuid",
+      "type": "InitialNode",
+      "name": "开始任务",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：1. 验证指令与计划: 飞行控制器接收并解析'开始任务'指令；简化：流程的起点，代表接收到开始任务指令。"
+    },
+    {
+      "id": "node-validate-command-uuid",
+      "type": "CallBehaviorAction",
+      "name": "验证指令与计划",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：1. 验证指令与计划: 飞行控制器接收并解析'开始任务'指令（MAV_CMD_MISSION_START），检查飞行计划的完整性和有效性。简化：此动作负责验证任务指令和飞行计划。"
+    },
+    {
+      "id": "pin-validate-in-command-uuid",
+      "type": "InputPin",
+      "name": "in_start_command",
+      "typeId": "blk-mavlink-command-uuid",
+      "parentId": "node-validate-command-uuid",
+      "description": "原文：飞行控制器接收并解析'开始任务'指令；简化：作为'验证指令与计划'动作的输入，接收开始任务指令。"
+    },
+    {
+      "id": "pin-validate-in-plan-uuid",
+      "type": "InputPin",
+      "name": "in_mission_plan",
+      "typeId": "blk-flight-plan-uuid",
+      "parentId": "node-validate-command-uuid",
+      "description": "原文：检查飞行计划的完整性和有效性；简化：作为'验证指令与计划'动作的输入，接收飞行计划。"
+    },
+    {
+      "id": "pin-validate-out-result-uuid",
+      "type": "OutputPin",
+      "name": "out_validation_result",
+      "parentId": "node-validate-command-uuid",
+      "description": "原文：验证失败则发送NACK；简化：作为'验证指令与计划'动作的输出，表示验证结果（成功或失败）。"
+    },
+    {
+      "id": "node-unlock-takeoff-uuid",
+      "type": "CallBehaviorAction",
+      "name": "解锁电机并起飞",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：2. 解锁电机并起飞: 飞控发送MAV_CMD_COMPONENT_ARM_DISARM解锁指令，等待所有电机初始化完成（超时3s）。控制无人机以1.5m/s垂直起飞至第一个航点的起始高度±2m。简化：此动作负责解锁电机并控制无人机起飞。"
+    },
+    {
+      "id": "node-navigate-waypoint-uuid",
+      "type": "CallBehaviorAction",
+      "name": "导航至下一航点",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：3. 导航至下一航点: 飞控根据传感器融合模块提供的实时位置，计算与目标航点的横向偏差和高度偏差，运行L1导航算法生成电机控制指令。简化：此动作负责导航到目标航点。"
+    },
+    {
+      "id": "pin-navigate-in-sensor-uuid",
+      "type": "InputPin",
+      "name": "in_sensor_data",
+      "typeId": "blk-sensor-data-uuid",
+      "parentId": "node-navigate-waypoint-uuid",
+      "description": "原文：飞控根据传感器融合模块提供的实时位置；简化：作为'导航至下一航点'动作的输入，接收传感器数据。"
+    },
+    {
+      "id": "pin-navigate-out-commands-uuid",
+      "type": "OutputPin",
+      "name": "out_navigation_commands",
+      "parentId": "node-navigate-waypoint-uuid",
+      "description": "原文：运行L1导航算法生成电机控制指令；简化：作为'导航至下一航点'动作的输出，生成电机控制命令。"
+    },
+    {
+      "id": "node-check-waypoint-uuid",
+      "type": "CallBehaviorAction",
+      "name": "检查航点到达条件",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：4. 检查航点到达条件: 当无人机进入以目标航点为中心、半径为5m的圆柱形空域（水平容差5m，垂直容差2m）并保持2秒时，判定为到达该航点。简化：此动作负责检查是否到达航点。"
+    },
+    {
+      "id": "node-trigger-data-uuid",
+      "type": "CallBehaviorAction",
+      "name": "触发数据采集",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：5. 触发数据采集: 在到达航点时，飞控通过任务载荷控制端口发送'拍照'指令（触发脉冲宽度20ms）。任务载荷模块执行拍照操作。简化：此动作负责触发数据采集（拍照）。"
+    },
+    {
+      "id": "pin-trigger-data-out-image-uuid",
+      "type": "OutputPin",
+      "name": "out_image_data",
+      "typeId": "blk-image-data-uuid",
+      "parentId": "node-trigger-data-uuid",
+      "description": "原文：任务载荷模块执行拍照操作；简化：作为'触发数据采集'动作的输出，生成图像数据。"
+    },
+    {
+      "id": "node-data-transmission-uuid",
+      "type": "CallBehaviorAction",
+      "name": "数据传输与存储",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：6. 数据传输与存储: 采集到的图像数据通过数据链模块尝试实时下传（QoS：尽力而为），同时被写入机载存储（写入速度≥20MB/s）。简化：此动作负责数据传输和存储。"
+    },
+    {
+      "id": "pin-data-transmission-in-image-uuid",
+      "type": "InputPin",
+      "name": "in_image_data",
+      "typeId": "blk-image-data-uuid",
+      "parentId": "node-data-transmission-uuid",
+      "description": "原文：采集到的图像数据通过数据链模块尝试实时下传；简化：作为'数据传输与存储'动作的输入，接收图像数据。"
+    },
+    {
+      "id": "node-loop-execution-uuid",
+      "type": "CallBehaviorAction",
+      "name": "循环执行",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：7. 循环执行: 重复步骤3至6，直至飞行计划中的所有航点都被访问完毕。支持动态跳过故障航点（连续3次无法到达）。简化：此动作代表循环执行导航、检查、触发和数据传输。"
+    },
+    {
+      "id": "node-return-land-uuid",
+      "type": "CallBehaviorAction",
+      "name": "执行返航着陆",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：8. 执行返航着陆: 飞控触发MAV_CMD_NAV_RETURN_TO_LAUNCH指令，无人机以5m/s速度爬升至RTL安全高度，飞向Home位置并执行自动着陆序列。简化：此动作负责返航和着陆。"
+    },
+    {
+      "id": "node-end-report-uuid",
+      "type": "CallBehaviorAction",
+      "name": "任务结束报告",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：9. 任务结束报告: 着陆并上锁电机后，飞控生成任务报告（包括完成的航点数、采集的图像数、飞行时间、平均速度等），通过数据链发送至地面站。简化：此动作负责生成和发送任务报告。"
+    },
+    {
+      "id": "pin-end-report-out-report-uuid",
+      "type": "OutputPin",
+      "name": "out_mission_report",
+      "typeId": "blk-mission-report-uuid",
+      "parentId": "node-end-report-uuid",
+      "description": "原文：飞控生成任务报告；简化：作为'任务结束报告'动作的输出，生成任务报告。"
+    },
+    {
+      "id": "node-validate-decision-uuid",
+      "type": "DecisionNode",
+      "name": "验证决策",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：验证失败则发送NACK；简化：此节点根据验证结果决定是否继续任务或结束。"
+    },
+    {
+      "id": "node-waypoint-decision-uuid",
+      "type": "DecisionNode",
+      "name": "航点到达决策",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：支持动态跳过故障航点（连续3次无法到达）；简化：此节点根据航点到达情况决定是否跳过故障航点。"
+    },
+    {
+      "id": "node-loop-merge-uuid",
+      "type": "MergeNode",
+      "name": "循环合并",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：重复步骤3至6；简化：此节点用于合并循环中的控制流，确保流程继续。"
+    },
+    {
+      "id": "node-data-fork-uuid",
+      "type": "ForkNode",
+      "name": "数据分叉",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：采集到的图像数据通过数据链模块尝试实时下传，同时被写入机载存储；简化：此节点分叉数据流以并行处理传输和存储。"
+    },
+    {
+      "id": "node-motor-join-uuid",
+      "type": "JoinNode",
+      "name": "电机初始化连接",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：等待所有电机初始化完成（超时3s）；简化：此节点同步电机初始化完成。"
+    },
+    {
+      "id": "node-end-mission-uuid",
+      "type": "ActivityFinalNode",
+      "name": "任务结束",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：任务结束报告；简化：流程的终点，代表任务完成。"
+    },
+    {
+      "id": "cbuf-flight-plan-uuid",
+      "type": "CentralBufferNode",
+      "name": "飞行计划缓存",
+      "typeId": "blk-flight-plan-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：mission_plan: FlightPlan {waypointCount:50..500,CRS:WGS84}; 简化：这是一个共享缓冲区，用于存储飞行计划数据。"
+    },
+    {
+      "id": "cbuf-image-data-uuid",
+      "type": "CentralBufferNode",
+      "name": "图像数据缓存",
+      "typeId": "blk-image-data-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：collected_imagery: ImageDataSet {format:GeoTIFF,count:uint16_t}; 简化：这是一个共享缓冲区，用于存储采集的图像数据。"
+    },
+    {
+      "id": "cbuf-mission-report-uuid",
+      "type": "CentralBufferNode",
+      "name": "任务报告缓存",
+      "typeId": "blk-mission-report-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：mission_status: MissionReport {success:bool,imagesCaptured:uint16_t}; 简化：这是一个共享缓冲区，用于存储任务报告数据。"
+    },
+    {
+      "id": "edge-start-validate-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-start-mission-uuid",
+      "targetId": "node-validate-command-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：1. 验证指令与计划; 简化：此控制流从起点启动验证动作。"
+    },
+    {
+      "id": "edge-validate-decision-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-validate-command-uuid",
+      "targetId": "node-validate-decision-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：验证失败则发送NACK；简化：此控制流在验证完成后进入决策节点。"
+    },
+    {
+      "id": "edge-validate-success-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-validate-decision-uuid",
+      "targetId": "node-unlock-takeoff-uuid",
+      "guard": "成功",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：验证失败则发送NACK；简化：在验证成功时触发的控制流，继续到解锁和起飞。"
+    },
+    {
+      "id": "edge-validate-fail-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-validate-decision-uuid",
+      "targetId": "node-end-mission-uuid",
+      "guard": "失败",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：验证失败则发送NACK；简化：在验证失败时触发的控制流，结束任务。"
+    },
+    {
+      "id": "edge-takeoff-navigate-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-unlock-takeoff-uuid",
+      "targetId": "node-navigate-waypoint-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：控制无人机以1.5m/s垂直起飞至第一个航点的起始高度±2m；简化：此控制流在起飞完成后启动导航。"
+    },
+    {
+      "id": "edge-navigate-check-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-navigate-waypoint-uuid",
+      "targetId": "node-check-waypoint-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：3. 导航至下一航点; 简化：此控制流在导航完成后启动航点到达检查。"
+    },
+    {
+      "id": "edge-check-trigger-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-check-waypoint-uuid",
+      "targetId": "node-trigger-data-uuid",
+      "guard": "到达",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：在到达航点时，飞控通过任务载荷控制端口发送'拍照'指令；简化：此控制流在到达航点时触发数据采集。"
+    },
+    {
+      "id": "edge-check-navigate-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-check-waypoint-uuid",
+      "targetId": "node-navigate-waypoint-uuid",
+      "guard": "跳过",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：支持动态跳过故障航点（连续3次无法到达）；简化：此控制流在跳过航点时直接返回导航。"
+    },
+    {
+      "id": "edge-trigger-transmission-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-trigger-data-uuid",
+      "targetId": "node-data-transmission-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：6. 数据传输与存储; 简化：此控制流在数据采集完成后启动数据传输。"
+    },
+    {
+      "id": "edge-transmission-loop-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-data-transmission-uuid",
+      "targetId": "node-loop-merge-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：重复步骤3至6；简化：此控制流在数据传输完成后返回循环执行。"
+    },
+    {
+      "id": "edge-loop-navigate-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-loop-merge-uuid",
+      "targetId": "node-navigate-waypoint-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：重复步骤3至6；简化：此控制流从合并节点继续导航到下一航点。"
+    },
+    {
+      "id": "edge-loop-return-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-loop-execution-uuid",
+      "targetId": "node-return-land-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：直至飞行计划中的所有航点都被访问完毕；简化：此控制流在所有航点完成后启动返航。"
+    },
+    {
+      "id": "edge-return-report-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-return-land-uuid",
+      "targetId": "node-end-report-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：8. 执行返航着陆; 简化：此控制流在返航完成后启动任务报告。"
+    },
+    {
+      "id": "edge-report-end-uuid",
+      "type": "ControlFlow",
+      "sourceId": "node-end-report-uuid",
+      "targetId": "node-end-mission-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：任务结束报告; 简化：此控制流在任务报告完成后结束流程。"
+    },
+    {
+      "id": "edge-command-validate-uuid",
+      "type": "ObjectFlow",
+      "sourceId": "pin-validate-in-command-uuid",
+      "targetId": "node-validate-command-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：飞行控制器接收并解析'开始任务'指令；简化：此对象流将开始任务指令传递给验证动作。"
+    },
+    {
+      "id": "edge-plan-validate-uuid",
+      "type": "ObjectFlow",
+      "sourceId": "cbuf-flight-plan-uuid",
+      "targetId": "pin-validate-in-plan-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：检查飞行计划的完整性和有效性；简化：此对象流将飞行计划传递给验证动作。"
+    },
+    {
+      "id": "edge-sensor-navigate-uuid",
+      "type": "ObjectFlow",
+      "sourceId": "act-sensor-fusion-uuid",
+      "targetId": "pin-navigate-in-sensor-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：飞控根据传感器融合模块提供的实时位置；简化：此对象流将传感器数据传递给导航动作。"
+    },
+    {
+      "id": "edge-image-transmission-uuid",
+      "type": "ObjectFlow",
+      "sourceId": "pin-trigger-data-out-image-uuid",
+      "targetId": "pin-data-transmission-in-image-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：采集到的图像数据通过数据链模块尝试实时下传；简化：此对象流将采集的图像数据传递给数据传输动作。"
+    },
+    {
+      "id": "edge-report-output-uuid",
+      "type": "ObjectFlow",
+      "sourceId": "pin-end-report-out-report-uuid",
+      "targetId": "cbuf-mission-report-uuid",
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：飞控生成任务报告；简化：此对象流将任务报告输出到缓存。"
+    },
+    {
+      "id": "grp-flight-controller-uuid",
+      "type": "ActivityPartition",
+      "name": "飞行控制器分区",
+      "representsId": "blk-flight-controller-uuid",
+      "parentId": "act-main-mission-uuid",
+      "nodeIds": [
+        "node-validate-command-uuid",
+        "node-unlock-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-check-waypoint-uuid",
+        "node-loop-execution-uuid",
+        "node-return-land-uuid",
+        "node-end-report-uuid",
+        "node-validate-decision-uuid",
+        "node-waypoint-decision-uuid",
+        "node-loop-merge-uuid"
+      ],
+      "description": "原文：飞行控制器接收并解析'开始任务'指令；简化：此泳道代表由飞行控制器执行的所有活动，包括验证、导航和决策。"
+    },
+    {
+      "id": "grp-sensor-fusion-uuid",
+      "type": "ActivityPartition",
+      "name": "传感器融合模块分区",
+      "representsId": "blk-sensor-fusion-uuid",
+      "parentId": "act-main-mission-uuid",
+      "nodeIds": [],
+      "description": "原文：传感器融合模块活动流程; 简化：此泳道代表由传感器融合模块执行的所有活动，提供实时传感器数据。"
+    },
+    {
+      "id": "grp-data-link-uuid",
+      "type": "ActivityPartition",
+      "name": "数据链模块分区",
+      "representsId": "blk-data-link-uuid",
+      "parentId": "act-main-mission-uuid",
+      "nodeIds": [
+        "node-data-transmission-uuid"
+      ],
+      "description": "原文：通过数据链模块尝试实时下传；简化：此泳道代表由数据链模块执行的所有活动，负责数据传输。"
+    },
+    {
+      "id": "grp-payload-uuid",
+      "type": "ActivityPartition",
+      "name": "任务载荷模块分区",
+      "representsId": "blk-payload-uuid",
+      "parentId": "act-main-mission-uuid",
+      "nodeIds": [
+        "node-trigger-data-uuid"
+      ],
+      "description": "原文：任务载荷模块执行拍照操作；简化：此泳道代表由任务载荷模块执行的所有活动，负责数据采集。"
+    },
+    {
+      "id": "grp-motor-system-uuid",
+      "type": "ActivityPartition",
+      "name": "电机系统分区",
+      "representsId": "blk-motor-system-uuid",
+      "parentId": "act-main-mission-uuid",
+      "nodeIds": [
+        "node-motor-join-uuid"
+      ],
+      "description": "原文：等待所有电机初始化完成；简化：此泳道代表由电机系统执行的所有活动，负责电机控制。"
+    }
+  ]
+}
