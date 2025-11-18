@@ -15,7 +15,9 @@ from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
 from json_repair import repair_json
-
+import concurrent.futures
+import threading
+from copy import deepcopy
 from graph.workflow_state import WorkflowState, SysMLTask, ProcessStatus
 from config.settings import settings
 
@@ -435,10 +437,63 @@ def classify_and_assign_tasks(state: WorkflowState) -> WorkflowState:
         state.status = ProcessStatus.FAILED
         return state
 
+def execute_single_task(state: WorkflowState, task: SysMLTask) -> tuple[str, ProcessStatus, str, any]:
+    """
+    执行单个SysML任务
+    
+    参数:
+        state: 当前工作流状态
+        task: 要执行的任务
+        
+    返回:
+        (task_id, status, error, result)
+    """
+    try:
+        logger.info(f"\n{'='*80}")
+        logger.info(f"⚙️ 执行任务 {task.id}")
+        logger.info(f"   类型: {task.type}")
+        logger.info(f"{'='*80}\n")
+        
+        # 创建状态副本以避免并发修改问题
+        task_state = deepcopy(state)
+        
+        # 根据任务类型调用对应的agent
+        if task.type == "Requirement" and requirement_agent:
+            task_state = requirement_agent(task_state, task.id, task.content)
+            
+        elif task.type == "Activity" and activity_agent:
+            task_state = activity_agent(task_state, task.id, task.content)
+            
+        elif task.type == "Block Definition and Internal Block" and bdd_ibd_agent:
+            task_state = bdd_ibd_agent(task_state, task.id, task.content)
+            
+        elif task.type == "State Machine" and state_machine_agent:
+            task_state = state_machine_agent(task_state, task.id, task.content)
+            
+        elif task.type == "Use Case" and usecase_agent:
+            task_state = usecase_agent(task_state, task.id, task.content)
+            
+        elif task.type == "Parameter" and parameter_agent:
+            task_state = parameter_agent(task_state, task.id, task.content)
+            
+        elif task.type == "Sequence" and sequence_agent:
+            task_state = sequence_agent(task_state, task.id, task.content)
+            
+        else:
+            logger.warning(f"⚠️ 不支持的任务类型或agent不可用: {task.type}")
+            return (task.id, ProcessStatus.FAILED, f"不支持的任务类型或agent不可用: {task.type}", None)
+        
+        logger.info(f"✅ 任务 {task.id} 执行完成")
+        return (task.id, ProcessStatus.COMPLETED, None, task_state)
+        
+    except Exception as e:
+        logger.error(f"❌ 任务 {task.id} 执行失败: {str(e)}", exc_info=True)
+        return (task.id, ProcessStatus.FAILED, str(e), None)
+
 
 def execute_sysml_tasks(state: WorkflowState) -> WorkflowState:
     """
-    执行SysML任务（调用各个agent）
+    并行执行SysML任务（调用各个agent）
     
     参数:
         state: 当前工作流状态
@@ -446,57 +501,58 @@ def execute_sysml_tasks(state: WorkflowState) -> WorkflowState:
     返回:
         更新后的工作流状态
     """
-    logger.info(f"🚀 开始执行 {len(state.assigned_tasks)} 个SysML任务")
+    logger.info(f"🚀 开始并行执行 {len(state.assigned_tasks)} 个SysML任务")
 
-    for task in state.assigned_tasks:
-        try:
-            logger.info(f"\n{'='*80}")
-            logger.info(f"⚙️ 执行任务 {task.id}")
-            logger.info(f"   类型: {task.type}")
-            logger.info(f"{'='*80}\n")
-            
-            task.status = ProcessStatus.PROCESSING
-            
-            # 根据任务类型调用对应的agent
-            if task.type == "Requirement" and requirement_agent:
-                state = requirement_agent(state, task.id, task.content)
+    # 使用线程锁保护共享资源
+    state_lock = threading.Lock()
+    
+    # 使用ThreadPoolExecutor进行并行执行
+    # max_workers可以根据需要调整，建议不超过CPU核心数的2倍
+    max_workers = min(len(state.assigned_tasks), 5)  # 最多5个并发
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # 提交所有任务
+        future_to_task = {
+            executor.submit(execute_single_task, state, task): task 
+            for task in state.assigned_tasks
+        }
+        
+        # 收集结果
+        completed_count = 0
+        total_tasks = len(state.assigned_tasks)
+        
+        for future in concurrent.futures.as_completed(future_to_task):
+            task = future_to_task[future]
+            try:
+                task_id, status, error, task_state = future.result()
                 
-            elif task.type == "Activity" and activity_agent:
-                state = activity_agent(state, task.id, task.content)
-                
-            elif task.type == "Block Definition and Internal Block" and bdd_ibd_agent:
-                state = bdd_ibd_agent(state, task.id, task.content)
-                
-            elif task.type == "State Machine" and state_machine_agent:
-                state = state_machine_agent(state, task.id, task.content)
-                
-            elif task.type == "Use Case" and usecase_agent:
-                state = usecase_agent(state, task.id, task.content)
-                
-            elif task.type == "Parameter" and parameter_agent:
-                state = parameter_agent(state, task.id, task.content)
-                
-            elif task.type == "Sequence" and sequence_agent:
-                state = sequence_agent(state, task.id, task.content)
-                
-            else:
-                logger.warning(f"⚠️ 不支持的任务类型或agent不可用: {task.type}")
-                task.status = ProcessStatus.FAILED
-                task.error = f"不支持的任务类型或agent不可用: {task.type}"
-                continue
-            
-            # 更新任务状态
-            for state_task in state.assigned_tasks:
-                if state_task.id == task.id:
-                    if state_task.status != ProcessStatus.FAILED:
-                        state_task.status = ProcessStatus.COMPLETED
-                    logger.info(f"✅ 任务 {task.id} 执行完成")
-                    break
+                # 使用锁更新状态
+                with state_lock:
+                    # 更新任务状态
+                    for state_task in state.assigned_tasks:
+                        if state_task.id == task_id:
+                            state_task.status = status
+                            if error:
+                                state_task.error = error
+                            break
                     
-        except Exception as e:
-            logger.error(f"❌ 任务 {task.id} 执行失败: {str(e)}", exc_info=True)
-            task.status = ProcessStatus.FAILED
-            task.error = str(e)
+                    # 如果任务成功，合并结果（根据你的需求调整）
+                    if task_state and status == ProcessStatus.COMPLETED:
+                        # 这里需要根据你的实际需求来合并状态
+                        # 例如：合并生成的图表、更新计数器等
+                        pass
+                    
+                    completed_count += 1
+                    logger.info(f"📊 进度: {completed_count}/{total_tasks} 任务完成")
+                    
+            except Exception as e:
+                logger.error(f"❌ 任务 {task.id} 处理异常: {str(e)}", exc_info=True)
+                with state_lock:
+                    for state_task in state.assigned_tasks:
+                        if state_task.id == task.id:
+                            state_task.status = ProcessStatus.FAILED
+                            state_task.error = str(e)
+                            break
     
     logger.info(f"\n{'='*80}")
     logger.info(f"🎉 所有任务执行完成")
