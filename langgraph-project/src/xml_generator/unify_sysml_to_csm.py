@@ -503,7 +503,6 @@ def apply_stereotypes(root_element):
         "ConstraintParameter": ("MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter", "base_Port"),
         "BindingConnector": ("sysml:BindingConnector", "base_Connector"), "AllocateActivityPartition": ("sysml:AllocateActivityPartition", "base_ActivityPartition"),
         "DeriveReqt": ("sysml:DeriveReqt", "base_Abstraction"), "Satisfy": ("sysml:Satisfy", "base_Abstraction"), "Verify": ("sysml:Verify", "base_Abstraction"),
-        "Actor": ("sysml:Actor", "base_Classifier"), "UseCase": ("sysml:UseCase", "base_UseCase"),
         "PartProperty": ("MD_Customization_for_SysML__additional_stereotypes:PartProperty", "base_Property"),
     }
     for stereotype_type, elements in stereotypes_to_apply.items():
