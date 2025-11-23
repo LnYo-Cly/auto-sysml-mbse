@@ -342,7 +342,6 @@ def merge_tasks_by_type(tasks: List[SysMLTaskExtraction]) -> List[SysMLTaskExtra
     logger.info(f"✅ 合并完成，最终任务数: {len(merged_tasks)}")
     return merged_tasks
 
-
 def classify_and_assign_tasks(state: WorkflowState) -> WorkflowState:
     """
     对chunks进行分类并分配任务
@@ -364,9 +363,9 @@ def classify_and_assign_tasks(state: WorkflowState) -> WorkflowState:
             return state
     
     try:
-        logger.info(f"📋 开始对 {len(state.text_chunks)} 个chunks进行任务分类")
+        logger.info(f"📋 开始并行对 {len(state.text_chunks)} 个chunks进行任务分类")
         
-        # 创建LLM和解析器
+        # 创建LLM和解析器（每个线程会复用这些对象）
         llm = ChatOpenAI(
             model=settings.llm_model,
             api_key=settings.openai_api_key,
@@ -377,18 +376,40 @@ def classify_and_assign_tasks(state: WorkflowState) -> WorkflowState:
         
         output_parser = JsonOutputParser(pydantic_object=SysMLTaskExtractionResult)
         
-        # 对每个chunk进行分类
+        # 使用线程锁保护共享资源
+        tasks_lock = threading.Lock()
         all_tasks = []
-        for i, chunk in enumerate(state.text_chunks):
-            logger.info(f"\n{'='*80}")
-            logger.info(f"📄 处理 Chunk {i+1}/{len(state.text_chunks)}")
-            logger.info(f"📏 Chunk长度: {len(chunk)} 字符")
-            logger.info(f"{'='*80}")
-            
-            tasks = classify_chunk(chunk, i, llm, output_parser)
-            all_tasks.extend(tasks)
         
-        logger.info(f"📊 总共提取了 {len(all_tasks)} 个原始任务")
+        # 并行处理chunks
+        max_workers = min(len(state.text_chunks), 5)  # 最多5个并发
+        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # 提交所有chunk的分类任务
+            future_to_chunk = {
+                executor.submit(classify_chunk, chunk, i, llm, output_parser): (chunk, i)
+                for i, chunk in enumerate(state.text_chunks)
+            }
+            
+            # 收集结果
+            completed_count = 0
+            total_chunks = len(state.text_chunks)
+            
+            for future in concurrent.futures.as_completed(future_to_chunk):
+                chunk, chunk_index = future_to_chunk[future]
+                try:
+                    tasks = future.result()
+                    
+                    # 使用锁添加任务
+                    with tasks_lock:
+                        all_tasks.extend(tasks)
+                        completed_count += 1
+                        logger.info(f"📊 Chunk处理进度: {completed_count}/{total_chunks}")
+                        logger.info(f"   Chunk {chunk_index + 1} 提取了 {len(tasks)} 个任务")
+                    
+                except Exception as e:
+                    logger.error(f"❌ Chunk {chunk_index + 1} 处理异常: {str(e)}", exc_info=True)
+        
+        logger.info(f"📊 并行处理完成，总共提取了 {len(all_tasks)} 个原始任务")
         
         # 按类型合并任务
         merged_tasks = merge_tasks_by_type(all_tasks)
@@ -436,7 +457,7 @@ def classify_and_assign_tasks(state: WorkflowState) -> WorkflowState:
         state.error_message = f"任务分类失败: {str(e)}"
         state.status = ProcessStatus.FAILED
         return state
-
+    
 def execute_single_task(state: WorkflowState, task: SysMLTask) -> tuple[str, ProcessStatus, str, any]:
     """
     执行单个SysML任务
