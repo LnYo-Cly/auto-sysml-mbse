@@ -1,0 +1,239 @@
+{
+  "model": [
+    {
+      "id": "model-autonomous-driving-uuid",
+      "name": "自动驾驶系统需求模型"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-functional-req-uuid",
+      "type": "Package",
+      "name": "功能需求",
+      "description": "该包包含自动驾驶系统的核心功能需求，涵盖环境感知、定位、路径规划和运动控制等关键功能模块"
+    },
+    {
+      "id": "pkg-nonfunctional-req-uuid",
+      "type": "Package",
+      "name": "非功能需求",
+      "description": "该包包含系统的性能、可靠性和计算能力等非功能性需求，确保系统在实际运行中的稳定性和效率"
+    },
+    {
+      "id": "req-env-perception-uuid",
+      "type": "Requirement",
+      "name": "环境感知与障碍物检测",
+      "reqId": "REQ-FUN-001",
+      "text": "系统应通过多传感器融合（激光雷达、摄像头、毫米波雷达）检测车辆周围360度范围内的静态和动态障碍物，包括其他车辆、行人、交通标志等，检测距离范围0.5-150米，检测精度≥99%",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应通过多传感器融合（激光雷达、摄像头、毫米波雷达）检测车辆周围360度范围内的静态和动态障碍物，包括其他车辆、行人、交通标志等，检测距离范围0.5-150米，检测精度≥99%。简化：该需求要求系统具备全面的环境感知能力，通过多传感器融合技术实现360度无死角障碍物检测，确保行车安全。背景：这是自动驾驶系统的基础功能，直接影响后续的路径规划和决策。"
+    },
+    {
+      "id": "req-precise-localization-uuid",
+      "type": "Requirement",
+      "name": "高精度定位与地图匹配",
+      "reqId": "REQ-FUN-002",
+      "text": "系统应结合GPS（精度≤10cm）、IMU和激光雷达点云数据，实现车辆在HD地图中的精确定位，横向定位误差≤15cm，纵向定位误差≤20cm",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应结合GPS（精度≤10cm）、IMU和激光雷达点云数据，实现车辆在HD地图中的精确定位，横向定位误差≤15cm，纵向定位误差≤20cm。简化：该需求要求系统实现厘米级的高精度定位，通过多源传感器融合确保车辆在HD地图中的准确位置。背景：精确定位是自动驾驶车辆路径规划和控制的先决条件。"
+    },
+    {
+      "id": "req-real-time-planning-uuid",
+      "type": "Requirement",
+      "name": "实时路径规划与决策",
+      "reqId": "REQ-FUN-003",
+      "text": "系统应基于A*或RRT*算法，每100ms重新规划一次路径，考虑交通规则、障碍物位置和车辆动力学约束，规划延迟≤50ms",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应基于A*或RRT*算法，每100ms重新规划一次路径，考虑交通规则、障碍物位置和车辆动力学约束，规划延迟≤50ms。简化：该需求要求系统具备实时路径规划和决策能力，在动态环境中快速生成安全可行的行驶路径。背景：实时规划能力直接影响自动驾驶系统的响应速度和安全性。"
+    },
+    {
+      "id": "req-vehicle-control-uuid",
+      "type": "Requirement",
+      "name": "车辆运动控制",
+      "reqId": "REQ-FUN-004",
+      "text": "系统应通过PID控制器或MPC控制器，控制车辆的转向、油门和制动，实现车道保持误差≤10cm，速度控制精度±1km/h",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应通过PID控制器或MPC控制器，控制车辆的转向、油门和制动，实现车道保持误差≤10cm，速度控制精度±1km/h。简化：该需求要求系统精确控制车辆的运动状态，确保行驶的稳定性和安全性。背景：精确的运动控制是实现自动驾驶功能的关键环节。"
+    },
+    {
+      "id": "req-system-response-uuid",
+      "type": "Requirement",
+      "name": "系统响应时间",
+      "reqId": "REQ-NFN-001",
+      "text": "从传感器数据采集到执行器控制输出的端到端延迟≤100ms，感知-决策-控制环路频率≥20Hz",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：从传感器数据采集到执行器控制输出的端到端延迟≤100ms，感知-决策-控制环路频率≥20Hz。简化：该需求规定了系统的实时性能要求，确保整个控制环路的快速响应。背景：低延迟是保证自动驾驶系统安全性的重要指标。"
+    },
+    {
+      "id": "req-system-reliability-uuid",
+      "type": "Requirement",
+      "name": "系统可靠性",
+      "reqId": "REQ-NFN-002",
+      "text": "系统应达到ASIL-D功能安全等级，平均无故障时间(MTBF)≥10,000小时，关键子系统采用冗余设计",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：系统应达到ASIL-D功能安全等级，平均无故障时间(MTBF)≥10,000小时，关键子系统采用冗余设计。简化：该需求要求系统具备高可靠性和功能安全性，通过冗余设计和严格的安全标准确保长期稳定运行。背景：ASIL-D是汽车功能安全的最高等级，对生命安全至关重要。"
+    },
+    {
+      "id": "req-computing-performance-uuid",
+      "type": "Requirement",
+      "name": "计算性能",
+      "reqId": "REQ-NFN-003",
+      "text": "主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s，支持并行处理多路传感器数据流",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s，支持并行处理多路传感器数据流。简化：该需求规定了系统的计算能力要求，确保能够高效处理复杂的感知和决策任务。背景：强大的计算性能是支撑自动驾驶算法实时运行的基础。"
+    },
+    {
+      "id": "blk-perception-system-uuid",
+      "type": "Block",
+      "name": "感知系统",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：通过多传感器融合（激光雷达、摄像头、毫米波雷达）检测车辆周围360度范围内的静态和动态障碍物。职责：负责环境感知和障碍物检测，融合多传感器数据。组成：包含激光雷达处理模块、摄像头视觉处理模块、毫米波雷达处理模块、传感器融合算法模块。技术：采用深度学习算法进行目标检测和分类，实现多传感器数据融合。"
+    },
+    {
+      "id": "blk-localization-system-uuid",
+      "type": "Block",
+      "name": "定位系统",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：结合GPS（精度≤10cm）、IMU和激光雷达点云数据，实现车辆在HD地图中的精确定位。职责：负责车辆的高精度定位和地图匹配。组成：包含GPS接收模块、IMU惯性测量单元、激光雷达定位模块、地图匹配算法。技术：采用卡尔曼滤波和SLAM技术实现多源定位数据融合。"
+    },
+    {
+      "id": "blk-planning-system-uuid",
+      "type": "Block",
+      "name": "规划决策系统",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：基于A*或RRT*算法，每100ms重新规划一次路径，考虑交通规则、障碍物位置和车辆动力学约束。职责：负责实时路径规划和决策制定。组成：包含全局路径规划模块、局部避障模块、行为决策模块。技术：采用A*、RRT*等搜索算法，结合车辆动力学模型进行路径优化。"
+    },
+    {
+      "id": "blk-control-system-uuid",
+      "type": "Block",
+      "name": "控制系统",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：通过PID控制器或MPC控制器，控制车辆的转向、油门和制动。职责：负责车辆的运动控制和执行。组成：包含转向控制模块、油门控制模块、制动控制模块、车辆状态估计模块。技术：采用PID控制、模型预测控制(MPC)等控制算法。"
+    },
+    {
+      "id": "blk-main-computing-uuid",
+      "type": "Block",
+      "name": "主计算单元",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s。职责：负责系统的核心计算任务，包括感知数据处理、决策算法运行、控制指令生成。组成：包含AI推理引擎、并行计算单元、高速内存系统、数据总线。技术：采用GPU/TPU等专用AI加速器，支持多路传感器数据并行处理。"
+    },
+    {
+      "id": "tc-obstacle-detection-test-uuid",
+      "type": "TestCase",
+      "name": "障碍物检测精度测试",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：检测精度≥99%。测试目的：验证环境感知系统的障碍物检测精度。测试方法：在测试场地设置多种障碍物场景，使用真值系统对比检测结果。预期结果：检测精度达到99%以上，误检率和漏检率均低于1%。"
+    },
+    {
+      "id": "tc-localization-accuracy-test-uuid",
+      "type": "TestCase",
+      "name": "定位精度测试",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：横向定位误差≤15cm，纵向定位误差≤20cm。测试目的：验证定位系统的精度指标。测试方法：使用高精度RTK-GPS作为基准，在不同场景下测试定位误差。预期结果：横向误差≤15cm，纵向误差≤20cm，满足高精度定位要求。"
+    },
+    {
+      "id": "tc-planning-realtime-test-uuid",
+      "type": "TestCase",
+      "name": "路径规划实时性测试",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：每100ms重新规划一次路径，规划延迟≤50ms。测试目的：验证路径规划系统的实时性能。测试方法：在动态环境中测试路径规划响应时间和规划频率。预期结果：规划延迟≤50ms，规划频率≥10Hz，满足实时性要求。"
+    },
+    {
+      "id": "tc-control-accuracy-test-uuid",
+      "type": "TestCase",
+      "name": "控制系统精度测试",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：车道保持误差≤10cm，速度控制精度±1km/h。测试目的：验证运动控制系统的控制精度。测试方法：在标准测试道路上测试车道保持和速度控制性能。预期结果：车道保持误差≤10cm，速度控制精度±1km/h。"
+    },
+    {
+      "id": "tc-end-to-end-latency-test-uuid",
+      "type": "TestCase",
+      "name": "端到端延迟测试",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：从传感器数据采集到执行器控制输出的端到端延迟≤100ms。测试目的：验证系统整体响应时间。测试方法：使用时间戳记录传感器输入到控制输出的完整流程。预期结果：端到端延迟≤100ms，控制环路频率≥20Hz。"
+    },
+    {
+      "id": "tc-reliability-test-uuid",
+      "type": "TestCase",
+      "name": "可靠性测试",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：系统应达到ASIL-D功能安全等级，平均无故障时间(MTBF)≥10,000小时。测试目的：验证系统的可靠性和安全性。测试方法：进行长时间运行测试、故障注入测试、冗余切换测试。预期结果：通过ASIL-D认证，MTBF≥10,000小时，关键功能具备冗余备份。"
+    },
+    {
+      "id": "tc-computing-performance-test-uuid",
+      "type": "TestCase",
+      "name": "计算性能测试",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s。测试目的：验证计算系统的性能指标。测试方法：使用标准AI推理基准测试和内存带宽测试工具。预期结果：AI推理性能≥50 TOPS，内存带宽≥200GB/s，支持多路传感器数据并行处理。"
+    },
+    {
+      "id": "rel-satisfy-perception-env-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-perception-system-uuid",
+      "requirementId": "req-env-perception-uuid",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应通过多传感器融合检测车辆周围360度范围内的静态和动态障碍物。感知系统通过激光雷达、摄像头、毫米波雷达等多传感器融合技术满足环境感知需求，采用深度学习算法实现高精度障碍物检测，检测范围0.5-150米，精度≥99%。"
+    },
+    {
+      "id": "rel-satisfy-localization-precise-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-localization-system-uuid",
+      "requirementId": "req-precise-localization-uuid",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应结合GPS、IMU和激光雷达点云数据实现车辆在HD地图中的精确定位。定位系统通过多源传感器融合和地图匹配算法满足高精度定位需求，采用卡尔曼滤波技术实现厘米级定位精度，横向误差≤15cm，纵向误差≤20cm。"
+    },
+    {
+      "id": "rel-satisfy-planning-realtime-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-planning-system-uuid",
+      "requirementId": "req-real-time-planning-uuid",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应基于A*或RRT*算法每100ms重新规划一次路径。规划决策系统通过高效的路径搜索算法满足实时规划需求，考虑交通规则、障碍物位置和车辆动力学约束，规划延迟≤50ms，确保安全可行的行驶路径。"
+    },
+    {
+      "id": "rel-satisfy-control-vehicle-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-control-system-uuid",
+      "requirementId": "req-vehicle-control-uuid",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应通过PID控制器或MPC控制器控制车辆的转向、油门和制动。控制系统通过先进的控制算法满足车辆运动控制需求，实现精确的车道保持（误差≤10cm）和速度控制（精度±1km/h），确保行驶稳定性和安全性。"
+    },
+    {
+      "id": "rel-satisfy-computing-performance-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-main-computing-uuid",
+      "requirementId": "req-computing-performance-uuid",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s。主计算单元通过高性能AI加速器和并行计算架构满足计算性能需求，支持多路传感器数据流并行处理，为整个自动驾驶系统提供强大的计算支撑。"
+    },
+    {
+      "id": "rel-verify-detection-env-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-obstacle-detection-test-uuid",
+      "requirementId": "req-env-perception-uuid",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：检测精度≥99%。通过障碍物检测精度测试验证环境感知需求，使用真值系统对比检测结果，确保检测精度达到99%以上，误检率和漏检率均满足要求，验证多传感器融合技术的有效性。"
+    },
+    {
+      "id": "rel-verify-localization-precise-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-localization-accuracy-test-uuid",
+      "requirementId": "req-precise-localization-uuid",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：横向定位误差≤15cm，纵向定位误差≤20cm。通过定位精度测试验证高精度定位需求，使用高精度RTK-GPS作为基准，在不同场景下测试定位误差，确保横向误差≤15cm、纵向误差≤20cm，验证多源定位融合算法的准确性。"
+    },
+    {
+      "id": "rel-verify-planning-realtime-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-planning-realtime-test-uuid",
+      "requirementId": "req-real-time-planning-uuid",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：每100ms重新规划一次路径，规划延迟≤50ms。通过路径规划实时性测试验证实时规划需求，在动态环境中测试规划响应时间和频率，确保规划延迟≤50ms、规划频率满足要求，验证A*/RRT*算法在实时场景下的性能。"
+    },
+    {
+      "id": "rel-verify-control-accuracy-uuid",
+      "type": "Verify",
+      "testCaseId": "tc-control-accuracy-test-uuid",
+      "description": "验证关系：测试验证需求"
+    }
+  ]
+}

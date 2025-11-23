@@ -1,0 +1,377 @@
+{
+  "model": [
+    {
+      "id": "model-uav-system-uuid",
+      "name": "无人机任务系统模型"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-uav-system-uuid",
+      "type": "Package",
+      "name": "无人机任务系统",
+      "parentId": "model-uav-system-uuid",
+      "description": "原文：自主起飞与航线执行流程: 无人机从地面待命状态开始...完整自动化过程。简化：该包封装了无人机任务执行相关的所有流程和组件。"
+    },
+    {
+      "id": "blk-mission-data-uuid",
+      "type": "Block",
+      "name": "MissionData",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：输入/输出: IN: mission_plan: MissionData。简化：代表包含航点、高度、速度等参数的任务规划数据。"
+    },
+    {
+      "id": "blk-mission-report-uuid",
+      "type": "Block",
+      "name": "MissionReport",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：OUT: mission_report: MissionReport。简化：代表任务完成后生成的总结报告。"
+    },
+    {
+      "id": "blk-fault-data-uuid",
+      "type": "Block",
+      "name": "FaultData",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：IN: fault_detection: FaultData。简化：代表系统检测到的故障数据。"
+    },
+    {
+      "id": "blk-emergency-status-uuid",
+      "type": "Block",
+      "name": "EmergencyStatus",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：OUT: emergency_status: EmergencyStatus。简化：代表应急处理流程的输出状态。"
+    },
+    {
+      "id": "blk-flight-controller-uuid",
+      "type": "Block",
+      "name": "飞行控制器",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：自主飞行控制活动：...结合飞行控制器实时调整电机转速。简化：代表无人机的核心飞行控制单元。"
+    },
+    {
+      "id": "blk-sensor-system-uuid",
+      "type": "Block",
+      "name": "传感器系统",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：通过GPS/IMU传感器融合定位。简化：代表无人机的定位和状态感知系统。"
+    },
+    {
+      "id": "blk-communication-uuid",
+      "type": "Block",
+      "name": "通信系统",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：实时遥测数据传输活动：通过数传电台...向地面站发送...遥测数据包。简化：代表无人机与地面站之间的通信设备。"
+    },
+    {
+      "id": "blk-power-system-uuid",
+      "type": "Block",
+      "name": "动力系统",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：执行起飞前自检（传感器、动力系统、通信链路）。简化：代表无人机的电机和电池系统。"
+    },
+    {
+      "id": "act-mission-exec-uuid",
+      "type": "Activity",
+      "name": "自主起飞与航线执行流程",
+      "parentId": "pkg-uav-system-uuid",
+      "nodes": [
+        "node-mission-start",
+        "node-receive-plan",
+        "node-preflight-check",
+        "node-check-decision",
+        "node-unlock-throttle",
+        "node-climb-altitude",
+        "node-enter-autonomous",
+        "node-execute-waypoint-task",
+        "node-check-return-condition",
+        "node-return-decision",
+        "node-fly-to-home",
+        "node-execute-landing",
+        "node-lock-motors",
+        "node-generate-report",
+        "node-mission-end"
+      ],
+      "edges": [
+        "edge-cf-start-receive",
+        "edge-of-plan-data",
+        "edge-cf-receive-check",
+        "edge-cf-check-ok",
+        "edge-cf-check-fail",
+        "edge-cf-unlock-climb",
+        "edge-cf-climb-autonomous",
+        "edge-cf-autonomous-waypoint",
+        "edge-cf-waypoint-checkreturn",
+        "edge-cf-checkreturn-decision",
+        "edge-cf-decision-flyhome",
+        "edge-cf-flyhome-landing",
+        "edge-cf-landing-lock",
+        "edge-cf-lock-generate",
+        "edge-of-report-out",
+        "edge-cf-generate-end"
+      ],
+      "groups": [
+        "grp-flight-control-uuid",
+        "grp-communication-uuid",
+        "grp-sensor-uuid"
+      ],
+      "description": "原文：自主起飞与航线执行流程: 无人机从地面待命状态开始...完整自动化过程。简化：这是定义无人机从起飞到任务执行再到返航的完整主活动。"
+    },
+    {
+      "id": "act-emergency-uuid",
+      "type": "Activity",
+      "name": "应急处理流程",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：当系统检测到严重故障或异常情况时，立即启动应急处理流程。简化：处理无人机故障和异常情况的子活动。"
+    },
+    {
+      "id": "act-flight-control-uuid",
+      "type": "Activity",
+      "name": "自主飞行控制活动",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：自主飞行控制活动：接收地面控制站上传的飞行计划...实现自主航线飞行。简化：负责无人机自主飞行的控制逻辑。"
+    },
+    {
+      "id": "act-telemetry-uuid",
+      "type": "Activity",
+      "name": "实时遥测数据传输活动",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：实时遥测数据传输活动：通过数传电台...发送包含位置、高度、速度...等参数的遥测数据包。简化：负责向地面站传输无人机状态数据。"
+    },
+    {
+      "id": "act-emergency-return-uuid",
+      "type": "Activity",
+      "name": "应急返航活动",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：应急返航活动：检测到通信信号丢失超过5秒...自动执行返航程序。简化：在特定紧急条件下触发返航的子活动。"
+    },
+    {
+      "id": "act-payload-uuid",
+      "type": "Activity",
+      "name": "有效载荷管理活动",
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：有效载荷管理活动：通过专用的载荷接口...向挂载设备供电并传输控制指令。简化：管理无人机挂载设备（如相机）的子活动。"
+    },
+    {
+      "id": "grp-flight-control-uuid",
+      "type": "ActivityPartition",
+      "name": "飞行控制分区",
+      "representsId": "blk-flight-controller-uuid",
+      "parentId": "act-mission-exec-uuid",
+      "nodeIds": [
+        "node-unlock-throttle",
+        "node-climb-altitude",
+        "node-enter-autonomous",
+        "node-execute-waypoint-task",
+        "node-fly-to-home",
+        "node-execute-landing",
+        "node-lock-motors"
+      ],
+      "description": "原文：自主飞行控制活动：接收地面控制站上传的飞行计划...实现自主航线飞行。简化：此泳道代表由飞行控制器执行的飞行相关活动。"
+    },
+    {
+      "id": "grp-communication-uuid",
+      "type": "ActivityPartition",
+      "name": "通信分区",
+      "representsId": "blk-communication-uuid",
+      "parentId": "act-mission-exec-uuid",
+      "nodeIds": [
+        "node-receive-plan",
+        "node-generate-report"
+      ],
+      "description": "原文：实时遥测数据传输活动：通过数传电台...发送...遥测数据包。简化：此泳道代表由通信系统执行的数据传输活动。"
+    },
+    {
+      "id": "grp-sensor-uuid",
+      "type": "ActivityPartition",
+      "name": "传感器分区",
+      "representsId": "blk-sensor-system-uuid",
+      "parentId": "act-mission-exec-uuid",
+      "nodeIds": [
+        "node-preflight-check",
+        "node-check-return-condition"
+      ],
+      "description": "原文：通过GPS/IMU传感器融合定位。简化：此泳道代表由传感器系统执行的感知和定位活动。"
+    },
+    {
+      "id": "node-mission-start",
+      "type": "InitialNode",
+      "name": "任务开始",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：自主起飞与航线执行流程: 无人机从地面待命状态开始。简化：流程的起点，代表无人机开始执行任务。"
+    },
+    {
+      "id": "node-receive-plan",
+      "type": "CallBehaviorAction",
+      "name": "接收任务规划数据",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：1.接收任务规划数据（航点、高度、速度参数）。简化：此动作接收来自地面站的任务规划信息。"
+    },
+    {
+      "id": "pin-receive-plan-in",
+      "type": "InputPin",
+      "name": "in_任务规划",
+      "typeId": "blk-mission-data-uuid",
+      "parentId": "node-receive-plan",
+      "description": "原文：1.接收任务规划数据（航点、高度、速度参数）。简化：作为\"接收任务规划数据\"动作的输入，接收MissionData。"
+    },
+    {
+      "id": "node-preflight-check",
+      "type": "CallBehaviorAction",
+      "name": "执行起飞前自检",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：2.执行起飞前自检（传感器、动力系统、通信链路）。简化：此动作在起飞前进行系统安全检查。"
+    },
+    {
+      "id": "node-check-decision",
+      "type": "DecisionNode",
+      "name": "自检决策",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：3.若自检通过，解锁电机并缓慢推油门至起飞推力。简化：此决策节点根据自检结果决定是否继续起飞流程。"
+    },
+    {
+      "id": "pin-check-decision-in",
+      "type": "InputPin",
+      "name": "in_自检结果",
+      "typeId": "blk-fault-data-uuid",
+      "parentId": "node-check-decision",
+      "description": "原文：2.执行起飞前自检（传感器、动力系统、通信链路）。简化：作为\"自检决策\"节点的输入，接收自检状态。"
+    },
+    {
+      "id": "node-unlock-throttle",
+      "type": "CallBehaviorAction",
+      "name": "解锁电机并缓慢推油门",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：3.若自检通过，解锁电机并缓慢推油门至起飞推力。简化：此动作控制无人机电机启动和推力增加。"
+    },
+    {
+      "id": "node-climb-altitude",
+      "type": "CallBehaviorAction",
+      "name": "垂直爬升至目标高度",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：4.垂直爬升至目标高度（通常10-20米）。简化：此动作控制无人机垂直上升至指定高度。"
+    },
+    {
+      "id": "node-enter-autonomous",
+      "type": "CallBehaviorAction",
+      "name": "转入自主飞行模式",
+      "behavior": "act-flight-control-uuid",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：5.转入自主飞行模式，按顺序飞向各航点。简化：此动作切换无人机到自主飞行模式。"
+    },
+    {
+      "id": "node-execute-waypoint-task",
+      "type": "CallBehaviorAction",
+      "name": "在每个航点执行预设任务动作",
+      "behavior": "act-payload-uuid",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：6.在每个航点执行预设任务动作（如拍照、悬停）。简化：此动作在航点执行特定任务（如触发相机）。"
+    },
+    {
+      "id": "node-check-return-condition",
+      "type": "CallBehaviorAction",
+      "name": "检测返航条件",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：7.检测返航条件（低电量、超时、指令触发）。简化：此动作持续监控是否满足返航条件。"
+    },
+    {
+      "id": "node-return-decision",
+      "type": "DecisionNode",
+      "name": "返航决策",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：7.检测返航条件（低电量、超时、指令触发）。简化：此决策节点根据多种条件判断是否需要启动返航。"
+    },
+    {
+      "id": "node-fly-to-home",
+      "type": "CallBehaviorAction",
+      "name": "飞向返航点",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：8.飞向返航点并执行自动降落程序。简化：此动作控制无人机飞向预设的返航点。"
+    },
+    {
+      "id": "node-execute-landing",
+      "type": "CallBehaviorAction",
+      "name": "执行自动降落程序",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：8.飞向返航点并执行自动降落程序。简化：此动作控制无人机执行降落序列。"
+    },
+    {
+      "id": "node-lock-motors",
+      "type": "CallBehaviorAction",
+      "name": "锁定电机",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：9.着陆后锁定电机，生成任务报告。简化：此动作在着陆后停止并锁定电机。"
+    },
+    {
+      "id": "node-generate-report",
+      "type": "CallBehaviorAction",
+      "name": "生成任务报告",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：9.着陆后锁定电机，生成任务报告。简化：此动作生成任务执行总结报告。"
+    },
+    {
+      "id": "pin-generate-report-out",
+      "type": "OutputPin",
+      "name": "out_任务报告",
+      "typeId": "blk-mission-report-uuid",
+      "parentId": "node-generate-report",
+      "description": "原文：9.着陆后锁定电机，生成任务报告。简化：作为\"生成任务报告\"动作的输出，产生MissionReport。"
+    },
+    {
+      "id": "node-mission-end",
+      "type": "ActivityFinalNode",
+      "name": "任务结束",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：9.着陆后锁定电机，生成任务报告。简化：流程的终点，代表任务完成。"
+    },
+    {
+      "id": "edge-cf-start-receive",
+      "type": "ControlFlow",
+      "sourceId": "node-mission-start",
+      "targetId": "node-receive-plan",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：自主起飞与航线执行流程: 无人机从地面待命状态开始。简化：从起始节点到接收任务规划数据的控制流。"
+    },
+    {
+      "id": "edge-of-plan-data",
+      "type": "ObjectFlow",
+      "sourceId": "pin-receive-plan-in",
+      "targetId": "node-preflight-check",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：1.接收任务规划数据（航点、高度、速度参数）。简化：此对象流将接收到的MissionData传递给后续动作。"
+    },
+    {
+      "id": "edge-cf-receive-check",
+      "type": "ControlFlow",
+      "sourceId": "node-receive-plan",
+      "targetId": "node-preflight-check",
+      "parentId": "act-mission-exec-uuid",
+      "description": "简化：从接收任务到执行自检的控制流。"
+    },
+    {
+      "id": "edge-cf-check-ok",
+      "type": "ControlFlow",
+      "sourceId": "node-check-decision",
+      "targetId": "node-unlock-throttle",
+      "guard": "[自检通过]",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：3.若自检通过，解锁电机并缓慢推油门至起飞推力。简化：在自检通过时触发的控制流，继续起飞流程。"
+    },
+    {
+      "id": "edge-cf-check-fail",
+      "type": "ControlFlow",
+      "sourceId": "node-check-decision",
+      "targetId": "node-mission-end",
+      "guard": "[自检不通过]",
+      "parentId": "act-mission-exec-uuid",
+      "description": "原文：3.若自检通过...简化：在自检不通过时触发的控制流，直接结束流程。"
+    },
+    {
+      "id": "edge-cf-unlock-climb",
+      "type": "ControlFlow",
+      "sourceId": "node-unlock-throttle",
+      "targetId": "node-climb-altitude",
+      "parentId": "act-mission-exec-uuid",
+      "description": "流：ControlFlow 从 node-unlock-throttle 到 node-climb-altitude"
+    }
+  ]
+}

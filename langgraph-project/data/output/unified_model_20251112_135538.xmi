@@ -258,10 +258,7 @@
   <sysml:TestCase xmi:id="_tc_aircon_control_uuid_app" base_Behavior="tc-aircon-control-uuid"/>
   <sysml:TestCase xmi:id="_tc_aircon_precision_uuid_app" base_Behavior="tc-aircon-precision-uuid"/>
   <sysml:TestCase xmi:id="_tc_aircon_energy_uuid_app" base_Behavior="tc-aircon-energy-uuid"/>
-  <sysml:Actor xmi:id="_actor_driver_uuid_app" base_Classifier="actor-driver-uuid"/>
-  <sysml:Actor xmi:id="_actor_touch_screen_uuid_app" base_Classifier="actor-touch-screen-uuid"/>
-  <sysml:Actor xmi:id="_actor_user_uuid_app" base_Classifier="actor-user-uuid"/>
-  <sysml:UseCase xmi:id="_uc_control_air_con_uuid_app" base_UseCase="uc-control-air-con-uuid"/>
+
   <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop1_app" base_Property="prop1"/>
   <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop2_app" base_Property="prop2"/>
   <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop3_app" base_Property="prop3"/>

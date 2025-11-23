@@ -1,0 +1,42 @@
+{
+  "timestamp": "20251123_221926",
+  "total_tasks": 6,
+  "tasks": [
+    {
+      "index": 1,
+      "type": "Requirement",
+      "content": "如多个电机同时故障，执行紧急降落程序\n\n---\n\n通信完全中断时依靠机载智能决策\n\n---\n\n着陆环境不安全时寻找备降场地\n\n---\n\nREQ-FUN-001: 自主飞行控制 - 系统接收地面控制站上传的飞行计划（包含航点坐标、高度、速度），通过GPS/IMU传感器融合定位，结合飞行控制器实时调整电机转速，实现自主航线飞行。优先级：High\n\n---\n\nREQ-FUN-002: 实时遥测数据传输 - 系统通过数传电台以2.4GHz频率，以10Hz频率向地面站发送包含位置、高度、速度、电池电压、电机状态等参数的遥测数据包。优先级：High\n\n---\n\nREQ-FUN-003: 应急返航功能 - 当检测到通信信号丢失超过5秒，或电池电压低于22.2V（6S锂电的3.7V/片），或IMU传感器持续报错时，系统自动执行返航程序，飞向预设的返航点并自主降落。优先级：High\n\n---\n\nREQ-FUN-004: 有效载荷管理 - 系统通过专用的载荷接口（如PWM、UART或USB-C）向挂载设备供电（12V DC, max 3A）并传输控制指令，支持基本的云台控制和快门触发功能。优先级：Medium\n\n---\n\nREQ-NFN-001: 飞行性能 - 最大续航时间：≥ 30分钟（悬停，标准载荷1kg），最大水平飞行速度：15 m/s，最大抗风能力：10 m/s，工作海拔高度：0 - 3000米。优先级：High\n\n---\n\nREQ-NFN-002: 控制响应 - 控制指令处理延迟：< 50ms（从接收指令到开始执行），姿态控制频率：200Hz，位置控制精度：水平±1.0米，垂直±0.5米（GPS模式）。优先级：High\n\n---\n\nREQ-NFN-003: 可靠性 - 平均无故障时间（MTBF）：> 1000小时，通信链路可靠性：> 99.9%（在视距范围内），支持关键传感器（IMU、GPS）冗余。优先级：High\n\n---\n\nREQ-NFN-004: 环境适应性 - 工作温度范围：-10°C 到 +45°C，防护等级：IP43（防溅水、防尘），电磁兼容性：符合FCC Part 15标准。优先级：Medium",
+      "content_length": 915
+    },
+    {
+      "index": 2,
+      "type": "Parameter",
+      "content": "约束块: 飞行续航时间计算 - 物理意义与应用: 此约束关系基于能量守恒原理，通过电池容量、系统功耗和飞行状态参数估算最大续航时间，用于任务规划和电量管理决策。参数: T_flight: 续航时间 [分钟], C_battery: 电池容量 [mAh], P_system: 系统平均功耗 [W], V_battery: 电池电压 [V], η: 系统效率系数 [0.7-0.9]。约束公式: T_flight = (C_battery × V_battery × η) / (P_system × 60) × 0.85\n\n---\n\n约束块: 升力与推力平衡 - 物理意义与应用: 描述四旋翼无人机在悬停状态下升力与重力的平衡关系，用于电机推力分配和功耗估算。参数: F_total: 总升力 [N], m: 无人机总质量 [kg], g: 重力加速度 [9.8 m/s²], F_motor: 单个电机推力 [N], n: 电机数量\n\n---\n\n约束块: 飞行续航时间计算\n物理意义与应用: 此约束关系基于能量守恒原理，通过电池容量、系统功耗和飞行状态参数估算最大续航时间，用于任务规划和电量管理决策。\n参数: \nT_flight: 续航时间 [分钟]\nC_battery: 电池容量 [\n\n---\n\n飞行性能参数：最大续航时间≥30分钟，最大水平飞行速度15 m/s，最大抗风能力10 m/s，工作海拔高度0-3000米\n\n---\n\n控制响应参数：控制指令处理延迟<50ms，姿态控制频率200Hz，位置控制精度水平±1.0米，垂直±0.5米\n\n---\n\n可靠性参数：平均无故障时间>1000小时，通信链路可靠性>99.9%，关键传感器冗余\n\n---\n\n环境适应性参数：工作温度范围-10°C到+45°C，防护等级IP43，电磁兼容性符合FCC Part 15标准\n\n---\n\n电气参数：电池电压阈值22.2V（6S锂电的3.7V/片），载荷供电12V DC, max 3A",
+      "content_length": 839
+    },
+    {
+      "index": 3,
+      "type": "Activity",
+      "content": "活动名称: 应急处理流程\n流程概述: 当系统检测到严重故障或异常情况时，立即启动应急处理流程，优先保障飞行器安全和避免次生灾害。\n输入/输出: IN: fault_detection: FaultData, OUT: emergency_status: EmergencyStatus\n步骤序列: \n1. 故障检测与分类（动力系统、导航、通信等）\n2. 根据故障等级执行相应应急策略\n3. 尝试故障恢复或系统重构\n4. 若恢复失败，启动返航程序\n5. 持续监控关键参数直至安全着陆\n6. 记录故障数据和处置过程\n\n---\n\n自动降落程序\n9. 着陆后锁定电机，生成任务报告\n\n---\n\n自主起飞与航线执行流程: 无人机从地面待命状态开始，经过安全检查、起飞爬升，到按预设航线执行任务，最后返航降落的完整自动化过程。输入/输出: IN: mission_plan: MissionData, OUT: mission_report: MissionReport。步骤序列: 1.接收任务规划数据（航点、高度、速度参数）2.执行起飞前自检（传感器、动力系统、通信链路）3.若自检通过，解锁电机并缓慢推油门至起飞推力4.垂直爬升至目标高度（通常10-20米）5.转入自主飞行模式，按顺序飞向各航点6.在每个航点执行预设任务动作（如拍照、悬停）7.检测返航条件（低电量、超时、指令触发）8.飞向返航点并执行自动降落程序9.着陆后锁定电机，生成任务报告\n\n---\n\n应急处理流程: 当系统检测到严重故障或异常情况时，立即启动应急处理流程，优先保障飞行器安全和避免次生灾害。输入/输出: IN: fault_detection: FaultData, OUT: emergency_status: EmergencyStatus。步骤序列: 1.故障检测与分类（动力系统、导航、通信等）2.根据故障等级执行相应应急策略3.尝试...\n\n---\n\n自主飞行控制活动：接收地面控制站上传的飞行计划（包含航点坐标、高度、速度），通过GPS/IMU传感器融合定位，结合飞行控制器实时调整电机转速，实现自主航线飞行\n\n---\n\n实时遥测数据传输活动：通过数传电台以2.4GHz频率，以10Hz频率向地面站发送包含位置、高度、速度、电池电压、电机状态等参数的遥测数据包\n\n---\n\n应急返航活动：检测到通信信号丢失超过5秒，或电池电压低于22.2V，或IMU传感器持续报错时，自动执行返航程序，飞向预设的返航点并自主降落\n\n---\n\n有效载荷管理活动：通过专用的载荷接口（如PWM、UART或USB-C）向挂载设备供电（12V DC, max 3A）并传输控制指令，支持基本的云台控制和快门触发功能",
+      "content_length": 1137
+    },
+    {
+      "index": 4,
+      "type": "State Machine",
+      "content": "上下文块: FlightController\n行为模型概述: 飞行控制器的状态机定义了无人机从关机到任务执行再到关机的完整生命周期。状态转换由用户指令、系统事件和传感器数据共同驱动，确保飞行器在各种工况下都有明确的行为模式。\n状态定义:\n状态名称: POWER_OFF\n描述: 系统完全断电状态，所有电子设备不工作\nentry / 无动作\ndo / 等待电源连接\nexit / 初始化硬件寄存器\n状态名称: INITIALIZING\n描述: 系统上电后的初始化过程，进行硬件自检和传感器校准\nentry / 启动所有传感器和子系统\ndo / 执行传感器校准和系统自检\nexit / 生成初始化报告\n状态名称: STANDBY\n描述: 系统准备就绪，等待用户指令，可以进行手动操控或任务上传\nentry / 启动遥测数据传输\ndo / 监控系统状态，响应地面站查询\nexit / 准备模式切换\n状态名称: MANUAL_FLIGHT\n描述: 手动飞行模式，完全由操作员通过遥控器控制\nentry / 切换到手动控制算法\ndo / 实时响应遥控指令，保持基本稳定性\nexit / 保存手动飞行数据\n状态名称: AUTO_MISSION\n描述: 自主任务执行模式，按预设航线自动飞行\nentry / 加载任务数据，启动导航算法\ndo / 执行航点导航，监控任务进度\nexit / 生成任务执行报告\n状态名称: RETURN_TO_LAUNCH\n描述: 返航模式，自动返回起飞点并降落\nentry / 计算最优返航路径\ndo / 执行返航导航，准备降落\nexit / 执行着陆后处理\n状态名称: EMERGENCY\n描述: 紧急状态，处理系统故障和异常情况\nentry / 触发警报，执行紧急协议\ndo / 尝试故障恢复，保障安全\nexit / 记录紧急事件数据\n转换:\n[POWER_OFF] --[power_on]--> [INITIALIZING]\n[INITIALIZING] --[init_complete[self_test_passed]]--> [STANDBY]\n[STANDBY] --[manual_control_cmd]--> [MANUAL_FLIGHT]\n[STANDBY] --[auto_mission_uploaded]--> [AUTO_MISSION]\n[MANUAL_FLIGHT] --[rtl_triggered]--> [RETURN_TO_LAUNCH]\n[AUTO_MISSION] --[battery_low || comm_lost]--> [RETURN_TO_LAUNCH]\n[任何状态] --[critical_fault_detected]--> [EMERGENCY]\n[RETURN_TO_LAUNCH] --[landing_complete]--> [STANDBY]\n\n---\n\n飞行模式状态：FlightModeEnum {MANUAL, GPS_HOLD, AUTO, RTL} - 手动模式、GPS悬停模式、自动模式、返航模式\n\n---\n\n系统健康状态：HealthStatus {NORMAL, WARNING, CRITICAL} - 正常、警告、严重",
+      "content_length": 1367
+    },
+    {
+      "index": 5,
+      "type": "Use Case",
+      "content": "用例名称: 执行测绘任务\n场景简述: 测绘工程师需要在某区域进行地形测绘，他通过地面站软件规划好测绘区域和飞行航线，上传至无人机后启动自主飞行任务。无人机按预定航线自动飞行，采集高精度影像数据，任务完成后自动返航降落。\n参与者: Primary: 测绘工程师, Secondary: 地面控制站\n基本流程: \n1. 工程师连接无人机与地面站\n2. 规划测绘区域和飞行参数\n3. 上传任务数据至无人机\n4. 执行起飞前检查并确认\n5. 启动自主飞行任务\n6. 无人机按航线飞行并采集数据\n7. 任务完成自动返航\n8. 下载采集的影像数据\n备选/异常流程: \n如遇恶劣天气，工程师可手动中止任务\n通信中断时无人机自动执行返航程序\n低电量预警时提前结束任务返航\n\n---\n\n用例名称: 应急故障处理\n场景简述: 飞行过程中无人机突然检测到电机异常振动，系统自动评估故障等级，决定继续任务或立即返航，同时向地面站发送警报信息。\n参与者: Primary: 飞行控制器, Secondary: 地面操作员\n基本流程: \n1. 传感器检测到异常振动模式\n2. 系统诊断故障类型和严重程度\n3. 如为轻微故障，继续任务但增加监控频率\n4. 如为严重故障，立即启动返航程序\n5. 向地面站发送故障报告和处置方案\n6. 安全降落后生成详细故障分析\n备选/异常流程: \n如多个电机同时故障，执行紧急降落程序\n通信完全中断时依靠机载智能决策\n着陆环境不安全时寻找备降场地",
+      "content_length": 624
+    },
+    {
+      "index": 6,
+      "type": "Block Definition and Internal Block",
+      "content": "FlightController: 运行姿态解算和导航算法，处理遥控器和地面站指令，管理飞行模式和状态切换，监控系统健康状态。关键属性: currentAttitude: EulerAngles [degrees] {-180..180}, flightMode: FlightModeEnum {MANUAL, GPS_HOLD, AUTO, RTL}, systemHealth: HealthStatus {NORMAL, WARNING, CRITICAL}。核心操作: updateNavigation(solution: NavSolution): Boolean, setFlightMode(mode: FlightModeEnum): Status, executeEmergencyProcedure(type: EmergencyType): void\n\n---\n\nPowerManagementModule: 电源管理模块负责整个系统的电力分配、电池状态监控和功耗优化。核心职责: 监控电池电压、电流和剩余电量，管理多路电源输出分配，实现低电量预警和保护，支持充电状态检测。关键属性: batteryVoltage: Real [V] {0..25.2}, batteryCapacity: Real [mAh] {0..16000}, powerOutputStatus: Boolean[4] {true, false}。核心操作: getBatteryInfo(): BatteryInfo, setPowerOutput(port: Integer, state: Boolean): Status, calculateRemainingTime(): Real\n\n---\n\nCommunicationSystem: 通信系统实现无人机与地面站、遥控器之间的双向数据交换。核心职责: 处理2.4GHz数传通信，管理900MHz远程通信链路，实现视频数据流传输，处理通信加密和校验。关键属性: linkQuality: Real [%] {0..100}, dataRate: Real [kbps] {0..1000}, encryptionStatus: Boolean {true, false}。核心操作: sendTelemetry(data: TelemetryPacket): Status, receiveCommand(): CommandPacket, setFrequency(band: FrequencyBand): Status\n\n---\n\nNavigationSystem: 导航系统通过多传感器融合提供精确的位置、速度和姿态信息。核心职责: GPS/GLONASS卫星定位，IMU惯性测量单元数据融合，气压计高度测量，视觉里程计辅助定位。关键属性: position: Coordinates {lat, lon, alt}, velocity: Real [m/s] {0..20}, positionAccuracy: Real [m] {0.5..5.0}。核心操作: getPosition(): NavSolution, calibrateSensors(): Status, setHomePosition(pos: Coordinates): void\n\n---\n\nPropulsionSystem: 推进系统包含电机、电调和螺旋桨，负责产生飞行所需的升力和推力。核心职责: 控制无刷电机转速，管理电子调速器工作状态，实现电机同步和平衡，监控电机温度和状态。关键属性: motorRPM: Real[4] [rpm] {0..12000}, motorTemperature: Real[4] [°C] {-20..120}, thrustOutput: Real [N] {0..200}。核心操作: setMotorSpeed(motorID: Integer, speed: Real): Status, getMotorStatus(motorID: Integer): MotorStatus, emergencyStop(): void\n\n---\n\nUAVSystem内部结构: 采用星型与总线混合的架构，飞行控制器作为中心节点，通过CAN总线和UART接口与各子系统通信。组成部分: fc: FlightController, pmm: PowerManagementModule, comm: CommunicationSystem, nav: NavigationSystem, prop: PropulsionSystem。连接关系: [fc.powerPort] <--> [pmm.controlPort], [fc.commPort] <--> [comm.dataPort], [fc.navPort] <--> [nav.dataPort], [fc.motorPort] <--> [prop.controlPort], [pmm.powerOut1] <--> [comm.powerPort], [pmm.powerOut2] <--> [nav.powerPort]\n\n---\n\n系统顶层架构设计理念：采用分层模块化架构，将飞行控制、动力系统、通信导航、任务载荷等核心功能解耦，通过标准化的硬件接口和通信协议实现高内聚低耦合的设计目标。主要划分为感知决策层、控制执行层和物理设备层\n\n---\n\nFlightController块定义：作为无人机的大脑，飞行控制器负责整合各类传感器数据，运行飞行控制算法，并协调各子系统的工作。采用双核处理器架构确保实时性和可靠性。核心职责：运行姿态解算和导航算法，处理遥控器和地面站指令，管理飞行模式和状态切换，监控系统健康状态。关键属性：currentAttitude: EulerAngles [degrees] {-180..180}, flightMode: FlightModeEnum {MANUAL, GPS_HOLD, AUTO, RTL}, systemHealth: HealthStatus {NORMAL, WARNING, CRITICAL}。核心操作：updateNavigation(solution: NavSolution): Boolean, setFlight",
+      "content_length": 2673
+    }
+  ]
+}

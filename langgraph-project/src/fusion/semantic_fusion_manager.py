@@ -2,9 +2,13 @@
 
 import sys
 import os
-from typing import Dict, Any, Optional, Tuple
+import logging
+import concurrent.futures
+from typing import Dict, Any, Optional, Tuple, List
 
 from flask import json
+
+logger = logging.getLogger(__name__)
 
 # 设置项目根目录以便导入模块
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -211,3 +215,122 @@ class SemanticFusionManager:
         with self.pg_conn.cursor() as cursor:
             cursor.execute(query, (canonical_key, element_name, element_type, element_desc, str(embedding_json)))
         self.pg_conn.commit()
+    
+    def get_embeddings_parallel(self, items: List[Tuple[str, str]]) -> List[Optional[List[float]]]:
+        """
+        并行生成向量
+        
+        Args:
+            items: List of (text_to_embed, identifier_for_log)
+            
+        Returns:
+            List[Optional[List[float]]]: 对应每个文本的嵌入向量
+        """
+        if not items:
+            return []
+        
+        embeddings = [None] * len(items)
+        
+        def _worker(index, text, identifier):
+            try:
+                embedding = self.embed_client.get_embedding(text)
+                if embedding:
+                    logger.debug(f"✅ [{index}] 向量生成成功: {identifier}")
+                return index, embedding
+            except Exception as e:
+                logger.error(f"❌ [{index}] 向量生成失败 ({identifier}): {e}")
+                return index, None
+        
+        max_workers = min(len(items), 10)  # 最多10个并发
+        logger.info(f"🚀 开始并行生成 {len(items)} 个向量 (并发数: {max_workers})")
+        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [executor.submit(_worker, i, item[0], item[1]) for i, item in enumerate(items)]
+            
+            for future in concurrent.futures.as_completed(futures):
+                idx, emb = future.result()
+                embeddings[idx] = emb
+        
+        success_count = sum(1 for e in embeddings if e is not None)
+        logger.info(f"✅ 并行向量生成完成: {success_count}/{len(items)} 成功")
+        
+        return embeddings
+    
+    def search_candidate_only(self, embedding: List[float], element_type: str, canonical_key: str) -> Optional[Dict[str, Any]]:
+        """
+        仅搜索相似候选，不进行 LLM 仲裁
+        
+        Args:
+            embedding: 嵌入向量
+            element_type: 元素类型
+            canonical_key: 规范键
+            
+        Returns:
+            如果找到相似候选，返回 {'key': str, 'description': str, 'similarity': float}
+        """
+        query = f"""
+        SELECT canonical_key, element_description, 1 - (embedding <=> %s) AS similarity
+        FROM {config.PG_VECTOR_TABLE_NAME}
+        WHERE element_type = %s AND canonical_key != %s
+        ORDER BY similarity DESC
+        LIMIT 1;
+        """
+        
+        with self.pg_conn.cursor() as cursor:
+            cursor.execute(query, (str(embedding), element_type, canonical_key))
+            result = cursor.fetchone()
+        
+        if result:
+            similar_key, similar_desc, similarity_score = result
+            if similarity_score >= self.SIMILARITY_THRESHOLD:
+                return {
+                    'key': similar_key,
+                    'description': similar_desc or '',
+                    'similarity': similarity_score
+                }
+        
+        return None
+    
+    def store_embedding_direct(self, canonical_key: str, element: Dict[str, Any], embedding: List[float]):
+        """
+        直接存储嵌入向量（不再重新生成）
+        
+        Args:
+            canonical_key: 规范键
+            element: 元素数据
+            embedding: 已生成的嵌入向量
+        """
+        element_name = element.get('name', canonical_key.split('::')[-1])
+        element_type = element.get('type')
+        element_desc = element.get('description', '')
+        
+        if not element_type:
+            logger.warning(f"⚠️ 元素缺少 type，跳过存储: {canonical_key}")
+            return
+        
+        # 处理 description
+        if isinstance(element_desc, dict):
+            element_desc = json.dumps(element_desc, ensure_ascii=False)
+        
+        # 转换向量为 JSON 字符串
+        if isinstance(embedding, (list, dict)):
+            embedding_json = json.dumps(embedding)
+        else:
+            embedding_json = str(embedding)
+        
+        query = f"""
+        INSERT INTO {config.PG_VECTOR_TABLE_NAME} (canonical_key, element_name, element_type, element_description, embedding)
+        VALUES (%s, %s, %s, %s, %s)
+        ON CONFLICT (canonical_key) DO UPDATE SET
+            element_name = EXCLUDED.element_name,
+            element_description = EXCLUDED.element_description,
+            embedding = EXCLUDED.embedding;
+        """
+        
+        try:
+            with self.pg_conn.cursor() as cursor:
+                cursor.execute(query, (canonical_key, element_name, element_type, element_desc, str(embedding_json)))
+            self.pg_conn.commit()
+            logger.debug(f"✅ 向量存储成功: {canonical_key}")
+        except Exception as e:
+            logger.error(f"❌ 向量存储失败 ({canonical_key}): {e}")

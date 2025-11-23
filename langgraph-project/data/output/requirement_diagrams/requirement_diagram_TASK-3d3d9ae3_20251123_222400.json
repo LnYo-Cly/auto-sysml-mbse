@@ -1,0 +1,237 @@
+{
+  "model": [
+    {
+      "id": "model-uav-system-uuid",
+      "name": "无人机系统需求模型"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-functional-req-uuid",
+      "type": "Package",
+      "name": "功能需求包",
+      "description": "该包包含无人机系统的核心功能需求，包括自主飞行、遥测传输、应急返航和载荷管理等功能"
+    },
+    {
+      "id": "pkg-nonfunctional-req-uuid",
+      "type": "Package",
+      "name": "非功能需求包",
+      "description": "该包包含无人机系统的性能、可靠性、环境适应性等非功能性需求"
+    },
+    {
+      "id": "pkg-emergency-scenarios-uuid",
+      "type": "Package",
+      "name": "应急场景包",
+      "description": "该包包含无人机在各种紧急情况下的处理需求和决策逻辑"
+    },
+    {
+      "id": "req-autonomous-flight-uuid",
+      "type": "Requirement",
+      "name": "自主飞行控制",
+      "reqId": "REQ-FUN-001",
+      "text": "系统接收地面控制站上传的飞行计划（包含航点坐标、高度、速度），通过GPS/IMU传感器融合定位，结合飞行控制器实时调整电机转速，实现自主航线飞行。优先级：High",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统接收地面控制站上传的飞行计划（包含航点坐标、高度、速度），通过GPS/IMU传感器融合定位，结合飞行控制器实时调整电机转速，实现自主航线飞行。简化：该需求要求无人机具备完整的自主飞行能力，能够按照预设航线自动飞行。背景：这是无人机系统的核心功能，确保飞行任务的自动化执行。"
+    },
+    {
+      "id": "req-telemetry-data-uuid",
+      "type": "Requirement",
+      "name": "实时遥测数据传输",
+      "reqId": "REQ-FUN-002",
+      "text": "系统通过数传电台以2.4GHz频率，以10Hz频率向地面站发送包含位置、高度、速度、电池电压、电机状态等参数的遥测数据包。优先级：High",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统通过数传电台以2.4GHz频率，以10Hz频率向地面站发送包含位置、高度、速度、电池电压、电机状态等参数的遥测数据包。简化：该需求要求无人机系统能够实时传输飞行状态数据，为地面监控提供必要信息。背景：遥测数据是地面操作人员监控无人机状态和做出决策的关键依据。"
+    },
+    {
+      "id": "req-emergency-return-uuid",
+      "type": "Requirement",
+      "name": "应急返航功能",
+      "reqId": "REQ-FUN-003",
+      "text": "当检测到通信信号丢失超过5秒，或电池电压低于22.2V（6S锂电的3.7V/片），或IMU传感器持续报错时，系统自动执行返航程序，飞向预设的返航点并自主降落。优先级：High",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：当检测到通信信号丢失超过5秒，或电池电压低于22.2V（6S锂电的3.7V/片），或IMU传感器持续报错时，系统自动执行返航程序，飞向预设的返航点并自主降落。简化：该需求要求无人机在检测到关键故障时能够自动执行安全返航程序。背景：这是确保飞行安全的关键功能，防止因设备故障导致的事故。"
+    },
+    {
+      "id": "req-payload-management-uuid",
+      "type": "Requirement",
+      "name": "有效载荷管理",
+      "reqId": "REQ-FUN-004",
+      "text": "系统通过专用的载荷接口（如PWM、UART或USB-C）向挂载设备供电（12V DC, max 3A）并传输控制指令，支持基本的云台控制和快门触发功能。优先级：Medium",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统通过专用的载荷接口（如PWM、UART或USB-C）向挂载设备供电（12V DC, max 3A）并传输控制指令，支持基本的云台控制和快门触发功能。简化：该需求要求无人机能够管理和控制搭载的各种有效载荷设备。背景：载荷管理是无人机执行特定任务（如航拍、测绘等）的基础能力。"
+    },
+    {
+      "id": "req-flight-performance-uuid",
+      "type": "Requirement",
+      "name": "飞行性能",
+      "reqId": "REQ-NFN-001",
+      "text": "最大续航时间：≥ 30分钟（悬停，标准载荷1kg），最大水平飞行速度：15 m/s，最大抗风能力：10 m/s，工作海拔高度：0 - 3000米。优先级：High",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：最大续航时间：≥ 30分钟（悬停，标准载荷1kg），最大水平飞行速度：15 m/s，最大抗风能力：10 m/s，工作海拔高度：0 - 3000米。简化：该需求定义了无人机的基本飞行性能指标，包括续航、速度、抗风能力和工作海拔。背景：这些性能指标直接影响无人机的任务执行能力和适用范围。"
+    },
+    {
+      "id": "req-control-response-uuid",
+      "type": "Requirement",
+      "name": "控制响应",
+      "reqId": "REQ-NFN-002",
+      "text": "控制指令处理延迟：< 50ms（从接收指令到开始执行），姿态控制频率：200Hz，位置控制精度：水平±1.0米，垂直±0.5米（GPS模式）。优先级：High",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：控制指令处理延迟：< 50ms（从接收指令到开始执行），姿态控制频率：200Hz，位置控制精度：水平±1.0米，垂直±0.5米（GPS模式）。简化：该需求规定了无人机控制系统的响应性能和精度要求。背景：快速响应和高精度控制是确保飞行稳定性和任务准确性的关键。"
+    },
+    {
+      "id": "req-reliability-uuid",
+      "type": "Requirement",
+      "name": "可靠性",
+      "reqId": "REQ-NFN-003",
+      "text": "平均无故障时间（MTBF）：> 1000小时，通信链路可靠性：> 99.9%（在视距范围内），支持关键传感器（IMU、GPS）冗余。优先级：High",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：平均无故障时间（MTBF）：> 1000小时，通信链路可靠性：> 99.9%（在视距范围内），支持关键传感器（IMU、GPS）冗余。简化：该需求定义了无人机系统的可靠性指标和冗余设计要求。背景：高可靠性是确保飞行安全和任务连续性的基础，特别是在关键应用中。"
+    },
+    {
+      "id": "req-environmental-adaptability-uuid",
+      "type": "Requirement",
+      "name": "环境适应性",
+      "reqId": "REQ-NFN-004",
+      "text": "工作温度范围：-10°C 到 +45°C，防护等级：IP43（防溅水、防尘），电磁兼容性：符合FCC Part 15标准。优先级：Medium",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：工作温度范围：-10°C 到 +45°C，防护等级：IP43（防溅水、防尘），电磁兼容性：符合FCC Part 15标准。简化：该需求规定了无人机在各种环境条件下的适应能力和防护标准。背景：环境适应性确保无人机能够在不同气候和电磁环境下稳定工作。"
+    },
+    {
+      "id": "req-multi-motor-failure-uuid",
+      "type": "Requirement",
+      "name": "多电机故障应急处理",
+      "reqId": "EMG-001",
+      "text": "如多个电机同时故障，执行紧急降落程序",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：如多个电机同时故障，执行紧急降落程序。简化：该需求要求在多个电机同时发生故障的极端情况下，系统能够执行紧急降落以确保安全。背景：这是飞行安全的重要保障措施，防止因动力系统故障导致的坠机事故。"
+    },
+    {
+      "id": "req-comm-loss-decision-uuid",
+      "type": "Requirement",
+      "name": "通信中断智能决策",
+      "reqId": "EMG-002",
+      "text": "通信完全中断时依靠机载智能决策",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：通信完全中断时依靠机载智能决策。简化：该需求要求在通信完全中断的情况下，无人机能够依靠机载智能系统自主做出决策。背景：确保在失去地面控制的情况下，无人机仍能安全运行并完成任务。"
+    },
+    {
+      "id": "req-unsafe-landing-uuid",
+      "type": "Requirement",
+      "name": "不安全着陆环境处理",
+      "reqId": "EMG-003",
+      "text": "着陆环境不安全时寻找备降场地",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：着陆环境不安全时寻找备降场地。简化：该需求要求无人机在检测到预设着陆点不安全时，能够自动寻找合适的备降场地。背景：这是提高飞行安全性的重要功能，避免在不适宜的环境下强行降落。"
+    },
+    {
+      "id": "blk-flight-control-uuid",
+      "type": "Block",
+      "name": "飞行控制系统",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：通过GPS/IMU传感器融合定位，结合飞行控制器实时调整电机转速。职责：负责无人机的自主飞行控制、姿态稳定和航线跟踪。组成：包含飞行控制器、GPS模块、IMU传感器、电机驱动模块。技术：采用传感器融合算法和PID控制技术实现精确飞行控制。"
+    },
+    {
+      "id": "blk-communication-uuid",
+      "type": "Block",
+      "name": "通信系统",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统通过数传电台以2.4GHz频率传输数据。职责：负责无人机与地面站之间的数据通信，包括遥测数据传输和控制指令接收。组成：包含数传电台、天线系统、通信协议栈。技术：采用2.4GHz频段，支持10Hz的数据传输频率。"
+    },
+    {
+      "id": "blk-power-management-uuid",
+      "type": "Block",
+      "name": "电源管理系统",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：检测电池电压低于22.2V时执行返航程序。职责：监控电池状态，管理电源分配，确保系统稳定供电。组成：包含电池监测模块、电源分配单元、电压转换模块。技术：实时监测6S锂电池电压，在低电压时触发保护机制。"
+    },
+    {
+      "id": "blk-payload-interface-uuid",
+      "type": "Block",
+      "name": "载荷接口系统",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：通过专用的载荷接口向挂载设备供电并传输控制指令。职责：管理有效载荷设备的供电和控制。组成：包含多种接口模块（PWM、UART、USB-C）、电源输出模块。技术：提供12V DC电源，最大3A输出，支持多种通信协议。"
+    },
+    {
+      "id": "blk-emergency-decision-uuid",
+      "type": "Block",
+      "name": "应急决策系统",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：通信完全中断时依靠机载智能决策，着陆环境不安全时寻找备降场地。职责：在紧急情况下做出智能决策，确保飞行安全。组成：包含环境感知模块、决策算法模块、应急执行模块。技术：采用机器学习算法和环境感知技术实现智能决策。"
+    },
+    {
+      "id": "tc-autonomous-flight-test-uuid",
+      "type": "TestCase",
+      "name": "自主飞行功能测试",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：验证自主航线飞行功能。测试目的：验证无人机按照预设飞行计划自主飞行的能力。测试方法：上传包含多个航点的飞行计划，观察无人机是否能够准确跟踪航线。预期结果：无人机能够按照预设航点、高度和速度完成自主飞行任务。"
+    },
+    {
+      "id": "tc-telemetry-test-uuid",
+      "type": "TestCase",
+      "name": "遥测数据传输测试",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：验证实时遥测数据传输功能。测试目的：验证无人机以10Hz频率向地面站发送遥测数据的能力。测试方法：监控数据链路，检查传输频率和数据完整性。预期结果：遥测数据以10Hz频率稳定传输，包含所有必要参数且数据准确无误。"
+    },
+    {
+      "id": "tc-emergency-return-test-uuid",
+      "type": "TestCase",
+      "name": "应急返航功能测试",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：验证应急返航功能在各种故障情况下的响应。测试目的：验证无人机在通信丢失、低电压或传感器故障时自动返航的能力。测试方法：模拟通信中断、低电压报警和传感器故障场景。预期结果：无人机在检测到故障条件后5秒内启动返航程序，安全返回预设返航点。"
+    },
+    {
+      "id": "tc-multi-motor-failure-test-uuid",
+      "type": "TestCase",
+      "name": "多电机故障应急测试",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：验证多个电机同时故障时的应急处理。测试目的：验证无人机在多个电机故障情况下的紧急降落能力。测试方法：模拟多个电机同时失效的场景。预期结果：系统检测到多电机故障后立即执行紧急降落程序，确保安全着陆。"
+    },
+    {
+      "id": "tc-comm-loss-decision-test-uuid",
+      "type": "TestCase",
+      "name": "通信中断决策测试",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：验证通信完全中断时机载智能决策能力。测试目的：验证无人机在失去通信连接时的自主决策能力。测试方法：切断通信链路，观察无人机行为。预期结果：无人机依靠机载智能系统做出合理决策，继续安全飞行或执行应急程序。"
+    },
+    {
+      "id": "rel-derive-emergency-motor-uuid",
+      "type": "DeriveReqt",
+      "sourceRequirementId": "req-emergency-return-uuid",
+      "derivedRequirementId": "req-multi-motor-failure-uuid",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：如多个电机同时故障，执行紧急降落程序。该需求是从应急返航功能需求派生，细化了在特定严重故障情况下的应急处理流程，原因是多电机故障是飞行安全的最严重威胁之一，需要专门的紧急降落程序来最大限度保障安全。"
+    },
+    {
+      "id": "rel-derive-emergency-comm-uuid",
+      "type": "DeriveReqt",
+      "sourceRequirementId": "req-emergency-return-uuid",
+      "derivedRequirementId": "req-comm-loss-decision-uuid",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：通信完全中断时依靠机载智能决策。该需求是从应急返航功能需求派生，细化了在通信完全中断情况下的智能决策要求，原因是单纯的返航可能不足以应对复杂的飞行环境，需要更高级的智能决策能力。"
+    },
+    {
+      "id": "rel-derive-emergency-landing-uuid",
+      "type": "DeriveReqt",
+      "sourceRequirementId": "req-emergency-return-uuid",
+      "derivedRequirementId": "req-unsafe-landing-uuid",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：着陆环境不安全时寻找备降场地。该需求是从应急返航功能需求派生，细化了返航过程中的着陆安全要求，原因是返航点的环境可能发生变化，需要动态评估和选择安全的着陆场地。"
+    },
+    {
+      "id": "rel-satisfy-flightctrl-autonomous-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-flight-control-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：通过GPS/IMU传感器融合定位，结合飞行控制器实时调整电机转速，实现自主航线飞行。飞行控制系统通过集成GPS和IMU传感器数据，采用传感器融合算法和实时控制逻辑来满足自主飞行控制需求，实现了精确的航线跟踪和稳定的飞行姿态控制。"
+    },
+    {
+      "id": "rel-satisfy-comm-telemetry-uuid",
+      "type": "Satisfy",
+      "blockId": "blk-communication-uuid",
+      "requirementId": "req-telemetry-data-uuid",
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统通过数传电台以2.4GHz频率，以10Hz频率向地面站发送遥测数据包。通信系统通过2.4GHz数传电台和优化的通信协议栈来满足实时遥测数据传输需求，实现了10Hz的高频数据传输，确保地面站能够实时监控无人机状态。"
+    }
+  ]
+}

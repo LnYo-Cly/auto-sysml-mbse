@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     # embedding 选择
     embedding_service: str = os.getenv("EMBEDDING_SERVICE", "ollama")  # 可选值: "ollama", "glm"
 
+    batch_size: int = int(os.getenv("BATCH_SIZE", "40"))
+
     # 日志配置
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
     

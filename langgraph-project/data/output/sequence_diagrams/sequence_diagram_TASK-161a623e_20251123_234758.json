@@ -1,0 +1,403 @@
+{
+  "model": [
+    {
+      "id": "model-autonomous-driving-uuid",
+      "name": "自动驾驶系统模型",
+      "type": "Model"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-obstacle-avoidance-uuid",
+      "type": "Package",
+      "name": "避障系统",
+      "parentId": "model-autonomous-driving-uuid",
+      "description": "原文：此序列展示了从障碍物检测到完成避让的完整组件协作过程。简化：包含障碍物检测、路径规划和控制的系统包。"
+    },
+    {
+      "id": "cls-perception-uuid",
+      "type": "Class",
+      "name": "PerceptionSystem",
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "description": "原文：PerceptionSystem。简化：感知系统组件，负责检测前方障碍物。",
+      "ownedOperationIds": [
+        "op-obstacle-detected-uuid",
+        "op-obstacle-cleared-uuid"
+      ],
+      "ownedAttributeIds": [
+        "prop-perception-instance-uuid"
+      ]
+    },
+    {
+      "id": "cls-planning-uuid",
+      "type": "Class",
+      "name": "PlanningSystem",
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "description": "原文：PlanningSystem。简化：规划系统组件，负责重新规划避让轨迹。",
+      "ownedOperationIds": [
+        "op-replan-trajectory-uuid",
+        "op-new-trajectory-uuid"
+      ],
+      "ownedAttributeIds": [
+        "prop-planning-instance-uuid"
+      ]
+    },
+    {
+      "id": "cls-control-uuid",
+      "type": "Class",
+      "name": "ControlSystem",
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "description": "原文：ControlSystem。简化：控制系统组件，负责计算并发送控制命令。",
+      "ownedOperationIds": [
+        "op-compute-control-uuid",
+        "op-steering-command-uuid",
+        "op-speed-command-uuid"
+      ],
+      "ownedAttributeIds": [
+        "prop-control-instance-uuid"
+      ]
+    },
+    {
+      "id": "cls-vehicle-interface-uuid",
+      "type": "Class",
+      "name": "VehicleInterface",
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "description": "原文：VehicleInterface。简化：车辆接口组件，负责执行转向和速度命令。",
+      "ownedOperationIds": [
+        "op-command-ack-uuid"
+      ],
+      "ownedAttributeIds": [
+        "prop-vehicle-interface-instance-uuid"
+      ]
+    },
+    {
+      "id": "op-obstacle-detected-uuid",
+      "type": "Operation",
+      "name": "obstacleDetected",
+      "parentId": "cls-perception-uuid",
+      "parameterIds": [
+        "param-obstacle-info-uuid"
+      ],
+      "description": "原文：obstacleDetected(obstacle_info)。简化：感知系统检测到障碍物时调用的操作。"
+    },
+    {
+      "id": "param-obstacle-info-uuid",
+      "type": "Parameter",
+      "name": "obstacle_info",
+      "parentId": "op-obstacle-detected-uuid",
+      "direction": "in",
+      "typeHref": "ObstacleInfo",
+      "description": "原文：obstacleDetected(obstacle_info)。简化：障碍物检测操作的输入参数，包含障碍物详细信息。"
+    },
+    {
+      "id": "op-obstacle-cleared-uuid",
+      "type": "Operation",
+      "name": "obstacleCleared",
+      "parentId": "cls-perception-uuid",
+      "description": "原文：obstacleCleared()。简化：感知系统确认障碍物已清除时调用的操作。"
+    },
+    {
+      "id": "prop-perception-instance-uuid",
+      "type": "Property",
+      "name": "perception_instance",
+      "parentId": "cls-perception-uuid",
+      "typeId": "cls-perception-uuid",
+      "description": "原文：PerceptionSystem。简化：感知系统实例属性，用于生命线表示。"
+    },
+    {
+      "id": "op-replan-trajectory-uuid",
+      "type": "Operation",
+      "name": "replanTrajectory",
+      "parentId": "cls-planning-uuid",
+      "description": "原文：replanTrajectory()。简化：规划系统重新规划避让轨迹的内部操作。"
+    },
+    {
+      "id": "op-new-trajectory-uuid",
+      "type": "Operation",
+      "name": "newTrajectory",
+      "parentId": "cls-planning-uuid",
+      "parameterIds": [
+        "param-trajectory-data-uuid"
+      ],
+      "description": "原文：newTrajectory(trajectory_data)。简化：规划系统发送新轨迹数据的操作。"
+    },
+    {
+      "id": "param-trajectory-data-uuid",
+      "type": "Parameter",
+      "name": "trajectory_data",
+      "parentId": "op-new-trajectory-uuid",
+      "direction": "out",
+      "typeHref": "TrajectoryData",
+      "description": "原文：newTrajectory(trajectory_data)。简化：新轨迹操作的输出参数，包含轨迹数据。"
+    },
+    {
+      "id": "prop-planning-instance-uuid",
+      "type": "Property",
+      "name": "planning_instance",
+      "parentId": "cls-planning-uuid",
+      "typeId": "cls-planning-uuid",
+      "description": "原文：PlanningSystem。简化：规划系统实例属性，用于生命线表示。"
+    },
+    {
+      "id": "op-compute-control-uuid",
+      "type": "Operation",
+      "name": "computeControlCommands",
+      "parentId": "cls-control-uuid",
+      "description": "原文：computeControlCommands()。简化：控制系统计算控制命令的内部操作。"
+    },
+    {
+      "id": "op-steering-command-uuid",
+      "type": "Operation",
+      "name": "steeringCommand",
+      "parentId": "cls-control-uuid",
+      "parameterIds": [
+        "param-angle-uuid"
+      ],
+      "description": "原文：steeringCommand(angle)。简化：控制系统发送转向命令的操作。"
+    },
+    {
+      "id": "param-angle-uuid",
+      "type": "Parameter",
+      "name": "angle",
+      "parentId": "op-steering-command-uuid",
+      "direction": "out",
+      "typeHref": "float",
+      "description": "原文：steeringCommand(angle)。简化：转向命令操作的输出参数，指定转向角度。"
+    },
+    {
+      "id": "op-speed-command-uuid",
+      "type": "Operation",
+      "name": "speedCommand",
+      "parentId": "cls-control-uuid",
+      "parameterIds": [
+        "param-speed-uuid"
+      ],
+      "description": "原文：speedCommand(speed)。简化：控制系统发送速度命令的操作。"
+    },
+    {
+      "id": "param-speed-uuid",
+      "type": "Parameter",
+      "name": "speed",
+      "parentId": "op-speed-command-uuid",
+      "direction": "out",
+      "typeHref": "float",
+      "description": "原文：speedCommand(speed)。简化：速度命令操作的输出参数，指定目标速度。"
+    },
+    {
+      "id": "prop-control-instance-uuid",
+      "type": "Property",
+      "name": "control_instance",
+      "parentId": "cls-control-uuid",
+      "typeId": "cls-control-uuid",
+      "description": "原文：ControlSystem。简化：控制系统实例属性，用于生命线表示。"
+    },
+    {
+      "id": "op-command-ack-uuid",
+      "type": "Operation",
+      "name": "commandAck",
+      "parentId": "cls-vehicle-interface-uuid",
+      "parameterIds": [
+        "param-status-uuid"
+      ],
+      "description": "原文：commandAck(status)。简化：车辆接口发送命令确认状态的操作。"
+    },
+    {
+      "id": "param-status-uuid",
+      "type": "Parameter",
+      "name": "status",
+      "parentId": "op-command-ack-uuid",
+      "direction": "out",
+      "typeHref": "CommandStatus",
+      "description": "原文：commandAck(status)。简化：命令确认操作的输出参数，包含执行状态。"
+    },
+    {
+      "id": "prop-vehicle-interface-instance-uuid",
+      "type": "Property",
+      "name": "vehicle_interface_instance",
+      "parentId": "cls-vehicle-interface-uuid",
+      "typeId": "cls-vehicle-interface-uuid",
+      "description": "原文：VehicleInterface。简化：车辆接口实例属性，用于生命线表示。"
+    },
+    {
+      "id": "interaction-obstacle-avoidance-uuid",
+      "type": "Interaction",
+      "name": "前方障碍物避让",
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "description": "原文：当感知系统检测到前方有静止障碍物时，系统需要快速做出反应，规划避让路径并执行相应的控制动作。简化：描述从障碍物检测到完成避让的完整交互流程。",
+      "lifelineIds": [
+        "ll-perception-uuid",
+        "ll-planning-uuid",
+        "ll-control-uuid",
+        "ll-vehicle-interface-uuid"
+      ],
+      "messageIds": [
+        "msg-obstacle-detected-uuid",
+        "msg-replan-trajectory-uuid",
+        "msg-new-trajectory-uuid",
+        "msg-compute-control-uuid",
+        "msg-steering-command-uuid",
+        "msg-speed-command-uuid",
+        "msg-command-ack-uuid",
+        "msg-obstacle-cleared-uuid"
+      ],
+      "fragmentIds": [
+        "fragment-send-obstacle-detected-uuid",
+        "fragment-recv-obstacle-detected-uuid",
+        "fragment-send-replan-trajectory-uuid",
+        "fragment-recv-replan-trajectory-uuid",
+        "fragment-send-new-trajectory-uuid",
+        "fragment-recv-new-trajectory-uuid",
+        "fragment-send-compute-control-uuid",
+        "fragment-recv-compute-control-uuid",
+        "fragment-send-steering-command-uuid",
+        "fragment-recv-steering-command-uuid",
+        "fragment-send-speed-command-uuid",
+        "fragment-recv-speed-command-uuid",
+        "fragment-send-command-ack-uuid",
+        "fragment-recv-command-ack-uuid",
+        "fragment-send-obstacle-cleared-uuid",
+        "fragment-recv-obstacle-cleared-uuid"
+      ]
+    },
+    {
+      "id": "ll-perception-uuid",
+      "type": "Lifeline",
+      "name": "L1-PerceptionSystem",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "representsId": "prop-perception-instance-uuid",
+      "description": "原文：PerceptionSystem。简化：代表感知系统组件的生命线，负责障碍物检测和清除通知。"
+    },
+    {
+      "id": "ll-planning-uuid",
+      "type": "Lifeline",
+      "name": "L2-PlanningSystem",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "representsId": "prop-planning-instance-uuid",
+      "description": "原文：PlanningSystem。简化：代表规划系统组件的生命线，负责轨迹重新规划。"
+    },
+    {
+      "id": "ll-control-uuid",
+      "type": "Lifeline",
+      "name": "L3-ControlSystem",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "representsId": "prop-control-instance-uuid",
+      "description": "原文：ControlSystem。简化：代表控制系统组件的生命线，负责计算控制命令。"
+    },
+    {
+      "id": "ll-vehicle-interface-uuid",
+      "type": "Lifeline",
+      "name": "L4-VehicleInterface",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "representsId": "prop-vehicle-interface-instance-uuid",
+      "description": "原文：VehicleInterface。简化：代表车辆接口组件的生命线，负责执行转向和速度命令。"
+    },
+    {
+      "id": "msg-obstacle-detected-uuid",
+      "type": "Message",
+      "name": "obstacleDetected",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "sendEventId": "fragment-send-obstacle-detected-uuid",
+      "receiveEventId": "fragment-recv-obstacle-detected-uuid",
+      "messageSort": "asynchCall",
+      "signatureId": "op-obstacle-detected-uuid",
+      "arguments": [
+        {
+          "body": "obstacle_info",
+          "language": "text"
+        }
+      ],
+      "description": "原文：PerceptionSystem -> PlanningSystem: obstacleDetected(obstacle_info)。简化：感知系统向规划系统发送障碍物检测信号，包含障碍物信息。"
+    },
+    {
+      "id": "fragment-send-obstacle-detected-uuid",
+      "type": "MessageOccurrenceSpecification",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "coveredId": "ll-perception-uuid",
+      "messageId": "msg-obstacle-detected-uuid",
+      "description": "原文：PerceptionSystem -> PlanningSystem: obstacleDetected。简化：障碍物检测消息的发送事件。"
+    },
+    {
+      "id": "fragment-recv-obstacle-detected-uuid",
+      "type": "MessageOccurrenceSpecification",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "coveredId": "ll-planning-uuid",
+      "messageId": "msg-obstacle-detected-uuid",
+      "description": "原文：PerceptionSystem -> PlanningSystem: obstacleDetected。简化：障碍物检测消息的接收事件。"
+    },
+    {
+      "id": "msg-replan-trajectory-uuid",
+      "type": "Message",
+      "name": "replanTrajectory",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "sendEventId": "fragment-send-replan-trajectory-uuid",
+      "receiveEventId": "fragment-recv-replan-trajectory-uuid",
+      "messageSort": "synchCall",
+      "signatureId": "op-replan-trajectory-uuid",
+      "description": "原文：PlanningSystem -> PlanningSystem: replanTrajectory()。简化：规划系统内部重新规划避让轨迹的自调用操作。"
+    },
+    {
+      "id": "fragment-send-replan-trajectory-uuid",
+      "type": "MessageOccurrenceSpecification",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "coveredId": "ll-planning-uuid",
+      "messageId": "msg-replan-trajectory-uuid",
+      "description": "原文：PlanningSystem -> PlanningSystem: replanTrajectory()。简化：重新规划轨迹自调用的发送事件。"
+    },
+    {
+      "id": "fragment-recv-replan-trajectory-uuid",
+      "type": "MessageOccurrenceSpecification",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "coveredId": "ll-planning-uuid",
+      "messageId": "msg-replan-trajectory-uuid",
+      "description": "原文：PlanningSystem -> PlanningSystem: replanTrajectory()。简化：重新规划轨迹自调用的接收事件。"
+    },
+    {
+      "id": "msg-new-trajectory-uuid",
+      "type": "Message",
+      "name": "newTrajectory",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "sendEventId": "fragment-send-new-trajectory-uuid",
+      "receiveEventId": "fragment-recv-new-trajectory-uuid",
+      "messageSort": "asynchCall",
+      "signatureId": "op-new-trajectory-uuid",
+      "arguments": [
+        {
+          "body": "trajectory_data",
+          "language": "text"
+        }
+      ],
+      "description": "原文：PlanningSystem -> ControlSystem: newTrajectory(trajectory_data)。简化：规划系统向控制系统发送新规划的轨迹数据。"
+    },
+    {
+      "id": "fragment-send-new-trajectory-uuid",
+      "type": "MessageOccurrenceSpecification",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "coveredId": "ll-planning-uuid",
+      "messageId": "msg-new-trajectory-uuid",
+      "description": "原文：PlanningSystem -> ControlSystem: newTrajectory。简化：新轨迹消息的发送事件。"
+    },
+    {
+      "id": "fragment-recv-new-trajectory-uuid",
+      "type": "MessageOccurrenceSpecification",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "coveredId": "ll-control-uuid",
+      "messageId": "msg-new-trajectory-uuid",
+      "description": "原文：PlanningSystem -> ControlSystem: newTrajectory。简化：新轨迹消息的接收事件。"
+    },
+    {
+      "id": "msg-compute-control-uuid",
+      "type": "Message",
+      "name": "computeControlCommands",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "sendEventId": "fragment-send-compute-control-uuid",
+      "receiveEventId": "fragment-recv-compute-control-uuid",
+      "messageSort": "synchCall",
+      "signatureId": "op-compute-control-uuid",
+      "description": "原文：ControlSystem -> ControlSystem: computeControlCommands()。简化：控制系统内部计算控制命令的自调用操作。"
+    },
+    {
+      "id": "fragment-send",
+      "description": " 元素：Unnamed（自动生成）"
+    }
+  ]
+}

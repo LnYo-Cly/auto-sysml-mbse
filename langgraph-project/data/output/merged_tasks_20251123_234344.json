@@ -1,0 +1,48 @@
+{
+  "timestamp": "20251123_234344",
+  "total_tasks": 7,
+  "tasks": [
+    {
+      "index": 1,
+      "type": "Requirement",
+      "content": "REQ-FUN-001: 环境感知与障碍物检测 - 系统应通过多传感器融合（激光雷达、摄像头、毫米波雷达）检测车辆周围360度范围内的静态和动态障碍物，包括其他车辆、行人、交通标志等，检测距离范围0.5-150米，检测精度≥99%\n\n---\n\nREQ-FUN-002: 高精度定位与地图匹配 - 系统应结合GPS（精度≤10cm）、IMU和激光雷达点云数据，实现车辆在HD地图中的精确定位，横向定位误差≤15cm，纵向定位误差≤20cm\n\n---\n\nREQ-FUN-003: 实时路径规划与决策 - 系统应基于A*或RRT*算法，每100ms重新规划一次路径，考虑交通规则、障碍物位置和车辆动力学约束，规划延迟≤50ms\n\n---\n\nREQ-FUN-004: 车辆运动控制 - 系统应通过PID控制器或MPC控制器，控制车辆的转向、油门和制动，实现车道保持误差≤10cm，速度控制精度±1km/h\n\n---\n\nREQ-NFN-001: 系统响应时间 - 从传感器数据采集到执行器控制输出的端到端延迟≤100ms，感知-决策-控制环路频率≥20Hz\n\n---\n\nREQ-NFN-002: 系统可靠性 - 系统应达到ASIL-D功能安全等级，平均无故障时间(MTBF)≥10,000小时，关键子系统采用冗余设计\n\n---\n\nREQ-NFN-003: 计算性能 - 主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s，支持并行处理多路传感器数据流",
+      "content_length": 631
+    },
+    {
+      "index": 2,
+      "type": "Block Definition and Internal Block",
+      "content": "PerceptionSystem - 感知系统负责处理所有传感器数据，构建车辆周围环境的实时模型。核心职责：处理激光雷达点云数据、执行视觉目标检测与识别、融合多传感器信息、跟踪动态障碍物。关键属性：detectionRange: Real [m] {0.5..150}, processingLatency: Real [ms] {0..50}, objectDetectionConfidence: Real [%] {0..100}。核心操作：processSensorData(sensorData: SensorData): PerceptionOutput, fuseMultiSensorData(): FusedPerceptionData, trackObjects(): ObjectTrackList\n\n---\n\nLocalizationModule - 定位模块负责精确确定车辆在全局坐标系中的位置和姿态。核心职责：融合GPS和IMU数据、执行激光雷达点云匹配、提供车辆6自由度位姿。关键属性：positionAccuracy: Real [cm] {0..20}, updateRate: Real [Hz] {10..100}, headingAccuracy: Real [deg] {0..1}。核心操作：estimatePose(): VehiclePose, matchPointCloud(mapData: PointCloud): LocalizationResult, correctDrift(sensorData: SensorData): CorrectedPose\n\n---\n\nPlanningSystem - 规划系统基于感知和定位信息，实时生成安全可行的行驶路径\n\n---\n\n系统顶层架构设计理念 - 采用分层模块化架构，分为感知层、决策层和控制层三个主要层次，各层之间通过标准化的接口进行通信。采用基于ROS 2的中间件实现组件间通信\n\n---\n\n**LocalizationModule**\n- **概述**: 定位模块融合GPS、IMU和激光雷达数据，实现厘米级定位精度。\n- **核心职责**: 融合GPS和IMU数据；执行激光雷达点云匹配；提供车辆6自由度位姿\n- **关键属性**: positionAccuracy: Real [cm] {0..20}; updateRate: Real [Hz] {10..100}; headingAccuracy: Real [deg] {0..1}\n- **核心操作**: estimatePose(): VehiclePose; matchPointCloud(mapData: PointCloud): LocalizationResult; correctDrift(sensorData: SensorData): CorrectedPose\n\n---\n\n**PlanningSystem**\n- **概述**: 规划系统基于感知和定位信息，实时生成安全可行的行驶路径。它采用分层规划策略，从全局路径到局部轨迹层层细化。\n- **核心职责**: 全局路径规划；局部轨迹生成；行为决策\n- **关键属性**: planningHorizon: Real [m] {10..200}; replanningRate: Real [Hz] {5..20}; collisionCheckDistance: Real [m] {5..50}\n- **核心操作**: generateGlobalRoute(destination: GeoPoint): Route; computeLocalTrajectory(): Trajectory; makeBehaviorDecision(): BehaviorCommand\n\n---\n\n**ControlSystem**\n- **概述**: 控制系统将规划轨迹转化为具体的车辆控制指令，通过精确的横向和纵向控制实现轨迹跟踪。\n- **核心职责**: 横向控制（转向）；纵向控制（油门/制动）；轨迹跟踪\n- **关键属性**: controlFrequency: Real [Hz] {50..200}; trackingError: Real [cm] {0..15}; actuatorDelay: Real [ms] {0..20}\n- **核心操作**: computeSteeringCommand(): SteeringAngle; computeThrottleCommand(): ThrottleValue; computeBrakeCommand(): BrakePressure\n\n---\n\n**VehicleInterface**\n- **概述**: 车辆接口模块负责与车辆底层系统的通信，将控制指令转换为CAN总线消息，同时读取车辆状态信息。\n- **核心职责**: 控制指令下发；车辆状态监控；CAN总线通信\n- **关键属性**: canBusRate: Real [kbps] {125..1000}; sensorUpdateRate: Real [Hz] {10..100}; actuatorResponseTime: Real [ms] {0..50}\n- **核心操作**: sendControlCommands(commands: ControlSet): Status; readVehicleState(): VehicleState; monitorSystemHealth(): HealthStatus\n\n---\n\n**上下文**: AutonomousDrivingSystem\n- **设计阐述**: 主系统内部采用星型通信架构，中央决策协调器作为核心，各功能模块通过标准接口与协调器通信。这种设计确保了系统的可扩展性和模块独立性，便于后续的功能升级和维护。\n- **组成部分**: perception: PerceptionSystem; localization: LocalizationModule; planning: PlanningSystem; control: ControlSystem; vehicleIf: VehicleInterface; coordinator: SystemCoordinator\n- **连接关系**: [perception.perceptionOutput] <--> [coordinator.perceptionInput]; [localization.poseOutput] <--> [coordinator.localizationInput]; [coordinator.planningRequest] <--> [planning.planningInput]; [planning.trajectoryOutput] <--> [coordinator.trajectoryInput]; [coordinator.controlCommand] <--> [control.controlInput]; [control.actuatorCommand] <--> [vehicleIf.commandInput]",
+      "content_length": 3054
+    },
+    {
+      "index": 3,
+      "type": "Parameter",
+      "content": "检测距离范围0.5-150米，检测精度≥99%\n\n---\n\nGPS精度≤10cm，横向定位误差≤15cm，纵向定位误差≤20cm\n\n---\n\n每100ms重新规划一次路径，规划延迟≤50ms\n\n---\n\n车道保持误差≤10cm，速度控制精度±1km/h\n\n---\n\n端到端延迟≤100ms，感知-决策-控制环路频率≥20Hz\n\n---\n\n平均无故障时间(MTBF)≥10,000小时\n\n---\n\nAI推理性能≥50 TOPS，内存带宽≥200GB/s\n\n---\n\n**约束块**: VehicleDynamicsConstraint\n- **物理意义与应用**: 此约束描述了车辆运动学与动力学的基本关系，用于确保规划轨迹的物理可行性和乘坐舒适性。它考虑了车辆的最大加速度、转向几何约束和轮胎摩擦极限。\n- **参数**:\n  - `max_lateral_acceleration: Real [m/s²] = 3.0`\n  - `max_longitudinal_acceleration: Real [m/s²] = 4.0`\n  - `max_deceleration: Real [m/s²] = 6.0`\n  - `wheelbase: Real [m] = 2.8`\n  - `max_steering_angle: Real [deg] = 30.0`\n- **约束公式**:\n  - 最小转弯半径: `min_turning_radius = wheelbase / tan(max_steering_angle)`\n  - 最大曲率约束: `trajectory_curvature ≤ 1 / min_turning_radius`\n  - 加速度约束: `longitudinal_acceleration² + lateral_acceleration² ≤ max_total_acceleration²`",
+      "content_length": 817
+    },
+    {
+      "index": 4,
+      "type": "State Machine",
+      "content": "**状态名称**: INIT\n- **描述**: 系统初始化状态，进行自检和启动准备\n- `entry / performSelfTest()`\n- `do / initializeSystems()`\n- `exit / prepareAutonomousResume()`\n\n**状态名称**: EMERGENCY_STOP\n- **描述**: 紧急停止状态，系统执行安全停车\n- `entry / triggerEmergencyBraking()`\n- `do / maintainSafeStop()`\n- `exit / assessSituation()`\n\n**状态名称**: FAULT\n- **描述**: 系统故障状态，进行故障处理和恢复\n- `entry / enterSafeState()`\n- `do / diagnoseFault()`\n- `exit / executeRecoveryProcedure()`\n\n- **转换**:\n  - `[INIT] --[selfTestPassed]--> [STANDBY]`\n  - `[STANDBY] --[autonomousEngage]--> [AUTONOMOUS_DRIVING]`\n  - `[AUTONOMOUS_DRIVING] --[driverOverride]--> [MANUAL_OVERRIDE]`\n  - `[AUTONOMOUS_DRIVING] --[criticalFault]--> [EMERGENCY_STOP]`\n  - `[MANUAL_OVERRIDE] --[autonomousResume]--> [AUTONOMOUS_DRIVING]`\n  - `[任何状态] --[systemFault[severity > threshold]]--> [FAULT]`\n  - `[EMERGENCY_STOP] --[situationResolved]--> [STANDBY]`\n\n---\n\n**上下文块**: AutonomousDrivingController\n- **行为模型概述**: 自动驾驶控制器状态机定义了系统从启动到关机的完整生命周期，包括各种驾驶模式和故障处理状态。状态转换基于用户指令、系统条件和环境因素，确保系统在不同场景下都能安全可靠地运行。\n- **状态定义**: \n**状态名称**: INIT - 描述: 系统初始化状态，进行自检和组件准备 - entry / initializeComponents() - do / performSelfTest() - exit / logInitializationResult()\n**状态名称**: STANDBY - 描述: 系统就绪状态，等待用户指令 - entry / enableSensors() - do / monitorSystemStatus() - exit / prepareForEngagement()\n**状态名称**: AUTONOMOUS_DRIVING - 描述: 全自动驾驶模式，系统完全控制车辆 - entry / activateAutonomousMode() - do / executeDrivingLoop() - exit / disengageAutonomousControl()\n**状态名称**: MANUAL_OVERRIDE - 描述: 人工接管状态，驾驶员控制车辆 - entry / transferControlToDriver() - do / monitorDriverInput() - exit / prepareAutonomousResume()\n**状态名称**: EMERGENCY_STOP - 描述: 紧急停止状态，系统执行安全停车 - entry / triggerEmergencyBraking() - do / maintainSafeStop() - exit / assessSituation()\n**状态名称**: FAULT - 描述: 系统故障状态，进行故障处理和恢复 - entry / enterSafeState() - do / diagnoseFault() - exit / executeRecoveryProcedure()\n- **转换**: [INIT] --[selfTestPassed]--> [STANDBY]; [STANDBY] --[autonomousEngage]--> [AUTONOMOUS_DRIVING]; [AUTONOMOUS_DRIVING] --[driverOverride]--> [MANUAL_OVERRIDE]",
+      "content_length": 2001
+    },
+    {
+      "index": 5,
+      "type": "Use Case",
+      "content": "**用例名称**: 城市道路自动驾驶\n- **场景简述**: 用户设定目的地后启动自动驾驶功能，车辆在复杂的城市道路环境中自动行驶，处理交通信号、交叉路口、行人穿越等各种典型场景，最终安全到达目的地。\n- **参与者**: \n  - Primary: 乘客\n  - Secondary: 交通管理系统、其他道路使用者\n- **基本流程**:\n  1. 乘客通过人机界面设定目的地\n  2. 系统规划全局路径并确认\n  3. 乘客启动自动驾驶模式\n  4. 系统执行环境感知和定位\n  5. 根据交通状况实时调整行驶策略\n  6. 处理交叉路口和交通信号\n  7. 避让行人和障碍物\n  8. 到达目的地后自动停车\n- **备选/异常流程**:\n  - 如遇施工路段，系统重新规划绕行路径\n  - 如传感器故障，系统降级运行或请求人工接管\n  - 如通信中断，系统依靠本地感知继续安全行驶",
+      "content_length": 393
+    },
+    {
+      "index": 6,
+      "type": "Sequence",
+      "content": "**场景名称**: 前方障碍物避让\n- **交互背景**: 当感知系统检测到前方有静止障碍物时，系统需要快速做出反应，规划避让路径并执行相应的控制动作。此序列展示了从障碍物检测到完成避让的完整组件协作过程。\n- **涉及的生命线**: \n  - `PerceptionSystem`\n  - `PlanningSystem` \n  - `ControlSystem`\n  - `VehicleInterface`\n- **消息序列**:\n  1. PerceptionSystem -> PlanningSystem: `obstacleDetected(obstacle_info)`\n  2. PlanningSystem -> PlanningSystem: `replanTrajectory()`\n  3. PlanningSystem -> ControlSystem: `newTrajectory(trajectory_data)`\n  4. ControlSystem -> ControlSystem: `computeControlCommands()`\n  5. ControlSystem -> VehicleInterface: `steeringCommand(angle)`\n  6. ControlSystem -> VehicleInterface: `speedCommand(speed)`\n  7. VehicleInterface -> ControlSystem: `commandAck(status)`\n  8. PerceptionSystem -> PlanningSystem: `obstacleCleared()`",
+      "content_length": 737
+    },
+    {
+      "index": 7,
+      "type": "Activity",
+      "content": "**活动名称**: 自动驾驶主循环流程\n- **流程概述**: 此流程描述了自动驾驶系统从传感器数据采集到控制指令输出的完整处理循环，是系统实现实时自动驾驶的核心业务流程。每个循环周期为50ms，确保系统能够及时响应环境变化。\n- **输入/输出**: IN: sensor_data: MultiSensorData; OUT: control_commands: ActuatorCommands\n- **步骤序列**: 1. 接收多传感器数据（激光雷达、摄像头、雷达）; 2. 执行传感器数据预处理和时间同步; 3. 并行执行环境感知和车辆定位; 4. 融合感知和定位结果，构建环境模型; 5. 基于环境模型进行行为决策和路径规划; 6. 生成平滑的局部轨迹; 7. 计算轨迹跟踪控制指令; 8. 验证控制指令安全性; 9. 通过车辆接口下发控制指令; 10. 监控执行结果并记录日志",
+      "content_length": 395
+    }
+  ]
+}

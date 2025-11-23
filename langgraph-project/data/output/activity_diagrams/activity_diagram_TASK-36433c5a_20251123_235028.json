@@ -1,0 +1,408 @@
+{
+  "model": [
+    {
+      "id": "model-autonomous-driving",
+      "name": "AutonomousDrivingSystem"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-ads-uuid",
+      "type": "Package",
+      "name": "AutonomousDrivingSystem",
+      "parentId": "model-autonomous-driving",
+      "description": "原文：此流程描述了自动驾驶系统从传感器数据采集到控制指令输出的完整处理循环。简化：该包封装了自动驾驶系统核心处理循环的所有组件和活动。"
+    },
+    {
+      "id": "act-main-driving-loop-uuid",
+      "type": "Activity",
+      "name": "自动驾驶主循环流程",
+      "parentId": "pkg-ads-uuid",
+      "nodes": [
+        "node-start-loop",
+        "node-receive-sensor-data",
+        "node-preprocess-sync",
+        "node-fork-parallel",
+        "node-environment-perception",
+        "node-vehicle-localization",
+        "node-join-perception-localization",
+        "node-fusion-perception-localization",
+        "node-behavior-planning",
+        "node-generate-trajectory",
+        "node-compute-control-commands",
+        "node-validate-safety",
+        "node-send-commands",
+        "node-monitor-log",
+        "node-end-loop"
+      ],
+      "edges": [
+        "edge-cf-start-receive",
+        "edge-of-sensor-data",
+        "edge-cf-receive-preprocess",
+        "edge-of-preprocessed-data",
+        "edge-cf-preprocess-fork",
+        "edge-cf-fork-perception",
+        "edge-of-perception-in",
+        "edge-cf-fork-localization",
+        "edge-of-localization-in",
+        "edge-cf-perception-join",
+        "edge-of-perception-out",
+        "edge-cf-localization-join",
+        "edge-of-localization-out",
+        "edge-cf-join-fusion",
+        "edge-of-fusion-perception-in",
+        "edge-of-fusion-localization-in",
+        "edge-cf-fusion-planning",
+        "edge-of-fusion-out",
+        "edge-of-planning-in",
+        "edge-cf-planning-trajectory",
+        "edge-of-planning-out",
+        "edge-of-trajectory-in",
+        "edge-cf-trajectory-control",
+        "edge-of-trajectory-out",
+        "edge-of-control-in",
+        "edge-cf-control-validate",
+        "edge-of-control-out",
+        "edge-of-validate-in",
+        "edge-cf-validate-send",
+        "edge-of-validate-out",
+        "edge-of-send-in",
+        "edge-cf-send-monitor",
+        "edge-of-send-out",
+        "edge-cf-monitor-end"
+      ],
+      "groups": [
+        "grp-sensor-interface-uuid",
+        "grp-data-processing-uuid",
+        "grp-perception-uuid",
+        "grp-localization-uuid",
+        "grp-fusion-uuid",
+        "grp-planning-uuid",
+        "grp-control-uuid",
+        "grp-safety-uuid",
+        "grp-vehicle-interface-uuid",
+        "grp-monitoring-uuid"
+      ],
+      "description": "原文：此流程描述了自动驾驶系统从传感器数据采集到控制指令输出的完整处理循环，是系统实现实时自动驾驶的核心业务流程。简化：定义自动驾驶系统50ms周期的核心处理活动。"
+    },
+    {
+      "id": "blk-multi-sensor-data-uuid",
+      "type": "Block",
+      "name": "MultiSensorData",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：IN: sensor_data: MultiSensorData。简化：包含激光雷达、摄像头、雷达等多种传感器数据的复合数据类型。"
+    },
+    {
+      "id": "blk-preprocessed-data-uuid",
+      "type": "Block",
+      "name": "PreprocessedSensorData",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：2. 执行传感器数据预处理和时间同步。简化：经过预处理和时间同步后的传感器数据。"
+    },
+    {
+      "id": "blk-environment-perception-uuid",
+      "type": "Block",
+      "name": "EnvironmentPerception",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：3. 并行执行环境感知。简化：环境感知模块输出的环境理解结果。"
+    },
+    {
+      "id": "blk-vehicle-localization-uuid",
+      "type": "Block",
+      "name": "VehicleLocalization",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：3. 并行执行车辆定位。简化：定位模块输出的车辆位置信息。"
+    },
+    {
+      "id": "blk-environment-model-uuid",
+      "type": "Block",
+      "name": "EnvironmentModel",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：融合后的统一环境表示模型。"
+    },
+    {
+      "id": "blk-behavior-decision-uuid",
+      "type": "Block",
+      "name": "BehaviorDecision",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：5. 基于环境模型进行行为决策和路径规划。简化：行为决策模块输出的驾驶行为选择。"
+    },
+    {
+      "id": "blk-local-trajectory-uuid",
+      "type": "Block",
+      "name": "LocalTrajectory",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：6. 生成平滑的局部轨迹。简化：规划生成的平滑可执行轨迹。"
+    },
+    {
+      "id": "blk-actuator-commands-uuid",
+      "type": "Block",
+      "name": "ActuatorCommands",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：OUT: control_commands: ActuatorCommands。简化：最终输出给车辆执行器的控制指令集。"
+    },
+    {
+      "id": "blk-sensor-interface-uuid",
+      "type": "Block",
+      "name": "SensorInterface",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：1. 接收多传感器数据（激光雷达、摄像头、雷达）。简化：负责与各种传感器硬件交互的接口模块。"
+    },
+    {
+      "id": "blk-data-processing-uuid",
+      "type": "Block",
+      "name": "DataProcessingModule",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：2. 执行传感器数据预处理和时间同步。简化：负责传感器数据预处理和时间同步的计算模块。"
+    },
+    {
+      "id": "blk-perception-module-uuid",
+      "type": "Block",
+      "name": "PerceptionModule",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：3. 并行执行环境感知。简化：负责环境感知的专用计算模块。"
+    },
+    {
+      "id": "blk-localization-module-uuid",
+      "type": "Block",
+      "name": "LocalizationModule",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：3. 并行执行车辆定位。简化：负责车辆定位的专用计算模块。"
+    },
+    {
+      "id": "blk-fusion-module-uuid",
+      "type": "Block",
+      "name": "FusionModule",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：负责多源信息融合的环境建模模块。"
+    },
+    {
+      "id": "blk-planning-module-uuid",
+      "type": "Block",
+      "name": "PlanningModule",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：5. 基于环境模型进行行为决策和路径规划。简化：负责行为决策和路径规划的模块。"
+    },
+    {
+      "id": "blk-control-module-uuid",
+      "type": "Block",
+      "name": "ControlModule",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：7. 计算轨迹跟踪控制指令。简化：负责控制指令生成的计算模块。"
+    },
+    {
+      "id": "blk-safety-module-uuid",
+      "type": "Block",
+      "name": "SafetyModule",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：8. 验证控制指令安全性。简化：负责控制指令安全性验证的模块。"
+    },
+    {
+      "id": "blk-vehicle-interface-uuid",
+      "type": "Block",
+      "name": "VehicleInterface",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：9. 通过车辆接口下发控制指令。简化：负责与车辆执行器交互的接口模块。"
+    },
+    {
+      "id": "blk-monitoring-module-uuid",
+      "type": "Block",
+      "name": "MonitoringModule",
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：10. 监控执行结果并记录日志。简化：负责系统监控和日志记录的模块。"
+    },
+    {
+      "id": "grp-sensor-interface-uuid",
+      "type": "ActivityPartition",
+      "name": "传感器接口分区",
+      "representsId": "blk-sensor-interface-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-receive-sensor-data"
+      ],
+      "description": "原文：1. 接收多传感器数据（激光雷达、摄像头、雷达）。简化：此泳道代表由传感器接口模块执行的活动。"
+    },
+    {
+      "id": "grp-data-processing-uuid",
+      "type": "ActivityPartition",
+      "name": "数据处理分区",
+      "representsId": "blk-data-processing-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-preprocess-sync"
+      ],
+      "description": "原文：2. 执行传感器数据预处理和时间同步。简化：此泳道代表由数据处理模块执行的活动。"
+    },
+    {
+      "id": "grp-perception-uuid",
+      "type": "ActivityPartition",
+      "name": "感知分区",
+      "representsId": "blk-perception-module-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-environment-perception"
+      ],
+      "description": "原文：3. 并行执行环境感知。简化：此泳道代表由环境感知模块执行的活动。"
+    },
+    {
+      "id": "grp-localization-uuid",
+      "type": "ActivityPartition",
+      "name": "定位分区",
+      "representsId": "blk-localization-module-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-vehicle-localization"
+      ],
+      "description": "原文：3. 并行执行车辆定位。简化：此泳道代表由车辆定位模块执行的活动。"
+    },
+    {
+      "id": "grp-fusion-uuid",
+      "type": "ActivityPartition",
+      "name": "融合分区",
+      "representsId": "blk-fusion-module-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-fusion-perception-localization"
+      ],
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：此泳道代表由信息融合模块执行的活动。"
+    },
+    {
+      "id": "grp-planning-uuid",
+      "type": "ActivityPartition",
+      "name": "规划分区",
+      "representsId": "blk-planning-module-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-behavior-planning",
+        "node-generate-trajectory"
+      ],
+      "description": "原文：5. 基于环境模型进行行为决策和路径规划。简化：此泳道代表由规划模块执行的活动。"
+    },
+    {
+      "id": "grp-control-uuid",
+      "type": "ActivityPartition",
+      "name": "控制分区",
+      "representsId": "blk-control-module-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-compute-control-commands"
+      ],
+      "description": "原文：7. 计算轨迹跟踪控制指令。简化：此泳道代表由控制模块执行的活动。"
+    },
+    {
+      "id": "grp-safety-uuid",
+      "type": "ActivityPartition",
+      "name": "安全分区",
+      "representsId": "blk-safety-module-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-validate-safety"
+      ],
+      "description": "原文：8. 验证控制指令安全性。简化：此泳道代表由安全模块执行的活动。"
+    },
+    {
+      "id": "grp-vehicle-interface-uuid",
+      "type": "ActivityPartition",
+      "name": "车辆接口分区",
+      "representsId": "blk-vehicle-interface-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-send-commands"
+      ],
+      "description": "原文：9. 通过车辆接口下发控制指令。简化：此泳道代表由车辆接口模块执行的活动。"
+    },
+    {
+      "id": "grp-monitoring-uuid",
+      "type": "ActivityPartition",
+      "name": "监控分区",
+      "representsId": "blk-monitoring-module-uuid",
+      "parentId": "act-main-driving-loop-uuid",
+      "nodeIds": [
+        "node-monitor-log"
+      ],
+      "description": "原文：10. 监控执行结果并记录日志。简化：此泳道代表由监控模块执行的活动。"
+    },
+    {
+      "id": "node-start-loop",
+      "type": "InitialNode",
+      "name": "开始循环",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：每个循环周期为50ms，确保系统能够及时响应环境变化。简化：代表每个50ms处理周期的起点。"
+    },
+    {
+      "id": "node-receive-sensor-data",
+      "type": "CallBehaviorAction",
+      "name": "接收多传感器数据",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：1. 接收多传感器数据（激光雷达、摄像头、雷达）。简化：接收来自各种传感器的原始数据输入。"
+    },
+    {
+      "id": "node-preprocess-sync",
+      "type": "CallBehaviorAction",
+      "name": "执行传感器数据预处理和时间同步",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：2. 执行传感器数据预处理和时间同步。简化：对原始传感器数据进行预处理和时间对齐。"
+    },
+    {
+      "id": "node-fork-parallel",
+      "type": "ForkNode",
+      "name": "开始并行处理",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：3. 并行执行环境感知和车辆定位。简化：将流程分叉为环境感知和车辆定位两个并行执行路径。"
+    },
+    {
+      "id": "node-environment-perception",
+      "type": "CallBehaviorAction",
+      "name": "环境感知",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：3. 并行执行环境感知。简化：从传感器数据中识别和理解周围环境。"
+    },
+    {
+      "id": "node-vehicle-localization",
+      "type": "CallBehaviorAction",
+      "name": "车辆定位",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：3. 并行执行车辆定位。简化：确定车辆在环境中的精确位置。"
+    },
+    {
+      "id": "node-join-perception-localization",
+      "type": "JoinNode",
+      "name": "同步感知定位结果",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：等待环境感知和车辆定位都完成后进行结果融合。"
+    },
+    {
+      "id": "node-fusion-perception-localization",
+      "type": "CallBehaviorAction",
+      "name": "融合感知和定位结果",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：将环境感知和定位信息融合成统一的环境模型。"
+    },
+    {
+      "id": "node-behavior-planning",
+      "type": "CallBehaviorAction",
+      "name": "行为决策和路径规划",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：5. 基于环境模型进行行为决策和路径规划。简化：根据环境模型制定驾驶行为和全局路径。"
+    },
+    {
+      "id": "node-generate-trajectory",
+      "type": "CallBehaviorAction",
+      "name": "生成平滑的局部轨迹",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：6. 生成平滑的局部轨迹。简化：将路径规划结果转化为可执行的平滑轨迹。"
+    },
+    {
+      "id": "node-compute-control-commands",
+      "type": "CallBehaviorAction",
+      "name": "计算轨迹跟踪控制指令",
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：7. 计算轨迹跟踪控制指令。简化：根据轨迹生成具体的车辆控制指令。"
+    },
+    {
+      "id": "node-validate-safety",
+      "type": "CallBehaviorAction",
+      "description": "动作：未命名，可能调用行为："
+    }
+  ]
+}

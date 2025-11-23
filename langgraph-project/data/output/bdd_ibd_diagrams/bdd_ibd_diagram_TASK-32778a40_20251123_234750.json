@@ -1,0 +1,397 @@
+{
+  "model": [
+    {
+      "id": "model-autonomous-driving-uuid",
+      "name": "AutonomousDrivingModel",
+      "description": "原文：**上下文**: AutonomousDrivingSystem。简化：代表整个自动驾驶系统的顶层模型。"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-autonomous-driving-uuid",
+      "type": "Package",
+      "name": "AutonomousDrivingSystem",
+      "parentId": "model-autonomous-driving-uuid",
+      "description": "原文：**上下文**: AutonomousDrivingSystem。简化：包含所有自动驾驶系统相关块和定义的包。"
+    },
+    {
+      "id": "blk-system-coordinator-uuid",
+      "type": "Block",
+      "name": "SystemCoordinator",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "isAbstract": false,
+      "description": "原文：中央决策协调器作为核心。简化：系统内部的中央协调器块定义（推断）。"
+    },
+    {
+      "id": "vt-real-uuid",
+      "type": "ValueType",
+      "name": "Real",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：detectionRange: Real [m]。简化：表示实数的值类型（推断）。"
+    },
+    {
+      "id": "unit-meter-uuid",
+      "type": "Unit",
+      "name": "m",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：detectionRange: Real [m]。简化：长度单位米（推断）。"
+    },
+    {
+      "id": "unit-millisecond-uuid",
+      "type": "Unit",
+      "name": "ms",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：processingLatency: Real [ms]。简化：时间单位毫秒（推断）。"
+    },
+    {
+      "id": "unit-percent-uuid",
+      "type": "Unit",
+      "name": "%",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：objectDetectionConfidence: Real [%]。简化：百分比单位（推断）。"
+    },
+    {
+      "id": "unit-centimeter-uuid",
+      "type": "Unit",
+      "name": "cm",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：positionAccuracy: Real [cm]。简化：长度单位厘米（推断）。"
+    },
+    {
+      "id": "unit-hertz-uuid",
+      "type": "Unit",
+      "name": "Hz",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：updateRate: Real [Hz]。简化：频率单位赫兹（推断）。"
+    },
+    {
+      "id": "unit-degree-uuid",
+      "type": "Unit",
+      "name": "deg",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：headingAccuracy: Real [deg]。简化：角度单位度（推断）。"
+    },
+    {
+      "id": "unit-kbps-uuid",
+      "type": "Unit",
+      "name": "kbps",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：canBusRate: Real [kbps]。简化：数据传输率单位千比特每秒（推断）。"
+    },
+    {
+      "id": "sig-sensor-data-uuid",
+      "type": "Signal",
+      "name": "SensorData",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：processSensorData(sensorData: SensorData)。简化：传感器数据信号类型（推断）。"
+    },
+    {
+      "id": "sig-perception-output-uuid",
+      "type": "Signal",
+      "name": "PerceptionOutput",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：processSensorData(...): PerceptionOutput。简化：感知输出信号类型（推断）。"
+    },
+    {
+      "id": "sig-fused-perception-data-uuid",
+      "type": "Signal",
+      "name": "FusedPerceptionData",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：fuseMultiSensorData(): FusedPerceptionData。简化：融合感知数据信号类型（推断）。"
+    },
+    {
+      "id": "sig-object-track-list-uuid",
+      "type": "Signal",
+      "name": "ObjectTrackList",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：trackObjects(): ObjectTrackList。简化：目标跟踪列表信号类型（推断）。"
+    },
+    {
+      "id": "sig-vehicle-pose-uuid",
+      "type": "Signal",
+      "name": "VehiclePose",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：estimatePose(): VehiclePose。简化：车辆位姿信号类型（推断）。"
+    },
+    {
+      "id": "sig-point-cloud-uuid",
+      "type": "Signal",
+      "name": "PointCloud",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：matchPointCloud(mapData: PointCloud)。简化：点云数据信号类型（推断）。"
+    },
+    {
+      "id": "sig-localization-result-uuid",
+      "type": "Signal",
+      "name": "LocalizationResult",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：matchPointCloud(...): LocalizationResult。简化：定位结果信号类型（推断）。"
+    },
+    {
+      "id": "sig-corrected-pose-uuid",
+      "type": "Signal",
+      "name": "CorrectedPose",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：correctDrift(...): CorrectedPose。简化：校正后位姿信号类型（推断）。"
+    },
+    {
+      "id": "sig-geo-point-uuid",
+      "type": "Signal",
+      "name": "GeoPoint",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：generateGlobalRoute(destination: GeoPoint)。简化：地理点信号类型（推断）。"
+    },
+    {
+      "id": "sig-route-uuid",
+      "type": "Signal",
+      "name": "Route",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：generateGlobalRoute(...): Route。简化：路径信号类型（推断）。"
+    },
+    {
+      "id": "sig-trajectory-uuid",
+      "type": "Signal",
+      "name": "Trajectory",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：computeLocalTrajectory(): Trajectory。简化：轨迹信号类型（推断）。"
+    },
+    {
+      "id": "sig-behavior-command-uuid",
+      "type": "Signal",
+      "name": "BehaviorCommand",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：makeBehaviorDecision(): BehaviorCommand。简化：行为指令信号类型（推断）。"
+    },
+    {
+      "id": "sig-steering-angle-uuid",
+      "type": "Signal",
+      "name": "SteeringAngle",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：computeSteeringCommand(): SteeringAngle。简化：转向角信号类型（推断）。"
+    },
+    {
+      "id": "sig-throttle-value-uuid",
+      "type": "Signal",
+      "name": "ThrottleValue",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：computeThrottleCommand(): ThrottleValue。简化：油门值信号类型（推断）。"
+    },
+    {
+      "id": "sig-brake-pressure-uuid",
+      "type": "Signal",
+      "name": "BrakePressure",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：computeBrakeCommand(): BrakePressure。简化：制动压力信号类型（推断）。"
+    },
+    {
+      "id": "sig-control-set-uuid",
+      "type": "Signal",
+      "name": "ControlSet",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：sendControlCommands(commands: ControlSet)。简化：控制指令集信号类型（推断）。"
+    },
+    {
+      "id": "sig-vehicle-state-uuid",
+      "type": "Signal",
+      "name": "VehicleState",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：readVehicleState(): VehicleState。简化：车辆状态信号类型（推断）。"
+    },
+    {
+      "id": "sig-health-status-uuid",
+      "type": "Signal",
+      "name": "HealthStatus",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：monitorSystemHealth(): HealthStatus。简化：健康状态信号类型（推断）。"
+    },
+    {
+      "id": "sig-status-uuid",
+      "type": "Signal",
+      "name": "Status",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "description": "原文：sendControlCommands(...): Status。简化：状态信号类型（推断）。"
+    },
+    {
+      "id": "blk-perception-system-uuid",
+      "type": "Block",
+      "name": "PerceptionSystem",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "isAbstract": false,
+      "description": "原文：PerceptionSystem - 感知系统负责处理所有传感器数据，构建车辆周围环境的实时模型。简化：系统的核心功能块，负责环境感知。"
+    },
+    {
+      "id": "prop-perception-detectionrange",
+      "type": "Property",
+      "name": "detectionRange",
+      "parentId": "blk-perception-system-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-uuid",
+      "description": "原文：关键属性：detectionRange: Real [m] {0.5..150}。简化：感知系统的检测范围属性。"
+    },
+    {
+      "id": "prop-perception-latency",
+      "type": "Property",
+      "name": "processingLatency",
+      "parentId": "blk-perception-system-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-uuid",
+      "description": "原文：processingLatency: Real [ms] {0..50}。简化：感知系统的处理延迟属性。"
+    },
+    {
+      "id": "prop-perception-confidence",
+      "type": "Property",
+      "name": "objectDetectionConfidence",
+      "parentId": "blk-perception-system-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-uuid",
+      "description": "原文：objectDetectionConfidence: Real [%] {0..100}。简化：感知系统的目标检测置信度属性。"
+    },
+    {
+      "id": "op-perception-processsensor",
+      "type": "Operation",
+      "name": "processSensorData",
+      "parentId": "blk-perception-system-uuid",
+      "description": "原文：核心操作：processSensorData(sensorData: SensorData): PerceptionOutput。简化：处理传感器数据的操作。"
+    },
+    {
+      "id": "op-perception-fusemulti",
+      "type": "Operation",
+      "name": "fuseMultiSensorData",
+      "parentId": "blk-perception-system-uuid",
+      "description": "原文：fuseMultiSensorData(): FusedPerceptionData。简化：融合多传感器数据的操作。"
+    },
+    {
+      "id": "op-perception-trackobjects",
+      "type": "Operation",
+      "name": "trackObjects",
+      "parentId": "blk-perception-system-uuid",
+      "description": "原文：trackObjects(): ObjectTrackList。简化：跟踪动态障碍物的操作。"
+    },
+    {
+      "id": "port-perception-output",
+      "type": "ProxyPort",
+      "name": "perceptionOutput",
+      "parentId": "blk-perception-system-uuid",
+      "description": "原文：[perception.perceptionOutput] <--> [coordinator.perceptionInput]。简化：感知系统输出感知结果的端口。"
+    },
+    {
+      "id": "blk-localization-module-uuid",
+      "type": "Block",
+      "name": "LocalizationModule",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "isAbstract": false,
+      "description": "原文：LocalizationModule - 定位模块负责精确确定车辆在全局坐标系中的位置和姿态。简化：系统的核心功能块，负责车辆定位。"
+    },
+    {
+      "id": "prop-localization-posacc",
+      "type": "Property",
+      "name": "positionAccuracy",
+      "parentId": "blk-localization-module-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-uuid",
+      "description": "原文：关键属性：positionAccuracy: Real [cm] {0..20}。简化：定位模块的位置精度属性。"
+    },
+    {
+      "id": "prop-localization-updaterate",
+      "type": "Property",
+      "name": "updateRate",
+      "parentId": "blk-localization-module-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-uuid",
+      "description": "原文：updateRate: Real [Hz] {10..100}。简化：定位模块的更新率属性。"
+    },
+    {
+      "id": "prop-localization-headacc",
+      "type": "Property",
+      "name": "headingAccuracy",
+      "parentId": "blk-localization-module-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-uuid",
+      "description": "原文：headingAccuracy: Real [deg] {0..1}。简化：定位模块的航向精度属性。"
+    },
+    {
+      "id": "op-localization-estimatepose",
+      "type": "Operation",
+      "name": "estimatePose",
+      "parentId": "blk-localization-module-uuid",
+      "description": "原文：核心操作：estimatePose(): VehiclePose。简化：估计车辆位姿的操作。"
+    },
+    {
+      "id": "op-localization-matchpointcloud",
+      "type": "Operation",
+      "name": "matchPointCloud",
+      "parentId": "blk-localization-module-uuid",
+      "description": "原文：matchPointCloud(mapData: PointCloud): LocalizationResult。简化：匹配点云数据的操作。"
+    },
+    {
+      "id": "op-localization-correctdrift",
+      "type": "Operation",
+      "name": "correctDrift",
+      "parentId": "blk-localization-module-uuid",
+      "description": "原文：correctDrift(sensorData: SensorData): CorrectedPose。简化：校正漂移的操作。"
+    },
+    {
+      "id": "port-localization-poseoutput",
+      "type": "ProxyPort",
+      "name": "poseOutput",
+      "parentId": "blk-localization-module-uuid",
+      "description": "原文：[localization.poseOutput] <--> [coordinator.localizationInput]。简化：定位模块输出位姿的端口。"
+    },
+    {
+      "id": "blk-planning-system-uuid",
+      "type": "Block",
+      "name": "PlanningSystem",
+      "parentId": "pkg-autonomous-driving-uuid",
+      "isAbstract": false,
+      "description": "原文：PlanningSystem - 规划系统基于感知和定位信息，实时生成安全可行的行驶路径。简化：系统的核心功能块，负责路径规划。"
+    },
+    {
+      "id": "prop-planning-horizon",
+      "type": "Property",
+      "name": "planningHorizon",
+      "parentId": "blk-planning-system-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-uuid",
+      "description": "原文：关键属性：planningHorizon: Real [m] {10..200}。简化：规划系统的规划视野属性。"
+    },
+    {
+      "id": "prop-planning-replanrate",
+      "type": "Property",
+      "name": "replanningRate",
+      "parentId": "blk-planning-system-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-uuid",
+      "description": "原文：replanningRate: Real [Hz] {5..20}。简化：规划系统的重规划率属性。"
+    },
+    {
+      "id": "prop-planning-colldist",
+      "type": "Property",
+      "name": "collisionCheckDistance",
+      "parentId": "blk-planning-system-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-real-uuid",
+      "description": "原文：collisionCheckDistance: Real [m] {5..50}。简化：规划系统的碰撞检查距离属性。"
+    },
+    {
+      "id": "op-planning-globalroute",
+      "type": "Operation",
+      "name": "generateGlobalRoute",
+      "parentId": "blk-planning-system-uuid",
+      "description": "原文：核心操作：generateGlobalRoute(destination: GeoPoint): Route。简化：生成全局路径的操作。"
+    },
+    {
+      "id": "op-planning-localtrj",
+      "type": "Operation",
+      "name": "computeLocalTrajectory",
+      "parentId": "blk-planning-system-uuid",
+      "description": "原文：computeLocalTrajectory(): Trajectory。简化：计算局部轨迹的操作。"
+    },
+    {
+      "id": "op-planning-behavior",
+      "type": "Operation",
+      "name": "makeBehaviorDecision",
+      "parentId": "blk-planning-system-uuid",
+      "description": "原文：makeBehaviorDecision(): BehaviorCommand。简化：做出行为决策的操作。"
+    }
+  ]
+}

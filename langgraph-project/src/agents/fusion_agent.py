@@ -7,7 +7,7 @@ import json
 import os
 from typing import Dict, Any, List
 from datetime import datetime
-
+import glob
 from graph.workflow_state import WorkflowState, ProcessStatus
 from config.settings import settings
 
@@ -16,24 +16,57 @@ logger = logging.getLogger(__name__)
 def collect_diagram_json_paths(state: WorkflowState) -> List[str]:
     """
     收集所有已完成任务的 JSON 文件路径
-    
-    返回:
-        JSON文件路径列表
     """
     json_paths = []
     
+    # 策略 1: 尝试从任务结果中获取路径 (标准流程)
     for task in state.assigned_tasks:
         if task.status == ProcessStatus.COMPLETED and task.result:
-            if isinstance(task.result, dict) and "saved_file" in task.result:
-                json_path = task.result["saved_file"]
-                if os.path.exists(json_path):
-                    json_paths.append(json_path)
-                    logger.info(f"✅ 已收集 {task.type} 图的JSON: {json_path}")
-                else:
-                    logger.warning(f"⚠️ 文件不存在: {json_path}")
+            if isinstance(task.result, dict):
+                if "saved_file" in task.result:
+                    json_paths.append(task.result["saved_file"])
+                elif "json_path" in task.result:
+                    json_paths.append(task.result["json_path"])
+            elif isinstance(task.result, str) and task.result.endswith(".json"):
+                json_paths.append(task.result)
     
-    logger.info(f"📊 共收集到 {len(json_paths)} 个JSON文件")
-    return json_paths
+    # 策略 2: 兜底机制 - 如果任务结果中没有路径，扫描默认输出目录
+    if not json_paths:
+        logger.warning("⚠️ 从任务结果中未提取到JSON路径，启动兜底策略：扫描默认输出目录...")
+        
+        try:
+            # 获取项目根目录 (假设结构为 src/agents/fusion_agent.py)
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            src_dir = os.path.dirname(current_dir)
+            project_root = os.path.dirname(src_dir)
+            base_output_dir = os.path.join(project_root, "data", "output")
+            
+            diagram_dirs = [
+                "activity_diagrams", "block_diagrams", "requirement_diagrams",
+                "state_machine_diagrams", "usecase_diagrams", "parametric_diagrams",
+                "sequence_diagrams"
+            ]
+            
+            for d_dir in diagram_dirs:
+                pattern = os.path.join(base_output_dir, d_dir, "*.json")
+                found_files = glob.glob(pattern)
+                if found_files:
+                    json_paths.extend(found_files)
+                    logger.info(f"   - 在 {d_dir} 中扫描到 {len(found_files)} 个文件")
+                    
+        except Exception as e:
+            logger.error(f"❌ 扫描目录失败: {e}")
+
+    # 去重并过滤不存在的文件
+    valid_paths = []
+    seen = set()
+    for p in json_paths:
+        if p and os.path.exists(p) and p not in seen:
+            valid_paths.append(p)
+            seen.add(p)
+    
+    logger.info(f"📊 最终收集到 {len(valid_paths)} 个有效的JSON文件")
+    return valid_paths
 
 
 def run_fusion_pipeline(json_paths: List[str]) -> Dict[str, Any]:
@@ -103,36 +136,137 @@ def run_fusion_pipeline(json_paths: List[str]) -> Dict[str, Any]:
         print("  ✅ 约束设置完成。")
         logger.info("✅ 约束设置完成")
 
-        # --- 步骤 4: 迭代融合 ---
-        print("\n[4/7] 开始迭代融合（语义检查 + 结构化写入）...")
-        logger.info("🔄 开始迭代融合...")
+        # --- 步骤 4: 批量并行迭代融合 ---
+        print("\n[4/7] 开始批量并行迭代融合（向量并行生成 + 批量仲裁 + 批量写入）...")
+        logger.info("🔄 开始批量并行迭代融合...")
         
         processed_count = 0
         similar_count = 0
         
-        for original_id, canonical_key in elements_with_keys.items():
-            element_data = all_elements_map.get(original_id)
-            if not element_data:
-                continue
-            
-            # 语义相似性检查
-            is_similar, similar_key, _ = semantic_manager.find_similar_element(
-                element_data, canonical_key
-            )
-            
-            if is_similar:
-                canonical_key_remap[canonical_key] = similar_key
-                similar_count += 1
-                continue
-            
-            # 写入Neo4j
-            neo4j_manager.fuse_element(element_data, canonical_key)
-            # 存储语义嵌入
-            semantic_manager.store_element_embedding(element_data, canonical_key)
-            processed_count += 1
+        # 将字典转换为列表以便分块
+        all_items = list(elements_with_keys.items())
+        batch_size = settings.batch_size  # 每批处理 20 个元素
+        total_batches = (len(all_items) + batch_size - 1) // batch_size
         
-        print(f"\n  ✅ 迭代融合完成。处理了 {processed_count} 个新元素，跳过 {similar_count} 个相似元素。")
-        logger.info(f"✅ 迭代融合完成: 新元素={processed_count}, 相似元素={similar_count}")
+        logger.info(f"📊 总共 {len(all_items)} 个元素，分为 {total_batches} 个批次处理")
+        
+        for batch_idx in range(0, len(all_items), batch_size):
+            batch_items = all_items[batch_idx : batch_idx + batch_size]
+            current_batch_num = batch_idx // batch_size + 1
+            
+            print(f"\n  --- 批次 {current_batch_num}/{total_batches} (大小: {len(batch_items)}) ---")
+            logger.info(f"📦 处理批次 {current_batch_num}/{total_batches}")
+            
+            # 1. 准备数据和文本
+            batch_data = []
+            texts_to_embed = []
+            
+            for original_id, canonical_key in batch_items:
+                element = all_elements_map.get(original_id)
+                if not element:
+                    continue
+                
+                # 构建 Embedding 文本 (逻辑同原 store_element_embedding)
+                name = element.get('name', canonical_key.split('::')[-1])
+                desc = element.get('description', '')
+                if isinstance(desc, dict):
+                    desc = json.dumps(desc, ensure_ascii=False)
+                
+                type_ = element.get('type', 'Unknown')
+                text = f"A {type_} named {name}: {desc}" if desc else f"A {type_} named {name}"
+                
+                batch_data.append({
+                    'element': element,
+                    'key': canonical_key,
+                    'text': text,
+                    'type': type_,
+                    'name': name
+                })
+                texts_to_embed.append((text, name))
+            
+            if not batch_data:
+                continue
+            
+            # 2. 并行生成向量
+            print(f"    🚀 并行生成 {len(texts_to_embed)} 个向量...")
+            embeddings = semantic_manager.get_embeddings_parallel(texts_to_embed)
+            
+            # 3. 向量搜索 & 收集仲裁候选
+            arbitration_queue = []  # 存放 (index_in_batch, item, candidate_info)
+            
+            for idx, embedding in enumerate(embeddings):
+                if not embedding:
+                    # 向量生成失败，标记为新元素
+                    batch_data[idx]['is_new'] = True
+                    continue
+                
+                item = batch_data[idx]
+                # 调用新方法，只查不存
+                candidate = semantic_manager.search_candidate_only(
+                    embedding, 
+                    item['type'], 
+                    item['key']
+                )
+                
+                if candidate:
+                    # 加入仲裁队列
+                    arbitration_queue.append((idx, item, candidate))
+                else:
+                    # 无相似项，直接标记为新元素
+                    item['is_new'] = True
+            
+            print(f"    🔍 找到 {len(arbitration_queue)} 个相似候选，准备批量仲裁...")
+            
+            # 4. 批量 LLM 仲裁
+            if arbitration_queue:
+                pairs_to_judge = []
+                for _, item, cand in arbitration_queue:
+                    pairs_to_judge.append((
+                        item['key'], 
+                        item['element'].get('description', ''),
+                        cand['key'], 
+                        cand['description']
+                    ))
+                
+                # 一次性裁断
+                print(f"    🤖 批量仲裁 {len(pairs_to_judge)} 对实体...")
+                results = semantic_manager.llm_arbiter.batch_are_they_the_same_entity(pairs_to_judge)
+                
+                # 应用结果
+                for res_idx, is_same in enumerate(results):
+                    q_idx, item, cand = arbitration_queue[res_idx]
+                    if is_same:
+                        # 判定为相同，进行融合映射
+                        canonical_key_remap[item['key']] = cand['key']
+                        item['is_new'] = False
+                        similar_count += 1
+                        logger.info(f"  🔗 融合: {item['key']} -> {cand['key']}")
+                    else:
+                        item['is_new'] = True
+            
+            # 5. 批量写入 (Neo4j & VectorDB)
+            new_elements_in_batch = [item for item in batch_data if item.get('is_new', True)]
+            print(f"    💾 批量写入 {len(new_elements_in_batch)} 个新元素...")
+            
+            for idx, item in enumerate(batch_data):
+                if item.get('is_new', True):
+                    # 写入 Neo4j
+                    neo4j_manager.fuse_element(item['element'], item['key'])
+                    
+                    # 写入向量数据库
+                    if embeddings[idx]:
+                        semantic_manager.store_embedding_direct(
+                            item['key'], 
+                            item['element'], 
+                            embeddings[idx]
+                        )
+                    
+                    processed_count += 1
+            
+            print(f"    ✅ 批次 {current_batch_num} 完成: 新增 {len(new_elements_in_batch)} 个元素")
+        
+        print(f"\n  ✅ 批量迭代融合完成。处理了 {processed_count} 个新元素，跳过 {similar_count} 个相似元素。")
+        logger.info(f"✅ 批量迭代融合完成: 新元素={processed_count}, 相似元素={similar_count}")
 
         # --- 步骤 5: 关系重建 ---
         print("\n[5/7] 开始关系重建流程...")

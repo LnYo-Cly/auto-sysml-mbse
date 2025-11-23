@@ -1,0 +1,417 @@
+{
+  "model": [
+    {
+      "id": "model-drone-unique-id",
+      "name": "DroneSystemModel",
+      "description": "原文：飞行续航时间计算 - 物理意义与应用: 此约束关系基于能量守恒原理，通过电池容量、系统功耗和飞行状态参数估算最大续航时间，用于任务规划和电量管理决策。升力与推力平衡 - 物理意义与应用: 描述四旋翼无人机在悬停状态下升力与重力的平衡关系，用于电机推力分配和功耗估算。简化：无人机系统参数模型，包含续航时间计算和力学平衡关系，用于系统性能分析和优化。"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-drone-unique-id",
+      "type": "Package",
+      "name": "ParametricDiagram",
+      "parentId": "model-drone-unique-id",
+      "description": "原文：飞行续航时间计算 - 物理意义与应用...升力与推力平衡...简化：封装无人机系统参数图的所有元素，包括续航时间计算和力学平衡关系。"
+    },
+    {
+      "id": "block_drone",
+      "type": "Block",
+      "name": "DroneSystem",
+      "parentId": "pkg-drone-unique-id",
+      "description": "原文：飞行续航时间计算 - 物理意义与应用: 此约束关系基于能量守恒原理，通过电池容量、系统功耗和飞行状态参数估算最大续航时间，用于任务规划和电量管理决策。简化：代表整个无人机系统，包含飞行性能、控制响应、可靠性、环境适应性和电气参数。"
+    },
+    {
+      "id": "block_battery",
+      "type": "Block",
+      "name": "BatterySystem",
+      "parentId": "pkg-drone-unique-id",
+      "description": "原文：电池容量 C_battery [mAh], 电池电压 V_battery [V]。简化：代表无人机的电池子系统，负责能量存储和供应。"
+    },
+    {
+      "id": "block_propulsion",
+      "type": "Block",
+      "name": "PropulsionSystem",
+      "parentId": "pkg-drone-unique-id",
+      "description": "原文：升力与推力平衡 - 物理意义与应用: 描述四旋翼无人机在悬停状态下升力与重力的平衡关系，用于电机推力分配和功耗估算。简化：代表无人机的动力子系统，负责产生升力和推力。"
+    },
+    {
+      "id": "prop_T_flight",
+      "type": "Property",
+      "name": "T_flight",
+      "propertyKind": "value",
+      "parentId": "block_drone",
+      "typeId": "Real",
+      "description": "原文：T_flight: 续航时间 [分钟]。简化：无人机的最大续航时间。"
+    },
+    {
+      "id": "prop_P_system",
+      "type": "Property",
+      "name": "P_system",
+      "propertyKind": "value",
+      "parentId": "block_drone",
+      "typeId": "Real",
+      "description": "原文：P_system: 系统平均功耗 [W]。简化：无人机系统的平均功耗。"
+    },
+    {
+      "id": "prop_eta",
+      "type": "Property",
+      "name": "η",
+      "propertyKind": "value",
+      "parentId": "block_drone",
+      "typeId": "Real",
+      "description": "原文：η: 系统效率系数 [0.7-0.9]。简化：系统的能量转换效率系数。"
+    },
+    {
+      "id": "prop_m",
+      "type": "Property",
+      "name": "m",
+      "propertyKind": "value",
+      "parentId": "block_drone",
+      "typeId": "Real",
+      "description": "原文：m: 无人机总质量 [kg]。简化：无人机的总质量。"
+    },
+    {
+      "id": "prop_g",
+      "type": "Property",
+      "name": "g",
+      "propertyKind": "value",
+      "parentId": "block_drone",
+      "typeId": "Real",
+      "description": "原文：g: 重力加速度 [9.8 m/s²]。简化：重力加速度常数。"
+    },
+    {
+      "id": "prop_F_total",
+      "type": "Property",
+      "name": "F_total",
+      "propertyKind": "value",
+      "parentId": "block_drone",
+      "typeId": "Real",
+      "description": "原文：F_total: 总升力 [N]。简化：无人机产生的总升力。"
+    },
+    {
+      "id": "prop_F_motor",
+      "type": "Property",
+      "name": "F_motor",
+      "propertyKind": "value",
+      "parentId": "block_drone",
+      "typeId": "Real",
+      "description": "原文：F_motor: 单个电机推力 [N]。简化：单个电机产生的推力。"
+    },
+    {
+      "id": "prop_n",
+      "type": "Property",
+      "name": "n",
+      "propertyKind": "value",
+      "parentId": "block_drone",
+      "typeId": "Integer",
+      "description": "原文：n: 电机数量。简化：无人机上的电机总数。"
+    },
+    {
+      "id": "prop_C_battery",
+      "type": "Property",
+      "name": "C_battery",
+      "propertyKind": "value",
+      "parentId": "block_battery",
+      "typeId": "Real",
+      "description": "原文：C_battery: 电池容量 [mAh]。简化：电池的总容量。"
+    },
+    {
+      "id": "prop_V_battery",
+      "type": "Property",
+      "name": "V_battery",
+      "propertyKind": "value",
+      "parentId": "block_battery",
+      "typeId": "Real",
+      "description": "原文：V_battery: 电池电压 [V]。简化：电池的工作电压。"
+    },
+    {
+      "id": "cb_endurance",
+      "type": "ConstraintBlock",
+      "name": "FlightEnduranceCalculation",
+      "parentId": "pkg-drone-unique-id",
+      "specification": {
+        "expression": "T_flight = (C_battery * V_battery * η) / (P_system * 60) * 0.85",
+        "language": "Math"
+      },
+      "description": "原文：飞行续航时间计算 - 物理意义与应用: 此约束关系基于能量守恒原理，通过电池容量、系统功耗和飞行状态参数估算最大续航时间，用于任务规划和电量管理决策。简化：基于能量守恒计算无人机最大续航时间。"
+    },
+    {
+      "id": "param_T_flight",
+      "type": "ConstraintParameter",
+      "name": "T_flight",
+      "parentId": "cb_endurance",
+      "typeId": "Real",
+      "description": "原文：T_flight: 续航时间 [分钟]。简化：约束方程中的续航时间变量。"
+    },
+    {
+      "id": "param_C_battery",
+      "type": "ConstraintParameter",
+      "name": "C_battery",
+      "parentId": "cb_endurance",
+      "typeId": "Real",
+      "description": "原文：C_battery: 电池容量 [mAh]。简化：约束方程中的电池容量变量。"
+    },
+    {
+      "id": "param_V_battery",
+      "type": "ConstraintParameter",
+      "name": "V_battery",
+      "parentId": "cb_endurance",
+      "typeId": "Real",
+      "description": "原文：V_battery: 电池电压 [V]。简化：约束方程中的电池电压变量。"
+    },
+    {
+      "id": "param_eta",
+      "type": "ConstraintParameter",
+      "name": "η",
+      "parentId": "cb_endurance",
+      "typeId": "Real",
+      "description": "原文：η: 系统效率系数 [0.7-0.9]。简化：约束方程中的效率系数变量。"
+    },
+    {
+      "id": "param_P_system",
+      "type": "ConstraintParameter",
+      "name": "P_system",
+      "parentId": "cb_endurance",
+      "typeId": "Real",
+      "description": "原文：P_system: 系统平均功耗 [W]。简化：约束方程中的系统功耗变量。"
+    },
+    {
+      "id": "cb_lift_balance",
+      "type": "ConstraintBlock",
+      "name": "LiftGravityBalance",
+      "parentId": "pkg-drone-unique-id",
+      "specification": {
+        "expression": "F_total = m * g",
+        "language": "Math"
+      },
+      "description": "原文：升力与推力平衡 - 物理意义与应用: 描述四旋翼无人机在悬停状态下升力与重力的平衡关系，用于电机推力分配和功耗估算。简化：定义悬停状态下总升力与重力的平衡关系。"
+    },
+    {
+      "id": "param_F_total",
+      "type": "ConstraintParameter",
+      "name": "F_total",
+      "parentId": "cb_lift_balance",
+      "typeId": "Real",
+      "description": "原文：F_total: 总升力 [N]。简化：约束方程中的总升力变量。"
+    },
+    {
+      "id": "param_m",
+      "type": "ConstraintParameter",
+      "name": "m",
+      "parentId": "cb_lift_balance",
+      "typeId": "Real",
+      "description": "原文：m: 无人机总质量 [kg]。简化：约束方程中的质量变量。"
+    },
+    {
+      "id": "param_g",
+      "type": "ConstraintParameter",
+      "name": "g",
+      "parentId": "cb_lift_balance",
+      "typeId": "Real",
+      "description": "原文：g: 重力加速度 [9.8 m/s²]。简化：约束方程中的重力加速度变量。"
+    },
+    {
+      "id": "cb_motor_thrust",
+      "type": "ConstraintBlock",
+      "name": "MotorThrustDistribution",
+      "parentId": "pkg-drone-unique-id",
+      "specification": {
+        "expression": "F_total = F_motor * n",
+        "language": "Math"
+      },
+      "description": "原文：升力与推力平衡...用于电机推力分配和功耗估算。简化：定义总升力与各电机推力之间的关系。"
+    },
+    {
+      "id": "param_F_total2",
+      "type": "ConstraintParameter",
+      "name": "F_total",
+      "parentId": "cb_motor_thrust",
+      "typeId": "Real",
+      "description": "原文：F_total: 总升力 [N]。简化：约束方程中的总升力变量。"
+    },
+    {
+      "id": "param_F_motor",
+      "type": "ConstraintParameter",
+      "name": "F_motor",
+      "parentId": "cb_motor_thrust",
+      "typeId": "Real",
+      "description": "原文：F_motor: 单个电机推力 [N]。简化：约束方程中的单个电机推力变量。"
+    },
+    {
+      "id": "param_n",
+      "type": "ConstraintParameter",
+      "name": "n",
+      "parentId": "cb_motor_thrust",
+      "typeId": "Integer",
+      "description": "原文：n: 电机数量。简化：约束方程中的电机数量变量。"
+    },
+    {
+      "id": "cp_endurance",
+      "type": "Property",
+      "name": "EnduranceConstraint",
+      "propertyKind": "constraint",
+      "parentId": "block_drone",
+      "typeId": "cb_endurance",
+      "description": "原文：飞行续航时间计算...用于任务规划和电量管理决策。简化：在无人机系统块中实例化续航时间计算约束。"
+    },
+    {
+      "id": "cp_lift_balance",
+      "type": "Property",
+      "name": "LiftBalanceConstraint",
+      "propertyKind": "constraint",
+      "parentId": "block_drone",
+      "typeId": "cb_lift_balance",
+      "description": "原文：升力与推力平衡...用于电机推力分配和功耗估算。简化：在无人机系统块中实例化升力平衡约束。"
+    },
+    {
+      "id": "cp_motor_thrust",
+      "type": "Property",
+      "name": "MotorThrustConstraint",
+      "propertyKind": "constraint",
+      "parentId": "block_drone",
+      "typeId": "cb_motor_thrust",
+      "description": "原文：升力与推力平衡...用于电机推力分配。简化：在无人机系统块中实例化电机推力分配约束。"
+    },
+    {
+      "id": "conn1",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_T_flight"
+      },
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_T_flight"
+      },
+      "description": "原文：T_flight: 续航时间 [分钟]。简化：将无人机的续航时间值绑定到约束方程中的续航时间参数。"
+    },
+    {
+      "id": "conn2",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_C_battery"
+      },
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_C_battery"
+      },
+      "description": "原文：C_battery: 电池容量 [mAh]。简化：将电池容量值绑定到续航时间约束方程中的电池容量参数。"
+    },
+    {
+      "id": "conn3",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_V_battery"
+      },
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_V_battery"
+      },
+      "description": "原文：V_battery: 电池电压 [V]。简化：将电池电压值绑定到续航时间约束方程中的电池电压参数。"
+    },
+    {
+      "id": "conn4",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_eta"
+      },
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_eta"
+      },
+      "description": "原文：η: 系统效率系数 [0.7-0.9]。简化：将系统效率系数绑定到续航时间约束方程中的效率参数。"
+    },
+    {
+      "id": "conn5",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_P_system"
+      },
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_P_system"
+      },
+      "description": "原文：P_system: 系统平均功耗 [W]。简化：将系统功耗值绑定到续航时间约束方程中的功耗参数。"
+    },
+    {
+      "id": "conn6",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_F_total"
+      },
+      "end2": {
+        "partRefId": "cp_lift_balance",
+        "portRefId": "param_F_total"
+      },
+      "description": "原文：F_total: 总升力 [N]。简化：将总升力值绑定到升力平衡约束方程中的总升力参数。"
+    },
+    {
+      "id": "conn7",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_m"
+      },
+      "end2": {
+        "partRefId": "cp_lift_balance",
+        "portRefId": "param_m"
+      },
+      "description": "原文：m: 无人机总质量 [kg]。简化：将无人机质量值绑定到升力平衡约束方程中的质量参数。"
+    },
+    {
+      "id": "conn8",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_g"
+      },
+      "end2": {
+        "partRefId": "cp_lift_balance",
+        "portRefId": "param_g"
+      },
+      "description": "原文：g: 重力加速度 [9.8 m/s²]。简化：将重力加速度值绑定到升力平衡约束方程中的重力参数。"
+    },
+    {
+      "id": "conn9",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_F_total"
+      },
+      "end2": {
+        "partRefId": "cp_motor_thrust",
+        "portRefId": "param_F_total2"
+      },
+      "description": "原文：F_total: 总升力 [N]。简化：将总升力值绑定到电机推力约束方程中的总升力参数。"
+    },
+    {
+      "id": "conn10",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_F_motor"
+      },
+      "end2": {
+        "partRefId": "cp_motor_thrust",
+        "portRefId": "param_F_motor"
+      },
+      "description": "原文：F_motor: 单个电机推力 [N]。简化：将单个电机推力值绑定到电机推力约束方程中的推力参数。"
+    },
+    {
+      "id": "conn11",
+      "type": "BindingConnector",
+      "parentId": "block_drone",
+      "end1": {
+        "propertyRefId": "prop_n"
+      },
+      "end2": {},
+      "description": "自动生成的描述: 这是一个类型为 'BindingConnector'，名称为 'Unnamed' 的元素。"
+    }
+  ]
+}

@@ -1,0 +1,441 @@
+{
+  "model": [
+    {
+      "id": "model-uav-uuid",
+      "name": "UAVSystemModel",
+      "description": "原文：系统顶层架构设计理念：采用分层模块化架构...主要划分为感知决策层、控制执行层和物理设备层。简化：代表整个无人机系统的顶层模型。"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-uav-uuid",
+      "type": "Package",
+      "name": "UAVSystemPackage",
+      "parentId": "model-uav-uuid",
+      "description": "原文：系统顶层架构设计理念...简化：包含所有与无人机系统相关的块和定义的包。"
+    },
+    {
+      "id": "vt-eulerangles-uuid",
+      "type": "ValueType",
+      "name": "EulerAngles",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：关键属性: currentAttitude: EulerAngles [degrees] {-180..180}。简化：表示姿态角的数值类型。"
+    },
+    {
+      "id": "enum-flightmode-uuid",
+      "type": "Enumeration",
+      "name": "FlightModeEnum",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：flightMode: FlightModeEnum {MANUAL, GPS_HOLD, AUTO, RTL}。简化：定义飞行模式的枚举。"
+    },
+    {
+      "id": "enum-healthstatus-uuid",
+      "type": "Enumeration",
+      "name": "HealthStatus",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：systemHealth: HealthStatus {NORMAL, WARNING, CRITICAL}。简化：定义系统健康状态的枚举。"
+    },
+    {
+      "id": "vt-navsolution-uuid",
+      "type": "ValueType",
+      "name": "NavSolution",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：核心操作: updateNavigation(solution: NavSolution): Boolean。简化：表示导航解算结果的数值类型。"
+    },
+    {
+      "id": "vt-status-uuid",
+      "type": "ValueType",
+      "name": "Status",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：核心操作: setFlightMode(mode: FlightModeEnum): Status。简化：表示操作状态的数值类型。"
+    },
+    {
+      "id": "enum-emergencytype-uuid",
+      "type": "Enumeration",
+      "name": "EmergencyType",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：核心操作: executeEmergencyProcedure(type: EmergencyType): void。简化：定义紧急类型的枚举。"
+    },
+    {
+      "id": "vt-batteryinfo-uuid",
+      "type": "ValueType",
+      "name": "BatteryInfo",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：核心操作: getBatteryInfo(): BatteryInfo。简化：表示电池信息的数值类型。"
+    },
+    {
+      "id": "vt-telemetrypacket-uuid",
+      "type": "ValueType",
+      "name": "TelemetryPacket",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：核心操作: sendTelemetry(data: TelemetryPacket): Status。简化：表示遥测数据包的数值类型。"
+    },
+    {
+      "id": "vt-commandpacket-uuid",
+      "type": "ValueType",
+      "name": "CommandPacket",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：核心操作: receiveCommand(): CommandPacket。简化：表示命令数据包的数值类型。"
+    },
+    {
+      "id": "enum-frequencyband-uuid",
+      "type": "Enumeration",
+      "name": "FrequencyBand",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：核心操作: setFrequency(band: FrequencyBand): Status。简化：定义频段的枚举。"
+    },
+    {
+      "id": "vt-coordinates-uuid",
+      "type": "ValueType",
+      "name": "Coordinates",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：关键属性: position: Coordinates {lat, lon, alt}。简化：表示坐标的数值类型。"
+    },
+    {
+      "id": "vt-motorstatus-uuid",
+      "type": "ValueType",
+      "name": "MotorStatus",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：核心操作: getMotorStatus(motorID: Integer): MotorStatus。简化：表示电机状态的数值类型。"
+    },
+    {
+      "id": "blk-flightcontroller-uuid",
+      "type": "Block",
+      "name": "FlightController",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：FlightController: 运行姿态解算和导航算法...作为无人机的大脑...简化：系统的核心控制块，负责数据处理和决策。"
+    },
+    {
+      "id": "prop-fc-attitude",
+      "type": "Property",
+      "name": "currentAttitude",
+      "parentId": "blk-flightcontroller-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-eulerangles-uuid",
+      "description": "原文：关键属性: currentAttitude: EulerAngles [degrees] {-180..180}。简化：当前姿态角。"
+    },
+    {
+      "id": "prop-fc-flightmode",
+      "type": "Property",
+      "name": "flightMode",
+      "parentId": "blk-flightcontroller-uuid",
+      "propertyKind": "value",
+      "typeId": "enum-flightmode-uuid",
+      "description": "原文：flightMode: FlightModeEnum {MANUAL, GPS_HOLD, AUTO, RTL}。简化：当前飞行模式。"
+    },
+    {
+      "id": "prop-fc-health",
+      "type": "Property",
+      "name": "systemHealth",
+      "parentId": "blk-flightcontroller-uuid",
+      "propertyKind": "value",
+      "typeId": "enum-healthstatus-uuid",
+      "description": "原文：systemHealth: HealthStatus {NORMAL, WARNING, CRITICAL}。简化：系统健康状态。"
+    },
+    {
+      "id": "op-fc-updatenav",
+      "type": "Operation",
+      "name": "updateNavigation",
+      "parentId": "blk-flightcontroller-uuid",
+      "description": "原文：核心操作: updateNavigation(solution: NavSolution): Boolean。简化：更新导航解算。"
+    },
+    {
+      "id": "op-fc-setmode",
+      "type": "Operation",
+      "name": "setFlightMode",
+      "parentId": "blk-flightcontroller-uuid",
+      "description": "原文：核心操作: setFlightMode(mode: FlightModeEnum): Status。简化：设置飞行模式。"
+    },
+    {
+      "id": "op-fc-emergency",
+      "type": "Operation",
+      "name": "executeEmergencyProcedure",
+      "parentId": "blk-flightcontroller-uuid",
+      "description": "原文：核心操作: executeEmergencyProcedure(type: EmergencyType): void。简化：执行紧急程序。"
+    },
+    {
+      "id": "port-fc-power",
+      "type": "ProxyPort",
+      "name": "powerPort",
+      "parentId": "blk-flightcontroller-uuid",
+      "description": "原文：连接关系: [fc.powerPort] <--> [pmm.controlPort]。简化：连接电源管理模块的端口。"
+    },
+    {
+      "id": "port-fc-comm",
+      "type": "ProxyPort",
+      "name": "commPort",
+      "parentId": "blk-flightcontroller-uuid",
+      "description": "原文：连接关系: [fc.commPort] <--> [comm.dataPort]。简化：连接通信系统的端口。"
+    },
+    {
+      "id": "port-fc-nav",
+      "type": "ProxyPort",
+      "name": "navPort",
+      "parentId": "blk-flightcontroller-uuid",
+      "description": "原文：连接关系: [fc.navPort] <--> [nav.dataPort]。简化：连接导航系统的端口。"
+    },
+    {
+      "id": "port-fc-motor",
+      "type": "ProxyPort",
+      "name": "motorPort",
+      "parentId": "blk-flightcontroller-uuid",
+      "description": "原文：连接关系: [fc.motorPort] <--> [prop.controlPort]。简化：连接推进系统的端口。"
+    },
+    {
+      "id": "blk-powermanagementmodule-uuid",
+      "type": "Block",
+      "name": "PowerManagementModule",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：PowerManagementModule: 电源管理模块负责整个系统的电力分配...简化：负责电力管理和分配的块。"
+    },
+    {
+      "id": "prop-pmm-voltage",
+      "type": "Property",
+      "name": "batteryVoltage",
+      "parentId": "blk-powermanagementmodule-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: batteryVoltage: Real [V] {0..25.2}。简化：电池电压。"
+    },
+    {
+      "id": "prop-pmm-capacity",
+      "type": "Property",
+      "name": "batteryCapacity",
+      "parentId": "blk-powermanagementmodule-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: batteryCapacity: Real [mAh] {0..16000}。简化：电池容量。"
+    },
+    {
+      "id": "prop-pmm-outputstatus",
+      "type": "Property",
+      "name": "powerOutputStatus",
+      "parentId": "blk-powermanagementmodule-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: powerOutputStatus: Boolean[4] {true, false}。简化：电源输出状态。"
+    },
+    {
+      "id": "op-pmm-batteryinfo",
+      "type": "Operation",
+      "name": "getBatteryInfo",
+      "parentId": "blk-powermanagementmodule-uuid",
+      "description": "原文：核心操作: getBatteryInfo(): BatteryInfo。简化：获取电池信息。"
+    },
+    {
+      "id": "op-pmm-setoutput",
+      "type": "Operation",
+      "name": "setPowerOutput",
+      "parentId": "blk-powermanagementmodule-uuid",
+      "description": "原文：核心操作: setPowerOutput(port: Integer, state: Boolean): Status。简化：设置电源输出。"
+    },
+    {
+      "id": "op-pmm-remaintime",
+      "type": "Operation",
+      "name": "calculateRemainingTime",
+      "parentId": "blk-powermanagementmodule-uuid",
+      "description": "原文：核心操作: calculateRemainingTime(): Real。简化：计算剩余时间。"
+    },
+    {
+      "id": "port-pmm-control",
+      "type": "ProxyPort",
+      "name": "controlPort",
+      "parentId": "blk-powermanagementmodule-uuid",
+      "description": "原文：连接关系: [fc.powerPort] <--> [pmm.controlPort]。简化：连接飞行控制器的端口。"
+    },
+    {
+      "id": "port-pmm-out1",
+      "type": "ProxyPort",
+      "name": "powerOut1",
+      "parentId": "blk-powermanagementmodule-uuid",
+      "description": "原文：连接关系: [pmm.powerOut1] <--> [comm.powerPort]。简化：电源输出端口1。"
+    },
+    {
+      "id": "port-pmm-out2",
+      "type": "ProxyPort",
+      "name": "powerOut2",
+      "parentId": "blk-powermanagementmodule-uuid",
+      "description": "原文：连接关系: [pmm.powerOut2] <--> [nav.powerPort]。简化：电源输出端口2。"
+    },
+    {
+      "id": "blk-communicationsystem-uuid",
+      "type": "Block",
+      "name": "CommunicationSystem",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：CommunicationSystem: 通信系统实现无人机与地面站、遥控器之间的双向数据交换。简化：负责通信数据交换的块。"
+    },
+    {
+      "id": "prop-comm-linkquality",
+      "type": "Property",
+      "name": "linkQuality",
+      "parentId": "blk-communicationsystem-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: linkQuality: Real [%] {0..100}。简化：链路质量。"
+    },
+    {
+      "id": "prop-comm-datarate",
+      "type": "Property",
+      "name": "dataRate",
+      "parentId": "blk-communicationsystem-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: dataRate: Real [kbps] {0..1000}。简化：数据速率。"
+    },
+    {
+      "id": "prop-comm-encryption",
+      "type": "Property",
+      "name": "encryptionStatus",
+      "parentId": "blk-communicationsystem-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: encryptionStatus: Boolean {true, false}。简化：加密状态。"
+    },
+    {
+      "id": "op-comm-sendtele",
+      "type": "Operation",
+      "name": "sendTelemetry",
+      "parentId": "blk-communicationsystem-uuid",
+      "description": "原文：核心操作: sendTelemetry(data: TelemetryPacket): Status。简化：发送遥测数据。"
+    },
+    {
+      "id": "op-comm-recvcmd",
+      "type": "Operation",
+      "name": "receiveCommand",
+      "parentId": "blk-communicationsystem-uuid",
+      "description": "原文：核心操作: receiveCommand(): CommandPacket。简化：接收命令。"
+    },
+    {
+      "id": "op-comm-setfreq",
+      "type": "Operation",
+      "name": "setFrequency",
+      "parentId": "blk-communicationsystem-uuid",
+      "description": "原文：核心操作: setFrequency(band: FrequencyBand): Status。简化：设置频率。"
+    },
+    {
+      "id": "port-comm-data",
+      "type": "ProxyPort",
+      "name": "dataPort",
+      "parentId": "blk-communicationsystem-uuid",
+      "description": "原文：连接关系: [fc.commPort] <--> [comm.dataPort]。简化：连接飞行控制器的数据端口。"
+    },
+    {
+      "id": "port-comm-power",
+      "type": "ProxyPort",
+      "name": "powerPort",
+      "parentId": "blk-communicationsystem-uuid",
+      "description": "原文：连接关系: [pmm.powerOut1] <--> [comm.powerPort]。简化：连接电源的端口。"
+    },
+    {
+      "id": "blk-navigationsystem-uuid",
+      "type": "Block",
+      "name": "NavigationSystem",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：NavigationSystem: 导航系统通过多传感器融合提供精确的位置、速度和姿态信息。简化：负责导航和定位的块。"
+    },
+    {
+      "id": "prop-nav-position",
+      "type": "Property",
+      "name": "position",
+      "parentId": "blk-navigationsystem-uuid",
+      "propertyKind": "value",
+      "typeId": "vt-coordinates-uuid",
+      "description": "原文：关键属性: position: Coordinates {lat, lon, alt}。简化：当前位置。"
+    },
+    {
+      "id": "prop-nav-velocity",
+      "type": "Property",
+      "name": "velocity",
+      "parentId": "blk-navigationsystem-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: velocity: Real [m/s] {0..20}。简化：当前速度。"
+    },
+    {
+      "id": "prop-nav-accuracy",
+      "type": "Property",
+      "name": "positionAccuracy",
+      "parentId": "blk-navigationsystem-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: positionAccuracy: Real [m] {0.5..5.0}。简化：定位精度。"
+    },
+    {
+      "id": "op-nav-getpos",
+      "type": "Operation",
+      "name": "getPosition",
+      "parentId": "blk-navigationsystem-uuid",
+      "description": "原文：核心操作: getPosition(): NavSolution。简化：获取位置。"
+    },
+    {
+      "id": "op-nav-calibrate",
+      "type": "Operation",
+      "name": "calibrateSensors",
+      "parentId": "blk-navigationsystem-uuid",
+      "description": "原文：核心操作: calibrateSensors(): Status。简化：校准传感器。"
+    },
+    {
+      "id": "op-nav-sethome",
+      "type": "Operation",
+      "name": "setHomePosition",
+      "parentId": "blk-navigationsystem-uuid",
+      "description": "原文：核心操作: setHomePosition(pos: Coordinates): void。简化：设置返航点。"
+    },
+    {
+      "id": "port-nav-data",
+      "type": "ProxyPort",
+      "name": "dataPort",
+      "parentId": "blk-navigationsystem-uuid",
+      "description": "原文：连接关系: [fc.navPort] <--> [nav.dataPort]。简化：连接飞行控制器的数据端口。"
+    },
+    {
+      "id": "port-nav-power",
+      "type": "ProxyPort",
+      "name": "powerPort",
+      "parentId": "blk-navigationsystem-uuid",
+      "description": "原文：连接关系: [pmm.powerOut2] <--> [nav.powerPort]。简化：连接电源的端口。"
+    },
+    {
+      "id": "blk-propulsionsystem-uuid",
+      "type": "Block",
+      "name": "PropulsionSystem",
+      "parentId": "pkg-uav-uuid",
+      "description": "原文：PropulsionSystem: 推进系统包含电机、电调和螺旋桨，负责产生飞行所需的升力和推力。简化：负责产生推力的块。"
+    },
+    {
+      "id": "prop-prop-rpm",
+      "type": "Property",
+      "name": "motorRPM",
+      "parentId": "blk-propulsionsystem-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: motorRPM: Real[4] [rpm] {0..12000}。简化：电机转速。"
+    },
+    {
+      "id": "prop-prop-temp",
+      "type": "Property",
+      "name": "motorTemperature",
+      "parentId": "blk-propulsionsystem-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: motorTemperature: Real[4] [°C] {-20..120}。简化：电机温度。"
+    },
+    {
+      "id": "prop-prop-thrust",
+      "type": "Property",
+      "name": "thrustOutput",
+      "parentId": "blk-propulsionsystem-uuid",
+      "propertyKind": "value",
+      "description": "原文：关键属性: thrustOutput: Real [N] {0..200}。简化：推力输出。"
+    },
+    {
+      "id": "op-prop-setspeed",
+      "type": "Operation",
+      "name": "setMotorSpeed",
+      "parentId": "blk-propulsionsystem-uuid",
+      "description": "原文：核心操作: setMotorSpeed(motorID: Integer, speed: Real): Status。简化：设置电机速度。"
+    },
+    {
+      "id": "op-prop-getstatus",
+      "type": "Operation",
+      "name": "getMotorStatus",
+      "parentId": "blk-propulsionsystem-uuid",
+      "description": "原文：核心操作: getMotorStatus(motorID: Integer): MotorStatus。简化：获取电机状态。"
+    },
+    {
+      "id": "op-prop-estop",
+      "type": "",
+      "description": "自动生成的描述: 这是一个  类型的元素，名为 '未命名'。"
+    }
+  ]
+}

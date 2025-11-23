@@ -1,0 +1,5204 @@
+{
+  "model": [
+    {
+      "name": "Model",
+      "id": "master-model",
+      "type": "Model"
+    }
+  ],
+  "elements": [
+    {
+      "parentId": "master-model",
+      "description": "原文：此流程描述了自动驾驶系统从传感器数据采集到控制指令输出的完整处理循环。简化：该包封装了自动驾驶系统核心处理循环的所有组件和活动。",
+      "name": "AutonomousDrivingSystem",
+      "id": "pkg-ads-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "edges": [
+        "edge-cf-start-receive",
+        "edge-of-sensor-data",
+        "edge-cf-receive-preprocess",
+        "edge-of-preprocessed-data",
+        "edge-cf-preprocess-fork",
+        "edge-cf-fork-perception",
+        "edge-of-perception-in",
+        "edge-cf-fork-localization",
+        "edge-of-localization-in",
+        "edge-cf-perception-join",
+        "edge-of-perception-out",
+        "edge-cf-localization-join",
+        "edge-of-localization-out",
+        "edge-cf-join-fusion",
+        "edge-of-fusion-perception-in",
+        "edge-of-fusion-localization-in",
+        "edge-cf-fusion-planning",
+        "edge-of-fusion-out",
+        "edge-of-planning-in",
+        "edge-cf-planning-trajectory",
+        "edge-of-planning-out",
+        "edge-of-trajectory-in",
+        "edge-cf-trajectory-control",
+        "edge-of-trajectory-out",
+        "edge-of-control-in",
+        "edge-cf-control-validate",
+        "edge-of-control-out",
+        "edge-of-validate-in",
+        "edge-cf-validate-send",
+        "edge-of-validate-out",
+        "edge-of-send-in",
+        "edge-cf-send-monitor",
+        "edge-of-send-out",
+        "edge-cf-monitor-end"
+      ],
+      "nodes": [
+        "node-start-loop",
+        "node-receive-sensor-data",
+        "node-preprocess-sync",
+        "node-fork-parallel",
+        "node-environment-perception",
+        "node-vehicle-localization",
+        "node-join-perception-localization",
+        "node-fusion-perception-localization",
+        "node-behavior-planning",
+        "node-generate-trajectory",
+        "node-compute-control-commands",
+        "node-validate-safety",
+        "node-send-commands",
+        "node-monitor-log",
+        "node-end-loop"
+      ],
+      "description": "原文：此流程描述了自动驾驶系统从传感器数据采集到控制指令输出的完整处理循环，是系统实现实时自动驾驶的核心业务流程。简化：定义自动驾驶系统50ms周期的核心处理活动。",
+      "name": "自动驾驶主循环流程",
+      "groups": [
+        "grp-sensor-interface-uuid",
+        "grp-data-processing-uuid",
+        "grp-perception-uuid",
+        "grp-localization-uuid",
+        "grp-fusion-uuid",
+        "grp-planning-uuid",
+        "grp-control-uuid",
+        "grp-safety-uuid",
+        "grp-vehicle-interface-uuid",
+        "grp-monitoring-uuid"
+      ],
+      "id": "act-main-driving-loop-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：IN: sensor_data: MultiSensorData。简化：包含激光雷达、摄像头、雷达等多种传感器数据的复合数据类型。",
+      "name": "MultiSensorData",
+      "id": "blk-multi-sensor-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：2. 执行传感器数据预处理和时间同步。简化：经过预处理和时间同步后的传感器数据。",
+      "name": "PreprocessedSensorData",
+      "id": "blk-preprocessed-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：3. 并行执行环境感知。简化：环境感知模块输出的环境理解结果。",
+      "name": "EnvironmentPerception",
+      "id": "blk-environment-perception-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：3. 并行执行车辆定位。简化：定位模块输出的车辆位置信息。",
+      "name": "VehicleLocalization",
+      "id": "blk-vehicle-localization-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：融合后的统一环境表示模型。",
+      "name": "EnvironmentModel",
+      "id": "blk-environment-model-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：5. 基于环境模型进行行为决策和路径规划。简化：行为决策模块输出的驾驶行为选择。",
+      "name": "BehaviorDecision",
+      "id": "blk-behavior-decision-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：6. 生成平滑的局部轨迹。简化：规划生成的平滑可执行轨迹。",
+      "name": "LocalTrajectory",
+      "id": "blk-local-trajectory-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：OUT: control_commands: ActuatorCommands。简化：最终输出给车辆执行器的控制指令集。",
+      "name": "ActuatorCommands",
+      "id": "blk-actuator-commands-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：1. 接收多传感器数据（激光雷达、摄像头、雷达）。简化：负责与各种传感器硬件交互的接口模块。",
+      "name": "SensorInterface",
+      "id": "blk-sensor-interface-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：2. 执行传感器数据预处理和时间同步。简化：负责传感器数据预处理和时间同步的计算模块。",
+      "name": "DataProcessingModule",
+      "id": "blk-data-processing-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：3. 并行执行环境感知。简化：负责环境感知的专用计算模块。",
+      "name": "PerceptionModule",
+      "id": "blk-perception-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：3. 并行执行车辆定位。简化：负责车辆定位的专用计算模块。",
+      "name": "LocalizationModule",
+      "id": "blk-localization-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：负责多源信息融合的环境建模模块。",
+      "name": "FusionModule",
+      "id": "blk-fusion-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：5. 基于环境模型进行行为决策和路径规划。简化：负责行为决策和路径规划的模块。",
+      "name": "PlanningModule",
+      "id": "blk-planning-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：7. 计算轨迹跟踪控制指令。简化：负责控制指令生成的计算模块。",
+      "name": "ControlModule",
+      "id": "blk-control-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：8. 验证控制指令安全性。简化：负责控制指令安全性验证的模块。",
+      "name": "SafetyModule",
+      "id": "blk-safety-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：9. 通过车辆接口下发控制指令。简化：负责与车辆执行器交互的接口模块。",
+      "name": "VehicleInterface",
+      "id": "blk-vehicle-interface-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-ads-uuid",
+      "description": "原文：10. 监控执行结果并记录日志。简化：负责系统监控和日志记录的模块。",
+      "name": "MonitoringModule",
+      "id": "blk-monitoring-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-sensor-interface-uuid",
+      "description": "原文：1. 接收多传感器数据（激光雷达、摄像头、雷达）。简化：此泳道代表由传感器接口模块执行的活动。",
+      "name": "传感器接口分区",
+      "nodeIds": [
+        "node-receive-sensor-data"
+      ],
+      "id": "grp-sensor-interface-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-data-processing-uuid",
+      "description": "原文：2. 执行传感器数据预处理和时间同步。简化：此泳道代表由数据处理模块执行的活动。",
+      "name": "数据处理分区",
+      "nodeIds": [
+        "node-preprocess-sync"
+      ],
+      "id": "grp-data-processing-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-perception-module-uuid",
+      "description": "原文：3. 并行执行环境感知。简化：此泳道代表由环境感知模块执行的活动。",
+      "name": "感知分区",
+      "nodeIds": [
+        "node-environment-perception"
+      ],
+      "id": "grp-perception-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-localization-module-uuid",
+      "description": "原文：3. 并行执行车辆定位。简化：此泳道代表由车辆定位模块执行的活动。",
+      "name": "定位分区",
+      "nodeIds": [
+        "node-vehicle-localization"
+      ],
+      "id": "grp-localization-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-fusion-module-uuid",
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：此泳道代表由信息融合模块执行的活动。",
+      "name": "融合分区",
+      "nodeIds": [
+        "node-fusion-perception-localization"
+      ],
+      "id": "grp-fusion-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-planning-module-uuid",
+      "description": "原文：5. 基于环境模型进行行为决策和路径规划。简化：此泳道代表由规划模块执行的活动。",
+      "name": "规划分区",
+      "nodeIds": [
+        "node-behavior-planning",
+        "node-generate-trajectory"
+      ],
+      "id": "grp-planning-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-control-module-uuid",
+      "description": "原文：7. 计算轨迹跟踪控制指令。简化：此泳道代表由控制模块执行的活动。",
+      "name": "控制分区",
+      "nodeIds": [
+        "node-compute-control-commands"
+      ],
+      "id": "grp-control-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-safety-module-uuid",
+      "description": "原文：8. 验证控制指令安全性。简化：此泳道代表由安全模块执行的活动。",
+      "name": "安全分区",
+      "nodeIds": [
+        "node-validate-safety"
+      ],
+      "id": "grp-safety-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-vehicle-interface-uuid",
+      "description": "原文：9. 通过车辆接口下发控制指令。简化：此泳道代表由车辆接口模块执行的活动。",
+      "name": "车辆接口分区",
+      "nodeIds": [
+        "node-send-commands"
+      ],
+      "id": "grp-vehicle-interface-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "representsId": "blk-monitoring-module-uuid",
+      "description": "原文：10. 监控执行结果并记录日志。简化：此泳道代表由监控模块执行的活动。",
+      "name": "监控分区",
+      "nodeIds": [
+        "node-monitor-log"
+      ],
+      "id": "grp-monitoring-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：每个循环周期为50ms，确保系统能够及时响应环境变化。简化：代表每个50ms处理周期的起点。",
+      "name": "开始循环",
+      "id": "node-start-loop",
+      "type": "InitialNode"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：1. 接收多传感器数据（激光雷达、摄像头、雷达）。简化：接收来自各种传感器的原始数据输入。",
+      "name": "接收多传感器数据",
+      "id": "node-receive-sensor-data",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：2. 执行传感器数据预处理和时间同步。简化：对原始传感器数据进行预处理和时间对齐。",
+      "name": "执行传感器数据预处理和时间同步",
+      "id": "node-preprocess-sync",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：3. 并行执行环境感知和车辆定位。简化：将流程分叉为环境感知和车辆定位两个并行执行路径。",
+      "name": "开始并行处理",
+      "id": "node-fork-parallel",
+      "type": "ForkNode"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：3. 并行执行环境感知。简化：从传感器数据中识别和理解周围环境。",
+      "name": "环境感知",
+      "id": "node-environment-perception",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：3. 并行执行车辆定位。简化：确定车辆在环境中的精确位置。",
+      "name": "车辆定位",
+      "id": "node-vehicle-localization",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：等待环境感知和车辆定位都完成后进行结果融合。",
+      "name": "同步感知定位结果",
+      "id": "node-join-perception-localization",
+      "type": "JoinNode"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：4. 融合感知和定位结果，构建环境模型。简化：将环境感知和定位信息融合成统一的环境模型。",
+      "name": "融合感知和定位结果",
+      "id": "node-fusion-perception-localization",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：5. 基于环境模型进行行为决策和路径规划。简化：根据环境模型制定驾驶行为和全局路径。",
+      "name": "行为决策和路径规划",
+      "id": "node-behavior-planning",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：6. 生成平滑的局部轨迹。简化：将路径规划结果转化为可执行的平滑轨迹。",
+      "name": "生成平滑的局部轨迹",
+      "id": "node-generate-trajectory",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-driving-loop-uuid",
+      "description": "原文：7. 计算轨迹跟踪控制指令。简化：根据轨迹生成具体的车辆控制指令。",
+      "name": "计算轨迹跟踪控制指令",
+      "id": "node-compute-control-commands",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "description": "动作：未命名，可能调用行为：",
+      "id": "node-validate-safety",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "master-model",
+      "description": "该包封装了系统启动自检流程的所有组件和活动。",
+      "name": "SystemStartupSelfCheck",
+      "id": "pkg-systemstart-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-systemstart-uuid",
+      "description": "代表开机指令的数据类型。",
+      "name": "BootCommand",
+      "id": "blk-bootcmd-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-systemstart-uuid",
+      "description": "代表系统状态报告的数据类型。",
+      "name": "StatusReport",
+      "id": "blk-statusrep-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-systemstart-uuid",
+      "description": "代表整个系统，包括所有硬件模块和软件组件。",
+      "name": "System",
+      "id": "blk-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-systemstart-uuid",
+      "edges": [
+        "edge-bootcmd-to-power",
+        "edge-power-to-sensors",
+        "edge-sensors-to-actuators",
+        "edge-actuators-to-control",
+        "edge-control-to-return",
+        "edge-return-to-idle",
+        "edge-idle-to-end"
+      ],
+      "nodes": [
+        "node-start-boot",
+        "node-check-power",
+        "node-check-sensors",
+        "node-check-actuators",
+        "node-initialize-control",
+        "node-return-status",
+        "node-enter-idle",
+        "node-end"
+      ],
+      "description": "这是定义整个系统启动自检流程的主要活动。",
+      "name": "系统启动自检活动",
+      "groups": [
+        "grp-system-uuid"
+      ],
+      "id": "act-systemstart-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "description": "流程的起点，代表接收到开机指令。",
+      "name": "接收开机指令",
+      "id": "node-start-boot",
+      "type": "InitialNode"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "description": "此动作负责检查电源是否正常。",
+      "name": "检查电源状态",
+      "id": "node-check-power",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "description": "此动作负责检查传感器是否正常工作。",
+      "name": "检查传感器状态",
+      "id": "node-check-sensors",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "description": "此动作负责检查执行器是否正常工作。",
+      "name": "检查执行器状态",
+      "id": "node-check-actuators",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "description": "此动作负责初始化控制模块。",
+      "name": "初始化控制模块",
+      "id": "node-initialize-control",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "description": "此动作负责返回系统状态信息。",
+      "name": "返回系统状态",
+      "id": "node-return-status",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "description": "此动作负责将系统置于待机状态。",
+      "name": "进入待机状态",
+      "id": "node-enter-idle",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "description": "流程的终点，代表自检流程完成。",
+      "name": "流程结束",
+      "id": "node-end",
+      "type": "ActivityFinalNode"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "representsId": "blk-system-uuid",
+      "description": "此泳道代表整个系统，包括所有硬件模块和软件组件。",
+      "name": "系统分区",
+      "id": "grp-system-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "guard": "[power_ok]",
+      "description": "从接收开机指令节点到检查电源状态节点的控制流。",
+      "targetId": "node-check-power",
+      "sourceId": "node-start-boot",
+      "id": "edge-bootcmd-to-power",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "guard": "[sensors_ok]",
+      "description": "从检查电源状态节点到检查传感器状态节点的控制流。",
+      "targetId": "node-check-sensors",
+      "sourceId": "node-check-power",
+      "id": "edge-power-to-sensors",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "guard": "[actuators_ok]",
+      "description": "从检查传感器状态节点到检查执行器状态节点的控制流。",
+      "targetId": "node-check-actuators",
+      "sourceId": "node-check-sensors",
+      "id": "edge-sensors-to-actuators",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "guard": "[control_ok]",
+      "description": "从检查执行器状态节点到初始化控制模块节点的控制流。",
+      "targetId": "node-initialize-control",
+      "sourceId": "node-check-actuators",
+      "id": "edge-actuators-to-control",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "region-battery-uuid",
+      "triggerIds": [
+        "event-critical-battery-uuid"
+      ],
+      "guard": {
+        "expression": "电量 < 15%",
+        "language": "English"
+      },
+      "description": "原文：电量低于15%强制着陆状态。简化：当电池电量进一步下降至15%时，从返航状态转换到强制着陆状态。",
+      "targetId": "state-forced-landing-uuid",
+      "sourceId": "state-return-home-uuid",
+      "id": "trans-return-to-forcedlanding-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：正常飞行是起点。简化：系统启动后自动进入避障维度的正常飞行状态。",
+      "targetId": "state-normal-flight-oa-uuid",
+      "sourceId": "ps-oa-initial-uuid",
+      "id": "trans-oa-initial-to-normal-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-obstacle-avoidance-uuid",
+      "triggerIds": [
+        "event-obstacle-detected-uuid"
+      ],
+      "description": "原文：检测到障碍物→悬停状态。简化：当传感器检测到前方有障碍物时，从正常飞行转换到悬停状态。",
+      "targetId": "state-hover-uuid",
+      "sourceId": "state-normal-flight-oa-uuid",
+      "id": "trans-normal-to-hover-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：悬停状态→绕行状态。简化：悬停评估后，启动绕行机动。",
+      "targetId": "state-circumvent-uuid",
+      "sourceId": "state-hover-uuid",
+      "id": "trans-hover-to-circumvent-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-obstacle-avoidance-uuid",
+      "triggerIds": [
+        "event-obstacle-cleared-uuid"
+      ],
+      "description": "原文：绕行状态→恢复正常飞行。简化：成功绕过障碍物后，恢复正常的飞行状态。",
+      "targetId": "state-normal-flight-oa-uuid",
+      "sourceId": "state-circumvent-uuid",
+      "id": "trans-circumvent-to-normal-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "pkg-uav-control-uuid",
+      "description": "原文：电量低于20%触发。简化：电池监测系统在电量低于20%时发出的事件。",
+      "name": "低电量警告事件",
+      "id": "event-low-battery-warning-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-uav-control-uuid",
+      "description": "原文：电量低于15%强制着陆。简化：电池监测系统在电量低于15%时发出的紧急事件。",
+      "name": "严重低电量事件",
+      "id": "event-critical-battery-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-uav-control-uuid",
+      "description": "原文：检测到障碍物。简化：避障传感器检测到前方有障碍物时触发的事件。",
+      "name": "检测到障碍物事件",
+      "id": "event-obstacle-detected-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-uav-control-uuid",
+      "description": "原文：恢复正常飞行。简化：传感器确认障碍物已成功绕过，路径畅通时触发的事件。",
+      "name": "障碍物已清除事件",
+      "id": "event-obstacle-cleared-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在\"返航状态\"中。简化：计算返航路径并启动返航飞行的具体活动。",
+      "name": "执行返航程序",
+      "id": "act-execute-return-home-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在\"返航状态\"中。简化：持续监控并调整飞行路径以确保返回起飞点。",
+      "name": "持续导航至Home点",
+      "id": "act-navigate-to-home-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在\"绕行状态\"中。简化：计算并执行绕过障碍物的飞行路径。",
+      "name": "执行绕障机动",
+      "id": "act-perform-circumvention-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在转换中。简化：记录低电量警告和状态转换的日志活动。",
+      "name": "记录低电量事件",
+      "id": "act-log-low-battery-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在状态进入行为中。简化：包装调用执行返航程序活动的包装器活动。",
+      "name": "进入返航状态包装活动",
+      "id": "wrapper-entry-return-home-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在状态执行行为中。简化：包装调用持续导航至Home点活动的包装器活动。",
+      "name": "返航状态执行活动包装器",
+      "id": "wrapper-do-return-home-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在状态执行行为中。简化：包装调用执行绕障机动活动的包装器活动。",
+      "name": "绕行状态执行活动包装器",
+      "id": "wrapper-do-circumvent-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-behaviors-uuid",
+      "description": "原文：隐含在转换效果中。简化：包装调用记录低电量事件活动的包装器活动。",
+      "name": "转换效果包装器",
+      "id": "wrapper-effect-t2-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "master-model",
+      "description": {
+        "原文": "上下文块: AirConditioningSystem。",
+        "简化": "主应用包，包含空调控制器和状态机定义。"
+      },
+      "name": "空调控制包",
+      "id": "pkg-air-con-control-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "master-model",
+      "description": {
+        "原文": "无。",
+        "简化": "行为库包，存储所有可被状态和转换调用的具体活动。"
+      },
+      "name": "空调行为库",
+      "id": "pkg-air-con-behaviors-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "blk-aircon-control-uuid",
+      "description": {
+        "原文": "空调系统状态机。",
+        "简化": "定义空调系统的完整生命周期和行为逻辑。"
+      },
+      "name": "空调状态机",
+      "id": "sm-air-con-uuid",
+      "type": "StateMachine"
+    },
+    {
+      "parentId": "sm-air-con-uuid",
+      "description": {
+        "原文": "空调系统的行为模型定义了从‘关闭’到‘待机’再到‘运行’的完整生命周期，包括各种状态和转换条件。",
+        "简化": "状态机的主要活动区域，包含所有顶层状态和转换。"
+      },
+      "name": "主区域",
+      "id": "region-air-con-main-uuid",
+      "type": "Region"
+    },
+    {
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "状态定义: 状态名称: Off。描述: 空调系统关闭状态。",
+        "简化": "空调系统完全关闭，不执行任何操作的状态。"
+      },
+      "name": "关闭",
+      "id": "state-off-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "状态定义: 状态名称: Standby。描述: 空调系统待机状态。",
+        "简化": "空调系统处于准备运行状态，执行初始化和监测操作。"
+      },
+      "name": "待机",
+      "id": "state-standby-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "状态定义: 状态名称: Running。描述: 空调系统运行状态。",
+        "简化": "空调系统正在执行制冷或制热操作，调节温度和湿度。"
+      },
+      "name": "运行",
+      "id": "state-running-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "状态机的起始点，系统启动时的入口。"
+      },
+      "kind": "initial",
+      "id": "ps-main-initial-uuid",
+      "type": "Pseudostate"
+    },
+    {
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "系统启动时自动进入关闭状态的转换。"
+      },
+      "targetId": "state-off-uuid",
+      "sourceId": "ps-main-initial-uuid",
+      "id": "trans-initial-to-off-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "转换: Off --[power_on]--> Standby。",
+        "简化": "接通电源后从关闭状态转换到待机状态。"
+      },
+      "targetId": "state-standby-uuid",
+      "sourceId": "state-off-uuid",
+      "id": "trans-off-to-standby-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "转换: Standby --[temperature_change] / [humidity_change]--> Running。",
+        "简化": "当环境参数发生变化时，从待机状态转换到运行状态。"
+      },
+      "targetId": "state-running-uuid",
+      "sourceId": "state-standby-uuid",
+      "id": "trans-standby-to-running-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-air-con-main-uuid",
+      "description": {
+        "原文": "转换: Running --[power_off]--> Off。",
+        "简化": "断开电源后从运行状态转换到关闭状态。"
+      },
+      "targetId": "state-off-uuid",
+      "sourceId": "state-running-uuid",
+      "id": "trans-running-to-off-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "pkg-air-con-control-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "接通电源时触发的事件。"
+      },
+      "name": "power_on",
+      "id": "event-power-on-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-air-con-control-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "环境温度发生变化时触发的事件。"
+      },
+      "name": "temperature_change",
+      "id": "event-temperature-change-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-air-con-control-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "环境湿度发生变化时触发的事件。"
+      },
+      "name": "humidity_change",
+      "id": "event-humidity-change-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-air-con-control-uuid",
+      "description": {
+        "原文": "无。",
+        "简化": "断开电源时触发的事件。"
+      },
+      "name": "power_off",
+      "id": "event-power-off-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: entry: 关闭所有执行器。",
+        "简化": "关闭空调系统中所有执行器的具体操作活动。"
+      },
+      "name": "关闭所有执行器",
+      "id": "act-close-all-executors-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: entry: 初始化传感器和执行器。",
+        "简化": "初始化空调系统中的传感器和执行器的具体操作活动。"
+      },
+      "name": "初始化传感器和执行器",
+      "id": "act-initialize-sensors-executors-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: do: 监测环境参数。",
+        "简化": "持续监测环境温度和湿度的具体操作活动。"
+      },
+      "name": "监测环境参数",
+      "id": "act-monitor-env-params-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: entry: 启动制冷或制热系统。",
+        "简化": "启动空调系统中的制冷或制热系统的具体操作活动。"
+      },
+      "name": "启动制冷或制热系统",
+      "id": "act-start-cooling-heating-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: do: 调节温度和湿度。",
+        "简化": "根据环境参数调节空调系统中的温度和湿度的具体操作活动。"
+      },
+      "name": "调节温度和湿度",
+      "id": "act-adjust-temperature-humidity-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-air-con-behaviors-uuid",
+      "description": {
+        "原文": "状态定义: exit: 关闭制冷或制热系统。",
+        "简化": "关闭空调系统中的制冷或制热系统的具体操作活动。"
+      },
+      "name": "关闭制冷或制热系统",
+      "id": "act-stop-cooling-heating-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：空调控制系统案例。简化：包含空调控制系统的所有核心用例和参与者。",
+      "name": "主要用例",
+      "id": "pkg-air-con-control-main-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **参与者**: Primary: 驾驶员。简化：空调系统的主要操作者，负责控制空调系统的各项功能。",
+      "name": "驾驶员",
+      "id": "actor-driver-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **参与者**: Secondary: 车载触摸屏。简化：驾驶员与空调系统交互的界面，用于显示和控制空调设置。",
+      "name": "车载触摸屏",
+      "id": "actor-touch-screen-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **用例名称**: ControlAirConditioning。简化：系统提供的核心功能，允许用户控制空调系统的各项设置。",
+      "name": "控制空调系统",
+      "id": "uc-control-air-con-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **参与者**: Primary: 驾驶员。简化：驾驶员是控制空调系统的主要参与者。",
+      "targetId": "uc-control-air-con-uuid",
+      "sourceId": "actor-driver-uuid",
+      "id": "assoc-driver-control-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-air-con-control-main-uuid",
+      "description": "原文：*   **参与者**: Secondary: 车载触摸屏。简化：车载触摸屏是驾驶员与空调系统交互的界面。",
+      "targetId": "uc-control-air-con-uuid",
+      "sourceId": "actor-touch-screen-uuid",
+      "id": "assoc-touch-screen-control-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：城市道路自动驾驶案例。简化：包含城市道路自动驾驶系统的所有核心用例和参与者。",
+      "name": "主要用例",
+      "id": "pkg-autonomous-driving-main-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Primary: 乘客。简化：城市道路自动驾驶系统的主要使用者，负责设定目的地和启动自动驾驶。",
+      "name": "乘客",
+      "id": "actor-passenger-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Secondary: 交通管理系统。简化：与自动驾驶系统交互的外部系统，提供交通信号等信息。",
+      "name": "交通管理系统",
+      "id": "actor-traffic-management-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Secondary: 其他道路使用者。简化：在道路环境中与自动驾驶车辆产生交互的外部实体，包括行人和其他车辆。",
+      "name": "其他道路使用者",
+      "id": "actor-other-road-users-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：乘客通过人机界面设定目的地。简化：乘客输入自动驾驶的最终目标地点。",
+      "name": "设定目的地",
+      "id": "uc-set-destination-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：乘客启动自动驾驶模式。简化：乘客激活车辆的自动驾驶功能。",
+      "name": "启动自动驾驶模式",
+      "id": "uc-start-autonomous-driving-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：系统规划全局路径并确认。简化：系统根据目的地计算整体行驶路线。",
+      "name": "规划全局路径",
+      "id": "uc-plan-global-path-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：系统执行环境感知和定位。简化：系统通过传感器识别周围环境并确定自身位置。",
+      "name": "执行环境感知和定位",
+      "id": "uc-perceive-environment-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：根据交通状况实时调整行驶策略。简化：系统根据实时交通信息动态修改驾驶行为。",
+      "name": "实时调整行驶策略",
+      "id": "uc-adjust-driving-strategy-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：处理交叉路口和交通信号。简化：系统在交叉路口处根据交通信号规则进行安全通行。",
+      "name": "处理交叉路口和交通信号",
+      "id": "uc-handle-intersection-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：避让行人和障碍物。简化：系统检测并安全规避道路上的行人和障碍物体。",
+      "name": "避让行人和障碍物",
+      "id": "uc-avoid-obstacles-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：到达目的地后自动停车。简化：系统在抵达目的地后自动执行停车操作。",
+      "name": "自动停车",
+      "id": "uc-auto-parking-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如遇施工路段，系统重新规划绕行路径。简化：系统在检测到道路施工时计算新的替代路线。",
+      "name": "重新规划绕行路径",
+      "id": "uc-replan-path-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如传感器故障，系统降级运行或请求人工接管。简化：系统在传感器故障时进入安全模式或要求人工干预。",
+      "name": "降级运行或请求人工接管",
+      "id": "uc-degrade-operation-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如通信中断，系统依靠本地感知继续安全行驶。简化：系统在失去外部通信时仅使用本地传感器维持基本安全行驶。",
+      "name": "依靠本地感知继续安全行驶",
+      "id": "uc-local-perception-driving-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：乘客通过人机界面设定目的地。简化：乘客使用设定目的地功能。",
+      "targetId": "uc-set-destination-uuid",
+      "sourceId": "actor-passenger-uuid",
+      "id": "assoc-passenger-set-destination-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：乘客启动自动驾驶模式。简化：乘客使用启动自动驾驶模式功能。",
+      "targetId": "uc-start-autonomous-driving-uuid",
+      "sourceId": "actor-passenger-uuid",
+      "id": "assoc-passenger-start-driving-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Secondary: 交通管理系统...处理交通信号。简化：交通管理系统为处理交叉路口和交通信号用例提供交通信号信息。",
+      "targetId": "uc-handle-intersection-uuid",
+      "sourceId": "actor-traffic-management-uuid",
+      "id": "assoc-traffic-handle-intersection-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Secondary: 其他道路使用者...避让行人。简化：其他道路使用者是避让行人和障碍物用例中需要规避的对象。",
+      "targetId": "uc-avoid-obstacles-uuid",
+      "sourceId": "actor-other-road-users-uuid",
+      "id": "assoc-other-users-avoid-obstacles-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：系统规划全局路径并确认。简化：启动自动驾驶模式必须包含规划全局路径这一必要步骤。",
+      "targetId": "uc-plan-global-path-uuid",
+      "sourceId": "uc-start-autonomous-driving-uuid",
+      "id": "include-start-plan-path-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：系统执行环境感知和定位。简化：启动自动驾驶模式必须包含执行环境感知和定位这一必要步骤。",
+      "targetId": "uc-perceive-environment-uuid",
+      "sourceId": "uc-start-autonomous-driving-uuid",
+      "id": "include-start-perceive-environment-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：根据交通状况实时调整行驶策略...处理交叉路口和交通信号。简化：实时调整行驶策略包含处理交叉路口和交通信号这一具体行为。",
+      "targetId": "uc-handle-intersection-uuid",
+      "sourceId": "uc-adjust-driving-strategy-uuid",
+      "id": "include-adjust-handle-intersection-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：根据交通状况实时调整行驶策略...避让行人和障碍物。简化：实时调整行驶策略包含避让行人和障碍物这一具体行为。",
+      "targetId": "uc-avoid-obstacles-uuid",
+      "sourceId": "uc-adjust-driving-strategy-uuid",
+      "id": "include-adjust-avoid-obstacles-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如遇施工路段，系统重新规划绕行路径。简化：重新规划绕行路径是在特定条件（施工路段）下对规划全局路径用例的可选扩展。",
+      "targetId": "uc-plan-global-path-uuid",
+      "sourceId": "uc-replan-path-uuid",
+      "id": "extend-plan-replan-path-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如传感器故障，系统降级运行或请求人工接管。简化：降级运行或请求人工接管是在传感器故障时对实时调整行驶策略用例的可选扩展。",
+      "targetId": "uc-adjust-driving-strategy-uuid",
+      "sourceId": "uc-degrade-operation-uuid",
+      "id": "extend-adjust-degrade-operation-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如通信中断，系统依靠本地感知继续安全行驶。简化：依靠本地感知继续安全行驶是在通信中断时对实时调整行驶策略用例的可选扩展。",
+      "targetId": "uc-adjust-driving-strategy-uuid",
+      "sourceId": "uc-local-perception-driving-uuid",
+      "id": "extend-adjust-local-perception-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：无人机测绘案例。简化：包含无人机测绘系统的所有核心用例和参与者。",
+      "name": "主要用例",
+      "id": "pkg-uav-survey-main-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：测绘工程师需要在某区域进行地形测绘，他通过地面站软件规划好测绘区域和飞行航线。简化：负责规划、上传并启动无人机测绘任务的主要操作人员。",
+      "name": "测绘工程师",
+      "id": "actor-survey-engineer-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：他通过地面站软件规划好测绘区域和飞行航线，上传至无人机后启动自主飞行任务。简化：运行地面站软件，用于任务规划并与无人机通信的外部系统。",
+      "name": "地面控制站",
+      "id": "actor-ground-station-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：飞行过程中无人机突然检测到电机异常振动，系统自动评估故障等级。简化：无人机上负责飞行控制、状态监控和自主决策的机载系统。",
+      "name": "飞行控制器",
+      "id": "actor-flight-controller-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：同时向地面站发送警报信息。简化：负责监控无人机状态并接收系统警报的地面人员。",
+      "name": "地面操作员",
+      "id": "actor-ground-operator-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：规划好测绘区域和飞行航线。简化：定义无人机需要执行测绘任务的地理范围和飞行路径参数。",
+      "name": "规划测绘区域和飞行参数",
+      "id": "uc-plan-survey-area-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：上传任务数据至无人机。简化：将规划好的任务信息从地面站传输到无人机。",
+      "name": "上传任务数据至无人机",
+      "id": "uc-upload-mission-data-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：执行起飞前检查并确认。简化：在起飞前对无人机系统状态进行最终核查并获得执行许可。",
+      "name": "执行起飞前检查并确认",
+      "id": "uc-pre-flight-check-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：启动自主飞行任务。简化：发出指令，使无人机开始执行预设的飞行计划。",
+      "name": "启动自主飞行任务",
+      "id": "uc-start-autonomous-flight-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：无人机按航线飞行并采集数据。简化：无人机自主沿预定航线飞行，并利用传感器收集影像数据。",
+      "name": "按航线飞行并采集数据",
+      "id": "uc-fly-route-collect-data-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：任务完成自动返航。简化：在任务完成或触发特定条件时，无人机自动返回起飞点。",
+      "name": "自动返航",
+      "id": "uc-auto-return-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：下载采集的影像数据。简化：将无人机采集的影像数据从机载存储传输到地面站。",
+      "name": "下载采集的影像数据",
+      "id": "uc-download-image-data-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：如遇恶劣天气，工程师可手动中止任务。简化：由操作人员主动中断正在执行或即将执行的飞行任务。",
+      "name": "手动中止任务",
+      "id": "uc-manual-abort-mission-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：飞行过程中无人机突然检测到电机异常振动。简化：通过传感器识别电机不正常的振动模式。",
+      "name": "检测异常振动",
+      "id": "uc-detect-abnormal-vibration-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：系统诊断故障类型和严重程度。简化：分析异常数据，确定故障的具体原因和等级。",
+      "name": "诊断故障类型和严重程度",
+      "id": "uc-diagnose-fault-type-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：继续任务但增加监控频率。简化：在轻微故障情况下，提升对系统状态的监视速率。",
+      "name": "增加监控频率",
+      "id": "uc-increase-monitoring-frequency-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：立即启动返航程序。简化：因严重故障而触发返回基地的飞行程序。",
+      "name": "启动返航程序",
+      "id": "uc-start-return-procedure-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：向地面站发送故障报告和处置方案。简化：将故障详情和系统采取的应对措施通知地面站。",
+      "name": "发送故障报告和处置方案",
+      "id": "uc-send-fault-report-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：安全降落后生成详细故障分析。简化：在飞行结束后，创建包含故障详情的分析报告。",
+      "name": "生成详细故障分析",
+      "id": "uc-generate-fault-analysis-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：如多个电机同时故障，执行紧急降落程序。简化：在多重严重故障下，立即执行迫降程序以确保安全。",
+      "name": "执行紧急降落程序",
+      "id": "uc-execute-emergency-landing-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：着陆环境不安全时寻找备降场地。简化：当原定降落点存在风险时，自主搜寻并飞往替代降落点。",
+      "name": "寻找备降场地",
+      "id": "uc-find-alternate-landing-site-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：他通过地面站软件规划好测绘区域和飞行航线。简化：测绘工程师执行任务规划功能。",
+      "targetId": "uc-plan-survey-area-uuid",
+      "sourceId": "actor-survey-engineer-uuid",
+      "id": "assoc-engineer-plan-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：上传至无人机后启动自主飞行任务。简化：测绘工程师执行数据上传功能。",
+      "targetId": "uc-upload-mission-data-uuid",
+      "sourceId": "actor-survey-engineer-uuid",
+      "id": "assoc-engineer-upload-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：上传至无人机后启动自主飞行任务。简化：测绘工程师发出任务启动指令。",
+      "targetId": "uc-start-autonomous-flight-uuid",
+      "sourceId": "actor-survey-engineer-uuid",
+      "id": "assoc-engineer-start-flight-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：工程师可手动中止任务。简化：测绘工程师在特定情况下执行任务中止功能。",
+      "targetId": "uc-manual-abort-mission-uuid",
+      "sourceId": "actor-survey-engineer-uuid",
+      "id": "assoc-engineer-abort-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：下载采集的影像数据。简化：测绘工程师执行数据下载功能。",
+      "targetId": "uc-download-image-data-uuid",
+      "sourceId": "actor-survey-engineer-uuid",
+      "id": "assoc-engineer-download-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：上传任务数据至无人机。简化：地面控制站作为通信中介，参与数据上传过程。",
+      "targetId": "uc-upload-mission-data-uuid",
+      "sourceId": "actor-ground-station-uuid",
+      "id": "assoc-station-upload-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：下载采集的影像数据。简化：地面控制站作为通信中介和数据接收端，参与数据下载过程。",
+      "targetId": "uc-download-image-data-uuid",
+      "sourceId": "actor-ground-station-uuid",
+      "id": "assoc-station-download-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：向地面站发送警报信息。简化：地面控制站接收系统发送的故障报告。",
+      "targetId": "uc-send-fault-report-uuid",
+      "sourceId": "actor-ground-station-uuid",
+      "id": "assoc-station-fault-report-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：飞行过程中无人机突然检测到电机异常振动。简化：飞行控制器负责执行异常检测功能。",
+      "targetId": "uc-detect-abnormal-vibration-uuid",
+      "sourceId": "actor-flight-controller-uuid",
+      "id": "assoc-controller-detect-vibration-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：系统诊断故障类型和严重程度。简化：飞行控制器负责执行故障诊断功能。",
+      "targetId": "uc-diagnose-fault-type-uuid",
+      "sourceId": "actor-flight-controller-uuid",
+      "id": "assoc-controller-diagnose-fault-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：继续任务但增加监控频率。简化：飞行控制器负责执行增加监控频率的决策。",
+      "targetId": "uc-increase-monitoring-frequency-uuid",
+      "sourceId": "actor-flight-controller-uuid",
+      "id": "assoc-controller-increase-monitoring-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：立即启动返航程序。简化：飞行控制器负责执行启动返航程序的决策。",
+      "targetId": "uc-start-return-procedure-uuid",
+      "sourceId": "actor-flight-controller-uuid",
+      "id": "assoc-controller-start-return-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：向地面站发送故障报告和处置方案。简化：飞行控制器负责生成并发送故障信息。",
+      "targetId": "uc-send-fault-report-uuid",
+      "sourceId": "actor-flight-controller-uuid",
+      "id": "assoc-controller-send-report-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：安全降落后生成详细故障分析。简化：飞行控制器负责生成故障分析报告。",
+      "targetId": "uc-generate-fault-analysis-uuid",
+      "sourceId": "actor-flight-controller-uuid",
+      "id": "assoc-controller-generate-analysis-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：执行紧急降落程序。简化：飞行控制器负责在极端情况下执行紧急降落。",
+      "targetId": "uc-execute-emergency-landing-uuid",
+      "sourceId": "actor-flight-controller-uuid",
+      "id": "assoc-controller-emergency-landing-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：寻找备降场地。简化：飞行控制器负责执行寻找备降场地的决策。",
+      "targetId": "uc-find-alternate-landing-site-uuid",
+      "sourceId": "actor-flight-controller-uuid",
+      "id": "assoc-controller-find-landing-site-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：同时向地面站发送警报信息。简化：地面操作员通过地面站接收并查看故障报告。",
+      "targetId": "uc-send-fault-report-uuid",
+      "sourceId": "actor-ground-operator-uuid",
+      "id": "assoc-operator-fault-report-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：执行起飞前检查并确认。简化：启动自主飞行任务前必须完成起飞前检查，这是一个必要的公共前置步骤。",
+      "targetId": "uc-pre-flight-check-uuid",
+      "sourceId": "uc-start-autonomous-flight-uuid",
+      "id": "include-start-flight-pre-check-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：任务完成自动返航。简化：按航线飞行并采集数据这个主要任务流程完成后，必然包含自动返航这一步骤。",
+      "targetId": "uc-auto-return-uuid",
+      "sourceId": "uc-fly-route-collect-data-uuid",
+      "id": "include-fly-route-auto-return-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：如遇恶劣天气，工程师可手动中止任务。简化：手动中止任务是在特定条件（如恶劣天气）下，对正在进行的飞行任务的可选中断行为。",
+      "targetId": "uc-fly-route-collect-data-uuid",
+      "sourceId": "uc-manual-abort-mission-uuid",
+      "id": "extend-fly-route-manual-abort-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：向地面站发送故障报告和处置方案。简化：在启动返航程序（因严重故障）时，可选地向地面站发送通知信息。",
+      "targetId": "uc-start-return-procedure-uuid",
+      "sourceId": "uc-send-fault-report-uuid",
+      "id": "extend-start-return-send-report-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：安全降落后生成详细故障分析。简化：生成详细故障分析是在自动返航并安全降落后，可选地增加的报告生成功能。",
+      "targetId": "uc-auto-return-uuid",
+      "sourceId": "uc-generate-fault-analysis-uuid",
+      "id": "extend-auto-return-generate-analysis-uuid",
+      "type": "Extend"
+    },
+    {
+      "description": " 元素：Unnamed（自动生成）",
+      "id": "extend-start-return",
+      "type": "UnknownType"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：飞行性能参数...CommunicationModule...PropulsionSystem...自主航线飞行流程性能参数。简化：封装无人机系统参数图的所有元素。",
+      "name": "ParametricDiagram",
+      "id": "pkg-uav-unique-id",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-unique-id",
+      "description": "原文：温度控制方程。简化：代表空调系统，用于控制温度。",
+      "name": "TemperatureControlSystem",
+      "id": "block1",
+      "type": "Block"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：T_current。简化：当前温度。",
+      "name": "T_current",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop1",
+      "type": "Property"
+    },
+    {
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：T_target。简化：目标温度。",
+      "name": "T_target",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop2",
+      "type": "Property"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：T_target。简化：目标温度。",
+      "name": "T_target",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop2",
+      "type": "Property"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：Q。简化：制冷或制热量。",
+      "name": "Q",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop3",
+      "type": "Property"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：t。简化：时间。",
+      "name": "t",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop4",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_localization",
+      "description": "原文：横向定位误差≤15cm。简化：横向位置误差，单位厘米。",
+      "name": "lateral_position_error",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop5",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg-uav-unique-id",
+      "description": "原文：PropulsionSystem关键属性范围约束。简化：代表无人机的推进系统，包含电机转速、推力输出、温度等参数。",
+      "name": "PropulsionSystem",
+      "id": "block2",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_localization",
+      "description": "原文：纵向定位误差≤20cm。简化：纵向位置误差，单位厘米。",
+      "name": "longitudinal_position_error",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop6",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-planning-system-uuid",
+      "description": "原文：每100ms重新规划一次路径。简化：路径重新规划时间间隔，单位毫秒。",
+      "name": "replanning_interval",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop7",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-planning-system-uuid",
+      "description": "原文：规划延迟≤50ms。简化：规划算法执行延迟，单位毫秒。",
+      "name": "planning_latency",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop8",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_control",
+      "description": "原文：车道保持误差≤10cm。简化：车道保持控制误差，单位厘米。",
+      "name": "lane_keeping_error",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop9",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_control",
+      "description": "原文：速度控制精度±1km/h。简化：速度控制精度，单位公里/小时。",
+      "name": "speed_control_accuracy",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop10",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg-uav-unique-id",
+      "description": "原文：飞行性能参数：最大水平飞行速度15m/s，最大续航时间30分钟...悬停精度垂直±0.1m/水平±0.3m，最大爬升率5m/s，最大下降率3m/s。简化：封装无人机的飞行性能参数。",
+      "name": "FlightPerformance",
+      "id": "block3",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_computing",
+      "description": "原文：AI推理性能≥50 TOPS。简化：AI计算性能，单位TOPS。",
+      "name": "ai_performance",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop11",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_computing",
+      "description": "原文：内存带宽≥200GB/s。简化：内存带宽性能，单位GB/s。",
+      "name": "memory_bandwidth",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop12",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：端到端延迟≤100ms。简化：感知-决策-控制全链路延迟，单位毫秒。",
+      "name": "end_to_end_latency",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop13",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：感知-决策-控制环路频率≥20Hz。简化：控制环路更新频率，单位赫兹。",
+      "name": "control_loop_frequency",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop14",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：平均无故障时间(MTBF)≥10,000小时。简化：系统平均无故障运行时间，单位小时。",
+      "name": "mtbf",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop15",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：max_lateral_acceleration: Real [m/s²] = 3.0。简化：最大横向加速度，单位m/s²。",
+      "name": "max_lateral_acceleration",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop16",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：max_longitudinal_acceleration: Real [m/s²] = 4.0。简化：最大纵向加速度，单位m/s²。",
+      "name": "max_longitudinal_acceleration",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop17",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：max_deceleration: Real [m/s²] = 6.0。简化：最大减速度，单位m/s²。",
+      "name": "max_deceleration",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop18",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg-uav-unique-id",
+      "description": "原文：自主航线飞行流程性能参数。简化：代表自主飞行控制模块，包含爬升率、下降率、电池电量等参数。",
+      "name": "AutonomousFlight",
+      "id": "block4",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：wheelbase: Real [m] = 2.8。简化：车辆轴距，单位米。",
+      "name": "wheelbase",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop19",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：max_steering_angle: Real [deg] = 30.0。简化：最大转向角，单位度。",
+      "name": "max_steering_angle",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop20",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：最小转弯半径: min_turning_radius = wheelbase / tan(max_steering_angle)。简化：车辆最小转弯半径，单位米。",
+      "name": "min_turning_radius",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop21",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：最大曲率约束: trajectory_curvature ≤ 1 / min_turning_radius。简化：规划轨迹的曲率。",
+      "name": "trajectory_curvature",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop22",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：加速度约束。简化：车辆纵向加速度，单位m/s²。",
+      "name": "longitudinal_acceleration",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop23",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：加速度约束。简化：车辆横向加速度，单位m/s²。",
+      "name": "lateral_acceleration",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop24",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：加速度约束。简化：最大总加速度限制，单位m/s²。",
+      "name": "max_total_acceleration",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop25",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg-unique-id",
+      "description": "原文：T_current + (Q * t) = T_target。简化：定义空调系统达到目标温度所需的时间。",
+      "name": "TemperatureControlEquation",
+      "specification": {
+        "expression": "T_current + (Q * t) = T_target",
+        "language": "Math"
+      },
+      "id": "cb1",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：T_current。简化：方程中的当前温度变量。",
+      "name": "T_current",
+      "typeId": "Real",
+      "id": "param1",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：T_target。简化：方程中的目标温度变量。",
+      "name": "T_target",
+      "typeId": "Real",
+      "id": "param2",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：检测精度≥99%。简化：定义感知系统检测精度的约束。",
+      "name": "DetectionAccuracyConstraint",
+      "specification": {
+        "expression": "detection_accuracy ≥ 0.99",
+        "language": "Math"
+      },
+      "id": "cb2",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：Q。简化：方程中的制冷或制热量变量。",
+      "name": "Q",
+      "typeId": "Real",
+      "id": "param3",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：t。简化：方程中的时间变量。",
+      "name": "t",
+      "typeId": "Real",
+      "id": "param4",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：GPS精度≤10cm，横向定位误差≤15cm，纵向定位误差≤20cm。简化：定义定位系统各项精度指标的约束。",
+      "name": "LocalizationAccuracyConstraint",
+      "specification": {
+        "expression": "gps_accuracy ≤ 0.1 and lateral_position_error ≤ 0.15 and longitudinal_position_error ≤ 0.2",
+        "language": "Math"
+      },
+      "id": "cb3",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb3",
+      "description": "原文：横向定位误差≤15cm。简化：横向定位误差参数。",
+      "name": "lateral_position_error",
+      "typeId": "Real",
+      "id": "param5",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：每100ms重新规划一次路径，规划延迟≤50ms。简化：定义规划系统性能指标的约束。",
+      "name": "PlanningPerformanceConstraint",
+      "specification": {
+        "expression": "replanning_interval = 100 and planning_latency ≤ 50",
+        "language": "Math"
+      },
+      "id": "cb4",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb3",
+      "description": "原文：纵向定位误差≤20cm。简化：纵向定位误差参数。",
+      "name": "longitudinal_position_error",
+      "typeId": "Real",
+      "id": "param6",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb4",
+      "description": "原文：每100ms重新规划一次路径。简化：重新规划间隔参数。",
+      "name": "replanning_interval",
+      "typeId": "Real",
+      "id": "param7",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：此方程用于计算空调系统达到目标温度所需的时间。简化：在温度控制系统中实例化温度控制方程。",
+      "name": "TemperatureControlEquation",
+      "typeId": "cb1",
+      "propertyKind": "constraint",
+      "id": "cp1",
+      "type": "Property"
+    },
+    {
+      "parentId": "block4",
+      "description": "原文：下降率1m/s...最大下降率3m/s。简化：在自主飞行模块中实例化下降率约束。",
+      "name": "DescentRateConstraint",
+      "typeId": "cb2",
+      "propertyKind": "constraint",
+      "id": "cp2",
+      "type": "Property"
+    },
+    {
+      "parentId": "block4",
+      "description": "原文：电池电量>30% (前置条件)。简化：在自主飞行模块中实例化电池电量约束。",
+      "name": "BatteryLevelConstraint",
+      "typeId": "cb3",
+      "propertyKind": "constraint",
+      "id": "cp3",
+      "type": "Property"
+    },
+    {
+      "parentId": "block4",
+      "description": "原文：数据交换10Mbps...dataRate: Real [Mbps] {1..50}。简化：在自主飞行模块中实例化数据速率约束。",
+      "name": "DataRateConstraint",
+      "typeId": "cb4",
+      "propertyKind": "constraint",
+      "id": "cp4",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：T_flight: 续航时间 [分钟]。简化：将无人机的续航时间值绑定到约束方程中的续航时间参数。",
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_T_flight"
+      },
+      "end1": {
+        "propertyRefId": "prop_T_flight"
+      },
+      "id": "conn1",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：C_battery: 电池容量 [mAh]。简化：将电池容量值绑定到续航时间约束方程中的电池容量参数。",
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_C_battery"
+      },
+      "end1": {
+        "propertyRefId": "prop_C_battery"
+      },
+      "id": "conn2",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：V_battery: 电池电压 [V]。简化：将电池电压值绑定到续航时间约束方程中的电池电压参数。",
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_V_battery"
+      },
+      "end1": {
+        "propertyRefId": "prop_V_battery"
+      },
+      "id": "conn3",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：η: 系统效率系数 [0.7-0.9]。简化：将系统效率系数绑定到续航时间约束方程中的效率参数。",
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_eta"
+      },
+      "end1": {
+        "propertyRefId": "prop_eta"
+      },
+      "id": "conn4",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：自动驾驶系统包。简化：包含自动驾驶系统所有块和约束定义的主要包。",
+      "name": "AutonomousDrivingPackage",
+      "id": "pkg-main",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：检测距离范围0.5-150米，检测精度≥99%。简化：负责环境感知的系统模块，包括目标检测和距离测量功能。",
+      "name": "PerceptionSystem",
+      "id": "block_perception",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：GPS精度≤10cm，横向定位误差≤15cm，纵向定位误差≤20cm。简化：负责车辆定位的系统模块，提供高精度的位置信息。",
+      "name": "LocalizationSystem",
+      "id": "block_localization",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：车道保持误差≤10cm，速度控制精度±1km/h。简化：负责车辆横向和纵向控制的系统模块。",
+      "name": "ControlSystem",
+      "id": "block_control",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：AI推理性能≥50 TOPS，内存带宽≥200GB/s。简化：负责AI计算和数据处理的计算平台模块。",
+      "name": "ComputingSystem",
+      "id": "block_computing",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：端到端延迟≤100ms，感知-决策-控制环路频率≥20Hz，平均无故障时间(MTBF)≥10,000小时。简化：顶层自动驾驶系统块，集成所有子系统并定义系统级性能约束。",
+      "name": "AutonomousDrivingSystem",
+      "id": "block_system",
+      "type": "Block"
+    },
+    {
+      "parentId": "cb4",
+      "description": "原文：规划延迟≤50ms。简化：规划延迟参数。",
+      "name": "planning_latency",
+      "typeId": "Real",
+      "id": "param8",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：车道保持误差≤10cm，速度控制精度±1km/h。简化：定义控制系统性能指标的约束。",
+      "name": "ControlPerformanceConstraint",
+      "specification": {
+        "expression": "lane_keeping_error ≤ 0.1 and speed_control_accuracy ≤ 1.0",
+        "language": "Math"
+      },
+      "id": "cb5",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "guard": "[return_ok]",
+      "description": "从初始化控制模块节点到返回系统状态节点的控制流。",
+      "targetId": "node-return-status",
+      "sourceId": "node-initialize-control",
+      "id": "edge-control-to-return",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "guard": "[status_ok]",
+      "description": "从返回系统状态节点到进入待机状态节点的控制流。",
+      "targetId": "node-enter-idle",
+      "sourceId": "node-return-status",
+      "id": "edge-return-to-idle",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-systemstart-uuid",
+      "guard": "[idle_ok]",
+      "description": "从进入待机状态节点到流程结束节点的控制流。",
+      "targetId": "node-end",
+      "sourceId": "node-enter-idle",
+      "id": "edge-idle-to-end",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：自主起飞与航线执行流程: 无人机从地面待命状态开始...完整自动化过程。简化：该包封装了无人机任务执行相关的所有流程和组件。",
+      "name": "无人机任务系统",
+      "id": "pkg-uav-system-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：输入/输出: IN: mission_plan: MissionData。简化：代表包含航点、高度、速度等参数的任务规划数据。",
+      "name": "MissionData",
+      "id": "blk-mission-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：输入/输出: IN: mission_plan: MissionData。简化：代表包含航点、高度、速度等参数的任务规划数据。",
+      "name": "MissionData",
+      "id": "blk-mission-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：输入/输出: IN: mission_plan: MissionData。简化：代表包含航点、高度、速度等参数的任务规划数据。",
+      "name": "MissionData",
+      "id": "blk-mission-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：OUT: mission_status: MissionReport {success:bool,imagesCaptured:uint16_t}; 简化：代表任务报告，包含成功状态和采集图像数量。",
+      "name": "MissionReport",
+      "id": "blk-mission-report-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：IN: fault_detection: FaultData。简化：代表系统检测到的故障数据。",
+      "name": "FaultData",
+      "id": "blk-fault-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：IN: fault_detection: FaultData。简化：代表系统检测到的故障数据。",
+      "name": "FaultData",
+      "id": "blk-fault-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：OUT: emergency_status: EmergencyStatus。简化：代表应急状态数据对象。",
+      "name": "EmergencyStatus",
+      "id": "blk-emergency-status-uuid",
+      "type": "Block"
+    },
+    {
+      "classifierBehaviorId": "sm-flight-uuid",
+      "parentId": "pkg-uav-control-uuid",
+      "description": "原文：电池状态管理...避障状态。简化：无人机的核心控制单元，其行为由电池状态管理和避障状态机定义。",
+      "name": "飞行控制器",
+      "id": "blk-flight-controller-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：GPS/IMU传感器融合定位；TOF传感器检测障碍物；实时监测电池参数。简化：代表负责各种传感器数据采集和处理的系统。",
+      "name": "SensorSystem",
+      "id": "blk-sensor-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：系统通过数传电台以2.4GHz频率传输数据。职责：负责无人机与地面站之间的数据通信，包括遥测数据传输和控制指令接收。组成：包含数传电台、天线系统、通信协议栈。技术：采用2.4GHz频段，支持10Hz的数据传输频率。",
+      "name": "通信系统",
+      "id": "blk-communication-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：执行起飞前自检（传感器、动力系统、通信链路）。简化：代表无人机的电机和电池系统。",
+      "name": "动力系统",
+      "id": "blk-power-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：执行起飞前自检（传感器、动力系统、通信链路）。简化：代表无人机的电机和电池系统。",
+      "name": "动力系统",
+      "id": "blk-power-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：活动名称: 应急处理流程。简化：这是处理飞行过程中各种异常情况的应急响应活动。",
+      "name": "应急处理流程",
+      "id": "act-emergency-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：实时遥测数据传输活动：通过数传电台...发送包含位置、高度、速度...等参数的遥测数据包。简化：负责向地面站传输无人机状态数据。",
+      "name": "实时遥测数据传输活动",
+      "id": "act-telemetry-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：应急返航活动：检测到通信信号丢失超过5秒...自动执行返航程序。简化：在特定紧急条件下触发返航的子活动。",
+      "name": "应急返航活动",
+      "id": "act-emergency-return-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：有效载荷管理活动：通过专用的载荷接口...向挂载设备供电并传输控制指令。简化：管理无人机挂载设备（如相机）的子活动。",
+      "name": "有效载荷管理活动",
+      "id": "act-payload-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "representsId": "blk-communication-uuid",
+      "description": "原文：实时遥测数据传输活动：通过数传电台...发送...遥测数据包。简化：此泳道代表由通信系统执行的数据传输活动。",
+      "name": "通信分区",
+      "nodeIds": [
+        "node-receive-plan",
+        "node-generate-report"
+      ],
+      "id": "grp-communication-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "representsId": "blk-sensor-system-uuid",
+      "description": "原文：通过GPS/IMU传感器融合定位。简化：此泳道代表由传感器系统执行的感知和定位活动。",
+      "name": "传感器分区",
+      "nodeIds": [
+        "node-preflight-check",
+        "node-check-return-condition"
+      ],
+      "id": "grp-sensor-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：自主起飞与航线执行流程: 无人机从地面待命状态开始。简化：流程的起点，代表无人机开始执行任务。",
+      "name": "任务开始",
+      "id": "node-mission-start",
+      "type": "InitialNode"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：1.接收任务规划数据（航点、高度、速度参数）。简化：此动作接收来自地面站的任务规划信息。",
+      "name": "接收任务规划数据",
+      "id": "node-receive-plan",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：1.接收任务规划数据（航点、高度、速度参数）。简化：此动作接收来自地面站的任务规划信息。",
+      "name": "接收任务规划数据",
+      "id": "node-receive-plan",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "cb5",
+      "description": "原文：车道保持误差≤10cm。简化：车道保持误差参数。",
+      "name": "lane_keeping_error",
+      "typeId": "Real",
+      "id": "param9",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "node-receive-plan",
+      "description": "原文：1.接收任务规划数据（航点、高度、速度参数）。简化：作为\"接收任务规划数据\"动作的输入，接收MissionData。",
+      "name": "in_任务规划",
+      "typeId": "blk-mission-data-uuid",
+      "id": "pin-receive-plan-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：3.若自检通过，解锁电机并缓慢推油门至起飞推力。简化：此决策节点根据自检结果决定是否继续起飞流程。",
+      "name": "自检决策",
+      "id": "node-check-decision",
+      "type": "DecisionNode"
+    },
+    {
+      "parentId": "node-check-decision",
+      "description": "原文：2.执行起飞前自检（传感器、动力系统、通信链路）。简化：作为\"自检决策\"节点的输入，接收自检状态。",
+      "name": "in_自检结果",
+      "typeId": "blk-fault-data-uuid",
+      "id": "pin-check-decision-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：3.若自检通过，解锁电机并缓慢推油门至起飞推力。简化：此动作控制无人机电机启动和推力增加。",
+      "name": "解锁电机并缓慢推油门",
+      "id": "node-unlock-throttle",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：3.若自检通过，解锁电机并缓慢推油门至起飞推力。简化：此动作控制无人机电机启动和推力增加。",
+      "name": "解锁电机并缓慢推油门",
+      "id": "node-unlock-throttle",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：4.垂直爬升至目标高度（通常10-20米）。简化：此动作控制无人机垂直上升至指定高度。",
+      "name": "垂直爬升至目标高度",
+      "id": "node-climb-altitude",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：5.转入自主飞行模式，按顺序飞向各航点。简化：此动作切换无人机到自主飞行模式。",
+      "behavior": "act-flight-control-uuid",
+      "name": "转入自主飞行模式",
+      "id": "node-enter-autonomous",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：7.检测返航条件（低电量、超时、指令触发）。简化：此动作持续监控是否满足返航条件。",
+      "name": "检测返航条件",
+      "id": "node-check-return-condition",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：7.检测返航条件（低电量、超时、指令触发）。简化：此决策节点根据多种条件判断是否需要启动返航。",
+      "name": "返航决策",
+      "id": "node-return-decision",
+      "type": "DecisionNode"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：8.飞向返航点并执行自动降落程序。简化：此动作控制无人机飞向预设的返航点。",
+      "name": "飞向返航点",
+      "id": "node-fly-to-home",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：8.飞向返航点并执行自动降落程序。简化：此动作控制无人机执行降落序列。",
+      "name": "执行自动降落程序",
+      "id": "node-execute-landing",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：9.着陆后锁定电机，生成任务报告。简化：此动作在着陆后停止并锁定电机。",
+      "name": "锁定电机",
+      "id": "node-lock-motors",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "cb5",
+      "description": "原文：速度控制精度±1km/h。简化：速度控制精度参数。",
+      "name": "speed_control_accuracy",
+      "typeId": "Real",
+      "id": "param10",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：自主起飞与航线执行流程: 无人机从地面待命状态开始。简化：从起始节点到接收任务规划数据的控制流。",
+      "targetId": "node-receive-plan",
+      "sourceId": "node-mission-start",
+      "id": "edge-cf-start-receive",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "简化：从接收任务到执行自检的控制流。",
+      "targetId": "node-preflight-check",
+      "sourceId": "node-receive-plan",
+      "id": "edge-cf-receive-check",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "guard": "[自检不通过]",
+      "description": "原文：3.若自检通过...简化：在自检不通过时触发的控制流，直接结束流程。",
+      "targetId": "node-mission-end",
+      "sourceId": "node-check-decision",
+      "id": "edge-cf-check-fail",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "流：ControlFlow 从 node-unlock-throttle 到 node-climb-altitude",
+      "targetId": "node-climb-altitude",
+      "sourceId": "node-unlock-throttle",
+      "id": "edge-cf-unlock-climb",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：自主飞行控制流程：接收飞行计划→GPS/IMU传感器融合定位→驱动电机和舵机实现导航飞行；避障处理流程：TOF传感器检测障碍物→自动悬停或规划绕行路径；电池管理流程：实时监测电池参数→电量低于阈值触发返航或强制着陆。简化：该包封装了无人机自主飞行控制系统的所有核心流程和组件。",
+      "name": "UAVFlightControlSystem",
+      "id": "pkg-uav-flight-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-uav-flight-uuid",
+      "description": "原文：驱动电机和舵机实现导航飞行。简化：代表负责执行飞行控制的电机和舵机系统。",
+      "name": "ActuatorSystem",
+      "id": "blk-actuator-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-uav-system-uuid",
+      "edges": [
+        "edge-cf-start-validate-uuid",
+        "edge-cf-validate-preflight-uuid",
+        "edge-cf-preflight-takeoff-uuid",
+        "edge-cf-takeoff-navigate-uuid",
+        "edge-of-mission-input-uuid",
+        "edge-of-report-output-uuid"
+      ],
+      "nodes": [
+        "node-start-flight-uuid",
+        "node-validate-mission-uuid",
+        "node-preflight-check-uuid",
+        "node-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-payload-operation-uuid",
+        "node-monitor-status-uuid",
+        "node-return-home-uuid",
+        "node-landing-uuid",
+        "node-generate-report-uuid",
+        "node-end-flight-uuid",
+        "node-battery-decision-uuid",
+        "node-merge-emergency-uuid"
+      ],
+      "description": "原文：活动名称: 自主航线飞行流程。简化：这是定义无人机从起飞到着陆完整任务执行的主要活动。",
+      "name": "自主航线飞行流程",
+      "groups": [
+        "part-flight-control-uuid",
+        "part-sensor-uuid",
+        "part-actuator-uuid"
+      ],
+      "id": "act-main-flight-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-flight-uuid",
+      "edges": [
+        "edge-cf-start-validate-uuid",
+        "edge-cf-validate-preflight-uuid",
+        "edge-cf-preflight-takeoff-uuid",
+        "edge-cf-takeoff-navigate-uuid",
+        "edge-of-mission-input-uuid",
+        "edge-of-report-output-uuid"
+      ],
+      "nodes": [
+        "node-start-flight-uuid",
+        "node-validate-mission-uuid",
+        "node-preflight-check-uuid",
+        "node-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-payload-operation-uuid",
+        "node-monitor-status-uuid",
+        "node-return-home-uuid",
+        "node-landing-uuid",
+        "node-generate-report-uuid",
+        "node-end-flight-uuid",
+        "node-battery-decision-uuid",
+        "node-merge-emergency-uuid"
+      ],
+      "description": "原文：活动名称: 自主航线飞行流程。简化：这是定义无人机从起飞到着陆完整任务执行的主要活动。",
+      "name": "自主航线飞行流程",
+      "groups": [
+        "part-flight-control-uuid",
+        "part-sensor-uuid",
+        "part-actuator-uuid"
+      ],
+      "id": "act-main-flight-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "representsId": "blk-flight-controller-uuid",
+      "description": "原文：自主飞行控制流程：接收飞行计划→GPS/IMU传感器融合定位→驱动电机和舵机实现导航飞行。简化：此泳道代表由飞行控制器执行的所有导航和控制活动。",
+      "name": "飞行控制分区",
+      "nodeIds": [
+        "node-validate-mission-uuid",
+        "node-preflight-check-uuid",
+        "node-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-payload-operation-uuid",
+        "node-return-home-uuid",
+        "node-landing-uuid",
+        "node-generate-report-uuid"
+      ],
+      "id": "part-flight-control-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "representsId": "blk-actuator-system-uuid",
+      "description": "原文：驱动电机和舵机实现导航飞行。简化：此泳道代表由执行器系统执行的所有物理控制活动。",
+      "name": "执行器分区",
+      "nodeIds": [
+        "node-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-landing-uuid"
+      ],
+      "id": "part-actuator-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：执行起飞前自检程序（传感器校准、电机测试、通信链路验证）。简化：执行起飞前的各项系统自检。",
+      "name": "执行起飞前自检程序",
+      "id": "node-preflight-check-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：自动起飞至预设高度（爬升率2m/s，姿态稳定控制）。简化：控制无人机自动起飞到预设高度。",
+      "name": "自动起飞",
+      "id": "node-takeoff-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：3. 导航至下一航点: 飞控根据传感器融合模块提供的实时位置，计算与目标航点的横向偏差和高度偏差，运行L1导航算法生成电机控制指令。简化：此动作负责导航到目标航点。",
+      "name": "导航至下一航点",
+      "id": "node-navigate-waypoint-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：在航点执行任务载荷操作（相机触发、传感器数据采集）。简化：在航点位置执行特定的载荷操作。",
+      "name": "执行任务载荷操作",
+      "id": "node-payload-operation-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：实时监控飞行状态和环境条件（电池状态、障碍物检测、气象条件）。简化：持续监控飞行状态和环境条件。",
+      "name": "实时监控飞行状态",
+      "id": "node-monitor-status-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：在最后一个航点启动返航程序（RTL模式激活）。简化：激活返航模式，控制无人机返回起飞点。",
+      "name": "启动返航程序",
+      "id": "node-return-home-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：生成任务执行报告（飞行数据统计、异常事件记录）。简化：生成包含飞行统计和异常记录的任务报告。",
+      "name": "生成任务执行报告",
+      "id": "node-generate-report-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：生成任务执行报告。简化：流程的终点，代表飞行任务成功完成。",
+      "name": "任务完成",
+      "id": "node-end-flight-uuid",
+      "type": "ActivityFinalNode"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：生成任务执行报告。简化：流程的终点，代表飞行任务成功完成。",
+      "name": "任务完成",
+      "id": "node-end-flight-uuid",
+      "type": "ActivityFinalNode"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：电池管理流程：实时监测电池参数→电量低于阈值触发返航或强制着陆。简化：根据电池电量状态决定继续飞行、返航或紧急着陆。",
+      "name": "电池状态决策",
+      "id": "node-battery-decision-uuid",
+      "type": "DecisionNode"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：当系统检测到异常情况时，此流程确保无人机能够安全应对。简化：将应急处理流程合并回主流程。",
+      "name": "合并应急处理",
+      "id": "node-merge-emergency-uuid",
+      "type": "MergeNode"
+    },
+    {
+      "parentId": "node-receive-plan",
+      "description": "原文：IN: flight_mission: MissionPlan。简化：作为\"接收并验证飞行任务数据\"动作的输入，接收飞行任务计划。",
+      "name": "in_飞行任务",
+      "typeId": "blk-mission-plan-uuid",
+      "id": "pin-mission-in-uuid",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "node-generate-report-uuid",
+      "description": "原文：OUT: mission_report: MissionReport。简化：作为\"生成任务执行报告\"动作的输出，产生任务执行报告。",
+      "name": "out_任务报告",
+      "typeId": "blk-mission-report-uuid",
+      "id": "pin-report-out-uuid",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "node-end-report-uuid",
+      "description": "原文：OUT: mission_report: MissionReport。简化：作为\"生成任务执行报告\"动作的输出，产生任务执行报告。",
+      "name": "out_任务报告",
+      "typeId": "blk-mission-report-uuid",
+      "id": "pin-report-out-uuid",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：接收并验证飞行任务数据。简化：从开始节点到任务验证的控制流转。",
+      "targetId": "node-validate-mission-uuid",
+      "sourceId": "node-start-flight-uuid",
+      "id": "edge-cf-start-validate-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：AI推理性能≥50 TOPS，内存带宽≥200GB/s。简化：定义计算系统性能指标的约束。",
+      "name": "ComputingPerformanceConstraint",
+      "specification": {
+        "expression": "ai_performance ≥ 50 and memory_bandwidth ≥ 200",
+        "language": "Math"
+      },
+      "id": "cb6",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：步骤序列: 1. 接收并验证飞行任务数据 2. 执行起飞前自检程序。简化：从任务验证到自检程序的控制流转。",
+      "targetId": "node-preflight-check-uuid",
+      "sourceId": "node-validate-mission-uuid",
+      "id": "edge-cf-validate-preflight-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：步骤序列: 2. 执行起飞前自检程序 3. 自动起飞至预设高度。简化：从自检完成到自动起飞的控制流转。",
+      "targetId": "node-takeoff-uuid",
+      "sourceId": "node-preflight-check-uuid",
+      "id": "edge-cf-preflight-takeoff-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：步骤序列: 3. 自动起飞至预设高度 4. 按顺序导航至各航点。简化：从起飞完成到开始导航的控制流转。",
+      "targetId": "node-navigate-waypoint-uuid",
+      "sourceId": "node-takeoff-uuid",
+      "id": "edge-cf-takeoff-navigate-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：IN: flight_mission: MissionPlan。简化：将MissionPlan对象流输入到验证任务数据动作。",
+      "targetId": "pin-mission-in-uuid",
+      "sourceId": "node-start-flight-uuid",
+      "id": "edge-of-mission-input-uuid",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：OUT: mission_report: MissionReport。简化：将MissionReport对象流从生成报告动作输出。",
+      "targetId": "node-end-flight-uuid",
+      "sourceId": "pin-report-out-uuid",
+      "id": "edge-of-report-output-uuid",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "cb6",
+      "description": "自动生成的描述: 这是一个类型为 'ConstraintParameter'，名称为 'ai_performance' 的元素。",
+      "name": "ai_performance",
+      "typeId": "",
+      "id": "param11",
+      "type": "ConstraintParameter"
+    },
+    {
+      "description": "原文：活动名称: 自主测绘任务执行流程; 简化：该包封装了自主测绘任务的所有相关组件和活动，包括飞行控制、数据采集和传感器融合。",
+      "name": "AutonomousMappingMission",
+      "id": "pkg-autonomous-mapping-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：IN: start_mission_command: MAVLink_Command {msgid:76,component:1}; 简化：代表MAVLink命令消息，用于开始任务。",
+      "name": "MAVLink_Command",
+      "id": "blk-mavlink-command-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：OUT: collected_imagery: ImageDataSet {format:GeoTIFF,count:uint16_t}; 简化：代表采集的图像数据集，包含格式和数量。",
+      "name": "ImageDataSet",
+      "id": "blk-image-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：从IMU读取原始数据，从GPS模块接收位置、速度和时间信息，从气压计获取高度数据，从磁力计获取航向信息；简化：代表传感器融合后的数据，用于导航和控制。",
+      "name": "SensorData",
+      "id": "blk-sensor-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：传感器融合模块汇集并处理来自多种异构传感器的原始数据，为飞行控制器提供精确、可靠的姿态、位置和速度信息，采用扩展卡尔曼滤波（EKF2）算法，支持多传感器冗余。核心职责: 从IMU读取原始数据（采样率1kHz），从GPS模块接收位置、速度和时间信息（更新率10Hz），从气压计获取高度数据，从磁力计获取航向信息，运行EKF2传感器融合算法（状态向量15维，更新率100Hz）。职责：处理传感器数据以提供融合后的状态信息。组成：包括IMU、GPS、气压计、磁力计接口和融合算法。技术：采用EKF2算法和多传感器冗余设计。",
+      "name": "传感器融合模块",
+      "id": "blk-sensor-fusion-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：通过数据链模块尝试实时下传；简化：代表数据链模块，负责数据传输到地面站。",
+      "name": "DataLinkModule",
+      "id": "blk-data-link-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：任务载荷模块执行拍照操作；简化：代表任务载荷模块，负责数据采集（如拍照）。",
+      "name": "PayloadModule",
+      "id": "blk-payload-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "edges": [
+        "edge-start-validate-uuid",
+        "edge-validate-decision-uuid",
+        "edge-validate-success-uuid",
+        "edge-validate-fail-uuid",
+        "edge-takeoff-navigate-uuid",
+        "edge-navigate-check-uuid",
+        "edge-check-trigger-uuid",
+        "edge-check-navigate-uuid",
+        "edge-trigger-transmission-uuid",
+        "edge-transmission-loop-uuid",
+        "edge-loop-navigate-uuid",
+        "edge-loop-return-uuid",
+        "edge-return-report-uuid",
+        "edge-report-end-uuid",
+        "edge-command-validate-uuid",
+        "edge-plan-validate-uuid",
+        "edge-sensor-navigate-uuid",
+        "edge-image-transmission-uuid",
+        "edge-report-output-uuid"
+      ],
+      "nodes": [
+        "node-start-mission-uuid",
+        "node-validate-command-uuid",
+        "node-unlock-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-check-waypoint-uuid",
+        "node-trigger-data-uuid",
+        "node-data-transmission-uuid",
+        "node-loop-execution-uuid",
+        "node-return-land-uuid",
+        "node-end-report-uuid",
+        "node-validate-decision-uuid",
+        "node-waypoint-decision-uuid",
+        "node-loop-merge-uuid",
+        "node-data-fork-uuid",
+        "node-motor-join-uuid",
+        "node-end-mission-uuid",
+        "cbuf-flight-plan-uuid",
+        "cbuf-image-data-uuid",
+        "cbuf-mission-report-uuid"
+      ],
+      "description": "原文：活动名称: 自主测绘任务执行流程; 简化：这是定义整个自主测绘任务执行流程的主要活动，涵盖从任务开始到结束的所有步骤。",
+      "name": "自主测绘任务执行流程",
+      "groups": [
+        "grp-flight-controller-uuid",
+        "grp-sensor-fusion-uuid",
+        "grp-data-link-uuid",
+        "grp-payload-uuid",
+        "grp-motor-system-uuid"
+      ],
+      "id": "act-main-mission-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：自主飞行控制: 接收并解析来自地面控制站的飞行计划, 采用自适应PID控制算法结合IMU和GPS数据动态调整电机转速。简化：此子活动负责飞行控制，包括解析计划和调整电机。",
+      "name": "自主飞行控制",
+      "id": "act-autonomous-flight-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-uav-system-uuid",
+      "description": "原文：自主飞行控制: 接收并解析来自地面控制站的飞行计划, 采用自适应PID控制算法结合IMU和GPS数据动态调整电机转速。简化：此子活动负责飞行控制，包括解析计划和调整电机。",
+      "name": "自主飞行控制",
+      "id": "act-autonomous-flight-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：多光谱数据采集: 根据触发条件控制多光谱相机拍照, 存储图像数据到机载存储, 并通过数传电台实时传输至地面站。简化：此子活动负责数据采集、存储和传输。",
+      "name": "多光谱数据采集",
+      "id": "act-multispectral-data-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：安全故障处理: 执行返航着陆(RTL)程序, 包括爬升至安全高度、飞向家位置、悬停确认、着陆。简化：此子活动负责在故障时执行返航和着陆。",
+      "name": "安全故障处理",
+      "id": "act-safety-fault-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-autonomous-mapping-uuid",
+      "description": "原文：传感器融合模块活动流程: 从IMU读取原始数据，从GPS模块接收位置、速度和时间信息，从气压计获取高度数据，从磁力计获取航向信息，运行EKF2传感器融合算法。简化：此子活动负责融合多传感器数据。",
+      "name": "传感器融合模块活动流程",
+      "id": "act-sensor-fusion-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：1. 验证指令与计划: 飞行控制器接收并解析'开始任务'指令；简化：流程的起点，代表接收到开始任务指令。",
+      "name": "开始任务",
+      "id": "node-start-mission-uuid",
+      "type": "InitialNode"
+    },
+    {
+      "parentId": "node-receive-plan",
+      "description": "原文：飞行控制器接收并解析'开始任务'指令；简化：作为'验证指令与计划'动作的输入，接收开始任务指令。",
+      "name": "in_start_command",
+      "typeId": "blk-mavlink-command-uuid",
+      "id": "pin-validate-in-command-uuid",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "node-receive-plan",
+      "description": "原文：验证失败则发送NACK；简化：作为'验证指令与计划'动作的输出，表示验证结果（成功或失败）。",
+      "name": "out_validation_result",
+      "id": "pin-validate-out-result-uuid",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "node-navigate-waypoint-uuid",
+      "description": "原文：飞控根据传感器融合模块提供的实时位置；简化：作为'导航至下一航点'动作的输入，接收传感器数据。",
+      "name": "in_sensor_data",
+      "typeId": "blk-sensor-data-uuid",
+      "id": "pin-navigate-in-sensor-uuid",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "node-navigate-waypoint-uuid",
+      "description": "原文：运行L1导航算法生成电机控制指令；简化：作为'导航至下一航点'动作的输出，生成电机控制命令。",
+      "name": "out_navigation_commands",
+      "id": "pin-navigate-out-commands-uuid",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：4. 检查航点到达条件: 当无人机进入以目标航点为中心、半径为5m的圆柱形空域（水平容差5m，垂直容差2m）并保持2秒时，判定为到达该航点。简化：此动作负责检查是否到达航点。",
+      "name": "检查航点到达条件",
+      "id": "node-check-waypoint-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：5. 触发数据采集: 在到达航点时，飞控通过任务载荷控制端口发送'拍照'指令（触发脉冲宽度20ms）。任务载荷模块执行拍照操作。简化：此动作负责触发数据采集（拍照）。",
+      "name": "触发数据采集",
+      "id": "node-trigger-data-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-trigger-data-uuid",
+      "description": "原文：任务载荷模块执行拍照操作；简化：作为'触发数据采集'动作的输出，生成图像数据。",
+      "name": "out_image_data",
+      "typeId": "blk-image-data-uuid",
+      "id": "pin-trigger-data-out-image-uuid",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：6. 数据传输与存储: 采集到的图像数据通过数据链模块尝试实时下传（QoS：尽力而为），同时被写入机载存储（写入速度≥20MB/s）。简化：此动作负责数据传输和存储。",
+      "name": "数据传输与存储",
+      "id": "node-data-transmission-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-data-transmission-uuid",
+      "description": "原文：采集到的图像数据通过数据链模块尝试实时下传；简化：作为'数据传输与存储'动作的输入，接收图像数据。",
+      "name": "in_image_data",
+      "typeId": "blk-image-data-uuid",
+      "id": "pin-data-transmission-in-image-uuid",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：7. 循环执行: 重复步骤3至6，直至飞行计划中的所有航点都被访问完毕。支持动态跳过故障航点（连续3次无法到达）。简化：此动作代表循环执行导航、检查、触发和数据传输。",
+      "name": "循环执行",
+      "id": "node-loop-execution-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：8. 执行返航着陆: 飞控触发MAV_CMD_NAV_RETURN_TO_LAUNCH指令，无人机以5m/s速度爬升至RTL安全高度，飞向Home位置并执行自动着陆序列。简化：此动作负责返航和着陆。",
+      "name": "执行返航着陆",
+      "id": "node-return-land-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：9. 任务结束报告: 着陆并上锁电机后，飞控生成任务报告（包括完成的航点数、采集的图像数、飞行时间、平均速度等），通过数据链发送至地面站。简化：此动作负责生成和发送任务报告。",
+      "name": "任务结束报告",
+      "id": "node-end-report-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-flight-uuid",
+      "description": "原文：9. 任务结束报告: 着陆并上锁电机后，飞控生成任务报告（包括完成的航点数、采集的图像数、飞行时间、平均速度等），通过数据链发送至地面站。简化：此动作负责生成和发送任务报告。",
+      "name": "任务结束报告",
+      "id": "node-end-report-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：验证失败则发送NACK；简化：此节点根据验证结果决定是否继续任务或结束。",
+      "name": "验证决策",
+      "id": "node-validate-decision-uuid",
+      "type": "DecisionNode"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：支持动态跳过故障航点（连续3次无法到达）；简化：此节点根据航点到达情况决定是否跳过故障航点。",
+      "name": "航点到达决策",
+      "id": "node-waypoint-decision-uuid",
+      "type": "DecisionNode"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：重复步骤3至6；简化：此节点用于合并循环中的控制流，确保流程继续。",
+      "name": "循环合并",
+      "id": "node-loop-merge-uuid",
+      "type": "MergeNode"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：采集到的图像数据通过数据链模块尝试实时下传，同时被写入机载存储；简化：此节点分叉数据流以并行处理传输和存储。",
+      "name": "数据分叉",
+      "id": "node-data-fork-uuid",
+      "type": "ForkNode"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：等待所有电机初始化完成（超时3s）；简化：此节点同步电机初始化完成。",
+      "name": "电机初始化连接",
+      "id": "node-motor-join-uuid",
+      "type": "JoinNode"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：mission_plan: FlightPlan {waypointCount:50..500,CRS:WGS84}; 简化：这是一个共享缓冲区，用于存储飞行计划数据。",
+      "name": "飞行计划缓存",
+      "typeId": "blk-flight-plan-uuid",
+      "id": "cbuf-flight-plan-uuid",
+      "type": "CentralBufferNode"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：collected_imagery: ImageDataSet {format:GeoTIFF,count:uint16_t}; 简化：这是一个共享缓冲区，用于存储采集的图像数据。",
+      "name": "图像数据缓存",
+      "typeId": "blk-image-data-uuid",
+      "id": "cbuf-image-data-uuid",
+      "type": "CentralBufferNode"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：mission_status: MissionReport {success:bool,imagesCaptured:uint16_t}; 简化：这是一个共享缓冲区，用于存储任务报告数据。",
+      "name": "任务报告缓存",
+      "typeId": "blk-mission-report-uuid",
+      "id": "cbuf-mission-report-uuid",
+      "type": "CentralBufferNode"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：1. 验证指令与计划; 简化：此控制流从起点启动验证动作。",
+      "targetId": "node-validate-command-uuid",
+      "sourceId": "node-start-mission-uuid",
+      "id": "edge-start-validate-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：验证失败则发送NACK；简化：此控制流在验证完成后进入决策节点。",
+      "targetId": "node-validate-decision-uuid",
+      "sourceId": "node-validate-command-uuid",
+      "id": "edge-validate-decision-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "guard": "成功",
+      "description": "原文：验证失败则发送NACK；简化：在验证成功时触发的控制流，继续到解锁和起飞。",
+      "targetId": "node-unlock-takeoff-uuid",
+      "sourceId": "node-validate-decision-uuid",
+      "id": "edge-validate-success-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "guard": "失败",
+      "description": "原文：验证失败则发送NACK；简化：在验证失败时触发的控制流，结束任务。",
+      "targetId": "node-end-mission-uuid",
+      "sourceId": "node-validate-decision-uuid",
+      "id": "edge-validate-fail-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：温度控制方程。简化：封装温度控制参数图的所有元素。",
+      "name": "ParametricDiagram",
+      "id": "pkg-unique-id",
+      "type": "Package"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：飞行续航时间计算 - 物理意义与应用...升力与推力平衡...简化：封装无人机系统参数图的所有元素，包括续航时间计算和力学平衡关系。",
+      "name": "ParametricDiagram",
+      "id": "pkg-drone-unique-id",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-drone-unique-id",
+      "description": "原文：飞行续航时间计算 - 物理意义与应用: 此约束关系基于能量守恒原理，通过电池容量、系统功耗和飞行状态参数估算最大续航时间，用于任务规划和电量管理决策。简化：代表整个无人机系统，包含飞行性能、控制响应、可靠性、环境适应性和电气参数。",
+      "name": "DroneSystem",
+      "id": "block_drone",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-drone-unique-id",
+      "description": "原文：电池容量 C_battery [mAh], 电池电压 V_battery [V]。简化：代表无人机的电池子系统，负责能量存储和供应。",
+      "name": "BatterySystem",
+      "id": "block_battery",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-drone-unique-id",
+      "description": "原文：升力与推力平衡 - 物理意义与应用: 描述四旋翼无人机在悬停状态下升力与重力的平衡关系，用于电机推力分配和功耗估算。简化：代表无人机的动力子系统，负责产生升力和推力。",
+      "name": "PropulsionSystem",
+      "id": "block_propulsion",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：T_flight: 续航时间 [分钟]。简化：无人机的最大续航时间。",
+      "name": "T_flight",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_T_flight",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：P_system: 系统平均功耗 [W]。简化：无人机系统的平均功耗。",
+      "name": "P_system",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_P_system",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：η: 系统效率系数 [0.7-0.9]。简化：系统的能量转换效率系数。",
+      "name": "η",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_eta",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：m: 无人机总质量 [kg]。简化：无人机的总质量。",
+      "name": "m",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_m",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：g: 重力加速度 [9.8 m/s²]。简化：重力加速度常数。",
+      "name": "g",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_g",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：F_total: 总升力 [N]。简化：无人机产生的总升力。",
+      "name": "F_total",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_F_total",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：F_motor: 单个电机推力 [N]。简化：单个电机产生的推力。",
+      "name": "F_motor",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_F_motor",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：n: 电机数量。简化：无人机上的电机总数。",
+      "name": "n",
+      "typeId": "Integer",
+      "propertyKind": "value",
+      "id": "prop_n",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_battery",
+      "description": "原文：C_battery: 电池容量 [mAh]。简化：电池的总容量。",
+      "name": "C_battery",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_C_battery",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_battery",
+      "description": "原文：V_battery: 电池电压 [V]。简化：电池的工作电压。",
+      "name": "V_battery",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_V_battery",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg-drone-unique-id",
+      "description": "原文：飞行续航时间计算 - 物理意义与应用: 此约束关系基于能量守恒原理，通过电池容量、系统功耗和飞行状态参数估算最大续航时间，用于任务规划和电量管理决策。简化：基于能量守恒计算无人机最大续航时间。",
+      "name": "FlightEnduranceCalculation",
+      "specification": {
+        "expression": "T_flight = (C_battery * V_battery * η) / (P_system * 60) * 0.85",
+        "language": "Math"
+      },
+      "id": "cb_endurance",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb_endurance",
+      "description": "原文：T_flight: 续航时间 [分钟]。简化：约束方程中的续航时间变量。",
+      "name": "T_flight",
+      "typeId": "Real",
+      "id": "param_T_flight",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb_endurance",
+      "description": "原文：C_battery: 电池容量 [mAh]。简化：约束方程中的电池容量变量。",
+      "name": "C_battery",
+      "typeId": "Real",
+      "id": "param_C_battery",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb_endurance",
+      "description": "原文：V_battery: 电池电压 [V]。简化：约束方程中的电池电压变量。",
+      "name": "V_battery",
+      "typeId": "Real",
+      "id": "param_V_battery",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb_endurance",
+      "description": "原文：η: 系统效率系数 [0.7-0.9]。简化：约束方程中的效率系数变量。",
+      "name": "η",
+      "typeId": "Real",
+      "id": "param_eta",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb_endurance",
+      "description": "原文：P_system: 系统平均功耗 [W]。简化：约束方程中的系统功耗变量。",
+      "name": "P_system",
+      "typeId": "Real",
+      "id": "param_P_system",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-drone-unique-id",
+      "description": "原文：升力与推力平衡 - 物理意义与应用: 描述四旋翼无人机在悬停状态下升力与重力的平衡关系，用于电机推力分配和功耗估算。简化：定义悬停状态下总升力与重力的平衡关系。",
+      "name": "LiftGravityBalance",
+      "specification": {
+        "expression": "F_total = m * g",
+        "language": "Math"
+      },
+      "id": "cb_lift_balance",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb_lift_balance",
+      "description": "原文：F_total: 总升力 [N]。简化：约束方程中的总升力变量。",
+      "name": "F_total",
+      "typeId": "Real",
+      "id": "param_F_total",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb_lift_balance",
+      "description": "原文：m: 无人机总质量 [kg]。简化：约束方程中的质量变量。",
+      "name": "m",
+      "typeId": "Real",
+      "id": "param_m",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb_lift_balance",
+      "description": "原文：g: 重力加速度 [9.8 m/s²]。简化：约束方程中的重力加速度变量。",
+      "name": "g",
+      "typeId": "Real",
+      "id": "param_g",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-drone-unique-id",
+      "description": "原文：升力与推力平衡...用于电机推力分配和功耗估算。简化：定义总升力与各电机推力之间的关系。",
+      "name": "MotorThrustDistribution",
+      "specification": {
+        "expression": "F_total = F_motor * n",
+        "language": "Math"
+      },
+      "id": "cb_motor_thrust",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb_motor_thrust",
+      "description": "原文：F_total: 总升力 [N]。简化：约束方程中的总升力变量。",
+      "name": "F_total",
+      "typeId": "Real",
+      "id": "param_F_total2",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb_motor_thrust",
+      "description": "原文：F_motor: 单个电机推力 [N]。简化：约束方程中的单个电机推力变量。",
+      "name": "F_motor",
+      "typeId": "Real",
+      "id": "param_F_motor",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb_motor_thrust",
+      "description": "原文：n: 电机数量。简化：约束方程中的电机数量变量。",
+      "name": "n",
+      "typeId": "Integer",
+      "id": "param_n",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：飞行续航时间计算...用于任务规划和电量管理决策。简化：在无人机系统块中实例化续航时间计算约束。",
+      "name": "EnduranceConstraint",
+      "typeId": "cb_endurance",
+      "propertyKind": "constraint",
+      "id": "cp_endurance",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：升力与推力平衡...用于电机推力分配和功耗估算。简化：在无人机系统块中实例化升力平衡约束。",
+      "name": "LiftBalanceConstraint",
+      "typeId": "cb_lift_balance",
+      "propertyKind": "constraint",
+      "id": "cp_lift_balance",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：升力与推力平衡...用于电机推力分配。简化：在无人机系统块中实例化电机推力分配约束。",
+      "name": "MotorThrustConstraint",
+      "typeId": "cb_motor_thrust",
+      "propertyKind": "constraint",
+      "id": "cp_motor_thrust",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：P_system: 系统平均功耗 [W]。简化：将系统功耗值绑定到续航时间约束方程中的功耗参数。",
+      "end2": {
+        "partRefId": "cp_endurance",
+        "portRefId": "param_P_system"
+      },
+      "end1": {
+        "propertyRefId": "prop_P_system"
+      },
+      "id": "conn5",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：F_total: 总升力 [N]。简化：将总升力值绑定到升力平衡约束方程中的总升力参数。",
+      "end2": {
+        "partRefId": "cp_lift_balance",
+        "portRefId": "param_F_total"
+      },
+      "end1": {
+        "propertyRefId": "prop_F_total"
+      },
+      "id": "conn6",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：m: 无人机总质量 [kg]。简化：将无人机质量值绑定到升力平衡约束方程中的质量参数。",
+      "end2": {
+        "partRefId": "cp_lift_balance",
+        "portRefId": "param_m"
+      },
+      "end1": {
+        "propertyRefId": "prop_m"
+      },
+      "id": "conn7",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：g: 重力加速度 [9.8 m/s²]。简化：将重力加速度值绑定到升力平衡约束方程中的重力参数。",
+      "end2": {
+        "partRefId": "cp_lift_balance",
+        "portRefId": "param_g"
+      },
+      "end1": {
+        "propertyRefId": "prop_g"
+      },
+      "id": "conn8",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：F_total: 总升力 [N]。简化：将总升力值绑定到电机推力约束方程中的总升力参数。",
+      "end2": {
+        "partRefId": "cp_motor_thrust",
+        "portRefId": "param_F_total2"
+      },
+      "end1": {
+        "propertyRefId": "prop_F_total"
+      },
+      "id": "conn9",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "原文：F_motor: 单个电机推力 [N]。简化：将单个电机推力值绑定到电机推力约束方程中的推力参数。",
+      "end2": {
+        "partRefId": "cp_motor_thrust",
+        "portRefId": "param_F_motor"
+      },
+      "end1": {
+        "propertyRefId": "prop_F_motor"
+      },
+      "id": "conn10",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_drone",
+      "description": "自动生成的描述: 这是一个类型为 'BindingConnector'，名称为 'Unnamed' 的元素。",
+      "end2": {},
+      "end1": {
+        "propertyRefId": "prop_n"
+      },
+      "id": "conn11",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：此序列展示了从障碍物检测到完成避让的完整组件协作过程。简化：包含障碍物检测、路径规划和控制的系统包。",
+      "name": "避障系统",
+      "id": "pkg-obstacle-avoidance-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "ownedOperationIds": [
+        "op-obstacle-detected-uuid",
+        "op-obstacle-cleared-uuid"
+      ],
+      "description": "原文：PerceptionSystem。简化：感知系统组件，负责检测前方障碍物。",
+      "name": "PerceptionSystem",
+      "ownedAttributeIds": [
+        "prop-perception-instance-uuid"
+      ],
+      "id": "cls-perception-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "ownedOperationIds": [
+        "op-replan-trajectory-uuid",
+        "op-new-trajectory-uuid"
+      ],
+      "description": "原文：PlanningSystem。简化：规划系统组件，负责重新规划避让轨迹。",
+      "name": "PlanningSystem",
+      "ownedAttributeIds": [
+        "prop-planning-instance-uuid"
+      ],
+      "id": "cls-planning-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "ownedOperationIds": [
+        "op-compute-control-uuid",
+        "op-steering-command-uuid",
+        "op-speed-command-uuid"
+      ],
+      "description": "原文：ControlSystem。简化：控制系统组件，负责计算并发送控制命令。",
+      "name": "ControlSystem",
+      "ownedAttributeIds": [
+        "prop-control-instance-uuid"
+      ],
+      "id": "cls-control-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "ownedOperationIds": [
+        "op-command-ack-uuid"
+      ],
+      "description": "原文：VehicleInterface。简化：车辆接口组件，负责执行转向和速度命令。",
+      "name": "VehicleInterface",
+      "ownedAttributeIds": [
+        "prop-vehicle-interface-instance-uuid"
+      ],
+      "id": "cls-vehicle-interface-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "cls-perception-uuid",
+      "description": "原文：obstacleDetected(obstacle_info)。简化：感知系统检测到障碍物时调用的操作。",
+      "parameterIds": [
+        "param-obstacle-info-uuid"
+      ],
+      "name": "obstacleDetected",
+      "id": "op-obstacle-detected-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "op-obstacle-detected-uuid",
+      "typeHref": "ObstacleInfo",
+      "description": "原文：obstacleDetected(obstacle_info)。简化：障碍物检测操作的输入参数，包含障碍物详细信息。",
+      "direction": "in",
+      "name": "obstacle_info",
+      "id": "param-obstacle-info-uuid",
+      "type": "Parameter"
+    },
+    {
+      "parentId": "cls-perception-uuid",
+      "description": "原文：obstacleCleared()。简化：感知系统确认障碍物已清除时调用的操作。",
+      "name": "obstacleCleared",
+      "id": "op-obstacle-cleared-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-perception-uuid",
+      "description": "原文：PerceptionSystem。简化：感知系统实例属性，用于生命线表示。",
+      "name": "perception_instance",
+      "typeId": "cls-perception-uuid",
+      "id": "prop-perception-instance-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-planning-uuid",
+      "description": "原文：replanTrajectory()。简化：规划系统重新规划避让轨迹的内部操作。",
+      "name": "replanTrajectory",
+      "id": "op-replan-trajectory-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-planning-uuid",
+      "description": "原文：newTrajectory(trajectory_data)。简化：规划系统发送新轨迹数据的操作。",
+      "parameterIds": [
+        "param-trajectory-data-uuid"
+      ],
+      "name": "newTrajectory",
+      "id": "op-new-trajectory-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "op-new-trajectory-uuid",
+      "typeHref": "TrajectoryData",
+      "description": "原文：newTrajectory(trajectory_data)。简化：新轨迹操作的输出参数，包含轨迹数据。",
+      "direction": "out",
+      "name": "trajectory_data",
+      "id": "param-trajectory-data-uuid",
+      "type": "Parameter"
+    },
+    {
+      "parentId": "cls-planning-uuid",
+      "description": "原文：PlanningSystem。简化：规划系统实例属性，用于生命线表示。",
+      "name": "planning_instance",
+      "typeId": "cls-planning-uuid",
+      "id": "prop-planning-instance-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-control-uuid",
+      "description": "原文：computeControlCommands()。简化：控制系统计算控制命令的内部操作。",
+      "name": "computeControlCommands",
+      "id": "op-compute-control-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-control-uuid",
+      "description": "原文：steeringCommand(angle)。简化：控制系统发送转向命令的操作。",
+      "parameterIds": [
+        "param-angle-uuid"
+      ],
+      "name": "steeringCommand",
+      "id": "op-steering-command-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "op-steering-command-uuid",
+      "typeHref": "float",
+      "description": "原文：steeringCommand(angle)。简化：转向命令操作的输出参数，指定转向角度。",
+      "direction": "out",
+      "name": "angle",
+      "id": "param-angle-uuid",
+      "type": "Parameter"
+    },
+    {
+      "parentId": "cls-control-uuid",
+      "description": "原文：speedCommand(speed)。简化：控制系统发送速度命令的操作。",
+      "parameterIds": [
+        "param-speed-uuid"
+      ],
+      "name": "speedCommand",
+      "id": "op-speed-command-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "op-speed-command-uuid",
+      "typeHref": "float",
+      "description": "原文：speedCommand(speed)。简化：速度命令操作的输出参数，指定目标速度。",
+      "direction": "out",
+      "name": "speed",
+      "id": "param-speed-uuid",
+      "type": "Parameter"
+    },
+    {
+      "parentId": "cls-control-uuid",
+      "description": "原文：ControlSystem。简化：控制系统实例属性，用于生命线表示。",
+      "name": "control_instance",
+      "typeId": "cls-control-uuid",
+      "id": "prop-control-instance-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-vehicle-interface-uuid",
+      "description": "原文：commandAck(status)。简化：车辆接口发送命令确认状态的操作。",
+      "parameterIds": [
+        "param-status-uuid"
+      ],
+      "name": "commandAck",
+      "id": "op-command-ack-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "op-command-ack-uuid",
+      "typeHref": "CommandStatus",
+      "description": "原文：commandAck(status)。简化：命令确认操作的输出参数，包含执行状态。",
+      "direction": "out",
+      "name": "status",
+      "id": "param-status-uuid",
+      "type": "Parameter"
+    },
+    {
+      "parentId": "cls-vehicle-interface-uuid",
+      "description": "原文：VehicleInterface。简化：车辆接口实例属性，用于生命线表示。",
+      "name": "vehicle_interface_instance",
+      "typeId": "cls-vehicle-interface-uuid",
+      "id": "prop-vehicle-interface-instance-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg-obstacle-avoidance-uuid",
+      "lifelineIds": [
+        "ll-perception-uuid",
+        "ll-planning-uuid",
+        "ll-control-uuid",
+        "ll-vehicle-interface-uuid"
+      ],
+      "fragmentIds": [
+        "fragment-send-obstacle-detected-uuid",
+        "fragment-recv-obstacle-detected-uuid",
+        "fragment-send-replan-trajectory-uuid",
+        "fragment-recv-replan-trajectory-uuid",
+        "fragment-send-new-trajectory-uuid",
+        "fragment-recv-new-trajectory-uuid",
+        "fragment-send-compute-control-uuid",
+        "fragment-recv-compute-control-uuid",
+        "fragment-send-steering-command-uuid",
+        "fragment-recv-steering-command-uuid",
+        "fragment-send-speed-command-uuid",
+        "fragment-recv-speed-command-uuid",
+        "fragment-send-command-ack-uuid",
+        "fragment-recv-command-ack-uuid",
+        "fragment-send-obstacle-cleared-uuid",
+        "fragment-recv-obstacle-cleared-uuid"
+      ],
+      "description": "原文：当感知系统检测到前方有静止障碍物时，系统需要快速做出反应，规划避让路径并执行相应的控制动作。简化：描述从障碍物检测到完成避让的完整交互流程。",
+      "name": "前方障碍物避让",
+      "messageIds": [
+        "msg-obstacle-detected-uuid",
+        "msg-replan-trajectory-uuid",
+        "msg-new-trajectory-uuid",
+        "msg-compute-control-uuid",
+        "msg-steering-command-uuid",
+        "msg-speed-command-uuid",
+        "msg-command-ack-uuid",
+        "msg-obstacle-cleared-uuid"
+      ],
+      "id": "interaction-obstacle-avoidance-uuid",
+      "type": "Interaction"
+    },
+    {
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "representsId": "prop-perception-instance-uuid",
+      "description": "原文：PerceptionSystem。简化：代表感知系统组件的生命线，负责障碍物检测和清除通知。",
+      "name": "L1-PerceptionSystem",
+      "id": "ll-perception-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "representsId": "prop-planning-instance-uuid",
+      "description": "原文：PlanningSystem。简化：代表规划系统组件的生命线，负责轨迹重新规划。",
+      "name": "L2-PlanningSystem",
+      "id": "ll-planning-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "representsId": "prop-control-instance-uuid",
+      "description": "原文：ControlSystem。简化：代表控制系统组件的生命线，负责计算控制命令。",
+      "name": "L3-ControlSystem",
+      "id": "ll-control-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "representsId": "prop-vehicle-interface-instance-uuid",
+      "description": "原文：VehicleInterface。简化：代表车辆接口组件的生命线，负责执行转向和速度命令。",
+      "name": "L4-VehicleInterface",
+      "id": "ll-vehicle-interface-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "arguments": [
+        {
+          "body": "obstacle_info",
+          "language": "text"
+        }
+      ],
+      "signatureId": "op-obstacle-detected-uuid",
+      "description": "原文：PerceptionSystem -> PlanningSystem: obstacleDetected(obstacle_info)。简化：感知系统向规划系统发送障碍物检测信号，包含障碍物信息。",
+      "sendEventId": "fragment-send-obstacle-detected-uuid",
+      "name": "obstacleDetected",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-obstacle-detected-uuid",
+      "id": "msg-obstacle-detected-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-perception-uuid",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "description": "原文：PerceptionSystem -> PlanningSystem: obstacleDetected。简化：障碍物检测消息的发送事件。",
+      "messageId": "msg-obstacle-detected-uuid",
+      "id": "fragment-send-obstacle-detected-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-planning-uuid",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "description": "原文：PerceptionSystem -> PlanningSystem: obstacleDetected。简化：障碍物检测消息的接收事件。",
+      "messageId": "msg-obstacle-detected-uuid",
+      "id": "fragment-recv-obstacle-detected-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "signatureId": "op-replan-trajectory-uuid",
+      "description": "原文：PlanningSystem -> PlanningSystem: replanTrajectory()。简化：规划系统内部重新规划避让轨迹的自调用操作。",
+      "sendEventId": "fragment-send-replan-trajectory-uuid",
+      "name": "replanTrajectory",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-replan-trajectory-uuid",
+      "id": "msg-replan-trajectory-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-planning-uuid",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "description": "原文：PlanningSystem -> PlanningSystem: replanTrajectory()。简化：重新规划轨迹自调用的发送事件。",
+      "messageId": "msg-replan-trajectory-uuid",
+      "id": "fragment-send-replan-trajectory-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-planning-uuid",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "description": "原文：PlanningSystem -> PlanningSystem: replanTrajectory()。简化：重新规划轨迹自调用的接收事件。",
+      "messageId": "msg-replan-trajectory-uuid",
+      "id": "fragment-recv-replan-trajectory-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "arguments": [
+        {
+          "body": "trajectory_data",
+          "language": "text"
+        }
+      ],
+      "signatureId": "op-new-trajectory-uuid",
+      "description": "原文：PlanningSystem -> ControlSystem: newTrajectory(trajectory_data)。简化：规划系统向控制系统发送新规划的轨迹数据。",
+      "sendEventId": "fragment-send-new-trajectory-uuid",
+      "name": "newTrajectory",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-new-trajectory-uuid",
+      "id": "msg-new-trajectory-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-planning-uuid",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "description": "原文：PlanningSystem -> ControlSystem: newTrajectory。简化：新轨迹消息的发送事件。",
+      "messageId": "msg-new-trajectory-uuid",
+      "id": "fragment-send-new-trajectory-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-control-uuid",
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "description": "原文：PlanningSystem -> ControlSystem: newTrajectory。简化：新轨迹消息的接收事件。",
+      "messageId": "msg-new-trajectory-uuid",
+      "id": "fragment-recv-new-trajectory-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-obstacle-avoidance-uuid",
+      "signatureId": "op-compute-control-uuid",
+      "description": "原文：ControlSystem -> ControlSystem: computeControlCommands()。简化：控制系统内部计算控制命令的自调用操作。",
+      "sendEventId": "fragment-send-compute-control-uuid",
+      "name": "computeControlCommands",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-compute-control-uuid",
+      "id": "msg-compute-control-uuid",
+      "type": "Message"
+    },
+    {
+      "description": " 元素：Unnamed（自动生成）",
+      "id": "fragment-send",
+      "type": "UnknownType"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：无明确提及，但根据上下文推断。简化：包含用户设置温度场景的包。",
+      "name": "车载系统",
+      "id": "pkg-vehicle-sys-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-vehicle-sys-uuid",
+      "description": "原文：*   **涉及的生命线**: `[User]`。简化：通过触摸屏设置温度的用户，系统外部参与者。",
+      "name": "用户",
+      "id": "actor-user-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-vehicle-sys-uuid",
+      "description": "原文：*   **涉及的生命线**: `[TouchScreen]`。简化：用户用于设置温度的触摸屏设备。",
+      "name": "触摸屏",
+      "id": "block-touchscreen-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-vehicle-sys-uuid",
+      "description": "原文：*   **场景名称**: UserSetsTemperature。简化：描述用户设置温度的交互流程。",
+      "name": "UserSetsTemperature",
+      "id": "interaction-user-set-temp-uuid",
+      "type": "Interaction"
+    },
+    {
+      "parentId": "interaction-user-set-temp-uuid",
+      "representsId": "prop-interaction-targetTemp-uuid",
+      "description": "原文：*   **涉及的生命线**: `[User]`。简化：代表用户参与者的生命线，贯穿整个设置温度交互。",
+      "name": "L1-用户",
+      "id": "ll-user-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-user-set-temp-uuid",
+      "representsId": "block-touchscreen-uuid",
+      "description": "原文：*   **涉及的生命线**: `[TouchScreen]`。简化：代表触摸屏设备的生命线，负责接收用户输入。",
+      "name": "L2-触摸屏",
+      "id": "ll-touchscreen-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-user-set-temp-uuid",
+      "representsId": "block-aircondsys-uuid",
+      "description": "原文：*   **涉及的生命线**: `[AirConditioningSystem]`。简化：代表空调系统实例的生命线，负责调整温度。",
+      "name": "L3-空调系统",
+      "id": "ll-aircondsys-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：1. 用户在触摸屏上设置目标温度。简化：用户通过触摸屏设置目标温度。",
+      "sendEventId": "fragment-send-settemp-uuid",
+      "name": "设置温度",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-settemp-uuid",
+      "id": "msg-settemp-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-user-uuid",
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：用户设置温度。简化：设置温度消息的发送事件。",
+      "messageId": "msg-settemp-uuid",
+      "id": "fragment-send-settemp-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-touchscreen-uuid",
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：触摸屏接收温度设置。简化：设置温度消息的接收事件。",
+      "messageId": "msg-settemp-uuid",
+      "id": "fragment-recv-settemp-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：2. 触摸屏发送温度设置到AirConditioningSystem。简化：触摸屏将用户设置的温度发送给空调系统。",
+      "sendEventId": "fragment-send-sendtemp-uuid",
+      "name": "发送温度设置",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-sendtemp-uuid",
+      "id": "msg-sendtemp-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-touchscreen-uuid",
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：触摸屏发送温度设置。简化：发送温度设置消息的发送事件。",
+      "messageId": "msg-sendtemp-uuid",
+      "id": "fragment-send-sendtemp-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-aircondsys-uuid",
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：空调系统接收温度设置。简化：发送温度设置消息的接收事件。",
+      "messageId": "msg-sendtemp-uuid",
+      "id": "fragment-recv-sendtemp-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：3. AirConditioningSystem调整制冷或制热系统以匹配目标温度。简化：空调系统根据目标温度调整制冷或制热系统。",
+      "sendEventId": "fragment-send-adjustsys-uuid",
+      "name": "调整系统",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-adjustsys-uuid",
+      "id": "msg-adjustsys-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-aircondsys-uuid",
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：空调系统调整系统。简化：调整系统消息的发送事件。",
+      "messageId": "msg-adjustsys-uuid",
+      "id": "fragment-send-adjustsys-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-aircondsys-uuid",
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：空调系统接收调整系统。简化：调整系统消息的接收事件。",
+      "messageId": "msg-adjustsys-uuid",
+      "id": "fragment-recv-adjustsys-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：4. AirConditioningSystem向触摸屏发送当前温度和湿度信息。简化：空调系统将当前温度和湿度信息发送给触摸屏。",
+      "sendEventId": "fragment-send-sendtempandhum-uuid",
+      "name": "发送温度和湿度信息",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-sendtempandhum-uuid",
+      "id": "msg-sendtempandhum-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-aircondsys-uuid",
+      "parentId": "interaction-user-set-temp-uuid",
+      "description": "原文：空调系统发送温度和湿度信息。简化：发送温度和湿度信息消息的发送事件。",
+      "messageId": "msg-sendtempandhum-uuid",
+      "id": "fragment-send-sendtempandhum-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "description": "消息事件：关联消息 ?（自动生成）",
+      "id": "fragment-recv-sendtempandhum-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：控制无人机以1.5m/s垂直起飞至第一个航点的起始高度±2m；简化：此控制流在起飞完成后启动导航。",
+      "targetId": "node-navigate-waypoint-uuid",
+      "sourceId": "node-unlock-takeoff-uuid",
+      "id": "edge-takeoff-navigate-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：3. 导航至下一航点; 简化：此控制流在导航完成后启动航点到达检查。",
+      "targetId": "node-check-waypoint-uuid",
+      "sourceId": "node-navigate-waypoint-uuid",
+      "id": "edge-navigate-check-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "guard": "到达",
+      "description": "原文：在到达航点时，飞控通过任务载荷控制端口发送'拍照'指令；简化：此控制流在到达航点时触发数据采集。",
+      "targetId": "node-trigger-data-uuid",
+      "sourceId": "node-check-waypoint-uuid",
+      "id": "edge-check-trigger-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "guard": "跳过",
+      "description": "原文：支持动态跳过故障航点（连续3次无法到达）；简化：此控制流在跳过航点时直接返回导航。",
+      "targetId": "node-navigate-waypoint-uuid",
+      "sourceId": "node-check-waypoint-uuid",
+      "id": "edge-check-navigate-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：6. 数据传输与存储; 简化：此控制流在数据采集完成后启动数据传输。",
+      "targetId": "node-data-transmission-uuid",
+      "sourceId": "node-trigger-data-uuid",
+      "id": "edge-trigger-transmission-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：重复步骤3至6；简化：此控制流在数据传输完成后返回循环执行。",
+      "targetId": "node-loop-merge-uuid",
+      "sourceId": "node-data-transmission-uuid",
+      "id": "edge-transmission-loop-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：重复步骤3至6；简化：此控制流从合并节点继续导航到下一航点。",
+      "targetId": "node-navigate-waypoint-uuid",
+      "sourceId": "node-loop-merge-uuid",
+      "id": "edge-loop-navigate-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：直至飞行计划中的所有航点都被访问完毕；简化：此控制流在所有航点完成后启动返航。",
+      "targetId": "node-return-land-uuid",
+      "sourceId": "node-loop-execution-uuid",
+      "id": "edge-loop-return-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：8. 执行返航着陆; 简化：此控制流在返航完成后启动任务报告。",
+      "targetId": "node-end-report-uuid",
+      "sourceId": "node-return-land-uuid",
+      "id": "edge-return-report-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：任务结束报告; 简化：此控制流在任务报告完成后结束流程。",
+      "targetId": "node-end-mission-uuid",
+      "sourceId": "node-end-report-uuid",
+      "id": "edge-report-end-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：飞行控制器接收并解析'开始任务'指令；简化：此对象流将开始任务指令传递给验证动作。",
+      "targetId": "node-validate-command-uuid",
+      "sourceId": "pin-validate-in-command-uuid",
+      "id": "edge-command-validate-uuid",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：检查飞行计划的完整性和有效性；简化：此对象流将飞行计划传递给验证动作。",
+      "targetId": "pin-validate-in-plan-uuid",
+      "sourceId": "cbuf-flight-plan-uuid",
+      "id": "edge-plan-validate-uuid",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：飞控根据传感器融合模块提供的实时位置；简化：此对象流将传感器数据传递给导航动作。",
+      "targetId": "pin-navigate-in-sensor-uuid",
+      "sourceId": "act-sensor-fusion-uuid",
+      "id": "edge-sensor-navigate-uuid",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：采集到的图像数据通过数据链模块尝试实时下传；简化：此对象流将采集的图像数据传递给数据传输动作。",
+      "targetId": "pin-data-transmission-in-image-uuid",
+      "sourceId": "pin-trigger-data-out-image-uuid",
+      "id": "edge-image-transmission-uuid",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "description": "原文：飞控生成任务报告；简化：此对象流将任务报告输出到缓存。",
+      "targetId": "cbuf-mission-report-uuid",
+      "sourceId": "pin-end-report-out-report-uuid",
+      "id": "edge-report-output-uuid",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "representsId": "blk-flight-controller-uuid",
+      "description": "原文：飞行控制器接收并解析'开始任务'指令；简化：此泳道代表由飞行控制器执行的所有活动，包括验证、导航和决策。",
+      "name": "飞行控制器分区",
+      "nodeIds": [
+        "node-validate-command-uuid",
+        "node-unlock-takeoff-uuid",
+        "node-navigate-waypoint-uuid",
+        "node-check-waypoint-uuid",
+        "node-loop-execution-uuid",
+        "node-return-land-uuid",
+        "node-end-report-uuid",
+        "node-validate-decision-uuid",
+        "node-waypoint-decision-uuid",
+        "node-loop-merge-uuid"
+      ],
+      "id": "grp-flight-controller-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "representsId": "blk-sensor-fusion-uuid",
+      "description": "原文：传感器融合模块活动流程; 简化：此泳道代表由传感器融合模块执行的所有活动，提供实时传感器数据。",
+      "name": "传感器融合模块分区",
+      "nodeIds": [],
+      "id": "grp-sensor-fusion-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "representsId": "blk-data-link-uuid",
+      "description": "原文：通过数据链模块尝试实时下传；简化：此泳道代表由数据链模块执行的所有活动，负责数据传输。",
+      "name": "数据链模块分区",
+      "nodeIds": [
+        "node-data-transmission-uuid"
+      ],
+      "id": "grp-data-link-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "representsId": "blk-payload-uuid",
+      "description": "原文：任务载荷模块执行拍照操作；简化：此泳道代表由任务载荷模块执行的所有活动，负责数据采集。",
+      "name": "任务载荷模块分区",
+      "nodeIds": [
+        "node-trigger-data-uuid"
+      ],
+      "id": "grp-payload-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-mission-uuid",
+      "representsId": "blk-motor-system-uuid",
+      "description": "原文：等待所有电机初始化完成；简化：此泳道代表由电机系统执行的所有活动，负责电机控制。",
+      "name": "电机系统分区",
+      "nodeIds": [
+        "node-motor-join-uuid"
+      ],
+      "id": "grp-motor-system-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "description": "包含无人机核心功能相关的需求，如自主飞行、视频传输、电池管理、避障等",
+      "name": "功能需求包",
+      "id": "pkg-functional-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "description": "包含无人机性能、通信、环境适应性、可靠性等非功能性需求",
+      "name": "非功能需求包",
+      "id": "pkg-nonfunctional-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "reqId": "REQ-FUN-001",
+      "parentId": "pkg-functional-uuid",
+      "text": "系统应通过多传感器融合（激光雷达、摄像头、毫米波雷达）检测车辆周围360度范围内的静态和动态障碍物，包括其他车辆、行人、交通标志等，检测距离范围0.5-150米，检测精度≥99%",
+      "description": "原文：系统应通过多传感器融合（激光雷达、摄像头、毫米波雷达）检测车辆周围360度范围内的静态和动态障碍物，包括其他车辆、行人、交通标志等，检测距离范围0.5-150米，检测精度≥99%。简化：该需求要求系统具备全面的环境感知能力，通过多传感器融合技术实现360度无死角障碍物检测，确保行车安全。背景：这是自动驾驶系统的基础功能，直接影响后续的路径规划和决策。",
+      "name": "环境感知与障碍物检测",
+      "id": "req-env-perception-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-002",
+      "parentId": "pkg-functional-uuid",
+      "text": "系统应结合GPS（精度≤10cm）、IMU和激光雷达点云数据，实现车辆在HD地图中的精确定位，横向定位误差≤15cm，纵向定位误差≤20cm",
+      "description": "原文：系统应结合GPS（精度≤10cm）、IMU和激光雷达点云数据，实现车辆在HD地图中的精确定位，横向定位误差≤15cm，纵向定位误差≤20cm。简化：该需求要求系统实现厘米级的高精度定位，通过多源传感器融合确保车辆在HD地图中的准确位置。背景：精确定位是自动驾驶车辆路径规划和控制的先决条件。",
+      "name": "高精度定位与地图匹配",
+      "id": "req-precise-localization-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-003",
+      "parentId": "pkg-functional-uuid",
+      "text": "系统应基于A*或RRT*算法，每100ms重新规划一次路径，考虑交通规则、障碍物位置和车辆动力学约束，规划延迟≤50ms",
+      "description": "原文：系统应基于A*或RRT*算法，每100ms重新规划一次路径，考虑交通规则、障碍物位置和车辆动力学约束，规划延迟≤50ms。简化：该需求要求系统具备实时路径规划和决策能力，在动态环境中快速生成安全可行的行驶路径。背景：实时规划能力直接影响自动驾驶系统的响应速度和安全性。",
+      "name": "实时路径规划与决策",
+      "id": "req-real-time-planning-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-004",
+      "parentId": "pkg-functional-uuid",
+      "text": "系统应通过PID控制器或MPC控制器，控制车辆的转向、油门和制动，实现车道保持误差≤10cm，速度控制精度±1km/h",
+      "description": "原文：系统应通过PID控制器或MPC控制器，控制车辆的转向、油门和制动，实现车道保持误差≤10cm，速度控制精度±1km/h。简化：该需求要求系统精确控制车辆的运动状态，确保行驶的稳定性和安全性。背景：精确的运动控制是实现自动驾驶功能的关键环节。",
+      "name": "车辆运动控制",
+      "id": "req-vehicle-control-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-001",
+      "parentId": "pkg-nonfunctional-uuid",
+      "text": "从传感器数据采集到执行器控制输出的端到端延迟≤100ms，感知-决策-控制环路频率≥20Hz",
+      "description": "原文：从传感器数据采集到执行器控制输出的端到端延迟≤100ms，感知-决策-控制环路频率≥20Hz。简化：该需求规定了系统的实时性能要求，确保整个控制环路的快速响应。背景：低延迟是保证自动驾驶系统安全性的重要指标。",
+      "name": "系统响应时间",
+      "id": "req-system-response-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-004",
+      "parentId": "pkg-nonfunctional-uuid",
+      "text": "平均无故障时间(MTBF) ≥ 1000小时，平均修复时间(MTTR) ≤ 30分钟。关键系统（如飞控）采用双冗余设计，传感器采用三冗余投票机制。系统可用性≥99.9%。验收标准：在95%置信水平下满足可靠性指标。优先级：High",
+      "description": "原文：平均无故障时间(MTBF) ≥ 1000小时，平均修复时间(MTTR) ≤ 30分钟。关键系统采用双冗余设计，传感器采用三冗余投票机制。简化：该需求定义了无人机系统的整体可靠性要求，通过冗余设计和快速维护确保高可用性。背景：基于航空安全标准，采用多重冗余机制提升系统容错能力。",
+      "name": "系统可靠性",
+      "id": "req-system-reliability-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-003",
+      "parentId": "pkg-nonfunctional-uuid",
+      "text": "主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s，支持并行处理多路传感器数据流",
+      "description": "原文：主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s，支持并行处理多路传感器数据流。简化：该需求规定了系统的计算能力要求，确保能够高效处理复杂的感知和决策任务。背景：强大的计算性能是支撑自动驾驶算法实时运行的基础。",
+      "name": "计算性能",
+      "id": "req-computing-performance-uuid",
+      "type": "Requirement"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：通过多传感器融合（激光雷达、摄像头、毫米波雷达）检测车辆周围360度范围内的静态和动态障碍物。职责：负责环境感知和障碍物检测，融合多传感器数据。组成：包含激光雷达处理模块、摄像头视觉处理模块、毫米波雷达处理模块、传感器融合算法模块。技术：采用深度学习算法进行目标检测和分类，实现多传感器数据融合。",
+      "name": "感知系统",
+      "id": "blk-perception-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：结合GPS（精度≤10cm）、IMU和激光雷达点云数据，实现车辆在HD地图中的精确定位。职责：负责车辆的高精度定位和地图匹配。组成：包含GPS接收模块、IMU惯性测量单元、激光雷达定位模块、地图匹配算法。技术：采用卡尔曼滤波和SLAM技术实现多源定位数据融合。",
+      "name": "定位系统",
+      "id": "blk-localization-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-main",
+      "description": "原文：基于A*或RRT*算法，每100ms重新规划一次路径，考虑交通规则、障碍物位置和车辆动力学约束。职责：负责实时路径规划和决策制定。组成：包含全局路径规划模块、局部避障模块、行为决策模块。技术：采用A*、RRT*等搜索算法，结合车辆动力学模型进行路径优化。",
+      "name": "规划决策系统",
+      "id": "blk-planning-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：基于A*或RRT*算法，每100ms重新规划一次路径，考虑交通规则、障碍物位置和车辆动力学约束。职责：负责实时路径规划和决策制定。组成：包含全局路径规划模块、局部避障模块、行为决策模块。技术：采用A*、RRT*等搜索算法，结合车辆动力学模型进行路径优化。",
+      "name": "规划决策系统",
+      "id": "blk-planning-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：通过PID控制器或MPC控制器，控制车辆的转向、油门和制动。职责：负责车辆的运动控制和执行。组成：包含转向控制模块、油门控制模块、制动控制模块、车辆状态估计模块。技术：采用PID控制、模型预测控制(MPC)等控制算法。",
+      "name": "控制系统",
+      "id": "blk-control-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s。职责：负责系统的核心计算任务，包括感知数据处理、决策算法运行、控制指令生成。组成：包含AI推理引擎、并行计算单元、高速内存系统、数据总线。技术：采用GPU/TPU等专用AI加速器，支持多路传感器数据并行处理。",
+      "name": "主计算单元",
+      "id": "blk-main-computing-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：检测精度≥99%。测试目的：验证环境感知系统的障碍物检测精度。测试方法：在测试场地设置多种障碍物场景，使用真值系统对比检测结果。预期结果：检测精度达到99%以上，误检率和漏检率均低于1%。",
+      "name": "障碍物检测精度测试",
+      "id": "tc-obstacle-detection-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：横向定位误差≤15cm，纵向定位误差≤20cm。测试目的：验证定位系统的精度指标。测试方法：使用高精度RTK-GPS作为基准，在不同场景下测试定位误差。预期结果：横向误差≤15cm，纵向误差≤20cm，满足高精度定位要求。",
+      "name": "定位精度测试",
+      "id": "tc-localization-accuracy-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：每100ms重新规划一次路径，规划延迟≤50ms。测试目的：验证路径规划系统的实时性能。测试方法：在动态环境中测试路径规划响应时间和规划频率。预期结果：规划延迟≤50ms，规划频率≥10Hz，满足实时性要求。",
+      "name": "路径规划实时性测试",
+      "id": "tc-planning-realtime-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：车道保持误差≤10cm，速度控制精度±1km/h。测试目的：验证运动控制系统的控制精度。测试方法：在标准测试道路上测试车道保持和速度控制性能。预期结果：车道保持误差≤10cm，速度控制精度±1km/h。",
+      "name": "控制系统精度测试",
+      "id": "tc-control-accuracy-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：从传感器数据采集到执行器控制输出的端到端延迟≤100ms。测试目的：验证系统整体响应时间。测试方法：使用时间戳记录传感器输入到控制输出的完整流程。预期结果：端到端延迟≤100ms，控制环路频率≥20Hz。",
+      "name": "端到端延迟测试",
+      "id": "tc-end-to-end-latency-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：基于系统可靠性需求创建测试。测试目的：验证系统可靠性和容错能力。测试方法：进行长时间运行测试，注入故障，测量MTBF和MTTR。预期结果：可靠性不低于99.95%，MTBF>800小时。",
+      "name": "系统可靠性测试",
+      "id": "tc-reliability-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于系统可靠性需求创建测试。测试目的：验证系统可靠性和容错能力。测试方法：进行长时间运行测试，注入故障，测量MTBF和MTTR。预期结果：可靠性不低于99.95%，MTBF>800小时。",
+      "name": "系统可靠性测试",
+      "id": "tc-reliability-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s。测试目的：验证计算系统的性能指标。测试方法：使用标准AI推理基准测试和内存带宽测试工具。预期结果：AI推理性能≥50 TOPS，内存带宽≥200GB/s，支持多路传感器数据并行处理。",
+      "name": "计算性能测试",
+      "id": "tc-computing-performance-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "blockId": "blk-perception-system-uuid",
+      "description": "原文：系统应通过多传感器融合检测车辆周围360度范围内的静态和动态障碍物。感知系统通过激光雷达、摄像头、毫米波雷达等多传感器融合技术满足环境感知需求，采用深度学习算法实现高精度障碍物检测，检测范围0.5-150米，精度≥99%。",
+      "requirementId": "req-env-perception-uuid",
+      "id": "rel-satisfy-perception-env-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "blockId": "blk-localization-system-uuid",
+      "description": "原文：系统应结合GPS、IMU和激光雷达点云数据实现车辆在HD地图中的精确定位。定位系统通过多源传感器融合和地图匹配算法满足高精度定位需求，采用卡尔曼滤波技术实现厘米级定位精度，横向误差≤15cm，纵向误差≤20cm。",
+      "requirementId": "req-precise-localization-uuid",
+      "id": "rel-satisfy-localization-precise-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "blockId": "blk-planning-system-uuid",
+      "description": "原文：系统应基于A*或RRT*算法每100ms重新规划一次路径。规划决策系统通过高效的路径搜索算法满足实时规划需求，考虑交通规则、障碍物位置和车辆动力学约束，规划延迟≤50ms，确保安全可行的行驶路径。",
+      "requirementId": "req-real-time-planning-uuid",
+      "id": "rel-satisfy-planning-realtime-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "blockId": "blk-control-system-uuid",
+      "description": "原文：系统应通过PID控制器或MPC控制器控制车辆的转向、油门和制动。控制系统通过先进的控制算法满足车辆运动控制需求，实现精确的车道保持（误差≤10cm）和速度控制（精度±1km/h），确保行驶稳定性和安全性。",
+      "requirementId": "req-vehicle-control-uuid",
+      "id": "rel-satisfy-control-vehicle-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-nonfunctional-uuid",
+      "blockId": "blk-main-computing-uuid",
+      "description": "原文：主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s。主计算单元通过高性能AI加速器和并行计算架构满足计算性能需求，支持多路传感器数据流并行处理，为整个自动驾驶系统提供强大的计算支撑。",
+      "requirementId": "req-computing-performance-uuid",
+      "id": "rel-satisfy-computing-performance-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：检测精度≥99%。通过障碍物检测精度测试验证环境感知需求，使用真值系统对比检测结果，确保检测精度达到99%以上，误检率和漏检率均满足要求，验证多传感器融合技术的有效性。",
+      "testCaseId": "tc-obstacle-detection-test-uuid",
+      "requirementId": "req-env-perception-uuid",
+      "id": "rel-verify-detection-env-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：横向定位误差≤15cm，纵向定位误差≤20cm。通过定位精度测试验证高精度定位需求，使用高精度RTK-GPS作为基准，在不同场景下测试定位误差，确保横向误差≤15cm、纵向误差≤20cm，验证多源定位融合算法的准确性。",
+      "testCaseId": "tc-localization-accuracy-test-uuid",
+      "requirementId": "req-precise-localization-uuid",
+      "id": "rel-verify-localization-precise-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：每100ms重新规划一次路径，规划延迟≤50ms。通过路径规划实时性测试验证实时规划需求，在动态环境中测试规划响应时间和频率，确保规划延迟≤50ms、规划频率满足要求，验证A*/RRT*算法在实时场景下的性能。",
+      "testCaseId": "tc-planning-realtime-test-uuid",
+      "requirementId": "req-real-time-planning-uuid",
+      "id": "rel-verify-planning-realtime-uuid",
+      "type": "Verify"
+    },
+    {
+      "description": "验证关系：测试验证需求",
+      "testCaseId": "tc-control-accuracy-test-uuid",
+      "id": "rel-verify-control-accuracy-uuid",
+      "type": "Verify"
+    },
+    {
+      "description": "该包包含无人机在各种紧急情况下的处理需求和决策逻辑",
+      "name": "应急场景包",
+      "id": "pkg-emergency-scenarios-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "reqId": "REQ-FUN-001",
+      "parentId": "pkg-functional-uuid",
+      "text": "系统应能接收地面控制站发送的飞行计划（包含航点坐标、高度、速度），通过GPS/IMU传感器融合确定自身位置和姿态，并驱动电机和舵机实现自主导航飞行。支持RTK-GPS定位，水平定位精度达到±1cm+1ppm，垂直定位精度±1.5cm+1ppm。飞行控制频率不低于200Hz，姿态控制精度优于0.1°。验收标准：航点跟踪误差<0.5m，高度保持误差<0.2m，速度控制误差<0.1m/s。优先级：High",
+      "description": "原文：系统应能接收地面控制站发送的飞行计划，通过GPS/IMU传感器融合确定自身位置和姿态，并驱动电机和舵机实现自主导航飞行。简化：该需求定义了无人机自主飞行的核心能力，包括飞行计划接收、精确定位导航和飞行控制执行，是实现自动化作业的基础。背景：支持RTK-GPS高精度定位，要求飞行控制频率200Hz以上，姿态控制精度0.1°以内。",
+      "name": "自主飞行控制",
+      "id": "req-autonomous-flight-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-004",
+      "parentId": "pkg-functional-uuid",
+      "text": "系统通过专用的载荷接口（如PWM、UART或USB-C）向挂载设备供电（12V DC, max 3A）并传输控制指令，支持基本的云台控制和快门触发功能。优先级：Medium",
+      "description": "原文：系统通过专用的载荷接口（如PWM、UART或USB-C）向挂载设备供电（12V DC, max 3A）并传输控制指令，支持基本的云台控制和快门触发功能。简化：该需求要求无人机能够管理和控制搭载的各种有效载荷设备。背景：载荷管理是无人机执行特定任务（如航拍、测绘等）的基础能力。",
+      "name": "有效载荷管理",
+      "id": "req-payload-management-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-001",
+      "parentId": "pkg-nonfunctional-uuid",
+      "text": "最大水平飞行速度15m/s，最大续航时间30分钟，最大抗风能力10m/s，最大作业海拔4000米。悬停精度：垂直±0.1m，水平±0.3m。最大爬升率5m/s，最大下降率3m/s。验收标准：所有性能指标在95%置信区间内满足要求。优先级：High",
+      "description": "原文：最大水平飞行速度15m/s，最大续航时间30分钟，最大抗风能力10m/s，最大作业海拔4000米。简化：该需求定义了无人机的核心飞行性能指标，包括速度、续航、抗风能力和作业高度等关键参数。背景：这些指标直接影响无人机的应用场景和作业能力。",
+      "name": "飞行性能",
+      "id": "req-flight-performance-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-001",
+      "parentId": "pkg-nonfunctional-uuid",
+      "text": "从IMU传感器读取数据到计算并输出PWM信号至电调（ESC）的完整控制回路延迟必须小于8毫秒（P95值），最大延迟不超过10毫秒。姿态控制带宽不低于20Hz，位置控制带宽不低于5Hz。",
+      "description": "原文：从IMU传感器读取数据到计算并输出PWM信号至电调（ESC）的完整控制回路延迟必须小于8毫秒（P95值），最大延迟不超过10毫秒。姿态控制带宽不低于20Hz，位置控制带宽不低于5Hz。简化：该需求要求飞行控制系统具有低延迟和高带宽，确保快速响应以维持飞行稳定性。背景：用于应对突发气流扰动，确保飞行稳定性和控制精度。",
+      "name": "飞行控制响应时间",
+      "id": "req-control-response-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-003",
+      "parentId": "pkg-nonfunctional-uuid",
+      "text": "工作温度范围-10°C至+40°C，存储温度-20°C至+60°C，防护等级IP43，能够在小雨（降雨量<2.5mm/h）和中等湿度（<85%RH）环境下短时工作。抗振动等级：5-500Hz，1.5Grms。优先级：High",
+      "description": "原文：工作温度范围-10°C至+40°C，存储温度-20°C至+60°C，防护等级IP43，能够在小雨和中等湿度环境下短时工作。简化：该需求定义了无人机在各种环境条件下的适应能力，确保在恶劣气候下的可靠运行。背景：符合工业级环境适应性标准，扩展无人机的应用范围。",
+      "name": "环境适应性",
+      "id": "req-environmental-adaptability-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "EMG-001",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "text": "如多个电机同时故障，执行紧急降落程序",
+      "description": "原文：如多个电机同时故障，执行紧急降落程序。简化：该需求要求在多个电机同时发生故障的极端情况下，系统能够执行紧急降落以确保安全。背景：这是飞行安全的重要保障措施，防止因动力系统故障导致的坠机事故。",
+      "name": "多电机故障应急处理",
+      "id": "req-multi-motor-failure-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "EMG-002",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "text": "通信完全中断时依靠机载智能决策",
+      "description": "原文：通信完全中断时依靠机载智能决策。简化：该需求要求在通信完全中断的情况下，无人机能够依靠机载智能系统自主做出决策。背景：确保在失去地面控制的情况下，无人机仍能安全运行并完成任务。",
+      "name": "通信中断智能决策",
+      "id": "req-comm-loss-decision-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "EMG-003",
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "text": "着陆环境不安全时寻找备降场地",
+      "description": "原文：着陆环境不安全时寻找备降场地。简化：该需求要求无人机在检测到预设着陆点不安全时，能够自动寻找合适的备降场地。背景：这是提高飞行安全性的重要功能，避免在不适宜的环境下强行降落。",
+      "name": "不安全着陆环境处理",
+      "id": "req-unsafe-landing-uuid",
+      "type": "Requirement"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：通过GPS/IMU传感器融合确定自身位置和姿态，并驱动电机和舵机实现自主导航飞行。职责：负责无人机的自主导航、姿态控制和飞行路径跟踪。组成：包含GPS/IMU传感器融合模块、飞行控制算法模块、电机驱动模块。技术：采用RTK-GPS定位技术和200Hz控制频率实现高精度飞行控制。",
+      "name": "飞行控制系统",
+      "id": "blk-flight-control-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：动力管理系统负责为整个无人机提供稳定、可靠的电力供应，并实时监控电池健康状况，集成智能电池管理算法，符合IEC 62133电芯安全标准。核心职责: 通过电源分配板（PDB，效率>95%）将主电池电压分配至各子系统，通过库仑计芯片实时采集电池电压、电流和估算剩余容量（精度±3%），实现过压（>25.5V）、欠压（<19V）、过流（>45A）硬件保护，支持电池健康状态（SOH）估算和循环次数统计。职责：管理电力分配和电池监控。组成：包括电源分配板、电池管理单元。技术：采用库仑计芯片和硬件保护电路。",
+      "name": "动力管理系统",
+      "id": "blk-power-management-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：通过专用的载荷接口向挂载设备供电并传输控制指令。职责：管理有效载荷设备的供电和控制。组成：包含多种接口模块（PWM、UART、USB-C）、电源输出模块。技术：提供12V DC电源，最大3A输出，支持多种通信协议。",
+      "name": "载荷接口系统",
+      "id": "blk-payload-interface-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：通信完全中断时依靠机载智能决策，着陆环境不安全时寻找备降场地。职责：在紧急情况下做出智能决策，确保飞行安全。组成：包含环境感知模块、决策算法模块、应急执行模块。技术：采用机器学习算法和环境感知技术实现智能决策。",
+      "name": "应急决策系统",
+      "id": "blk-emergency-decision-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：验收标准：航点跟踪误差<0.5m，高度保持误差<0.2m，速度控制误差<0.1m/s。测试目的：验证自主飞行控制的精度和稳定性。测试方法：在预设航点路径上进行多次飞行测试，测量实际飞行轨迹与计划轨迹的偏差。预期结果：所有精度指标在95%置信区间内满足要求。",
+      "name": "自主飞行性能测试",
+      "id": "tc-autonomous-flight-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：验证实时遥测数据传输功能。测试目的：验证无人机以10Hz频率向地面站发送遥测数据的能力。测试方法：监控数据链路，检查传输频率和数据完整性。预期结果：遥测数据以10Hz频率稳定传输，包含所有必要参数且数据准确无误。",
+      "name": "遥测数据传输测试",
+      "id": "tc-telemetry-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：验证多个电机同时故障时的应急处理。测试目的：验证无人机在多个电机故障情况下的紧急降落能力。测试方法：模拟多个电机同时失效的场景。预期结果：系统检测到多电机故障后立即执行紧急降落程序，确保安全着陆。",
+      "name": "多电机故障应急测试",
+      "id": "tc-multi-motor-failure-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "description": "原文：验证通信完全中断时机载智能决策能力。测试目的：验证无人机在失去通信连接时的自主决策能力。测试方法：切断通信链路，观察无人机行为。预期结果：无人机依靠机载智能系统做出合理决策，继续安全飞行或执行应急程序。",
+      "name": "通信中断决策测试",
+      "id": "tc-comm-loss-decision-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "derivedRequirementId": "req-multi-motor-failure-uuid",
+      "description": "原文：如多个电机同时故障，执行紧急降落程序。该需求是从应急返航功能需求派生，细化了在特定严重故障情况下的应急处理流程，原因是多电机故障是飞行安全的最严重威胁之一，需要专门的紧急降落程序来最大限度保障安全。",
+      "sourceRequirementId": "req-emergency-return-uuid",
+      "id": "rel-derive-emergency-motor-uuid",
+      "type": "DeriveReqt"
+    },
+    {
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "derivedRequirementId": "req-comm-loss-decision-uuid",
+      "description": "原文：通信完全中断时依靠机载智能决策。该需求是从应急返航功能需求派生，细化了在通信完全中断情况下的智能决策要求，原因是单纯的返航可能不足以应对复杂的飞行环境，需要更高级的智能决策能力。",
+      "sourceRequirementId": "req-emergency-return-uuid",
+      "id": "rel-derive-emergency-comm-uuid",
+      "type": "DeriveReqt"
+    },
+    {
+      "parentId": "pkg-emergency-scenarios-uuid",
+      "derivedRequirementId": "req-unsafe-landing-uuid",
+      "description": "原文：着陆环境不安全时寻找备降场地。该需求是从应急返航功能需求派生，细化了返航过程中的着陆安全要求，原因是返航点的环境可能发生变化，需要动态评估和选择安全的着陆场地。",
+      "sourceRequirementId": "req-emergency-return-uuid",
+      "id": "rel-derive-emergency-landing-uuid",
+      "type": "DeriveReqt"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "blockId": "blk-communication-uuid",
+      "description": "原文：系统通过数传电台以2.4GHz频率，以10Hz频率向地面站发送遥测数据包。通信系统通过2.4GHz数传电台和优化的通信协议栈来满足实时遥测数据传输需求，实现了10Hz的高频数据传输，确保地面站能够实时监控无人机状态。",
+      "requirementId": "req-telemetry-data-uuid",
+      "id": "rel-satisfy-comm-telemetry-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "description": "包含车载空调系统的功能需求，包括温度控制、能耗管理和系统可靠性等",
+      "name": "空调系统功能",
+      "id": "pkg-aircon-func-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "reqId": "REQ-FUN-001",
+      "parentId": "pkg-aircon-func-uuid",
+      "text": "系统应能够根据用户设定和外部环境自动调节车内温度，包括制冷、制热和除湿功能，并通过CAN总线与车辆其他系统进行数据交换",
+      "description": "原文：系统应能够根据用户设定和外部环境自动调节车内温度，包括制冷、制热和除湿功能，并通过CAN总线与车辆其他系统进行数据交换。简化：该需求要求空调系统能够自动调节车内温度，并与其他车辆系统进行数据交换，以提供舒适的乘坐环境。",
+      "name": "空调系统控制",
+      "id": "req-aircon-control-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-002",
+      "parentId": "pkg-aircon-func-uuid",
+      "text": "系统应能够将车内温度控制在设定温度的±0.5°C范围内，并通过PID控制算法实现精确调节",
+      "description": "原文：系统应能够将车内温度控制在设定温度的±0.5°C范围内，并通过PID控制算法实现精确调节。简化：该需求要求空调系统能够精确控制车内温度，以提供舒适的乘坐环境。",
+      "name": "温度控制精度",
+      "id": "req-aircon-precision-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-003",
+      "parentId": "pkg-aircon-func-uuid",
+      "text": "系统应通过智能算法优化制冷和制热过程，以最小化能耗，并实现节能模式",
+      "description": "原文：系统应通过智能算法优化制冷和制热过程，以最小化能耗，并实现节能模式。简化：该需求要求空调系统能够通过智能算法优化能耗，以降低运营成本和环境影响。",
+      "name": "能耗管理",
+      "id": "req-aircon-energy-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-001",
+      "parentId": "pkg-aircon-func-uuid",
+      "text": "系统在接收到温度调整指令后，应在2秒内开始响应，并通过实时监控确保系统响应时间不超过3秒",
+      "description": "原文：系统在接收到温度调整指令后，应在2秒内开始响应，并通过实时监控确保系统响应时间不超过3秒。简化：该需求要求空调系统能够快速响应温度调整指令，以提供良好的用户体验。",
+      "name": "响应时间",
+      "id": "req-aircon-response-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-002",
+      "parentId": "pkg-aircon-func-uuid",
+      "text": "系统的平均无故障时间（MTBF）应大于10,000小时，并通过冗余设计提高系统的可靠性",
+      "description": "原文：系统的平均无故障时间（MTBF）应大于10,000小时，并通过冗余设计提高系统的可靠性。简化：该需求要求空调系统具有高可靠性，以减少维护成本并确保行车安全。",
+      "name": "系统可靠性",
+      "id": "req-aircon-reliability-uuid",
+      "type": "Requirement"
+    },
+    {
+      "parentId": "pkg-vehicle-sys-uuid",
+      "description": "原文：空调控制系统负责根据用户设定和外部环境自动调节车内温度。职责：实现制冷、制热和除湿功能，并通过CAN总线与其他车辆系统进行数据交换。组成：包括温度传感器、执行器、PID控制器和通信模块。技术：采用先进的控制算法和传感器技术。",
+      "name": "空调控制系统",
+      "id": "blk-aircon-control-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-air-con-control-uuid",
+      "description": "原文：空调控制系统负责根据用户设定和外部环境自动调节车内温度。职责：实现制冷、制热和除湿功能，并通过CAN总线与其他车辆系统进行数据交换。组成：包括温度传感器、执行器、PID控制器和通信模块。技术：采用先进的控制算法和传感器技术。",
+      "name": "空调控制系统",
+      "id": "blk-aircon-control-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-aircon-func-uuid",
+      "description": "原文：空调控制系统负责根据用户设定和外部环境自动调节车内温度。职责：实现制冷、制热和除湿功能，并通过CAN总线与其他车辆系统进行数据交换。组成：包括温度传感器、执行器、PID控制器和通信模块。技术：采用先进的控制算法和传感器技术。",
+      "name": "空调控制系统",
+      "id": "blk-aircon-control-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-aircon-func-uuid",
+      "description": "原文：空调系统控制测试用于验证空调系统是否能够根据用户设定和外部环境自动调节车内温度。测试目的：验证制冷、制热和除湿功能以及与车辆其他系统的数据交换。测试方法：模拟不同温度和湿度条件，测试系统响应和调节效果。预期结果：系统能够准确调节车内温度，并与其他系统进行有效数据交换。",
+      "name": "空调系统控制测试",
+      "id": "tc-aircon-control-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-aircon-func-uuid",
+      "description": "原文：温度控制精度测试用于验证空调系统是否能够将车内温度控制在设定温度的±0.5°C范围内。测试目的：验证PID控制算法的精确性。测试方法：设定不同温度，测试系统调节精度。预期结果：系统能够将车内温度控制在设定温度的±0.5°C范围内。",
+      "name": "温度控制精度测试",
+      "id": "tc-aircon-precision-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-aircon-func-uuid",
+      "description": "原文：能耗管理测试用于验证空调系统是否能够通过智能算法优化制冷和制热过程，以最小化能耗。测试目的：验证节能模式的效率。测试方法：在不同工况下测试系统能耗。预期结果：系统在节能模式下能够实现≥20%的能耗降低。",
+      "name": "能耗管理测试",
+      "id": "tc-aircon-energy-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-aircon-func",
+      "description": "测试用例：响应时间测试，用于验证需求",
+      "name": "响应时间测试",
+      "id": "tc-aircon-response-uuid",
+      "type": "TestCase"
+    },
+    {
+      "description": "包含无人机系统的核心模块，如飞行控制、动力管理、传感器融合、推进系统和数据链",
+      "name": "系统模块包",
+      "id": "pkg-system-blocks-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "reqId": "REQ-FUN-002",
+      "parentId": "pkg-functional-uuid",
+      "text": "系统应在飞行过程中，根据预设的触发条件（到达特定航点±3m范围内或固定时间间隔2-5s可调），控制多光谱相机（MicaSense RedEdge-MX，5个波段：蓝475nm、绿560nm、红668nm、红边717nm、近红外842nm）进行拍照。空间分辨率要求：在120m飞行高度下达到8cm/像素。采集到的图像数据（每张约12MB，格式为16位GeoTIFF+XML元数据）应被UTC时间戳和DGPS位置（精度≤10cm）标记，并通过数传电台（传输速率115.2kbps）实时传输至地面站。同时，数据应存储在机载的64GB Class 10 UHS-I microSD卡中，存储容量需支持至少5000张原始图像。",
+      "description": "原文：系统应在飞行过程中，根据预设的触发条件（到达特定航点±3m范围内或固定时间间隔2-5s可调），控制多光谱相机（MicaSense RedEdge-MX，5个波段：蓝475nm、绿560nm、红668nm、红边717nm、近红外842nm）进行拍照。空间分辨率要求：在120m飞行高度下达到8cm/像素。采集到的图像数据（每张约12MB，格式为16位GeoTIFF+XML元数据）应被UTC时间戳和DGPS位置（精度≤10cm）标记，并通过数传电台（传输速率115.2kbps）实时传输至地面站。同时，数据应存储在机载的64GB Class 10 UHS-I microSD卡中，存储容量需支持至少5000张原始图像。简化：该需求要求无人机在飞行中自动采集多光谱图像数据，并确保数据的完整存储和传输。背景：用于分析作物健康状况，为精准农业决策提供数据支持，符合NDVI植被指数计算规范。",
+      "name": "多光谱数据采集与存储",
+      "id": "req-multispectral-data-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-003",
+      "parentId": "pkg-functional-uuid",
+      "text": "系统应通过MAVLink 2.0协议，以10Hz±1Hz的频率向地面控制站发送遥测数据包。数据包内容必须包括：GPS位置（经纬度精度1e-7度，海拔精度0.1m）、姿态角（滚转、俯仰精度0.1°，偏航精度0.5°）、空速（量程0-30m/s，精度0.5m/s）、电池电压（量程0-25.2V，精度±0.1V）、电池剩余电量（精度±5%）、电机转速（量程0-20000RPM，精度±100RPM）和信号链路强度（量程-120至0dBm，精度±3dB）。数据丢包率应小于1%。",
+      "description": "原文：系统应通过MAVLink 2.0协议，以10Hz±1Hz的频率向地面控制站发送遥测数据包。数据包内容必须包括：GPS位置（经纬度精度1e-7度，海拔精度0.1m）、姿态角（滚转、俯仰精度0.1°，偏航精度0.5°）、空速（量程0-30m/s，精度0.5m/s）、电池电压（量程0-25.2V，精度±0.1V）、电池剩余电量（精度±5%）、电机转速（量程0-20000RPM，精度±100RPM）和信号链路强度（量程-120至0dBm，精度±3dB）。数据丢包率应小于1%。简化：该需求要求无人机实时传输飞行状态和系统健康数据到地面站，确保操作员能监控和干预。背景：为操作员提供态势感知，便于监控和干预，符合ASTM F38.01无人机遥测标准。",
+      "name": "实时状态监控与遥测",
+      "id": "req-real-time-telemetry-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-004",
+      "parentId": "pkg-functional-uuid",
+      "text": "当检测到以下任一条件时，系统应自动触发失效保护模式并执行返航着陆（RTL）程序：1) 与地面站的RC控制信号丢失持续超过5.0±0.5秒；2) 电池电压低于预设的3.4V/单体（对于4S电池组，即总电压低于13.6V±0.2V）；3) GPS卫星数少于8颗持续30秒。RTL程序包括：爬升至预设安全高度（50±5m，可配置）、以5m/s速度飞向并降落在预设的'家'位置（Home Position，精度半径2m内）。着陆过程应包含3m高度悬停3秒的确认阶段。",
+      "description": "原文：当检测到以下任一条件时，系统应自动触发失效保护模式并执行返航着陆（RTL）程序：1) 与地面站的RC控制信号丢失持续超过5.0±0.5秒；2) 电池电压低于预设的3.4V/单体（对于4S电池组，即总电压低于13.6V±0.2V）；3) GPS卫星数少于8颗持续30秒。RTL程序包括：爬升至预设安全高度（50±5m，可配置）、以5m/s速度飞向并降落在预设的'家'位置（Home Position，精度半径2m内）。着陆过程应包含3m高度悬停3秒的确认阶段。简化：该需求要求无人机在紧急情况下自动执行安全返航程序，防止坠机。背景：最大限度地保证飞行器本体和地面人员、财产的安全，符合FAA Part 107安全规范。",
+      "name": "安全故障处理与自动返航",
+      "id": "req-safety-return-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-004",
+      "parentId": "pkg-nonfunctional-uuid",
+      "text": "在最大载重5.0±0.2公斤（包括相机、云台等有效载荷）的条件下，系统使用16000mAh 6S锂聚合物电池（标称电压22.2V），应能实现不少于30分钟的有效飞行时间（从起飞到着陆，保留15%的安全电量）。悬停功耗不超过800W，最大爬升功耗不超过1500W。单次任务覆盖面积应不小于100公顷（在120m飞行高度下）。",
+      "description": "原文：在最大载重5.0±0.2公斤（包括相机、云台等有效载荷）的条件下，系统使用16000mAh 6S锂聚合物电池（标称电压22.2V），应能实现不少于30分钟的有效飞行时间（从起飞到着陆，保留15%的安全电量）。悬停功耗不超过800W，最大爬升功耗不超过1500W。单次任务覆盖面积应不小于100公顷（在120m飞行高度下）。简化：该需求要求无人机在满载条件下具有足够的续航能力和覆盖面积。背景：用于农业测绘任务，确保作业效率和任务完成率。",
+      "name": "续航与载重能力",
+      "id": "req-endurance-payload-uuid",
+      "type": "Requirement"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：推进系统是无人机的执行机构，它将飞控的计算指令转化为实际的升力和力矩，通过精确控制四个无刷电机和螺旋桨的转速来实现飞行器的运动，采用BLDC电机和32位电调，支持DShot600数字协议。核心职责: 接收来自飞控的PWM/DShot控制信号（更新率400Hz），通过电子调速器驱动无刷电机以目标转速旋转，提供电机转速反馈（精度±50RPM），实现电机温度监控和过载保护，支持螺旋桨推力系数校准。职责：控制电机和螺旋桨以产生推力。组成：包括电机、电调、螺旋桨。技术：采用BLDC电机和DShot600数字协议。",
+      "name": "推进系统",
+      "id": "blk-propulsion-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据链模块是无人机与外部世界（主要是地面控制站）通信的桥梁，负责双向传输控制指令、遥测数据和任务载荷数据，采用双频段冗余设计，支持AES-256加密。核心职责: 通过数传电台以MAVLink 2.0协议与地面站通信（最大传输距离10km），通过RC接收机接收来自遥控器的直接操控指令（更新率50Hz），实现链路质量监控和自动频段切换，支持数据加密和身份认证，提供通信延迟统计（平均延迟<100ms）。职责：处理无人机与地面站之间的通信。组成：包括数传电台、RC接收机。技术：采用MAVLink 2.0协议和AES-256加密。",
+      "name": "数据链模块",
+      "id": "blk-datalink-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：硬件在环测试（HIL）用于验证自主飞行控制需求。测试目的：验证飞行控制算法在模拟环境中的性能。测试方法：使用硬件在环仿真平台，模拟传感器输入和电机输出，测试控制回路的响应时间和精度。预期结果：控制回路延迟小于8毫秒（P95），航迹跟踪精度符合要求。",
+      "name": "硬件在环测试",
+      "id": "tc-hil-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：实飞验证用于验证自主飞行控制需求。测试目的：验证无人机在实际飞行中的自主控制能力。测试方法：在真实环境中执行预设飞行计划，记录飞行数据并分析航迹跟踪精度。预期结果：水平误差≤1.0m，垂直误差≤0.5m。",
+      "name": "实飞验证",
+      "id": "tc-flight-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：航迹分析用于验证自主飞行控制需求。测试目的：分析飞行路径的准确性。测试方法：后处理飞行日志数据，比较实际航迹与预设航点。预期结果：航迹偏差在允许范围内。",
+      "name": "航迹分析",
+      "id": "tc-trajectory-analysis-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：功能测试用于验证多光谱数据采集与存储需求。测试目的：验证相机触发和数据采集功能。测试方法：模拟飞行条件，触发相机拍照，检查图像数据和元数据。预期结果：图像按预设条件采集，数据完整存储和传输。",
+      "name": "多光谱数据采集功能测试",
+      "id": "tc-multispectral-functional-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证多光谱数据采集与存储需求。测试目的：在实际任务中演示数据采集能力。测试方法：在真实农业场景中飞行，采集多光谱图像。预期结果：成功采集并传输图像数据，满足分辨率要求。",
+      "name": "多光谱数据采集现场演示",
+      "id": "tc-multispectral-demo-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据完整性校验用于验证多光谱数据采集与存储需求。测试目的：确保采集的数据完整无误。测试方法：检查存储的图像文件，验证时间戳、位置信息和文件格式。预期结果：所有数据完整，元数据准确。",
+      "name": "数据完整性校验",
+      "id": "tc-data-integrity-check-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：协议一致性测试用于验证实时状态监控与遥测需求。测试目的：验证MAVLink协议的正确实现。测试方法：使用协议分析工具，检查遥测数据包的格式和频率。预期结果：数据包符合MAVLink 2.0标准，频率10Hz±1Hz。",
+      "name": "MAVLink协议一致性测试",
+      "id": "tc-mavlink-conformance-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据完整性验证用于验证实时状态监控与遥测需求。测试目的：确保遥测数据准确无误。测试方法：比较发送和接收的数据，检查丢包率和数据准确性。预期结果：丢包率小于1%，数据内容正确。",
+      "name": "遥测数据完整性验证",
+      "id": "tc-telemetry-integrity-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证实时状态监控与遥测需求。测试目的：在实际飞行中演示遥测功能。测试方法：操作无人机飞行，监控地面站接收的遥测数据。预期结果：遥测数据实时更新，所有参数在预期范围内。",
+      "name": "遥测现场演示",
+      "id": "tc-telemetry-demo-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：故障注入测试用于验证安全故障处理与自动返航需求。测试目的：验证系统在故障条件下的响应。测试方法：模拟信号丢失、低电池电压等故障，观察自动返航行为。预期结果：系统正确触发RTL程序，安全着陆。",
+      "name": "安全故障注入测试",
+      "id": "tc-fault-injection-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：安全案例分析用于验证安全故障处理与自动返航需求。测试目的：分析系统安全设计的有效性。测试方法：审查设计文档，进行风险分析。预期结果：系统符合安全规范，单点故障不导致失效。",
+      "name": "安全案例分析",
+      "id": "tc-safety-analysis-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证安全故障处理与自动返航需求。测试目的：在实际飞行中演示自动返航功能。测试方法：故意触发故障条件，观察返航过程。预期结果：无人机自动返航并安全着陆。",
+      "name": "自动返航现场演示",
+      "id": "tc-rtl-demo-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：现场演示用于验证安全故障处理与自动返航需求。测试目的：在实际飞行中演示自动返航功能。测试方法：故意触发故障条件，观察返航过程。预期结果：无人机自动返航并安全着陆。",
+      "name": "自动返航现场演示",
+      "id": "tc-rtl-demo-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：性能测试用于验证飞行控制响应时间需求。测试目的：测量控制回路延迟和带宽。测试方法：使用高精度计时器，记录从IMU读取到PWM输出的时间。预期结果：延迟小于8毫秒（P95），带宽符合要求。",
+      "name": "控制响应性能测试",
+      "id": "tc-control-performance-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：延迟测量用于验证飞行控制响应时间需求。测试目的：精确测量控制回路延迟。测试方法：在实验室环境中，使用示波器或专用设备测量信号时间。预期结果：最大延迟不超过10毫秒。",
+      "name": "控制延迟测量",
+      "id": "tc-latency-measurement-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：基于MIL-STD-810H的环境适应性测试。测试目的：验证无人机在极限环境下的工作能力。测试方法：在高温、低温、潮湿、振动等环境下测试系统功能。预期结果：在极限环境下功能正常，性能下降不超过10%。",
+      "name": "环境适应性测试",
+      "id": "tc-environmental-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：电磁兼容性应符合FCC Part 15和CE EN 300328标准。测试目的：验证电磁兼容性。测试方法：在认证实验室进行辐射和传导发射测试。预期结果：通过FCC和CE标准。",
+      "name": "EMC测试",
+      "id": "tc-emc-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于续航与载重能力需求创建测试。测试目的：验证飞行时间和载重能力。测试方法：在满载条件下进行飞行测试，记录飞行时间和功耗。预期结果：飞行时间不少于30分钟，功耗在范围内。",
+      "name": "续航与载重测试",
+      "id": "tc-endurance-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "blockId": "blk-flight-control-uuid",
+      "description": "原文：飞行控制系统负责姿态稳定、导航制导、任务执行。飞行控制系统通过运行PID控制算法和导航逻辑满足自主飞行控制需求，实现了航点跟踪和姿态稳定，采用自适应PID控制算法和四元数姿态表示法。",
+      "requirementId": "req-autonomous-flight-uuid",
+      "id": "rel-satisfy-fc-autonomous-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "blockId": "blk-flight-control-uuid",
+      "description": "原文：飞行控制系统负责姿态稳定、导航制导、任务执行。飞行控制系统通过运行PID控制算法和导航逻辑满足自主飞行控制需求，实现了航点跟踪和姿态稳定，采用自适应PID控制算法和四元数姿态表示法。",
+      "requirementId": "req-autonomous-flight-uuid",
+      "id": "rel-satisfy-fc-autonomous-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "blockId": "blk-flight-control-uuid",
+      "description": "原文：飞行控制系统实现故障安全处理（触发RTL或迫降）。飞行控制系统通过监控故障条件并执行RTL程序满足安全故障处理与自动返航需求，确保了飞行安全，符合FAA Part 107规范。",
+      "requirementId": "req-safety-return-uuid",
+      "id": "rel-satisfy-fc-safety-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "blockId": "blk-power-management-uuid",
+      "description": "原文：动力管理系统实时监控电池健康状况。动力管理系统通过采集电池电压、电流和剩余容量数据满足实时状态监控与遥测需求，提供了电池状态信息，精度符合要求。",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "id": "rel-satisfy-pm-telemetry-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "blockId": "blk-power-management-uuid",
+      "description": "原文：动力管理系统实现欠压保护。动力管理系统通过检测低电池电压并触发保护措施满足安全故障处理与自动返航需求，防止电池过度放电，确保安全返航。",
+      "requirementId": "req-safety-return-uuid",
+      "id": "rel-satisfy-pm-safety-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "blockId": "blk-sensor-fusion-uuid",
+      "description": "原文：传感器融合模块为飞行控制器提供精确、可靠的姿态、位置和速度信息。传感器融合模块通过EKF2算法处理传感器数据满足自主飞行控制需求，提供了高精度的状态估计，支持航迹跟踪。",
+      "requirementId": "req-autonomous-flight-uuid",
+      "id": "rel-satisfy-sf-autonomous-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "blockId": "blk-propulsion-system-uuid",
+      "description": "原文：推进系统将飞控的计算指令转化为实际的升力和力矩。推进系统通过控制电机转速满足自主飞行控制需求，实现了飞行器的运动控制，采用BLDC电机和DShot600协议。",
+      "requirementId": "req-autonomous-flight-uuid",
+      "id": "rel-satisfy-ps-autonomous-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "blockId": "blk-datalink-uuid",
+      "description": "原文：数据链模块负责双向传输控制指令、遥测数据和任务载荷数据。数据链模块通过MAVLink协议传输遥测数据满足实时状态监控与遥测需求，确保了数据的实时传输，丢包率小于1%。",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "id": "rel-satisfy-dl-telemetry-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "blockId": "blk-datalink-uuid",
+      "description": "原文：数据链模块实现链路质量监控。数据链模块通过检测信号丢失满足安全故障处理与自动返航需求，触发了自动返航程序，确保通信中断时的安全响应。",
+      "requirementId": "req-safety-return-uuid",
+      "id": "rel-satisfy-dl-safety-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：硬件在环测试（HIL）用于验证自主飞行控制需求。通过硬件在环测试验证自主飞行控制需求，确保控制算法在模拟环境中的性能符合要求，包括延迟和精度测试。",
+      "testCaseId": "tc-hil-test-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "id": "rel-verify-hil-autonomous-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：实飞验证用于验证自主飞行控制需求。通过实飞验证验证自主飞行控制需求，确保无人机在实际飞行中的航迹跟踪精度，水平误差≤1.0m，垂直误差≤0.5m。",
+      "testCaseId": "tc-flight-test-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "id": "rel-verify-flight-autonomous-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：航迹分析用于验证自主飞行控制需求。通过航迹分析验证自主飞行控制需求，确保飞行路径的准确性，后处理日志数据比较实际与预设航点。",
+      "testCaseId": "tc-trajectory-analysis-uuid",
+      "requirementId": "req-autonomous-flight-uuid",
+      "id": "rel-verify-trajectory-autonomous-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：功能测试用于验证多光谱数据采集与存储需求。通过功能测试验证多光谱数据采集与存储需求，确保相机触发和数据采集功能正常，图像数据完整。",
+      "testCaseId": "tc-multispectral-functional-test-uuid",
+      "requirementId": "req-multispectral-data-uuid",
+      "id": "rel-verify-functional-multispectral-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证多光谱数据采集与存储需求。通过现场演示验证多光谱数据采集与存储需求，确保在实际任务中数据采集能力，满足空间分辨率要求。",
+      "testCaseId": "tc-multispectral-demo-uuid",
+      "requirementId": "req-multispectral-data-uuid",
+      "id": "rel-verify-demo-multispectral-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据完整性校验用于验证多光谱数据采集与存储需求。通过数据完整性校验验证多光谱数据采集与存储需求，确保采集的数据完整无误，包括时间戳和位置信息。",
+      "testCaseId": "tc-data-integrity-check-uuid",
+      "requirementId": "req-multispectral-data-uuid",
+      "id": "rel-verify-integrity-multispectral-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：协议一致性测试用于验证实时状态监控与遥测需求。通过协议一致性测试验证实时状态监控与遥测需求，确保MAVLink协议的正确实现，数据包格式和频率符合标准。",
+      "testCaseId": "tc-mavlink-conformance-uuid",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "id": "rel-verify-conformance-telemetry-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：数据完整性验证用于验证实时状态监控与遥测需求。通过数据完整性验证验证实时状态监控与遥测需求，确保遥测数据准确无误，丢包率小于1%。",
+      "testCaseId": "tc-telemetry-integrity-uuid",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "id": "rel-verify-integrity-telemetry-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证实时状态监控与遥测需求。通过现场演示验证实时状态监控与遥测需求，确保在实际飞行中遥测功能正常，数据实时更新。",
+      "testCaseId": "tc-telemetry-demo-uuid",
+      "requirementId": "req-real-time-telemetry-uuid",
+      "id": "rel-verify-demo-telemetry-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：故障注入测试用于验证安全故障处理与自动返航需求。通过故障注入测试验证安全故障处理与自动返航需求，确保系统在故障条件下的正确响应，触发RTL程序。",
+      "testCaseId": "tc-fault-injection-uuid",
+      "requirementId": "req-safety-return-uuid",
+      "id": "rel-verify-fault-safety-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：安全案例分析用于验证安全故障处理与自动返航需求。通过安全案例分析验证安全故障处理与自动返航需求，确保系统安全设计的有效性，符合FAA Part 107规范。",
+      "testCaseId": "tc-safety-analysis-uuid",
+      "requirementId": "req-safety-return-uuid",
+      "id": "rel-verify-analysis-safety-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：现场演示用于验证安全故障处理与自动返航需求。通过现场演示验证安全故障处理与自动返航需求，确保自动返航功能在实际飞行中正常工作，安全着陆。",
+      "testCaseId": "tc-rtl-demo-uuid",
+      "requirementId": "req-safety-return-uuid",
+      "id": "rel-verify-demo-safety-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：性能测试用于验证飞行控制响应时间需求。通过性能测试验证飞行控制响应时间需求，确保控制回路延迟小于8毫秒（P95），带宽符合要求。",
+      "testCaseId": "tc-control-performance-uuid",
+      "requirementId": "req-control-response-uuid",
+      "id": "rel-verify-performance-response-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：延迟测量用于验证飞行控制响应时间需求。通过延迟测量验证飞行控制响应时间需求，确保最大延迟不超过10毫秒，使用高精度设备测量信号时间。",
+      "testCaseId": "tc-latency-measurement-uuid",
+      "requirementId": "req-control-response-uuid",
+      "id": "rel-verify-latency-response-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于系统可靠性需求创建测试。通过系统可靠性测试验证系统可靠性需求，确保关键功能可用性不低于99.95%，MTBF>800小时，MTTR<30分钟。",
+      "testCaseId": "tc-reliability-test-uuid",
+      "requirementId": "req-system-reliability-uuid",
+      "id": "rel-verify-reliability-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于环境适应性需求创建测试。通过环境适应性测试验证环境适应性需求，确保系统在温度、湿度、风力等极端条件下正常运行，符合IP54防护等级。",
+      "testCaseId": "tc-environmental-test-uuid",
+      "requirementId": "req-environmental-adaptability-uuid",
+      "id": "rel-verify-environmental-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：电磁兼容性应符合FCC Part 15和CE EN 300328标准。通过EMC测试验证环境适应性需求中的电磁兼容性部分，确保系统通过FCC和CE标准，无干扰问题。",
+      "testCaseId": "tc-emc-test-uuid",
+      "requirementId": "req-environmental-adaptability-uuid",
+      "id": "rel-verify-emc-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-system-blocks-uuid",
+      "description": "原文：基于续航与载重能力需求创建测试。通过续航与载重测试验证续航与载重能力需求，确保在满载条件下飞行时间不少于30分钟，功耗在范围内。",
+      "testCaseId": "tc-endurance-test-uuid",
+      "requirementId": "req-endurance-payload-uuid",
+      "id": "rel-verify-endurance-uuid",
+      "type": "Verify"
+    },
+    {
+      "reqId": "REQ-FUN-002",
+      "parentId": "pkg-functional-uuid",
+      "text": "机载摄像头采集1080p@30fps视频流，通过H.264编码后，经由5.8GHz图传系统以<100ms端到端延迟发送至地面站显示。支持自适应码率控制，码率范围2-10Mbps可调。视频传输采用FEC前向纠错和ARQ自动重传机制，确保在20%丢包率下仍可正常解码。验收标准：视频延迟<100ms，解码成功率>99.5%，PSNR>35dB。优先级：High",
+      "description": "原文：机载摄像头采集1080p@30fps视频流，通过H.264编码后，经由5.8GHz图传系统以<100ms端到端延迟发送至地面站显示。简化：该需求要求实现高质量、低延迟的视频采集、编码和传输系统，为地面操作人员提供实时视觉反馈。背景：采用先进的纠错机制确保在恶劣通信环境下的传输可靠性。",
+      "name": "实时视频传输",
+      "id": "req-video-transmission-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-003",
+      "parentId": "pkg-functional-uuid",
+      "text": "实时监测6S锂聚合物电池的电压、电流、温度和剩余电量，采样频率1kHz，电压测量精度±5mV，电流测量精度±10mA。当电量低于20%或单体电压低于3.3V时自动触发返航，低于15%强制着陆。支持电池健康状态(SOH)估算，精度±3%。验收标准：SOC估算误差<3%，过压/欠压保护响应时间<100ms。优先级：High",
+      "description": "原文：实时监测6S锂聚合物电池的电压、电流、温度和剩余电量，当电量低于20%或单体电压低于3.3V时自动触发返航。简化：该需求定义了智能电池监控和安全保护机制，确保飞行安全并延长电池寿命。背景：高精度监测和智能决策算法防止电池过放，保障飞行安全。",
+      "name": "智能电池管理",
+      "id": "req-battery-management-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-004",
+      "parentId": "pkg-functional-uuid",
+      "text": "通过前向和下视TOF传感器检测5米范围内的障碍物，检测角度水平±75°，垂直±60°，检测精度±2cm。当检测到障碍物时，自动悬停或规划绕行路径。避障决策周期<50ms，支持动态障碍物跟踪和预测。验收标准：避障成功率>99.9%，误报率<0.1%，响应时间<100ms。优先级：Medium",
+      "description": "原文：通过前向和下视TOF传感器检测5米范围内的障碍物，当检测到障碍物时，自动悬停或规划绕行路径。简化：该需求要求无人机具备实时环境感知和智能避障能力，提升飞行安全性。背景：快速决策周期和动态障碍物跟踪确保在复杂环境中的安全飞行。",
+      "name": "避障与应急处理",
+      "id": "req-obstacle-avoidance-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-002",
+      "parentId": "pkg-nonfunctional-uuid",
+      "text": "遥控链路使用2.4GHz频段，控制距离≥2km，丢包率<1%，采用DSSS扩频技术。图传链路使用5.8GHz，传输距离≥1km，延迟<100ms，支持MIMO 2x2。通信系统具备自动频点切换和功率控制功能。验收标准：控制链路BER<10⁻⁶，图传链路PER<10⁻³。优先级：High",
+      "description": "原文：遥控链路使用2.4GHz频段，控制距离≥2km，丢包率<1%，采用DSSS扩频技术。简化：该需求定义了无人机通信系统的可靠性和性能要求，确保控制指令和视频数据的稳定传输。背景：采用先进的扩频技术和自动频点切换机制提升抗干扰能力。",
+      "name": "通信可靠性",
+      "id": "req-communication-reliability-uuid",
+      "type": "Requirement"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：机载摄像头采集1080p@30fps视频流，通过H.264编码后，经由5.8GHz图传系统发送至地面站。职责：负责视频采集、编码、传输和解码显示。组成：包含摄像头模块、H.264编码器、5.8GHz图传模块、地面接收站。技术：采用自适应码率控制、FEC前向纠错和ARQ自动重传机制确保传输质量。",
+      "name": "视频传输系统",
+      "id": "blk-video-transmission-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：实时监测6S锂聚合物电池的电压、电流、温度和剩余电量。职责：负责电池状态监测、电量估算和安全保护。组成：包含电压电流传感器、温度传感器、SOC/SOH估算算法、保护电路。技术：采用1kHz采样频率和高精度测量实现智能电池管理。",
+      "name": "电池管理系统",
+      "id": "blk-battery-management-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：通过前向和下视TOF传感器检测5米范围内的障碍物，自动悬停或规划绕行路径。职责：负责环境感知、障碍物检测和避障决策。组成：包含TOF传感器阵列、障碍物检测算法、路径规划模块。技术：采用多传感器融合和快速决策算法实现实时避障。",
+      "name": "避障系统",
+      "id": "blk-obstacle-avoidance-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：遥控链路使用2.4GHz频段，图传链路使用5.8GHz，支持自动频点切换和功率控制。职责：负责控制指令传输和视频数据传输。组成：包含2.4GHz遥控模块、5.8GHz图传模块、频点管理模块。技术：采用DSSS扩频技术和MIMO 2x2提升通信可靠性。",
+      "name": "通信系统",
+      "id": "blk-communication-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：验收标准：视频延迟<100ms，解码成功率>99.5%，PSNR>35dB。测试目的：验证视频传输系统的延迟、可靠性和画质。测试方法：在不同距离和干扰环境下测试视频传输性能，测量端到端延迟和图像质量。预期结果：在指定条件下所有指标达标，20%丢包率下仍可正常解码。",
+      "name": "视频传输质量测试",
+      "id": "tc-video-transmission-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：验收标准：SOC估算误差<3%，过压/欠压保护响应时间<100ms。测试目的：验证电池监测精度和安全保护机制。测试方法：模拟不同电池状态，测试SOC估算精度和保护功能响应。预期结果：高精度监测和快速保护响应，确保飞行安全。",
+      "name": "电池管理功能测试",
+      "id": "tc-battery-management-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "description": "原文：验收标准：避障成功率>99.9%，误报率<0.1%，响应时间<100ms。测试目的：验证避障系统的检测准确性和响应速度。测试方法：设置不同障碍物场景，测试避障决策和路径规划能力。预期结果：高成功率避障，快速响应动态障碍物。",
+      "name": "避障性能测试",
+      "id": "tc-obstacle-avoidance-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-nonfunctional-uuid",
+      "description": "原文：验收标准：控制链路BER<10⁻⁶，图传链路PER<10⁻³。测试目的：验证通信系统的可靠性和性能指标。测试方法：在不同距离和干扰条件下测试通信链路质量。预期结果：满足误码率和丢包率要求，支持自动频点切换。",
+      "name": "通信链路测试",
+      "id": "tc-communication-link-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "blockId": "blk-video-transmission-uuid",
+      "description": "原文：机载摄像头采集1080p@30fps视频流，通过H.264编码后，经由5.8GHz图传系统发送至地面站。视频传输系统通过H.264编码、5.8GHz无线传输和自适应码率控制技术来满足实时视频传输需求，采用FEC和ARQ机制确保在恶劣信道条件下的可靠传输。",
+      "requirementId": "req-video-transmission-uuid",
+      "id": "rel-satisfy-video-transmission-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-uuid",
+      "blockId": "blk-battery-management-uuid",
+      "description": "原文：实时监测6S锂聚合物电池的电压、电流、温度和剩余电量。电池管理系统通过1kHz高精度采样和智能算法来满足智能电池管理需求，实现精确的SOC/SOH估算和自动安全保护，确保电池安全和飞行续航。",
+      "requirementId": "req-battery-management-uuid",
+      "id": "rel-satisfy-battery-management-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "blockId": "blk-obstacle-avoidance-uuid",
+      "description": "满足关系：模块实现需求",
+      "requirementId": "req-obstacle-avoidance-uuid",
+      "id": "rel-satisfy-obstacle-avoidance-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：电池状态管理...避障状态。简化：主应用包，包含无人机飞行控制器及其状态机定义。",
+      "name": "无人机控制包",
+      "id": "pkg-uav-control-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：隐含状态和转换会执行具体操作。简化：行为库包，存储所有可被状态机调用的具体活动（如执行返航、执行着陆等）。",
+      "name": "无人机行为库",
+      "id": "pkg-uav-behaviors-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "blk-flight-controller-uuid",
+      "description": "原文：电池状态管理...避障状态。简化：定义飞行控制器行为的完整状态机，包含电池管理和避障两个并发区域。",
+      "name": "飞行状态机",
+      "id": "sm-flight-uuid",
+      "type": "StateMachine"
+    },
+    {
+      "parentId": "sm-flight-uuid",
+      "description": "原文：电池状态管理：正常飞行状态→电量低于20%触发返航状态→电量低于15%强制着陆状态。简化：管理无人机电池电量的区域，根据电量水平触发状态转换。",
+      "name": "电池管理区域",
+      "id": "region-battery-uuid",
+      "type": "Region"
+    },
+    {
+      "parentId": "sm-flight-uuid",
+      "description": "原文：避障状态：正常飞行→检测到障碍物→悬停状态→绕行状态→恢复正常飞行。简化：处理无人机遇到障碍物时避障行为的区域。",
+      "name": "避障区域",
+      "id": "region-obstacle-avoidance-uuid",
+      "type": "Region"
+    },
+    {
+      "parentId": "region-battery-uuid",
+      "description": "原文：正常飞行状态是起点。简化：电池管理区域的起始点，系统启动后进入正常飞行状态。",
+      "kind": "initial",
+      "id": "ps-batt-initial-uuid",
+      "type": "Pseudostate"
+    },
+    {
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：正常飞行是起点。简化：避障区域的起始点，系统启动后进入正常飞行状态。",
+      "kind": "initial",
+      "id": "ps-oa-initial-uuid",
+      "type": "Pseudostate"
+    },
+    {
+      "parentId": "region-battery-uuid",
+      "description": "原文：正常飞行状态。简化：电池电量充足时的默认飞行状态。",
+      "name": "正常飞行",
+      "id": "state-normal-flight-batt-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-battery-uuid",
+      "description": "原文：电量低于20%触发返航状态。简化：低电量警告状态，无人机自动返回起飞点。",
+      "entry": {
+        "wrapperActivityId": "wrapper-entry-return-home-uuid",
+        "calledBehaviorId": "act-execute-return-home-uuid"
+      },
+      "name": "返航",
+      "doActivity": {
+        "wrapperActivityId": "wrapper-do-return-home-uuid",
+        "calledBehaviorId": "act-navigate-to-home-uuid"
+      },
+      "id": "state-return-home-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-battery-uuid",
+      "description": "原文：电量低于15%强制着陆状态。简化：严重低电量状态，无人机立即执行着陆程序。",
+      "name": "强制着陆",
+      "id": "state-forced-landing-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：正常飞行。简化：无障碍物时的默认飞行状态。",
+      "name": "正常飞行",
+      "id": "state-normal-flight-oa-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：悬停状态。简化：检测到障碍物后暂停前进，保持当前位置。",
+      "name": "悬停",
+      "id": "state-hover-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-obstacle-avoidance-uuid",
+      "description": "原文：绕行状态。简化：执行绕过障碍物的机动动作。",
+      "name": "绕行",
+      "doActivity": {
+        "wrapperActivityId": "wrapper-do-circumvent-uuid",
+        "calledBehaviorId": "act-perform-circumvention-uuid"
+      },
+      "id": "state-circumvent-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-battery-uuid",
+      "description": "原文：正常飞行状态是起点。简化：系统启动后自动进入电池维度的正常飞行状态。",
+      "targetId": "state-normal-flight-batt-uuid",
+      "sourceId": "ps-batt-initial-uuid",
+      "id": "trans-batt-initial-to-normal-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-battery-uuid",
+      "triggerIds": [
+        "event-low-battery-warning-uuid"
+      ],
+      "effect": {
+        "wrapperActivityId": "wrapper-effect-t2-uuid",
+        "calledBehaviorId": "act-log-low-battery-uuid"
+      },
+      "guard": {
+        "expression": "电量 < 20%",
+        "language": "English"
+      },
+      "description": "原文：电量低于20%触发返航状态。简化：当电池电量低于20%时，从正常飞行转换到返航状态。",
+      "targetId": "state-return-home-uuid",
+      "sourceId": "state-normal-flight-batt-uuid",
+      "id": "trans-normal-to-return-uuid",
+      "type": "Transition"
+    }
+  ]
+}

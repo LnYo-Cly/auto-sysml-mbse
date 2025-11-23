@@ -1,0 +1,1895 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20131001" xmlns:sysml="http://www.omg.org/spec/SysML/20181001/SysML" xmlns:MD_Customization_for_SysML__additional_stereotypes="http://www.magicdraw.com/spec/Customization/180/SysML" xmlns:DSL_Customization="http://www.magicdraw.com/schemas/DSL_Customization.xmi" xmlns:StandardProfile="http://www.omg.org/spec/UML/20131001/StandardProfile" xmlns:MagicDraw_Profile="http://www.omg.org/spec/UML/20131001/MagicDrawProfile" xmlns:MD_Customization_for_Requirements__additional_stereotypes="http://www.magicdraw.com/spec/Customization/180/Requirements" xmlns:Validation_Profile="http://www.magicdraw.com/schemas/Validation_Profile.xmi" xmi:version="2.5">
+  <uml:Model xmi:type="uml:Model" xmi:id="master-model" name="Model">
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="SysML_Profile_App">
+      <appliedProfile href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML"/>
+    </profileApplication>
+    <packagedElement xmi:id="pkg-ads-uuid" name="AutonomousDrivingSystem" xmi:type="uml:Package">
+      <packagedElement xmi:id="act-main-driving-loop-uuid" name="自动驾驶主循环流程" xmi:type="uml:Activity">
+        <partition xmi:idref="grp-sensor-interface-uuid"/>
+        <partition xmi:idref="grp-data-processing-uuid"/>
+        <partition xmi:idref="grp-perception-uuid"/>
+        <partition xmi:idref="grp-localization-uuid"/>
+        <partition xmi:idref="grp-fusion-uuid"/>
+        <partition xmi:idref="grp-planning-uuid"/>
+        <partition xmi:idref="grp-control-uuid"/>
+        <partition xmi:idref="grp-safety-uuid"/>
+        <partition xmi:idref="grp-vehicle-interface-uuid"/>
+        <partition xmi:idref="grp-monitoring-uuid"/>
+        <node xmi:id="node-start-loop" name="开始循环" xmi:type="uml:InitialNode" visibility="public"/>
+        <node xmi:id="node-receive-sensor-data" name="接收多传感器数据" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-preprocess-sync" name="执行传感器数据预处理和时间同步" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-fork-parallel" name="开始并行处理" xmi:type="uml:ForkNode" visibility="public"/>
+        <node xmi:id="node-environment-perception" name="环境感知" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-vehicle-localization" name="车辆定位" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-join-perception-localization" name="同步感知定位结果" xmi:type="uml:JoinNode" visibility="public"/>
+        <node xmi:id="node-fusion-perception-localization" name="融合感知和定位结果" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-behavior-planning" name="行为决策和路径规划" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-generate-trajectory" name="生成平滑的局部轨迹" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-compute-control-commands" name="计算轨迹跟踪控制指令" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <group xmi:id="grp-sensor-interface-uuid" name="传感器接口分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-sensor-interface-uuid">
+          <node xmi:idref="node-receive-sensor-data"/>
+        </group>
+        <group xmi:id="grp-data-processing-uuid" name="数据处理分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-data-processing-uuid">
+          <node xmi:idref="node-preprocess-sync"/>
+        </group>
+        <group xmi:id="grp-perception-uuid" name="感知分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-perception-module-uuid">
+          <node xmi:idref="node-environment-perception"/>
+        </group>
+        <group xmi:id="grp-localization-uuid" name="定位分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-localization-module-uuid">
+          <node xmi:idref="node-vehicle-localization"/>
+        </group>
+        <group xmi:id="grp-fusion-uuid" name="融合分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-fusion-module-uuid">
+          <node xmi:idref="node-fusion-perception-localization"/>
+        </group>
+        <group xmi:id="grp-planning-uuid" name="规划分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-planning-module-uuid">
+          <node xmi:idref="node-behavior-planning"/>
+          <node xmi:idref="node-generate-trajectory"/>
+        </group>
+        <group xmi:id="grp-control-uuid" name="控制分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-control-module-uuid">
+          <node xmi:idref="node-compute-control-commands"/>
+        </group>
+        <group xmi:id="grp-safety-uuid" name="安全分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-safety-module-uuid">
+          <node xmi:idref="node-validate-safety"/>
+        </group>
+        <group xmi:id="grp-vehicle-interface-uuid" name="车辆接口分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-vehicle-interface-uuid"/>
+        <group xmi:id="grp-monitoring-uuid" name="监控分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-monitoring-module-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="blk-multi-sensor-data-uuid" name="MultiSensorData" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-preprocessed-data-uuid" name="PreprocessedSensorData" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-environment-perception-uuid" name="EnvironmentPerception" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-vehicle-localization-uuid" name="VehicleLocalization" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-environment-model-uuid" name="EnvironmentModel" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-behavior-decision-uuid" name="BehaviorDecision" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-local-trajectory-uuid" name="LocalTrajectory" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-actuator-commands-uuid" name="ActuatorCommands" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-sensor-interface-uuid" name="SensorInterface" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-data-processing-uuid" name="DataProcessingModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-perception-module-uuid" name="PerceptionModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-localization-module-uuid" name="LocalizationModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-fusion-module-uuid" name="FusionModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-planning-module-uuid" name="PlanningModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-control-module-uuid" name="ControlModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-safety-module-uuid" name="SafetyModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-vehicle-interface-uuid" name="VehicleInterface" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-monitoring-module-uuid" name="MonitoringModule" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-systemstart-uuid" name="SystemStartupSelfCheck" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-bootcmd-uuid" name="BootCommand" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-statusrep-uuid" name="StatusReport" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-system-uuid" name="System" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="act-systemstart-uuid" name="系统启动自检活动" xmi:type="uml:Activity">
+        <partition xmi:idref="grp-system-uuid"/>
+        <edge xmi:id="edge-bootcmd-to-power" xmi:type="uml:ControlFlow" visibility="public" source="node-start-boot" target="node-check-power">
+          <weight xmi:id="_edge_bootcmd_to_power_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_bootcmd_to_power_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>[power_ok]</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-power-to-sensors" xmi:type="uml:ControlFlow" visibility="public" source="node-check-power" target="node-check-sensors">
+          <weight xmi:id="_edge_power_to_sensors_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_power_to_sensors_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>[sensors_ok]</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-sensors-to-actuators" xmi:type="uml:ControlFlow" visibility="public" source="node-check-sensors" target="node-check-actuators">
+          <weight xmi:id="_edge_sensors_to_actuators_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_sensors_to_actuators_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>[actuators_ok]</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-actuators-to-control" xmi:type="uml:ControlFlow" visibility="public" source="node-check-actuators" target="node-initialize-control">
+          <weight xmi:id="_edge_actuators_to_control_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_actuators_to_control_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>[control_ok]</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-control-to-return" xmi:type="uml:ControlFlow" visibility="public" source="node-initialize-control" target="node-return-status">
+          <weight xmi:id="_edge_control_to_return_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_control_to_return_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>[return_ok]</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-return-to-idle" xmi:type="uml:ControlFlow" visibility="public" source="node-return-status" target="node-enter-idle">
+          <weight xmi:id="_edge_return_to_idle_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_return_to_idle_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>[status_ok]</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-idle-to-end" xmi:type="uml:ControlFlow" visibility="public" source="node-enter-idle" target="node-end">
+          <weight xmi:id="_edge_idle_to_end_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_idle_to_end_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>[idle_ok]</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <node xmi:id="node-start-boot" name="接收开机指令" xmi:type="uml:InitialNode" visibility="public"/>
+        <node xmi:id="node-check-power" name="检查电源状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-check-sensors" name="检查传感器状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-check-actuators" name="检查执行器状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-initialize-control" name="初始化控制模块" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-return-status" name="返回系统状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-enter-idle" name="进入待机状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-end" name="流程结束" xmi:type="uml:ActivityFinalNode" visibility="public"/>
+        <group xmi:id="grp-system-uuid" name="系统分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-system-uuid"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-air-con-control-uuid" name="空调控制包" xmi:type="uml:Package">
+      <packagedElement xmi:id="event-power-on-uuid" name="power_on" xmi:type="uml:AnyReceiveEvent"/>
+      <packagedElement xmi:id="event-temperature-change-uuid" name="temperature_change" xmi:type="uml:AnyReceiveEvent"/>
+      <packagedElement xmi:id="event-humidity-change-uuid" name="humidity_change" xmi:type="uml:AnyReceiveEvent"/>
+      <packagedElement xmi:id="event-power-off-uuid" name="power_off" xmi:type="uml:AnyReceiveEvent"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-air-con-behaviors-uuid" name="空调行为库" xmi:type="uml:Package">
+      <packagedElement xmi:id="act-close-all-executors-uuid" name="关闭所有执行器" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-initialize-sensors-executors-uuid" name="初始化传感器和执行器" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-monitor-env-params-uuid" name="监测环境参数" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-start-cooling-heating-uuid" name="启动制冷或制热系统" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-adjust-temperature-humidity-uuid" name="调节温度和湿度" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-stop-cooling-heating-uuid" name="关闭制冷或制热系统" xmi:type="uml:Activity"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-air-con-control-main-uuid" name="主要用例" xmi:type="uml:Package">
+      <packagedElement xmi:id="actor-driver-uuid" name="驾驶员" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-touch-screen-uuid" name="车载触摸屏" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="uc-control-air-con-uuid" name="控制空调系统" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="assoc-driver-control-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_driver_control_uuid_source_end" type="actor-driver-uuid" association="assoc-driver-control-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_driver_control_uuid_target_end" type="uc-control-air-con-uuid" association="assoc-driver-control-uuid"/>
+        <memberEnd xmi:idref="_assoc_driver_control_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_driver_control_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-touch-screen-control-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_touch_screen_control_uuid_source_end" type="actor-touch-screen-uuid" association="assoc-touch-screen-control-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_touch_screen_control_uuid_target_end" type="uc-control-air-con-uuid" association="assoc-touch-screen-control-uuid"/>
+        <memberEnd xmi:idref="_assoc_touch_screen_control_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_touch_screen_control_uuid_target_end"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-autonomous-driving-main-uuid" name="主要用例" xmi:type="uml:Package">
+      <packagedElement xmi:id="actor-passenger-uuid" name="乘客" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-traffic-management-uuid" name="交通管理系统" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-other-road-users-uuid" name="其他道路使用者" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="uc-set-destination-uuid" name="设定目的地" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-start-autonomous-driving-uuid" name="启动自动驾驶模式" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-plan-global-path-uuid" name="规划全局路径" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-perceive-environment-uuid" name="执行环境感知和定位" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-adjust-driving-strategy-uuid" name="实时调整行驶策略" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-handle-intersection-uuid" name="处理交叉路口和交通信号" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-avoid-obstacles-uuid" name="避让行人和障碍物" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-auto-parking-uuid" name="自动停车" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-replan-path-uuid" name="重新规划绕行路径" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-degrade-operation-uuid" name="降级运行或请求人工接管" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-local-perception-driving-uuid" name="依靠本地感知继续安全行驶" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="assoc-passenger-set-destination-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_passenger_set_destination_uuid_source_end" type="actor-passenger-uuid" association="assoc-passenger-set-destination-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_passenger_set_destination_uuid_target_end" type="uc-set-destination-uuid" association="assoc-passenger-set-destination-uuid"/>
+        <memberEnd xmi:idref="_assoc_passenger_set_destination_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_passenger_set_destination_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-passenger-start-driving-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_passenger_start_driving_uuid_source_end" type="actor-passenger-uuid" association="assoc-passenger-start-driving-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_passenger_start_driving_uuid_target_end" type="uc-start-autonomous-driving-uuid" association="assoc-passenger-start-driving-uuid"/>
+        <memberEnd xmi:idref="_assoc_passenger_start_driving_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_passenger_start_driving_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-traffic-handle-intersection-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_traffic_handle_intersection_uuid_source_end" type="actor-traffic-management-uuid" association="assoc-traffic-handle-intersection-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_traffic_handle_intersection_uuid_target_end" type="uc-handle-intersection-uuid" association="assoc-traffic-handle-intersection-uuid"/>
+        <memberEnd xmi:idref="_assoc_traffic_handle_intersection_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_traffic_handle_intersection_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-other-users-avoid-obstacles-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_other_users_avoid_obstacles_uuid_source_end" type="actor-other-road-users-uuid" association="assoc-other-users-avoid-obstacles-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_other_users_avoid_obstacles_uuid_target_end" type="uc-avoid-obstacles-uuid" association="assoc-other-users-avoid-obstacles-uuid"/>
+        <memberEnd xmi:idref="_assoc_other_users_avoid_obstacles_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_other_users_avoid_obstacles_uuid_target_end"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-uav-survey-main-uuid" name="主要用例" xmi:type="uml:Package">
+      <packagedElement xmi:id="actor-survey-engineer-uuid" name="测绘工程师" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-ground-station-uuid" name="地面控制站" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-flight-controller-uuid" name="飞行控制器" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-ground-operator-uuid" name="地面操作员" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="uc-plan-survey-area-uuid" name="规划测绘区域和飞行参数" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-upload-mission-data-uuid" name="上传任务数据至无人机" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-pre-flight-check-uuid" name="执行起飞前检查并确认" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-start-autonomous-flight-uuid" name="启动自主飞行任务" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-fly-route-collect-data-uuid" name="按航线飞行并采集数据" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-auto-return-uuid" name="自动返航" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-download-image-data-uuid" name="下载采集的影像数据" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-manual-abort-mission-uuid" name="手动中止任务" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-detect-abnormal-vibration-uuid" name="检测异常振动" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-diagnose-fault-type-uuid" name="诊断故障类型和严重程度" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-increase-monitoring-frequency-uuid" name="增加监控频率" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-start-return-procedure-uuid" name="启动返航程序" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-send-fault-report-uuid" name="发送故障报告和处置方案" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-generate-fault-analysis-uuid" name="生成详细故障分析" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-execute-emergency-landing-uuid" name="执行紧急降落程序" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-find-alternate-landing-site-uuid" name="寻找备降场地" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="assoc-engineer-plan-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_plan_uuid_source_end" type="actor-survey-engineer-uuid" association="assoc-engineer-plan-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_plan_uuid_target_end" type="uc-plan-survey-area-uuid" association="assoc-engineer-plan-uuid"/>
+        <memberEnd xmi:idref="_assoc_engineer_plan_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_engineer_plan_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-engineer-upload-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_upload_uuid_source_end" type="actor-survey-engineer-uuid" association="assoc-engineer-upload-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_upload_uuid_target_end" type="uc-upload-mission-data-uuid" association="assoc-engineer-upload-uuid"/>
+        <memberEnd xmi:idref="_assoc_engineer_upload_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_engineer_upload_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-engineer-start-flight-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_start_flight_uuid_source_end" type="actor-survey-engineer-uuid" association="assoc-engineer-start-flight-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_start_flight_uuid_target_end" type="uc-start-autonomous-flight-uuid" association="assoc-engineer-start-flight-uuid"/>
+        <memberEnd xmi:idref="_assoc_engineer_start_flight_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_engineer_start_flight_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-engineer-abort-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_abort_uuid_source_end" type="actor-survey-engineer-uuid" association="assoc-engineer-abort-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_abort_uuid_target_end" type="uc-manual-abort-mission-uuid" association="assoc-engineer-abort-uuid"/>
+        <memberEnd xmi:idref="_assoc_engineer_abort_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_engineer_abort_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-engineer-download-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_download_uuid_source_end" type="actor-survey-engineer-uuid" association="assoc-engineer-download-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_engineer_download_uuid_target_end" type="uc-download-image-data-uuid" association="assoc-engineer-download-uuid"/>
+        <memberEnd xmi:idref="_assoc_engineer_download_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_engineer_download_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-station-upload-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_station_upload_uuid_source_end" type="actor-ground-station-uuid" association="assoc-station-upload-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_station_upload_uuid_target_end" type="uc-upload-mission-data-uuid" association="assoc-station-upload-uuid"/>
+        <memberEnd xmi:idref="_assoc_station_upload_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_station_upload_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-station-download-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_station_download_uuid_source_end" type="actor-ground-station-uuid" association="assoc-station-download-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_station_download_uuid_target_end" type="uc-download-image-data-uuid" association="assoc-station-download-uuid"/>
+        <memberEnd xmi:idref="_assoc_station_download_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_station_download_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-station-fault-report-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_station_fault_report_uuid_source_end" type="actor-ground-station-uuid" association="assoc-station-fault-report-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_station_fault_report_uuid_target_end" type="uc-send-fault-report-uuid" association="assoc-station-fault-report-uuid"/>
+        <memberEnd xmi:idref="_assoc_station_fault_report_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_station_fault_report_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-controller-detect-vibration-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_detect_vibration_uuid_source_end" type="actor-flight-controller-uuid" association="assoc-controller-detect-vibration-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_detect_vibration_uuid_target_end" type="uc-detect-abnormal-vibration-uuid" association="assoc-controller-detect-vibration-uuid"/>
+        <memberEnd xmi:idref="_assoc_controller_detect_vibration_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_controller_detect_vibration_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-controller-diagnose-fault-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_diagnose_fault_uuid_source_end" type="actor-flight-controller-uuid" association="assoc-controller-diagnose-fault-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_diagnose_fault_uuid_target_end" type="uc-diagnose-fault-type-uuid" association="assoc-controller-diagnose-fault-uuid"/>
+        <memberEnd xmi:idref="_assoc_controller_diagnose_fault_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_controller_diagnose_fault_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-controller-increase-monitoring-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_increase_monitoring_uuid_source_end" type="actor-flight-controller-uuid" association="assoc-controller-increase-monitoring-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_increase_monitoring_uuid_target_end" type="uc-increase-monitoring-frequency-uuid" association="assoc-controller-increase-monitoring-uuid"/>
+        <memberEnd xmi:idref="_assoc_controller_increase_monitoring_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_controller_increase_monitoring_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-controller-start-return-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_start_return_uuid_source_end" type="actor-flight-controller-uuid" association="assoc-controller-start-return-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_start_return_uuid_target_end" type="uc-start-return-procedure-uuid" association="assoc-controller-start-return-uuid"/>
+        <memberEnd xmi:idref="_assoc_controller_start_return_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_controller_start_return_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-controller-send-report-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_send_report_uuid_source_end" type="actor-flight-controller-uuid" association="assoc-controller-send-report-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_send_report_uuid_target_end" type="uc-send-fault-report-uuid" association="assoc-controller-send-report-uuid"/>
+        <memberEnd xmi:idref="_assoc_controller_send_report_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_controller_send_report_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-controller-generate-analysis-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_generate_analysis_uuid_source_end" type="actor-flight-controller-uuid" association="assoc-controller-generate-analysis-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_generate_analysis_uuid_target_end" type="uc-generate-fault-analysis-uuid" association="assoc-controller-generate-analysis-uuid"/>
+        <memberEnd xmi:idref="_assoc_controller_generate_analysis_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_controller_generate_analysis_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-controller-emergency-landing-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_emergency_landing_uuid_source_end" type="actor-flight-controller-uuid" association="assoc-controller-emergency-landing-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_emergency_landing_uuid_target_end" type="uc-execute-emergency-landing-uuid" association="assoc-controller-emergency-landing-uuid"/>
+        <memberEnd xmi:idref="_assoc_controller_emergency_landing_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_controller_emergency_landing_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-controller-find-landing-site-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_find_landing_site_uuid_source_end" type="actor-flight-controller-uuid" association="assoc-controller-find-landing-site-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_controller_find_landing_site_uuid_target_end" type="uc-find-alternate-landing-site-uuid" association="assoc-controller-find-landing-site-uuid"/>
+        <memberEnd xmi:idref="_assoc_controller_find_landing_site_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_controller_find_landing_site_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-operator-fault-report-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_operator_fault_report_uuid_source_end" type="actor-ground-operator-uuid" association="assoc-operator-fault-report-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_operator_fault_report_uuid_target_end" type="uc-send-fault-report-uuid" association="assoc-operator-fault-report-uuid"/>
+        <memberEnd xmi:idref="_assoc_operator_fault_report_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_operator_fault_report_uuid_target_end"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-uav-unique-id" name="ParametricDiagram" xmi:type="uml:Package">
+      <packagedElement xmi:id="block2" name="PropulsionSystem" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="block3" name="FlightPerformance" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="block4" name="AutonomousFlight" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="cp2" name="DescentRateConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb2"/>
+        <ownedAttribute xmi:id="cp3" name="BatteryLevelConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb3"/>
+        <ownedAttribute xmi:id="cp4" name="DataRateConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb4"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-main" name="AutonomousDrivingPackage" xmi:type="uml:Package">
+      <packagedElement xmi:id="cb2" name="DetectionAccuracyConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb2_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb2_spec">
+            <body>detection_accuracy ≥ 0.99</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+      </packagedElement>
+      <packagedElement xmi:id="cb3" name="LocalizationAccuracyConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb3_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb3_spec">
+            <body>gps_accuracy ≤ 0.1 and lateral_position_error ≤ 0.15 and longitudinal_position_error ≤ 0.2</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param5" name="lateral_position_error" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param6" name="longitudinal_position_error" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="cb4" name="PlanningPerformanceConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb4_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb4_spec">
+            <body>replanning_interval = 100 and planning_latency ≤ 50</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param7" name="replanning_interval" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param8" name="planning_latency" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="block_perception" name="PerceptionSystem" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="block_localization" name="LocalizationSystem" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop5" name="lateral_position_error" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop6" name="longitudinal_position_error" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="block_control" name="ControlSystem" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop9" name="lane_keeping_error" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop10" name="speed_control_accuracy" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="block_computing" name="ComputingSystem" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop11" name="ai_performance" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop12" name="memory_bandwidth" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="block_system" name="AutonomousDrivingSystem" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop13" name="end_to_end_latency" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop14" name="control_loop_frequency" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop15" name="mtbf" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop16" name="max_lateral_acceleration" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop17" name="max_longitudinal_acceleration" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop18" name="max_deceleration" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop19" name="wheelbase" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop20" name="max_steering_angle" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop21" name="min_turning_radius" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop22" name="trajectory_curvature" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop23" name="longitudinal_acceleration" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop24" name="lateral_acceleration" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop25" name="max_total_acceleration" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="cb5" name="ControlPerformanceConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb5_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb5_spec">
+            <body>lane_keeping_error ≤ 0.1 and speed_control_accuracy ≤ 1.0</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param9" name="lane_keeping_error" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param10" name="speed_control_accuracy" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="cb6" name="ComputingPerformanceConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb6_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb6_spec">
+            <body>ai_performance ≥ 50 and memory_bandwidth ≥ 200</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param11" name="ai_performance" xmi:type="uml:Port" visibility="public" aggregation="none"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-uav-system-uuid" name="无人机任务系统" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-mission-data-uuid" name="MissionData" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-fault-data-uuid" name="FaultData" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-power-system-uuid" name="动力系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="act-telemetry-uuid" name="实时遥测数据传输活动" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-emergency-return-uuid" name="应急返航活动" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-payload-uuid" name="有效载荷管理活动" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-autonomous-flight-uuid" name="自主飞行控制" xmi:type="uml:Activity"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-uav-flight-uuid" name="UAVFlightControlSystem" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-emergency-status-uuid" name="EmergencyStatus" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-sensor-system-uuid" name="SensorSystem" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="act-emergency-uuid" name="应急处理流程" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="blk-actuator-system-uuid" name="ActuatorSystem" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="act-main-flight-uuid" name="自主航线飞行流程" xmi:type="uml:Activity">
+        <partition xmi:idref="grp-communication-uuid"/>
+        <partition xmi:idref="grp-sensor-uuid"/>
+        <partition xmi:idref="part-flight-control-uuid"/>
+        <partition xmi:idref="part-actuator-uuid"/>
+        <edge xmi:id="edge-cf-start-receive" xmi:type="uml:ControlFlow" visibility="public" source="node-mission-start" target="node-receive-plan">
+          <weight xmi:id="_edge_cf_start_receive_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-cf-receive-check" xmi:type="uml:ControlFlow" visibility="public" source="node-receive-plan" target="node-preflight-check">
+          <weight xmi:id="_edge_cf_receive_check_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-cf-check-fail" xmi:type="uml:ControlFlow" visibility="public" source="node-check-decision" target="node-mission-end">
+          <weight xmi:id="_edge_cf_check_fail_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_cf_check_fail_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>[自检不通过]</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-cf-unlock-climb" xmi:type="uml:ControlFlow" visibility="public" source="node-unlock-throttle" target="node-climb-altitude">
+          <weight xmi:id="_edge_cf_unlock_climb_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-cf-start-validate-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-start-flight-uuid" target="node-validate-mission-uuid">
+          <weight xmi:id="_edge_cf_start_validate_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-cf-validate-preflight-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-validate-mission-uuid" target="node-preflight-check-uuid">
+          <weight xmi:id="_edge_cf_validate_preflight_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-cf-preflight-takeoff-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-preflight-check-uuid" target="node-takeoff-uuid">
+          <weight xmi:id="_edge_cf_preflight_takeoff_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-cf-takeoff-navigate-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-takeoff-uuid" target="node-navigate-waypoint-uuid">
+          <weight xmi:id="_edge_cf_takeoff_navigate_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-of-mission-input-uuid" xmi:type="uml:ObjectFlow" visibility="public" source="node-start-flight-uuid" target="pin-mission-in-uuid">
+          <weight xmi:id="_edge_of_mission_input_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-of-report-output-uuid" xmi:type="uml:ObjectFlow" visibility="public" source="pin-report-out-uuid" target="node-end-flight-uuid">
+          <weight xmi:id="_edge_of_report_output_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <node xmi:id="node-mission-start" name="任务开始" xmi:type="uml:InitialNode" visibility="public"/>
+        <node xmi:id="node-receive-plan" name="接收任务规划数据" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <argument xmi:id="pin-receive-plan-in" name="in_任务规划" xmi:type="uml:InputPin" visibility="public" type="blk-mission-data-uuid"/>
+          <argument xmi:id="pin-mission-in-uuid" name="in_飞行任务" xmi:type="uml:InputPin" visibility="public" type="blk-mission-plan-uuid"/>
+          <argument xmi:id="pin-validate-in-command-uuid" name="in_start_command" xmi:type="uml:InputPin" visibility="public" type="blk-mavlink-command-uuid"/>
+          <result xmi:id="pin-validate-out-result-uuid" name="out_validation_result" xmi:type="uml:OutputPin" visibility="public"/>
+        </node>
+        <node xmi:id="node-check-decision" name="自检决策" xmi:type="uml:DecisionNode" visibility="public"/>
+        <node xmi:id="node-unlock-throttle" name="解锁电机并缓慢推油门" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-climb-altitude" name="垂直爬升至目标高度" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-enter-autonomous" name="转入自主飞行模式" xmi:type="uml:CallBehaviorAction" visibility="public" behavior="act-flight-control-uuid"/>
+        <node xmi:id="node-check-return-condition" name="检测返航条件" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-return-decision" name="返航决策" xmi:type="uml:DecisionNode" visibility="public"/>
+        <node xmi:id="node-fly-to-home" name="飞向返航点" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-execute-landing" name="执行自动降落程序" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-lock-motors" name="锁定电机" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-preflight-check-uuid" name="执行起飞前自检程序" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-takeoff-uuid" name="自动起飞" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-payload-operation-uuid" name="执行任务载荷操作" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-monitor-status-uuid" name="实时监控飞行状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-return-home-uuid" name="启动返航程序" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-generate-report-uuid" name="生成任务执行报告" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-end-flight-uuid" name="任务完成" xmi:type="uml:ActivityFinalNode" visibility="public"/>
+        <node xmi:id="node-battery-decision-uuid" name="电池状态决策" xmi:type="uml:DecisionNode" visibility="public"/>
+        <node xmi:id="node-merge-emergency-uuid" name="合并应急处理" xmi:type="uml:MergeNode" visibility="public"/>
+        <node xmi:id="node-end-report-uuid" name="任务结束报告" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <result xmi:id="pin-report-out-uuid" name="out_任务报告" xmi:type="uml:OutputPin" visibility="public" type="blk-mission-report-uuid"/>
+        </node>
+        <group xmi:id="grp-communication-uuid" name="通信分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-communication-uuid">
+          <node xmi:idref="node-receive-plan"/>
+        </group>
+        <group xmi:id="grp-sensor-uuid" name="传感器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-sensor-system-uuid">
+          <node xmi:idref="node-check-return-condition"/>
+        </group>
+        <group xmi:id="part-flight-control-uuid" name="飞行控制分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-flight-controller-uuid">
+          <node xmi:idref="node-preflight-check-uuid"/>
+          <node xmi:idref="node-takeoff-uuid"/>
+          <node xmi:idref="node-navigate-waypoint-uuid"/>
+          <node xmi:idref="node-payload-operation-uuid"/>
+          <node xmi:idref="node-return-home-uuid"/>
+          <node xmi:idref="node-generate-report-uuid"/>
+        </group>
+        <group xmi:id="part-actuator-uuid" name="执行器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-actuator-system-uuid">
+          <node xmi:idref="node-takeoff-uuid"/>
+          <node xmi:idref="node-navigate-waypoint-uuid"/>
+        </group>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-autonomous-mapping-uuid" name="AutonomousMappingMission" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-mission-report-uuid" name="MissionReport" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-mavlink-command-uuid" name="MAVLink_Command" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-image-data-uuid" name="ImageDataSet" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-sensor-data-uuid" name="SensorData" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-data-link-uuid" name="DataLinkModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-payload-uuid" name="PayloadModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="act-main-mission-uuid" name="自主测绘任务执行流程" xmi:type="uml:Activity">
+        <partition xmi:idref="grp-flight-controller-uuid"/>
+        <partition xmi:idref="grp-sensor-fusion-uuid"/>
+        <partition xmi:idref="grp-data-link-uuid"/>
+        <partition xmi:idref="grp-payload-uuid"/>
+        <partition xmi:idref="grp-motor-system-uuid"/>
+        <edge xmi:id="edge-start-validate-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-start-mission-uuid" target="node-validate-command-uuid">
+          <weight xmi:id="_edge_start_validate_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-validate-decision-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-validate-command-uuid" target="node-validate-decision-uuid">
+          <weight xmi:id="_edge_validate_decision_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-validate-success-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-validate-decision-uuid" target="node-unlock-takeoff-uuid">
+          <weight xmi:id="_edge_validate_success_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_validate_success_uuid_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>成功</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-validate-fail-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-validate-decision-uuid" target="node-end-mission-uuid">
+          <weight xmi:id="_edge_validate_fail_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_validate_fail_uuid_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>失败</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-takeoff-navigate-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-unlock-takeoff-uuid" target="node-navigate-waypoint-uuid">
+          <weight xmi:id="_edge_takeoff_navigate_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-navigate-check-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-navigate-waypoint-uuid" target="node-check-waypoint-uuid">
+          <weight xmi:id="_edge_navigate_check_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-check-trigger-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-check-waypoint-uuid" target="node-trigger-data-uuid">
+          <weight xmi:id="_edge_check_trigger_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_check_trigger_uuid_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>到达</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-check-navigate-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-check-waypoint-uuid" target="node-navigate-waypoint-uuid">
+          <weight xmi:id="_edge_check_navigate_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+          <guard xmi:id="_edge_check_navigate_uuid_guard_expr" xmi:type="uml:OpaqueExpression">
+            <body>跳过</body>
+            <language>English</language>
+          </guard>
+        </edge>
+        <edge xmi:id="edge-trigger-transmission-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-trigger-data-uuid" target="node-data-transmission-uuid">
+          <weight xmi:id="_edge_trigger_transmission_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-transmission-loop-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-data-transmission-uuid" target="node-loop-merge-uuid">
+          <weight xmi:id="_edge_transmission_loop_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-loop-navigate-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-loop-merge-uuid" target="node-navigate-waypoint-uuid">
+          <weight xmi:id="_edge_loop_navigate_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-loop-return-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-loop-execution-uuid" target="node-return-land-uuid">
+          <weight xmi:id="_edge_loop_return_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-return-report-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-return-land-uuid" target="node-end-report-uuid">
+          <weight xmi:id="_edge_return_report_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-report-end-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-end-report-uuid" target="node-end-mission-uuid">
+          <weight xmi:id="_edge_report_end_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-command-validate-uuid" xmi:type="uml:ObjectFlow" visibility="public" source="pin-validate-in-command-uuid" target="node-validate-command-uuid">
+          <weight xmi:id="_edge_command_validate_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-plan-validate-uuid" xmi:type="uml:ObjectFlow" visibility="public" source="cbuf-flight-plan-uuid" target="pin-validate-in-plan-uuid">
+          <weight xmi:id="_edge_plan_validate_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-sensor-navigate-uuid" xmi:type="uml:ObjectFlow" visibility="public" source="act-sensor-fusion-uuid" target="pin-navigate-in-sensor-uuid">
+          <weight xmi:id="_edge_sensor_navigate_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-image-transmission-uuid" xmi:type="uml:ObjectFlow" visibility="public" source="pin-trigger-data-out-image-uuid" target="pin-data-transmission-in-image-uuid">
+          <weight xmi:id="_edge_image_transmission_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-report-output-uuid" xmi:type="uml:ObjectFlow" visibility="public" source="pin-end-report-out-report-uuid" target="cbuf-mission-report-uuid">
+          <weight xmi:id="_edge_report_output_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <node xmi:id="node-navigate-waypoint-uuid" name="导航至下一航点" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <argument xmi:id="pin-navigate-in-sensor-uuid" name="in_sensor_data" xmi:type="uml:InputPin" visibility="public" type="blk-sensor-data-uuid"/>
+          <result xmi:id="pin-navigate-out-commands-uuid" name="out_navigation_commands" xmi:type="uml:OutputPin" visibility="public"/>
+        </node>
+        <node xmi:id="node-start-mission-uuid" name="开始任务" xmi:type="uml:InitialNode" visibility="public"/>
+        <node xmi:id="node-check-waypoint-uuid" name="检查航点到达条件" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-trigger-data-uuid" name="触发数据采集" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <result xmi:id="pin-trigger-data-out-image-uuid" name="out_image_data" xmi:type="uml:OutputPin" visibility="public" type="blk-image-data-uuid"/>
+        </node>
+        <node xmi:id="node-data-transmission-uuid" name="数据传输与存储" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <argument xmi:id="pin-data-transmission-in-image-uuid" name="in_image_data" xmi:type="uml:InputPin" visibility="public" type="blk-image-data-uuid"/>
+        </node>
+        <node xmi:id="node-loop-execution-uuid" name="循环执行" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-return-land-uuid" name="执行返航着陆" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-validate-decision-uuid" name="验证决策" xmi:type="uml:DecisionNode" visibility="public">
+          <inPartition xmi:idref="grp-flight-controller-uuid"/>
+        </node>
+        <node xmi:id="node-waypoint-decision-uuid" name="航点到达决策" xmi:type="uml:DecisionNode" visibility="public">
+          <inPartition xmi:idref="grp-flight-controller-uuid"/>
+        </node>
+        <node xmi:id="node-loop-merge-uuid" name="循环合并" xmi:type="uml:MergeNode" visibility="public">
+          <inPartition xmi:idref="grp-flight-controller-uuid"/>
+        </node>
+        <node xmi:id="node-data-fork-uuid" name="数据分叉" xmi:type="uml:ForkNode" visibility="public"/>
+        <node xmi:id="node-motor-join-uuid" name="电机初始化连接" xmi:type="uml:JoinNode" visibility="public">
+          <inPartition xmi:idref="grp-motor-system-uuid"/>
+        </node>
+        <node xmi:id="cbuf-flight-plan-uuid" name="飞行计划缓存" xmi:type="uml:CentralBufferNode" visibility="public" type="blk-flight-plan-uuid"/>
+        <node xmi:id="cbuf-image-data-uuid" name="图像数据缓存" xmi:type="uml:CentralBufferNode" visibility="public" type="blk-image-data-uuid"/>
+        <node xmi:id="cbuf-mission-report-uuid" name="任务报告缓存" xmi:type="uml:CentralBufferNode" visibility="public" type="blk-mission-report-uuid"/>
+        <group xmi:id="grp-flight-controller-uuid" name="飞行控制器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-flight-controller-uuid">
+          <node xmi:idref="node-navigate-waypoint-uuid"/>
+          <node xmi:idref="node-check-waypoint-uuid"/>
+          <node xmi:idref="node-loop-execution-uuid"/>
+          <node xmi:idref="node-return-land-uuid"/>
+          <node xmi:idref="node-end-report-uuid"/>
+          <node xmi:idref="node-validate-decision-uuid"/>
+          <node xmi:idref="node-waypoint-decision-uuid"/>
+          <node xmi:idref="node-loop-merge-uuid"/>
+        </group>
+        <group xmi:id="grp-sensor-fusion-uuid" name="传感器融合模块分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-sensor-fusion-uuid"/>
+        <group xmi:id="grp-data-link-uuid" name="数据链模块分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-data-link-uuid">
+          <node xmi:idref="node-data-transmission-uuid"/>
+        </group>
+        <group xmi:id="grp-payload-uuid" name="任务载荷模块分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-payload-uuid">
+          <node xmi:idref="node-trigger-data-uuid"/>
+        </group>
+        <group xmi:id="grp-motor-system-uuid" name="电机系统分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-motor-system-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="act-multispectral-data-uuid" name="多光谱数据采集" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-safety-fault-uuid" name="安全故障处理" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-sensor-fusion-uuid" name="传感器融合模块活动流程" xmi:type="uml:Activity"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-unique-id" name="ParametricDiagram" xmi:type="uml:Package">
+      <packagedElement xmi:id="block1" name="TemperatureControlSystem" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop1" name="T_current" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop2" name="T_target" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop3" name="Q" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop4" name="t" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="cp1" name="TemperatureControlEquation" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb1"/>
+      </packagedElement>
+      <packagedElement xmi:id="cb1" name="TemperatureControlEquation" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb1_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb1_spec">
+            <body>T_current + (Q * t) = T_target</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param1" name="T_current" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param2" name="T_target" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param3" name="Q" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param4" name="t" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-drone-unique-id" name="ParametricDiagram" xmi:type="uml:Package">
+      <packagedElement xmi:id="block_drone" name="DroneSystem" xmi:type="uml:Class">
+        <ownedConnector xmi:id="conn1" xmi:type="uml:Connector">
+          <end xmi:id="_conn1_end_1" xmi:type="uml:ConnectorEnd" role="prop_T_flight"/>
+          <end xmi:id="_conn1_end_2" xmi:type="uml:ConnectorEnd" role="param_T_flight" partWithPort="cp_endurance"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn2" xmi:type="uml:Connector">
+          <end xmi:id="_conn2_end_1" xmi:type="uml:ConnectorEnd" role="prop_C_battery"/>
+          <end xmi:id="_conn2_end_2" xmi:type="uml:ConnectorEnd" role="param_C_battery" partWithPort="cp_endurance"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn3" xmi:type="uml:Connector">
+          <end xmi:id="_conn3_end_1" xmi:type="uml:ConnectorEnd" role="prop_V_battery"/>
+          <end xmi:id="_conn3_end_2" xmi:type="uml:ConnectorEnd" role="param_V_battery" partWithPort="cp_endurance"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn4" xmi:type="uml:Connector">
+          <end xmi:id="_conn4_end_1" xmi:type="uml:ConnectorEnd" role="prop_eta"/>
+          <end xmi:id="_conn4_end_2" xmi:type="uml:ConnectorEnd" role="param_eta" partWithPort="cp_endurance"/>
+        </ownedConnector>
+        <ownedAttribute xmi:id="prop_T_flight" name="T_flight" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop_P_system" name="P_system" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop_eta" name="η" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop_m" name="m" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop_g" name="g" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop_F_total" name="F_total" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop_F_motor" name="F_motor" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop_n" name="n" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Integer"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="cp_endurance" name="EnduranceConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb_endurance"/>
+        <ownedAttribute xmi:id="cp_lift_balance" name="LiftBalanceConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb_lift_balance"/>
+        <ownedAttribute xmi:id="cp_motor_thrust" name="MotorThrustConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb_motor_thrust"/>
+        <ownedConnector xmi:id="conn5" xmi:type="uml:Connector">
+          <end xmi:id="_conn5_end_1" xmi:type="uml:ConnectorEnd" role="prop_P_system"/>
+          <end xmi:id="_conn5_end_2" xmi:type="uml:ConnectorEnd" role="param_P_system" partWithPort="cp_endurance"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn6" xmi:type="uml:Connector">
+          <end xmi:id="_conn6_end_1" xmi:type="uml:ConnectorEnd" role="prop_F_total"/>
+          <end xmi:id="_conn6_end_2" xmi:type="uml:ConnectorEnd" role="param_F_total" partWithPort="cp_lift_balance"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn7" xmi:type="uml:Connector">
+          <end xmi:id="_conn7_end_1" xmi:type="uml:ConnectorEnd" role="prop_m"/>
+          <end xmi:id="_conn7_end_2" xmi:type="uml:ConnectorEnd" role="param_m" partWithPort="cp_lift_balance"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn8" xmi:type="uml:Connector">
+          <end xmi:id="_conn8_end_1" xmi:type="uml:ConnectorEnd" role="prop_g"/>
+          <end xmi:id="_conn8_end_2" xmi:type="uml:ConnectorEnd" role="param_g" partWithPort="cp_lift_balance"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn9" xmi:type="uml:Connector">
+          <end xmi:id="_conn9_end_1" xmi:type="uml:ConnectorEnd" role="prop_F_total"/>
+          <end xmi:id="_conn9_end_2" xmi:type="uml:ConnectorEnd" role="param_F_total2" partWithPort="cp_motor_thrust"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn10" xmi:type="uml:Connector">
+          <end xmi:id="_conn10_end_1" xmi:type="uml:ConnectorEnd" role="prop_F_motor"/>
+          <end xmi:id="_conn10_end_2" xmi:type="uml:ConnectorEnd" role="param_F_motor" partWithPort="cp_motor_thrust"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn11" xmi:type="uml:Connector">
+          <end xmi:id="_conn11_end_1" xmi:type="uml:ConnectorEnd" role="prop_n"/>
+          <end xmi:id="_conn11_end_2" xmi:type="uml:ConnectorEnd"/>
+        </ownedConnector>
+      </packagedElement>
+      <packagedElement xmi:id="block_battery" name="BatterySystem" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop_C_battery" name="C_battery" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop_V_battery" name="V_battery" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="block_propulsion" name="PropulsionSystem" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cb_endurance" name="FlightEnduranceCalculation" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_endurance_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_endurance_spec">
+            <body>T_flight = (C_battery * V_battery * η) / (P_system * 60) * 0.85</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param_T_flight" name="T_flight" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param_C_battery" name="C_battery" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param_V_battery" name="V_battery" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param_eta" name="η" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param_P_system" name="P_system" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="cb_lift_balance" name="LiftGravityBalance" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_lift_balance_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_lift_balance_spec">
+            <body>F_total = m * g</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param_F_total" name="F_total" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param_m" name="m" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param_g" name="g" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="cb_motor_thrust" name="MotorThrustDistribution" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_motor_thrust_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_motor_thrust_spec">
+            <body>F_total = F_motor * n</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param_F_total2" name="F_total" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param_F_motor" name="F_motor" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param_n" name="n" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Integer"/>
+        </ownedAttribute>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-obstacle-avoidance-uuid" name="避障系统" xmi:type="uml:Package">
+      <packagedElement xmi:id="cls-perception-uuid" name="PerceptionSystem" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-obstacle-detected-uuid" name="obstacleDetected" xmi:type="uml:Operation">
+          <ownedParameter xmi:id="param-obstacle-info-uuid" name="obstacle_info" xmi:type="uml:Parameter" direction="in">
+            <type href="ObstacleInfo"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:id="op-obstacle-cleared-uuid" name="obstacleCleared" xmi:type="uml:Operation"/>
+        <ownedAttribute xmi:id="prop-perception-instance-uuid" name="perception_instance" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-perception-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-planning-uuid" name="PlanningSystem" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-replan-trajectory-uuid" name="replanTrajectory" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-new-trajectory-uuid" name="newTrajectory" xmi:type="uml:Operation">
+          <ownedParameter xmi:id="param-trajectory-data-uuid" name="trajectory_data" xmi:type="uml:Parameter" direction="out">
+            <type href="TrajectoryData"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedAttribute xmi:id="prop-planning-instance-uuid" name="planning_instance" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-planning-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-control-uuid" name="ControlSystem" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-compute-control-uuid" name="computeControlCommands" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-steering-command-uuid" name="steeringCommand" xmi:type="uml:Operation">
+          <ownedParameter xmi:id="param-angle-uuid" name="angle" xmi:type="uml:Parameter" direction="out">
+            <type href="float"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:id="op-speed-command-uuid" name="speedCommand" xmi:type="uml:Operation">
+          <ownedParameter xmi:id="param-speed-uuid" name="speed" xmi:type="uml:Parameter" direction="out">
+            <type href="float"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedAttribute xmi:id="prop-control-instance-uuid" name="control_instance" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-control-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-vehicle-interface-uuid" name="VehicleInterface" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-command-ack-uuid" name="commandAck" xmi:type="uml:Operation">
+          <ownedParameter xmi:id="param-status-uuid" name="status" xmi:type="uml:Parameter" direction="out">
+            <type href="CommandStatus"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedAttribute xmi:id="prop-vehicle-interface-instance-uuid" name="vehicle_interface_instance" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-vehicle-interface-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="interaction-obstacle-avoidance-uuid" name="前方障碍物避让" xmi:type="uml:Interaction">
+        <lifeline xmi:id="ll-perception-uuid" name="L1-PerceptionSystem" xmi:type="uml:Lifeline" represents="prop-perception-instance-uuid">
+          <coveredBy xmi:idref="fragment-send-obstacle-detected-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-planning-uuid" name="L2-PlanningSystem" xmi:type="uml:Lifeline" represents="prop-planning-instance-uuid">
+          <coveredBy xmi:idref="fragment-recv-obstacle-detected-uuid"/>
+          <coveredBy xmi:idref="fragment-send-replan-trajectory-uuid"/>
+          <coveredBy xmi:idref="fragment-recv-replan-trajectory-uuid"/>
+          <coveredBy xmi:idref="fragment-send-new-trajectory-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-control-uuid" name="L3-ControlSystem" xmi:type="uml:Lifeline" represents="prop-control-instance-uuid">
+          <coveredBy xmi:idref="fragment-recv-new-trajectory-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-vehicle-interface-uuid" name="L4-VehicleInterface" xmi:type="uml:Lifeline" represents="prop-vehicle-interface-instance-uuid"/>
+        <message xmi:id="msg-obstacle-detected-uuid" name="obstacleDetected" xmi:type="uml:Message" sendEvent="fragment-send-obstacle-detected-uuid" receiveEvent="fragment-recv-obstacle-detected-uuid" signature="op-obstacle-detected-uuid" messageSort="asynchCall">
+          <argument xmi:type="uml:OpaqueExpression">
+            <body>obstacle_info</body>
+            <language>text</language>
+          </argument>
+        </message>
+        <fragment xmi:id="fragment-send-obstacle-detected-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-perception-uuid" message="msg-obstacle-detected-uuid"/>
+        <fragment xmi:id="fragment-recv-obstacle-detected-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-planning-uuid" message="msg-obstacle-detected-uuid"/>
+        <message xmi:id="msg-replan-trajectory-uuid" name="replanTrajectory" xmi:type="uml:Message" sendEvent="fragment-send-replan-trajectory-uuid" receiveEvent="fragment-recv-replan-trajectory-uuid" signature="op-replan-trajectory-uuid" messageSort="synchCall"/>
+        <fragment xmi:id="fragment-send-replan-trajectory-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-planning-uuid" message="msg-replan-trajectory-uuid"/>
+        <fragment xmi:id="fragment-recv-replan-trajectory-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-planning-uuid" message="msg-replan-trajectory-uuid"/>
+        <message xmi:id="msg-new-trajectory-uuid" name="newTrajectory" xmi:type="uml:Message" sendEvent="fragment-send-new-trajectory-uuid" receiveEvent="fragment-recv-new-trajectory-uuid" signature="op-new-trajectory-uuid" messageSort="asynchCall">
+          <argument xmi:type="uml:OpaqueExpression">
+            <body>trajectory_data</body>
+            <language>text</language>
+          </argument>
+        </message>
+        <fragment xmi:id="fragment-send-new-trajectory-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-planning-uuid" message="msg-new-trajectory-uuid"/>
+        <fragment xmi:id="fragment-recv-new-trajectory-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-control-uuid" message="msg-new-trajectory-uuid"/>
+        <message xmi:id="msg-compute-control-uuid" name="computeControlCommands" xmi:type="uml:Message" sendEvent="fragment-send-compute-control-uuid" receiveEvent="fragment-recv-compute-control-uuid" signature="op-compute-control-uuid" messageSort="synchCall"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-vehicle-sys-uuid" name="车载系统" xmi:type="uml:Package">
+      <packagedElement xmi:id="actor-user-uuid" name="用户" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="block-touchscreen-uuid" name="触摸屏" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="interaction-user-set-temp-uuid" name="UserSetsTemperature" xmi:type="uml:Interaction">
+        <lifeline xmi:id="ll-user-uuid" name="L1-用户" xmi:type="uml:Lifeline" represents="prop-interaction-targetTemp-uuid">
+          <coveredBy xmi:idref="fragment-send-settemp-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-touchscreen-uuid" name="L2-触摸屏" xmi:type="uml:Lifeline" represents="block-touchscreen-uuid">
+          <coveredBy xmi:idref="fragment-recv-settemp-uuid"/>
+          <coveredBy xmi:idref="fragment-send-sendtemp-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-aircondsys-uuid" name="L3-空调系统" xmi:type="uml:Lifeline" represents="block-aircondsys-uuid">
+          <coveredBy xmi:idref="fragment-recv-sendtemp-uuid"/>
+          <coveredBy xmi:idref="fragment-send-adjustsys-uuid"/>
+          <coveredBy xmi:idref="fragment-recv-adjustsys-uuid"/>
+          <coveredBy xmi:idref="fragment-send-sendtempandhum-uuid"/>
+        </lifeline>
+        <message xmi:id="msg-settemp-uuid" name="设置温度" xmi:type="uml:Message" sendEvent="fragment-send-settemp-uuid" receiveEvent="fragment-recv-settemp-uuid" messageSort="synchCall"/>
+        <fragment xmi:id="fragment-send-settemp-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-user-uuid" message="msg-settemp-uuid"/>
+        <fragment xmi:id="fragment-recv-settemp-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-touchscreen-uuid" message="msg-settemp-uuid"/>
+        <message xmi:id="msg-sendtemp-uuid" name="发送温度设置" xmi:type="uml:Message" sendEvent="fragment-send-sendtemp-uuid" receiveEvent="fragment-recv-sendtemp-uuid" messageSort="synchCall"/>
+        <fragment xmi:id="fragment-send-sendtemp-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-touchscreen-uuid" message="msg-sendtemp-uuid"/>
+        <fragment xmi:id="fragment-recv-sendtemp-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-aircondsys-uuid" message="msg-sendtemp-uuid"/>
+        <message xmi:id="msg-adjustsys-uuid" name="调整系统" xmi:type="uml:Message" sendEvent="fragment-send-adjustsys-uuid" receiveEvent="fragment-recv-adjustsys-uuid" messageSort="synchCall"/>
+        <fragment xmi:id="fragment-send-adjustsys-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-aircondsys-uuid" message="msg-adjustsys-uuid"/>
+        <fragment xmi:id="fragment-recv-adjustsys-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-aircondsys-uuid" message="msg-adjustsys-uuid"/>
+        <message xmi:id="msg-sendtempandhum-uuid" name="发送温度和湿度信息" xmi:type="uml:Message" sendEvent="fragment-send-sendtempandhum-uuid" receiveEvent="fragment-recv-sendtempandhum-uuid" messageSort="synchCall"/>
+        <fragment xmi:id="fragment-send-sendtempandhum-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-aircondsys-uuid" message="msg-sendtempandhum-uuid"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-functional-uuid" name="功能需求包" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-communication-uuid" name="通信系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-env-perception-uuid" name="环境感知与障碍物检测" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-precise-localization-uuid" name="高精度定位与地图匹配" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-real-time-planning-uuid" name="实时路径规划与决策" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-vehicle-control-uuid" name="车辆运动控制" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-perception-system-uuid" name="感知系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-localization-system-uuid" name="定位系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-planning-system-uuid" name="规划决策系统" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop7" name="replanning_interval" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop8" name="planning_latency" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="blk-control-system-uuid" name="控制系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-obstacle-detection-test-uuid" name="障碍物检测精度测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_obstacle_detection_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_obstacle_detection_test_uuid_verdict_node" name="verdict" parameter="_tc_obstacle_detection_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-localization-accuracy-test-uuid" name="定位精度测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_localization_accuracy_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_localization_accuracy_test_uuid_verdict_node" name="verdict" parameter="_tc_localization_accuracy_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-planning-realtime-test-uuid" name="路径规划实时性测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_planning_realtime_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_planning_realtime_test_uuid_verdict_node" name="verdict" parameter="_tc_planning_realtime_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-control-accuracy-test-uuid" name="控制系统精度测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_control_accuracy_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_control_accuracy_test_uuid_verdict_node" name="verdict" parameter="_tc_control_accuracy_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-perception-env-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-perception-system-uuid"/>
+        <supplier xmi:idref="req-env-perception-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-localization-precise-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-localization-system-uuid"/>
+        <supplier xmi:idref="req-precise-localization-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-planning-realtime-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-planning-system-uuid"/>
+        <supplier xmi:idref="req-real-time-planning-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-control-vehicle-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-control-system-uuid"/>
+        <supplier xmi:idref="req-vehicle-control-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-detection-env-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-obstacle-detection-test-uuid"/>
+        <supplier xmi:idref="req-env-perception-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-localization-precise-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-localization-accuracy-test-uuid"/>
+        <supplier xmi:idref="req-precise-localization-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-planning-realtime-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-planning-realtime-test-uuid"/>
+        <supplier xmi:idref="req-real-time-planning-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="req-autonomous-flight-uuid" name="自主飞行控制" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-payload-management-uuid" name="有效载荷管理" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-flight-control-uuid" name="飞行控制系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-payload-interface-uuid" name="载荷接口系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-autonomous-flight-test-uuid" name="自主飞行性能测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_autonomous_flight_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_autonomous_flight_test_uuid_verdict_node" name="verdict" parameter="_tc_autonomous_flight_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-telemetry-test-uuid" name="遥测数据传输测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_telemetry_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_telemetry_test_uuid_verdict_node" name="verdict" parameter="_tc_telemetry_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-comm-telemetry-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-communication-uuid"/>
+        <supplier xmi:idref="req-telemetry-data-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="req-multispectral-data-uuid" name="多光谱数据采集与存储" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-real-time-telemetry-uuid" name="实时状态监控与遥测" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-safety-return-uuid" name="安全故障处理与自动返航" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-rtl-demo-uuid" name="自动返航现场演示" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_rtl_demo_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_rtl_demo_uuid_verdict_node" name="verdict" parameter="_tc_rtl_demo_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-fc-autonomous-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-flight-control-uuid"/>
+        <supplier xmi:idref="req-autonomous-flight-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="req-video-transmission-uuid" name="实时视频传输" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-battery-management-uuid" name="智能电池管理" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-obstacle-avoidance-uuid" name="避障与应急处理" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-video-transmission-uuid" name="视频传输系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-battery-management-uuid" name="电池管理系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-obstacle-avoidance-uuid" name="避障系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-video-transmission-test-uuid" name="视频传输质量测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_video_transmission_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_video_transmission_test_uuid_verdict_node" name="verdict" parameter="_tc_video_transmission_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-battery-management-test-uuid" name="电池管理功能测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_battery_management_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_battery_management_test_uuid_verdict_node" name="verdict" parameter="_tc_battery_management_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-obstacle-avoidance-test-uuid" name="避障性能测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_obstacle_avoidance_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_obstacle_avoidance_test_uuid_verdict_node" name="verdict" parameter="_tc_obstacle_avoidance_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-video-transmission-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-video-transmission-uuid"/>
+        <supplier xmi:idref="req-video-transmission-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-battery-management-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-battery-management-uuid"/>
+        <supplier xmi:idref="req-battery-management-uuid"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-nonfunctional-uuid" name="非功能需求包" xmi:type="uml:Package">
+      <packagedElement xmi:id="req-system-response-uuid" name="系统响应时间" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-system-reliability-uuid" name="系统可靠性" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-computing-performance-uuid" name="计算性能" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-main-computing-uuid" name="主计算单元" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-end-to-end-latency-test-uuid" name="端到端延迟测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_end_to_end_latency_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_end_to_end_latency_test_uuid_verdict_node" name="verdict" parameter="_tc_end_to_end_latency_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-computing-performance-test-uuid" name="计算性能测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_computing_performance_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_computing_performance_test_uuid_verdict_node" name="verdict" parameter="_tc_computing_performance_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-computing-performance-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-main-computing-uuid"/>
+        <supplier xmi:idref="req-computing-performance-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="req-flight-performance-uuid" name="飞行性能" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-control-response-uuid" name="飞行控制响应时间" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-environmental-adaptability-uuid" name="环境适应性" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-endurance-payload-uuid" name="续航与载重能力" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-environmental-test-uuid" name="环境适应性测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_environmental_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_environmental_test_uuid_verdict_node" name="verdict" parameter="_tc_environmental_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="req-communication-reliability-uuid" name="通信可靠性" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-communication-system-uuid" name="通信系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-communication-link-test-uuid" name="通信链路测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_communication_link_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_communication_link_test_uuid_verdict_node" name="verdict" parameter="_tc_communication_link_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="rel-verify-control-accuracy-uuid" xmi:type="uml:Abstraction">
+      <client xmi:idref="tc-control-accuracy-test-uuid"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-emergency-scenarios-uuid" name="应急场景包" xmi:type="uml:Package">
+      <packagedElement xmi:id="req-multi-motor-failure-uuid" name="多电机故障应急处理" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-comm-loss-decision-uuid" name="通信中断智能决策" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-unsafe-landing-uuid" name="不安全着陆环境处理" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-emergency-decision-uuid" name="应急决策系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-multi-motor-failure-test-uuid" name="多电机故障应急测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_multi_motor_failure_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_multi_motor_failure_test_uuid_verdict_node" name="verdict" parameter="_tc_multi_motor_failure_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-comm-loss-decision-test-uuid" name="通信中断决策测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_comm_loss_decision_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_comm_loss_decision_test_uuid_verdict_node" name="verdict" parameter="_tc_comm_loss_decision_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="rel-derive-emergency-motor-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="req-multi-motor-failure-uuid"/>
+        <supplier xmi:idref="req-emergency-return-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-derive-emergency-comm-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="req-comm-loss-decision-uuid"/>
+        <supplier xmi:idref="req-emergency-return-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-derive-emergency-landing-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="req-unsafe-landing-uuid"/>
+        <supplier xmi:idref="req-emergency-return-uuid"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-aircon-func-uuid" name="空调系统功能" xmi:type="uml:Package">
+      <packagedElement xmi:id="req-aircon-control-uuid" name="空调系统控制" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-aircon-precision-uuid" name="温度控制精度" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-aircon-energy-uuid" name="能耗管理" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-aircon-response-uuid" name="响应时间" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-aircon-reliability-uuid" name="系统可靠性" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-aircon-control-uuid" name="空调控制系统" xmi:type="uml:Class">
+        <ownedBehavior xmi:id="sm-air-con-uuid" name="空调状态机" xmi:type="uml:StateMachine">
+          <region xmi:id="region-air-con-main-uuid" name="主区域" xmi:type="uml:Region">
+            <subvertex xmi:id="state-off-uuid" name="关闭" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-standby-uuid" name="待机" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-running-uuid" name="运行" xmi:type="uml:State"/>
+            <subvertex xmi:id="ps-main-initial-uuid" xmi:type="uml:Pseudostate"/>
+            <transition xmi:id="trans-initial-to-off-uuid" xmi:type="uml:Transition" source="ps-main-initial-uuid" target="state-off-uuid"/>
+            <transition xmi:id="trans-off-to-standby-uuid" xmi:type="uml:Transition" source="state-off-uuid" target="state-standby-uuid"/>
+            <transition xmi:id="trans-standby-to-running-uuid" xmi:type="uml:Transition" source="state-standby-uuid" target="state-running-uuid"/>
+            <transition xmi:id="trans-running-to-off-uuid" xmi:type="uml:Transition" source="state-running-uuid" target="state-off-uuid"/>
+          </region>
+        </ownedBehavior>
+      </packagedElement>
+      <packagedElement xmi:id="tc-aircon-control-uuid" name="空调系统控制测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_aircon_control_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_aircon_control_uuid_verdict_node" name="verdict" parameter="_tc_aircon_control_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-aircon-precision-uuid" name="温度控制精度测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_aircon_precision_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_aircon_precision_uuid_verdict_node" name="verdict" parameter="_tc_aircon_precision_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-aircon-energy-uuid" name="能耗管理测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_aircon_energy_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_aircon_energy_uuid_verdict_node" name="verdict" parameter="_tc_aircon_energy_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-system-blocks-uuid" name="系统模块包" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-sensor-fusion-uuid" name="传感器融合模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-reliability-test-uuid" name="系统可靠性测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_reliability_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_reliability_test_uuid_verdict_node" name="verdict" parameter="_tc_reliability_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="blk-power-management-uuid" name="动力管理系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-propulsion-system-uuid" name="推进系统" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-datalink-uuid" name="数据链模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-hil-test-uuid" name="硬件在环测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_hil_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_hil_test_uuid_verdict_node" name="verdict" parameter="_tc_hil_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-flight-test-uuid" name="实飞验证" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_flight_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_flight_test_uuid_verdict_node" name="verdict" parameter="_tc_flight_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-trajectory-analysis-uuid" name="航迹分析" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_trajectory_analysis_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_trajectory_analysis_uuid_verdict_node" name="verdict" parameter="_tc_trajectory_analysis_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-multispectral-functional-test-uuid" name="多光谱数据采集功能测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_multispectral_functional_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_multispectral_functional_test_uuid_verdict_node" name="verdict" parameter="_tc_multispectral_functional_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-multispectral-demo-uuid" name="多光谱数据采集现场演示" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_multispectral_demo_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_multispectral_demo_uuid_verdict_node" name="verdict" parameter="_tc_multispectral_demo_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-data-integrity-check-uuid" name="数据完整性校验" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_data_integrity_check_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_data_integrity_check_uuid_verdict_node" name="verdict" parameter="_tc_data_integrity_check_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-mavlink-conformance-uuid" name="MAVLink协议一致性测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_mavlink_conformance_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_mavlink_conformance_uuid_verdict_node" name="verdict" parameter="_tc_mavlink_conformance_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-telemetry-integrity-uuid" name="遥测数据完整性验证" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_telemetry_integrity_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_telemetry_integrity_uuid_verdict_node" name="verdict" parameter="_tc_telemetry_integrity_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-telemetry-demo-uuid" name="遥测现场演示" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_telemetry_demo_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_telemetry_demo_uuid_verdict_node" name="verdict" parameter="_tc_telemetry_demo_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-fault-injection-uuid" name="安全故障注入测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_fault_injection_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_fault_injection_uuid_verdict_node" name="verdict" parameter="_tc_fault_injection_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-safety-analysis-uuid" name="安全案例分析" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_safety_analysis_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_safety_analysis_uuid_verdict_node" name="verdict" parameter="_tc_safety_analysis_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-control-performance-uuid" name="控制响应性能测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_control_performance_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_control_performance_uuid_verdict_node" name="verdict" parameter="_tc_control_performance_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-latency-measurement-uuid" name="控制延迟测量" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_latency_measurement_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_latency_measurement_uuid_verdict_node" name="verdict" parameter="_tc_latency_measurement_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-emc-test-uuid" name="EMC测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_emc_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_emc_test_uuid_verdict_node" name="verdict" parameter="_tc_emc_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-endurance-test-uuid" name="续航与载重测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_endurance_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_endurance_test_uuid_verdict_node" name="verdict" parameter="_tc_endurance_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-fc-safety-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-flight-control-uuid"/>
+        <supplier xmi:idref="req-safety-return-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-pm-telemetry-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-power-management-uuid"/>
+        <supplier xmi:idref="req-real-time-telemetry-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-pm-safety-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-power-management-uuid"/>
+        <supplier xmi:idref="req-safety-return-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-sf-autonomous-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-sensor-fusion-uuid"/>
+        <supplier xmi:idref="req-autonomous-flight-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-ps-autonomous-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-propulsion-system-uuid"/>
+        <supplier xmi:idref="req-autonomous-flight-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-dl-telemetry-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-datalink-uuid"/>
+        <supplier xmi:idref="req-real-time-telemetry-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-dl-safety-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-datalink-uuid"/>
+        <supplier xmi:idref="req-safety-return-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-hil-autonomous-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-hil-test-uuid"/>
+        <supplier xmi:idref="req-autonomous-flight-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-flight-autonomous-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-flight-test-uuid"/>
+        <supplier xmi:idref="req-autonomous-flight-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-trajectory-autonomous-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-trajectory-analysis-uuid"/>
+        <supplier xmi:idref="req-autonomous-flight-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-functional-multispectral-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-multispectral-functional-test-uuid"/>
+        <supplier xmi:idref="req-multispectral-data-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-demo-multispectral-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-multispectral-demo-uuid"/>
+        <supplier xmi:idref="req-multispectral-data-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-integrity-multispectral-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-data-integrity-check-uuid"/>
+        <supplier xmi:idref="req-multispectral-data-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-conformance-telemetry-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-mavlink-conformance-uuid"/>
+        <supplier xmi:idref="req-real-time-telemetry-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-integrity-telemetry-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-telemetry-integrity-uuid"/>
+        <supplier xmi:idref="req-real-time-telemetry-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-demo-telemetry-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-telemetry-demo-uuid"/>
+        <supplier xmi:idref="req-real-time-telemetry-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-fault-safety-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-fault-injection-uuid"/>
+        <supplier xmi:idref="req-safety-return-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-analysis-safety-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-safety-analysis-uuid"/>
+        <supplier xmi:idref="req-safety-return-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-demo-safety-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-rtl-demo-uuid"/>
+        <supplier xmi:idref="req-safety-return-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-performance-response-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-control-performance-uuid"/>
+        <supplier xmi:idref="req-control-response-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-latency-response-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-latency-measurement-uuid"/>
+        <supplier xmi:idref="req-control-response-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-reliability-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-reliability-test-uuid"/>
+        <supplier xmi:idref="req-system-reliability-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-environmental-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-environmental-test-uuid"/>
+        <supplier xmi:idref="req-environmental-adaptability-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-emc-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-emc-test-uuid"/>
+        <supplier xmi:idref="req-environmental-adaptability-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-endurance-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-endurance-test-uuid"/>
+        <supplier xmi:idref="req-endurance-payload-uuid"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="rel-satisfy-obstacle-avoidance-uuid" xmi:type="uml:Abstraction">
+      <client xmi:idref="blk-obstacle-avoidance-uuid"/>
+      <supplier xmi:idref="req-obstacle-avoidance-uuid"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-uav-control-uuid" name="无人机控制包" xmi:type="uml:Package">
+      <packagedElement xmi:id="event-low-battery-warning-uuid" name="低电量警告事件" xmi:type="uml:AnyReceiveEvent"/>
+      <packagedElement xmi:id="event-critical-battery-uuid" name="严重低电量事件" xmi:type="uml:AnyReceiveEvent"/>
+      <packagedElement xmi:id="event-obstacle-detected-uuid" name="检测到障碍物事件" xmi:type="uml:AnyReceiveEvent"/>
+      <packagedElement xmi:id="event-obstacle-cleared-uuid" name="障碍物已清除事件" xmi:type="uml:AnyReceiveEvent"/>
+      <packagedElement xmi:id="blk-flight-controller-uuid" name="飞行控制器" xmi:type="uml:Class">
+        <classifierBehavior xmi:idref="sm-flight-uuid"/>
+        <ownedBehavior xmi:id="sm-flight-uuid" name="飞行状态机" xmi:type="uml:StateMachine">
+          <region xmi:id="region-battery-uuid" name="电池管理区域" xmi:type="uml:Region">
+            <transition xmi:id="trans-return-to-forcedlanding-uuid" xmi:type="uml:Transition" source="state-return-home-uuid" target="state-forced-landing-uuid">
+              <trigger xmi:type="uml:Trigger" xmi:id="trans-return-to-forcedlanding-uuid_tr_0">
+                <event xmi:idref="event-critical-battery-uuid"/>
+              </trigger>
+              <guard xmi:type="uml:Constraint" xmi:id="trans-return-to-forcedlanding-uuid_guard">
+                <specification xmi:type="uml:OpaqueExpression" xmi:id="trans-return-to-forcedlanding-uuid_guard_spec">
+                  <body>电量 &lt; 15%</body>
+                  <language>English</language>
+                </specification>
+              </guard>
+            </transition>
+            <subvertex xmi:id="ps-batt-initial-uuid" xmi:type="uml:Pseudostate"/>
+            <subvertex xmi:id="state-normal-flight-batt-uuid" name="正常飞行" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-return-home-uuid" name="返航" xmi:type="uml:State">
+              <entry xmi:type="uml:Activity" xmi:id="wrapper-entry-return-home-uuid" name="执行返航程序">
+                <node xmi:type="uml:InitialNode" xmi:id="wrapper-entry-return-home-uuid_initial"/>
+                <node xmi:type="uml:CallBehaviorAction" xmi:id="wrapper-entry-return-home-uuid_cba" behavior="act-execute-return-home-uuid" name="Call_执行返航程序"/>
+                <node xmi:type="uml:ActivityFinalNode" xmi:id="wrapper-entry-return-home-uuid_final"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-entry-return-home-uuid_cf1" source="wrapper-entry-return-home-uuid_initial" target="wrapper-entry-return-home-uuid_cba"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-entry-return-home-uuid_cf2" source="wrapper-entry-return-home-uuid_cba" target="wrapper-entry-return-home-uuid_final"/>
+              </entry>
+              <doActivity xmi:type="uml:Activity" xmi:id="wrapper-do-return-home-uuid" name="持续导航至Home点">
+                <node xmi:type="uml:InitialNode" xmi:id="wrapper-do-return-home-uuid_initial"/>
+                <node xmi:type="uml:CallBehaviorAction" xmi:id="wrapper-do-return-home-uuid_cba" behavior="act-navigate-to-home-uuid" name="Call_持续导航至Home点"/>
+                <node xmi:type="uml:ActivityFinalNode" xmi:id="wrapper-do-return-home-uuid_final"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-return-home-uuid_cf1" source="wrapper-do-return-home-uuid_initial" target="wrapper-do-return-home-uuid_cba"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-return-home-uuid_cf2" source="wrapper-do-return-home-uuid_cba" target="wrapper-do-return-home-uuid_final"/>
+              </doActivity>
+            </subvertex>
+            <subvertex xmi:id="state-forced-landing-uuid" name="强制着陆" xmi:type="uml:State"/>
+            <transition xmi:id="trans-batt-initial-to-normal-uuid" xmi:type="uml:Transition" source="ps-batt-initial-uuid" target="state-normal-flight-batt-uuid"/>
+            <transition xmi:id="trans-normal-to-return-uuid" xmi:type="uml:Transition" source="state-normal-flight-batt-uuid" target="state-return-home-uuid">
+              <trigger xmi:type="uml:Trigger" xmi:id="trans-normal-to-return-uuid_tr_0">
+                <event xmi:idref="event-low-battery-warning-uuid"/>
+              </trigger>
+              <guard xmi:type="uml:Constraint" xmi:id="trans-normal-to-return-uuid_guard">
+                <specification xmi:type="uml:OpaqueExpression" xmi:id="trans-normal-to-return-uuid_guard_spec">
+                  <body>电量 &lt; 20%</body>
+                  <language>English</language>
+                </specification>
+              </guard>
+              <effect xmi:type="uml:Activity" xmi:id="wrapper-effect-t2-uuid" name="记录低电量事件">
+                <node xmi:type="uml:InitialNode" xmi:id="wrapper-effect-t2-uuid_initial"/>
+                <node xmi:type="uml:CallBehaviorAction" xmi:id="wrapper-effect-t2-uuid_cba" behavior="act-log-low-battery-uuid" name="Call_记录低电量事件"/>
+                <node xmi:type="uml:ActivityFinalNode" xmi:id="wrapper-effect-t2-uuid_final"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-effect-t2-uuid_cf1" source="wrapper-effect-t2-uuid_initial" target="wrapper-effect-t2-uuid_cba"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-effect-t2-uuid_cf2" source="wrapper-effect-t2-uuid_cba" target="wrapper-effect-t2-uuid_final"/>
+              </effect>
+            </transition>
+          </region>
+          <region xmi:id="region-obstacle-avoidance-uuid" name="避障区域" xmi:type="uml:Region">
+            <transition xmi:id="trans-oa-initial-to-normal-uuid" xmi:type="uml:Transition" source="ps-oa-initial-uuid" target="state-normal-flight-oa-uuid"/>
+            <transition xmi:id="trans-normal-to-hover-uuid" xmi:type="uml:Transition" source="state-normal-flight-oa-uuid" target="state-hover-uuid">
+              <trigger xmi:type="uml:Trigger" xmi:id="trans-normal-to-hover-uuid_tr_0">
+                <event xmi:idref="event-obstacle-detected-uuid"/>
+              </trigger>
+            </transition>
+            <transition xmi:id="trans-hover-to-circumvent-uuid" xmi:type="uml:Transition" source="state-hover-uuid" target="state-circumvent-uuid"/>
+            <transition xmi:id="trans-circumvent-to-normal-uuid" xmi:type="uml:Transition" source="state-circumvent-uuid" target="state-normal-flight-oa-uuid">
+              <trigger xmi:type="uml:Trigger" xmi:id="trans-circumvent-to-normal-uuid_tr_0">
+                <event xmi:idref="event-obstacle-cleared-uuid"/>
+              </trigger>
+            </transition>
+            <subvertex xmi:id="ps-oa-initial-uuid" xmi:type="uml:Pseudostate"/>
+            <subvertex xmi:id="state-normal-flight-oa-uuid" name="正常飞行" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-hover-uuid" name="悬停" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-circumvent-uuid" name="绕行" xmi:type="uml:State">
+              <doActivity xmi:type="uml:Activity" xmi:id="wrapper-do-circumvent-uuid" name="执行绕障机动">
+                <node xmi:type="uml:InitialNode" xmi:id="wrapper-do-circumvent-uuid_initial"/>
+                <node xmi:type="uml:CallBehaviorAction" xmi:id="wrapper-do-circumvent-uuid_cba" behavior="act-perform-circumvention-uuid" name="Call_执行绕障机动"/>
+                <node xmi:type="uml:ActivityFinalNode" xmi:id="wrapper-do-circumvent-uuid_final"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-circumvent-uuid_cf1" source="wrapper-do-circumvent-uuid_initial" target="wrapper-do-circumvent-uuid_cba"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-circumvent-uuid_cf2" source="wrapper-do-circumvent-uuid_cba" target="wrapper-do-circumvent-uuid_final"/>
+              </doActivity>
+            </subvertex>
+          </region>
+        </ownedBehavior>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-uav-behaviors-uuid" name="无人机行为库" xmi:type="uml:Package">
+      <packagedElement xmi:id="act-execute-return-home-uuid" name="执行返航程序" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-navigate-to-home-uuid" name="持续导航至Home点" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-perform-circumvention-uuid" name="执行绕障机动" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-log-low-battery-uuid" name="记录低电量事件" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="wrapper-entry-return-home-uuid" name="进入返航状态包装活动" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="wrapper-do-return-home-uuid" name="返航状态执行活动包装器" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="wrapper-do-circumvent-uuid" name="绕行状态执行活动包装器" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="wrapper-effect-t2-uuid" name="转换效果包装器" xmi:type="uml:Activity"/>
+    </packagedElement>
+  </uml:Model>
+  <sysml:Block xmi:id="_blk_multi_sensor_data_uuid_app" base_Class="blk-multi-sensor-data-uuid"/>
+  <sysml:Block xmi:id="_blk_preprocessed_data_uuid_app" base_Class="blk-preprocessed-data-uuid"/>
+  <sysml:Block xmi:id="_blk_environment_perception_uuid_app" base_Class="blk-environment-perception-uuid"/>
+  <sysml:Block xmi:id="_blk_vehicle_localization_uuid_app" base_Class="blk-vehicle-localization-uuid"/>
+  <sysml:Block xmi:id="_blk_environment_model_uuid_app" base_Class="blk-environment-model-uuid"/>
+  <sysml:Block xmi:id="_blk_behavior_decision_uuid_app" base_Class="blk-behavior-decision-uuid"/>
+  <sysml:Block xmi:id="_blk_local_trajectory_uuid_app" base_Class="blk-local-trajectory-uuid"/>
+  <sysml:Block xmi:id="_blk_actuator_commands_uuid_app" base_Class="blk-actuator-commands-uuid"/>
+  <sysml:Block xmi:id="_blk_sensor_interface_uuid_app" base_Class="blk-sensor-interface-uuid"/>
+  <sysml:Block xmi:id="_blk_data_processing_uuid_app" base_Class="blk-data-processing-uuid"/>
+  <sysml:Block xmi:id="_blk_perception_module_uuid_app" base_Class="blk-perception-module-uuid"/>
+  <sysml:Block xmi:id="_blk_localization_module_uuid_app" base_Class="blk-localization-module-uuid"/>
+  <sysml:Block xmi:id="_blk_fusion_module_uuid_app" base_Class="blk-fusion-module-uuid"/>
+  <sysml:Block xmi:id="_blk_planning_module_uuid_app" base_Class="blk-planning-module-uuid"/>
+  <sysml:Block xmi:id="_blk_control_module_uuid_app" base_Class="blk-control-module-uuid"/>
+  <sysml:Block xmi:id="_blk_safety_module_uuid_app" base_Class="blk-safety-module-uuid"/>
+  <sysml:Block xmi:id="_blk_vehicle_interface_uuid_app" base_Class="blk-vehicle-interface-uuid"/>
+  <sysml:Block xmi:id="_blk_monitoring_module_uuid_app" base_Class="blk-monitoring-module-uuid"/>
+  <sysml:Block xmi:id="_blk_bootcmd_uuid_app" base_Class="blk-bootcmd-uuid"/>
+  <sysml:Block xmi:id="_blk_statusrep_uuid_app" base_Class="blk-statusrep-uuid"/>
+  <sysml:Block xmi:id="_blk_system_uuid_app" base_Class="blk-system-uuid"/>
+  <sysml:Block xmi:id="_block1_app" base_Class="block1"/>
+  <sysml:Block xmi:id="_block2_app" base_Class="block2"/>
+  <sysml:Block xmi:id="_block3_app" base_Class="block3"/>
+  <sysml:Block xmi:id="_block4_app" base_Class="block4"/>
+  <sysml:Block xmi:id="_block_perception_app" base_Class="block_perception"/>
+  <sysml:Block xmi:id="_block_localization_app" base_Class="block_localization"/>
+  <sysml:Block xmi:id="_block_control_app" base_Class="block_control"/>
+  <sysml:Block xmi:id="_block_computing_app" base_Class="block_computing"/>
+  <sysml:Block xmi:id="_block_system_app" base_Class="block_system"/>
+  <sysml:Block xmi:id="_blk_mission_data_uuid_app" base_Class="blk-mission-data-uuid"/>
+  <sysml:Block xmi:id="_blk_mission_report_uuid_app" base_Class="blk-mission-report-uuid"/>
+  <sysml:Block xmi:id="_blk_fault_data_uuid_app" base_Class="blk-fault-data-uuid"/>
+  <sysml:Block xmi:id="_blk_emergency_status_uuid_app" base_Class="blk-emergency-status-uuid"/>
+  <sysml:Block xmi:id="_blk_flight_controller_uuid_app" base_Class="blk-flight-controller-uuid"/>
+  <sysml:Block xmi:id="_blk_sensor_system_uuid_app" base_Class="blk-sensor-system-uuid"/>
+  <sysml:Block xmi:id="_blk_communication_uuid_app" base_Class="blk-communication-uuid"/>
+  <sysml:Block xmi:id="_blk_power_system_uuid_app" base_Class="blk-power-system-uuid"/>
+  <sysml:Block xmi:id="_blk_actuator_system_uuid_app" base_Class="blk-actuator-system-uuid"/>
+  <sysml:Block xmi:id="_blk_mavlink_command_uuid_app" base_Class="blk-mavlink-command-uuid"/>
+  <sysml:Block xmi:id="_blk_image_data_uuid_app" base_Class="blk-image-data-uuid"/>
+  <sysml:Block xmi:id="_blk_sensor_data_uuid_app" base_Class="blk-sensor-data-uuid"/>
+  <sysml:Block xmi:id="_blk_sensor_fusion_uuid_app" base_Class="blk-sensor-fusion-uuid"/>
+  <sysml:Block xmi:id="_blk_data_link_uuid_app" base_Class="blk-data-link-uuid"/>
+  <sysml:Block xmi:id="_blk_payload_uuid_app" base_Class="blk-payload-uuid"/>
+  <sysml:Block xmi:id="_block_drone_app" base_Class="block_drone"/>
+  <sysml:Block xmi:id="_block_battery_app" base_Class="block_battery"/>
+  <sysml:Block xmi:id="_block_propulsion_app" base_Class="block_propulsion"/>
+  <sysml:Block xmi:id="_block_touchscreen_uuid_app" base_Class="block-touchscreen-uuid"/>
+  <sysml:Block xmi:id="_blk_perception_system_uuid_app" base_Class="blk-perception-system-uuid"/>
+  <sysml:Block xmi:id="_blk_localization_system_uuid_app" base_Class="blk-localization-system-uuid"/>
+  <sysml:Block xmi:id="_blk_planning_system_uuid_app" base_Class="blk-planning-system-uuid"/>
+  <sysml:Block xmi:id="_blk_control_system_uuid_app" base_Class="blk-control-system-uuid"/>
+  <sysml:Block xmi:id="_blk_main_computing_uuid_app" base_Class="blk-main-computing-uuid"/>
+  <sysml:Block xmi:id="_blk_flight_control_uuid_app" base_Class="blk-flight-control-uuid"/>
+  <sysml:Block xmi:id="_blk_power_management_uuid_app" base_Class="blk-power-management-uuid"/>
+  <sysml:Block xmi:id="_blk_payload_interface_uuid_app" base_Class="blk-payload-interface-uuid"/>
+  <sysml:Block xmi:id="_blk_emergency_decision_uuid_app" base_Class="blk-emergency-decision-uuid"/>
+  <sysml:Block xmi:id="_blk_aircon_control_uuid_app" base_Class="blk-aircon-control-uuid"/>
+  <sysml:Block xmi:id="_blk_propulsion_system_uuid_app" base_Class="blk-propulsion-system-uuid"/>
+  <sysml:Block xmi:id="_blk_datalink_uuid_app" base_Class="blk-datalink-uuid"/>
+  <sysml:Block xmi:id="_blk_video_transmission_uuid_app" base_Class="blk-video-transmission-uuid"/>
+  <sysml:Block xmi:id="_blk_battery_management_uuid_app" base_Class="blk-battery-management-uuid"/>
+  <sysml:Block xmi:id="_blk_obstacle_avoidance_uuid_app" base_Class="blk-obstacle-avoidance-uuid"/>
+  <sysml:Block xmi:id="_blk_communication_system_uuid_app" base_Class="blk-communication-system-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_sensor_interface_uuid_app" base_ActivityPartition="grp-sensor-interface-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_data_processing_uuid_app" base_ActivityPartition="grp-data-processing-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_perception_uuid_app" base_ActivityPartition="grp-perception-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_localization_uuid_app" base_ActivityPartition="grp-localization-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_fusion_uuid_app" base_ActivityPartition="grp-fusion-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_planning_uuid_app" base_ActivityPartition="grp-planning-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_control_uuid_app" base_ActivityPartition="grp-control-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_safety_uuid_app" base_ActivityPartition="grp-safety-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_vehicle_interface_uuid_app" base_ActivityPartition="grp-vehicle-interface-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_monitoring_uuid_app" base_ActivityPartition="grp-monitoring-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_system_uuid_app" base_ActivityPartition="grp-system-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_communication_uuid_app" base_ActivityPartition="grp-communication-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_sensor_uuid_app" base_ActivityPartition="grp-sensor-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_part_flight_control_uuid_app" base_ActivityPartition="part-flight-control-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_part_actuator_uuid_app" base_ActivityPartition="part-actuator-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_flight_controller_uuid_app" base_ActivityPartition="grp-flight-controller-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_sensor_fusion_uuid_app" base_ActivityPartition="grp-sensor-fusion-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_data_link_uuid_app" base_ActivityPartition="grp-data-link-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_payload_uuid_app" base_ActivityPartition="grp-payload-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_motor_system_uuid_app" base_ActivityPartition="grp-motor-system-uuid"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop1_app" base_Property="prop1"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop2_app" base_Property="prop2"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop3_app" base_Property="prop3"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop4_app" base_Property="prop4"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop5_app" base_Property="prop5"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop6_app" base_Property="prop6"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop7_app" base_Property="prop7"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop8_app" base_Property="prop8"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop9_app" base_Property="prop9"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop10_app" base_Property="prop10"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop11_app" base_Property="prop11"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop12_app" base_Property="prop12"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop13_app" base_Property="prop13"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop14_app" base_Property="prop14"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop15_app" base_Property="prop15"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop16_app" base_Property="prop16"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop17_app" base_Property="prop17"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop18_app" base_Property="prop18"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop19_app" base_Property="prop19"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop20_app" base_Property="prop20"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop21_app" base_Property="prop21"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop22_app" base_Property="prop22"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop23_app" base_Property="prop23"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop24_app" base_Property="prop24"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop25_app" base_Property="prop25"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_T_flight_app" base_Property="prop_T_flight"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_P_system_app" base_Property="prop_P_system"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_eta_app" base_Property="prop_eta"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_m_app" base_Property="prop_m"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_g_app" base_Property="prop_g"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_F_total_app" base_Property="prop_F_total"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_F_motor_app" base_Property="prop_F_motor"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_n_app" base_Property="prop_n"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_C_battery_app" base_Property="prop_C_battery"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_V_battery_app" base_Property="prop_V_battery"/>
+  <sysml:ConstraintBlock xmi:id="_cb1_app" base_Class="cb1"/>
+  <sysml:ConstraintBlock xmi:id="_cb2_app" base_Class="cb2"/>
+  <sysml:ConstraintBlock xmi:id="_cb3_app" base_Class="cb3"/>
+  <sysml:ConstraintBlock xmi:id="_cb4_app" base_Class="cb4"/>
+  <sysml:ConstraintBlock xmi:id="_cb5_app" base_Class="cb5"/>
+  <sysml:ConstraintBlock xmi:id="_cb6_app" base_Class="cb6"/>
+  <sysml:ConstraintBlock xmi:id="_cb_endurance_app" base_Class="cb_endurance"/>
+  <sysml:ConstraintBlock xmi:id="_cb_lift_balance_app" base_Class="cb_lift_balance"/>
+  <sysml:ConstraintBlock xmi:id="_cb_motor_thrust_app" base_Class="cb_motor_thrust"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param1_app" base_Port="param1"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param2_app" base_Port="param2"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param3_app" base_Port="param3"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param4_app" base_Port="param4"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param5_app" base_Port="param5"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param6_app" base_Port="param6"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param7_app" base_Port="param7"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param8_app" base_Port="param8"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param9_app" base_Port="param9"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param10_app" base_Port="param10"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param11_app" base_Port="param11"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_T_flight_app" base_Port="param_T_flight"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_C_battery_app" base_Port="param_C_battery"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_V_battery_app" base_Port="param_V_battery"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_eta_app" base_Port="param_eta"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_P_system_app" base_Port="param_P_system"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_F_total_app" base_Port="param_F_total"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_m_app" base_Port="param_m"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_g_app" base_Port="param_g"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_F_total2_app" base_Port="param_F_total2"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_F_motor_app" base_Port="param_F_motor"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_n_app" base_Port="param_n"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp1_app" base_Property="cp1"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp2_app" base_Property="cp2"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp3_app" base_Property="cp3"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp4_app" base_Property="cp4"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp_endurance_app" base_Property="cp_endurance"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp_lift_balance_app" base_Property="cp_lift_balance"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp_motor_thrust_app" base_Property="cp_motor_thrust"/>
+  <sysml:BindingConnector xmi:id="_conn1_app" base_Connector="conn1"/>
+  <sysml:BindingConnector xmi:id="_conn2_app" base_Connector="conn2"/>
+  <sysml:BindingConnector xmi:id="_conn3_app" base_Connector="conn3"/>
+  <sysml:BindingConnector xmi:id="_conn4_app" base_Connector="conn4"/>
+  <sysml:BindingConnector xmi:id="_conn5_app" base_Connector="conn5"/>
+  <sysml:BindingConnector xmi:id="_conn6_app" base_Connector="conn6"/>
+  <sysml:BindingConnector xmi:id="_conn7_app" base_Connector="conn7"/>
+  <sysml:BindingConnector xmi:id="_conn8_app" base_Connector="conn8"/>
+  <sysml:BindingConnector xmi:id="_conn9_app" base_Connector="conn9"/>
+  <sysml:BindingConnector xmi:id="_conn10_app" base_Connector="conn10"/>
+  <sysml:BindingConnector xmi:id="_conn11_app" base_Connector="conn11"/>
+  <sysml:Requirement xmi:id="_req_env_perception_uuid_app" base_Class="req-env-perception-uuid" Id="REQ-FUN-001" Text="系统应通过多传感器融合（激光雷达、摄像头、毫米波雷达）检测车辆周围360度范围内的静态和动态障碍物，包括其他车辆、行人、交通标志等，检测距离范围0.5-150米，检测精度≥99%"/>
+  <sysml:Requirement xmi:id="_req_precise_localization_uuid_app" base_Class="req-precise-localization-uuid" Id="REQ-FUN-002" Text="系统应结合GPS（精度≤10cm）、IMU和激光雷达点云数据，实现车辆在HD地图中的精确定位，横向定位误差≤15cm，纵向定位误差≤20cm"/>
+  <sysml:Requirement xmi:id="_req_real_time_planning_uuid_app" base_Class="req-real-time-planning-uuid" Id="REQ-FUN-003" Text="系统应基于A*或RRT*算法，每100ms重新规划一次路径，考虑交通规则、障碍物位置和车辆动力学约束，规划延迟≤50ms"/>
+  <sysml:Requirement xmi:id="_req_vehicle_control_uuid_app" base_Class="req-vehicle-control-uuid" Id="REQ-FUN-004" Text="系统应通过PID控制器或MPC控制器，控制车辆的转向、油门和制动，实现车道保持误差≤10cm，速度控制精度±1km/h"/>
+  <sysml:Requirement xmi:id="_req_system_response_uuid_app" base_Class="req-system-response-uuid" Id="REQ-NFN-001" Text="从传感器数据采集到执行器控制输出的端到端延迟≤100ms，感知-决策-控制环路频率≥20Hz"/>
+  <sysml:Requirement xmi:id="_req_system_reliability_uuid_app" base_Class="req-system-reliability-uuid" Id="REQ-NFN-004" Text="平均无故障时间(MTBF) ≥ 1000小时，平均修复时间(MTTR) ≤ 30分钟。关键系统（如飞控）采用双冗余设计，传感器采用三冗余投票机制。系统可用性≥99.9%。验收标准：在95%置信水平下满足可靠性指标。优先级：High"/>
+  <sysml:Requirement xmi:id="_req_computing_performance_uuid_app" base_Class="req-computing-performance-uuid" Id="REQ-NFN-003" Text="主计算单元应具备≥50 TOPS的AI推理性能，内存带宽≥200GB/s，支持并行处理多路传感器数据流"/>
+  <sysml:Requirement xmi:id="_req_autonomous_flight_uuid_app" base_Class="req-autonomous-flight-uuid" Id="REQ-FUN-001" Text="系统应能接收地面控制站发送的飞行计划（包含航点坐标、高度、速度），通过GPS/IMU传感器融合确定自身位置和姿态，并驱动电机和舵机实现自主导航飞行。支持RTK-GPS定位，水平定位精度达到±1cm+1ppm，垂直定位精度±1.5cm+1ppm。飞行控制频率不低于200Hz，姿态控制精度优于0.1°。验收标准：航点跟踪误差&lt;0.5m，高度保持误差&lt;0.2m，速度控制误差&lt;0.1m/s。优先级：High"/>
+  <sysml:Requirement xmi:id="_req_payload_management_uuid_app" base_Class="req-payload-management-uuid" Id="REQ-FUN-004" Text="系统通过专用的载荷接口（如PWM、UART或USB-C）向挂载设备供电（12V DC, max 3A）并传输控制指令，支持基本的云台控制和快门触发功能。优先级：Medium"/>
+  <sysml:Requirement xmi:id="_req_flight_performance_uuid_app" base_Class="req-flight-performance-uuid" Id="REQ-NFN-001" Text="最大水平飞行速度15m/s，最大续航时间30分钟，最大抗风能力10m/s，最大作业海拔4000米。悬停精度：垂直±0.1m，水平±0.3m。最大爬升率5m/s，最大下降率3m/s。验收标准：所有性能指标在95%置信区间内满足要求。优先级：High"/>
+  <sysml:Requirement xmi:id="_req_control_response_uuid_app" base_Class="req-control-response-uuid" Id="REQ-NFN-001" Text="从IMU传感器读取数据到计算并输出PWM信号至电调（ESC）的完整控制回路延迟必须小于8毫秒（P95值），最大延迟不超过10毫秒。姿态控制带宽不低于20Hz，位置控制带宽不低于5Hz。"/>
+  <sysml:Requirement xmi:id="_req_environmental_adaptability_uuid_app" base_Class="req-environmental-adaptability-uuid" Id="REQ-NFN-003" Text="工作温度范围-10°C至+40°C，存储温度-20°C至+60°C，防护等级IP43，能够在小雨（降雨量&lt;2.5mm/h）和中等湿度（&lt;85%RH）环境下短时工作。抗振动等级：5-500Hz，1.5Grms。优先级：High"/>
+  <sysml:Requirement xmi:id="_req_multi_motor_failure_uuid_app" base_Class="req-multi-motor-failure-uuid" Id="EMG-001" Text="如多个电机同时故障，执行紧急降落程序"/>
+  <sysml:Requirement xmi:id="_req_comm_loss_decision_uuid_app" base_Class="req-comm-loss-decision-uuid" Id="EMG-002" Text="通信完全中断时依靠机载智能决策"/>
+  <sysml:Requirement xmi:id="_req_unsafe_landing_uuid_app" base_Class="req-unsafe-landing-uuid" Id="EMG-003" Text="着陆环境不安全时寻找备降场地"/>
+  <sysml:Requirement xmi:id="_req_aircon_control_uuid_app" base_Class="req-aircon-control-uuid" Id="REQ-FUN-001" Text="系统应能够根据用户设定和外部环境自动调节车内温度，包括制冷、制热和除湿功能，并通过CAN总线与车辆其他系统进行数据交换"/>
+  <sysml:Requirement xmi:id="_req_aircon_precision_uuid_app" base_Class="req-aircon-precision-uuid" Id="REQ-FUN-002" Text="系统应能够将车内温度控制在设定温度的±0.5°C范围内，并通过PID控制算法实现精确调节"/>
+  <sysml:Requirement xmi:id="_req_aircon_energy_uuid_app" base_Class="req-aircon-energy-uuid" Id="REQ-FUN-003" Text="系统应通过智能算法优化制冷和制热过程，以最小化能耗，并实现节能模式"/>
+  <sysml:Requirement xmi:id="_req_aircon_response_uuid_app" base_Class="req-aircon-response-uuid" Id="REQ-NFN-001" Text="系统在接收到温度调整指令后，应在2秒内开始响应，并通过实时监控确保系统响应时间不超过3秒"/>
+  <sysml:Requirement xmi:id="_req_aircon_reliability_uuid_app" base_Class="req-aircon-reliability-uuid" Id="REQ-NFN-002" Text="系统的平均无故障时间（MTBF）应大于10,000小时，并通过冗余设计提高系统的可靠性"/>
+  <sysml:Requirement xmi:id="_req_multispectral_data_uuid_app" base_Class="req-multispectral-data-uuid" Id="REQ-FUN-002" Text="系统应在飞行过程中，根据预设的触发条件（到达特定航点±3m范围内或固定时间间隔2-5s可调），控制多光谱相机（MicaSense RedEdge-MX，5个波段：蓝475nm、绿560nm、红668nm、红边717nm、近红外842nm）进行拍照。空间分辨率要求：在120m飞行高度下达到8cm/像素。采集到的图像数据（每张约12MB，格式为16位GeoTIFF+XML元数据）应被UTC时间戳和DGPS位置（精度≤10cm）标记，并通过数传电台（传输速率115.2kbps）实时传输至地面站。同时，数据应存储在机载的64GB Class 10 UHS-I microSD卡中，存储容量需支持至少5000张原始图像。"/>
+  <sysml:Requirement xmi:id="_req_real_time_telemetry_uuid_app" base_Class="req-real-time-telemetry-uuid" Id="REQ-FUN-003" Text="系统应通过MAVLink 2.0协议，以10Hz±1Hz的频率向地面控制站发送遥测数据包。数据包内容必须包括：GPS位置（经纬度精度1e-7度，海拔精度0.1m）、姿态角（滚转、俯仰精度0.1°，偏航精度0.5°）、空速（量程0-30m/s，精度0.5m/s）、电池电压（量程0-25.2V，精度±0.1V）、电池剩余电量（精度±5%）、电机转速（量程0-20000RPM，精度±100RPM）和信号链路强度（量程-120至0dBm，精度±3dB）。数据丢包率应小于1%。"/>
+  <sysml:Requirement xmi:id="_req_safety_return_uuid_app" base_Class="req-safety-return-uuid" Id="REQ-FUN-004" Text="当检测到以下任一条件时，系统应自动触发失效保护模式并执行返航着陆（RTL）程序：1) 与地面站的RC控制信号丢失持续超过5.0±0.5秒；2) 电池电压低于预设的3.4V/单体（对于4S电池组，即总电压低于13.6V±0.2V）；3) GPS卫星数少于8颗持续30秒。RTL程序包括：爬升至预设安全高度（50±5m，可配置）、以5m/s速度飞向并降落在预设的'家'位置（Home Position，精度半径2m内）。着陆过程应包含3m高度悬停3秒的确认阶段。"/>
+  <sysml:Requirement xmi:id="_req_endurance_payload_uuid_app" base_Class="req-endurance-payload-uuid" Id="REQ-NFN-004" Text="在最大载重5.0±0.2公斤（包括相机、云台等有效载荷）的条件下，系统使用16000mAh 6S锂聚合物电池（标称电压22.2V），应能实现不少于30分钟的有效飞行时间（从起飞到着陆，保留15%的安全电量）。悬停功耗不超过800W，最大爬升功耗不超过1500W。单次任务覆盖面积应不小于100公顷（在120m飞行高度下）。"/>
+  <sysml:Requirement xmi:id="_req_video_transmission_uuid_app" base_Class="req-video-transmission-uuid" Id="REQ-FUN-002" Text="机载摄像头采集1080p@30fps视频流，通过H.264编码后，经由5.8GHz图传系统以&lt;100ms端到端延迟发送至地面站显示。支持自适应码率控制，码率范围2-10Mbps可调。视频传输采用FEC前向纠错和ARQ自动重传机制，确保在20%丢包率下仍可正常解码。验收标准：视频延迟&lt;100ms，解码成功率&gt;99.5%，PSNR&gt;35dB。优先级：High"/>
+  <sysml:Requirement xmi:id="_req_battery_management_uuid_app" base_Class="req-battery-management-uuid" Id="REQ-FUN-003" Text="实时监测6S锂聚合物电池的电压、电流、温度和剩余电量，采样频率1kHz，电压测量精度±5mV，电流测量精度±10mA。当电量低于20%或单体电压低于3.3V时自动触发返航，低于15%强制着陆。支持电池健康状态(SOH)估算，精度±3%。验收标准：SOC估算误差&lt;3%，过压/欠压保护响应时间&lt;100ms。优先级：High"/>
+  <sysml:Requirement xmi:id="_req_obstacle_avoidance_uuid_app" base_Class="req-obstacle-avoidance-uuid" Id="REQ-FUN-004" Text="通过前向和下视TOF传感器检测5米范围内的障碍物，检测角度水平±75°，垂直±60°，检测精度±2cm。当检测到障碍物时，自动悬停或规划绕行路径。避障决策周期&lt;50ms，支持动态障碍物跟踪和预测。验收标准：避障成功率&gt;99.9%，误报率&lt;0.1%，响应时间&lt;100ms。优先级：Medium"/>
+  <sysml:Requirement xmi:id="_req_communication_reliability_uuid_app" base_Class="req-communication-reliability-uuid" Id="REQ-NFN-002" Text="遥控链路使用2.4GHz频段，控制距离≥2km，丢包率&lt;1%，采用DSSS扩频技术。图传链路使用5.8GHz，传输距离≥1km，延迟&lt;100ms，支持MIMO 2x2。通信系统具备自动频点切换和功率控制功能。验收标准：控制链路BER&lt;10⁻⁶，图传链路PER&lt;10⁻³。优先级：High"/>
+  <sysml:TestCase xmi:id="_tc_obstacle_detection_test_uuid_app" base_Behavior="tc-obstacle-detection-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_localization_accuracy_test_uuid_app" base_Behavior="tc-localization-accuracy-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_planning_realtime_test_uuid_app" base_Behavior="tc-planning-realtime-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_control_accuracy_test_uuid_app" base_Behavior="tc-control-accuracy-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_end_to_end_latency_test_uuid_app" base_Behavior="tc-end-to-end-latency-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_reliability_test_uuid_app" base_Behavior="tc-reliability-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_computing_performance_test_uuid_app" base_Behavior="tc-computing-performance-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_autonomous_flight_test_uuid_app" base_Behavior="tc-autonomous-flight-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_telemetry_test_uuid_app" base_Behavior="tc-telemetry-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_multi_motor_failure_test_uuid_app" base_Behavior="tc-multi-motor-failure-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_comm_loss_decision_test_uuid_app" base_Behavior="tc-comm-loss-decision-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_aircon_control_uuid_app" base_Behavior="tc-aircon-control-uuid"/>
+  <sysml:TestCase xmi:id="_tc_aircon_precision_uuid_app" base_Behavior="tc-aircon-precision-uuid"/>
+  <sysml:TestCase xmi:id="_tc_aircon_energy_uuid_app" base_Behavior="tc-aircon-energy-uuid"/>
+  <sysml:TestCase xmi:id="_tc_hil_test_uuid_app" base_Behavior="tc-hil-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_flight_test_uuid_app" base_Behavior="tc-flight-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_trajectory_analysis_uuid_app" base_Behavior="tc-trajectory-analysis-uuid"/>
+  <sysml:TestCase xmi:id="_tc_multispectral_functional_test_uuid_app" base_Behavior="tc-multispectral-functional-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_multispectral_demo_uuid_app" base_Behavior="tc-multispectral-demo-uuid"/>
+  <sysml:TestCase xmi:id="_tc_data_integrity_check_uuid_app" base_Behavior="tc-data-integrity-check-uuid"/>
+  <sysml:TestCase xmi:id="_tc_mavlink_conformance_uuid_app" base_Behavior="tc-mavlink-conformance-uuid"/>
+  <sysml:TestCase xmi:id="_tc_telemetry_integrity_uuid_app" base_Behavior="tc-telemetry-integrity-uuid"/>
+  <sysml:TestCase xmi:id="_tc_telemetry_demo_uuid_app" base_Behavior="tc-telemetry-demo-uuid"/>
+  <sysml:TestCase xmi:id="_tc_fault_injection_uuid_app" base_Behavior="tc-fault-injection-uuid"/>
+  <sysml:TestCase xmi:id="_tc_safety_analysis_uuid_app" base_Behavior="tc-safety-analysis-uuid"/>
+  <sysml:TestCase xmi:id="_tc_rtl_demo_uuid_app" base_Behavior="tc-rtl-demo-uuid"/>
+  <sysml:TestCase xmi:id="_tc_control_performance_uuid_app" base_Behavior="tc-control-performance-uuid"/>
+  <sysml:TestCase xmi:id="_tc_latency_measurement_uuid_app" base_Behavior="tc-latency-measurement-uuid"/>
+  <sysml:TestCase xmi:id="_tc_environmental_test_uuid_app" base_Behavior="tc-environmental-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_emc_test_uuid_app" base_Behavior="tc-emc-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_endurance_test_uuid_app" base_Behavior="tc-endurance-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_video_transmission_test_uuid_app" base_Behavior="tc-video-transmission-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_battery_management_test_uuid_app" base_Behavior="tc-battery-management-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_obstacle_avoidance_test_uuid_app" base_Behavior="tc-obstacle-avoidance-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_communication_link_test_uuid_app" base_Behavior="tc-communication-link-test-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_perception_env_uuid_app" base_Abstraction="rel-satisfy-perception-env-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_localization_precise_uuid_app" base_Abstraction="rel-satisfy-localization-precise-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_planning_realtime_uuid_app" base_Abstraction="rel-satisfy-planning-realtime-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_control_vehicle_uuid_app" base_Abstraction="rel-satisfy-control-vehicle-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_computing_performance_uuid_app" base_Abstraction="rel-satisfy-computing-performance-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_comm_telemetry_uuid_app" base_Abstraction="rel-satisfy-comm-telemetry-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_fc_autonomous_uuid_app" base_Abstraction="rel-satisfy-fc-autonomous-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_fc_safety_uuid_app" base_Abstraction="rel-satisfy-fc-safety-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_pm_telemetry_uuid_app" base_Abstraction="rel-satisfy-pm-telemetry-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_pm_safety_uuid_app" base_Abstraction="rel-satisfy-pm-safety-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_sf_autonomous_uuid_app" base_Abstraction="rel-satisfy-sf-autonomous-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_ps_autonomous_uuid_app" base_Abstraction="rel-satisfy-ps-autonomous-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_dl_telemetry_uuid_app" base_Abstraction="rel-satisfy-dl-telemetry-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_dl_safety_uuid_app" base_Abstraction="rel-satisfy-dl-safety-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_video_transmission_uuid_app" base_Abstraction="rel-satisfy-video-transmission-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_battery_management_uuid_app" base_Abstraction="rel-satisfy-battery-management-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_obstacle_avoidance_uuid_app" base_Abstraction="rel-satisfy-obstacle-avoidance-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_detection_env_uuid_app" base_Abstraction="rel-verify-detection-env-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_localization_precise_uuid_app" base_Abstraction="rel-verify-localization-precise-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_planning_realtime_uuid_app" base_Abstraction="rel-verify-planning-realtime-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_control_accuracy_uuid_app" base_Abstraction="rel-verify-control-accuracy-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_hil_autonomous_uuid_app" base_Abstraction="rel-verify-hil-autonomous-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_flight_autonomous_uuid_app" base_Abstraction="rel-verify-flight-autonomous-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_trajectory_autonomous_uuid_app" base_Abstraction="rel-verify-trajectory-autonomous-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_functional_multispectral_uuid_app" base_Abstraction="rel-verify-functional-multispectral-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_demo_multispectral_uuid_app" base_Abstraction="rel-verify-demo-multispectral-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_integrity_multispectral_uuid_app" base_Abstraction="rel-verify-integrity-multispectral-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_conformance_telemetry_uuid_app" base_Abstraction="rel-verify-conformance-telemetry-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_integrity_telemetry_uuid_app" base_Abstraction="rel-verify-integrity-telemetry-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_demo_telemetry_uuid_app" base_Abstraction="rel-verify-demo-telemetry-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_fault_safety_uuid_app" base_Abstraction="rel-verify-fault-safety-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_analysis_safety_uuid_app" base_Abstraction="rel-verify-analysis-safety-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_demo_safety_uuid_app" base_Abstraction="rel-verify-demo-safety-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_performance_response_uuid_app" base_Abstraction="rel-verify-performance-response-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_latency_response_uuid_app" base_Abstraction="rel-verify-latency-response-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_reliability_uuid_app" base_Abstraction="rel-verify-reliability-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_environmental_uuid_app" base_Abstraction="rel-verify-environmental-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_emc_uuid_app" base_Abstraction="rel-verify-emc-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_endurance_uuid_app" base_Abstraction="rel-verify-endurance-uuid"/>
+  <sysml:DeriveReqt xmi:id="_rel_derive_emergency_motor_uuid_app" base_Abstraction="rel-derive-emergency-motor-uuid"/>
+  <sysml:DeriveReqt xmi:id="_rel_derive_emergency_comm_uuid_app" base_Abstraction="rel-derive-emergency-comm-uuid"/>
+  <sysml:DeriveReqt xmi:id="_rel_derive_emergency_landing_uuid_app" base_Abstraction="rel-derive-emergency-landing-uuid"/>
+</xmi:XMI>

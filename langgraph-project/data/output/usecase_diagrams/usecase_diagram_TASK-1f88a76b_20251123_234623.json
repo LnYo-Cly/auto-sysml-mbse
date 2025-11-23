@@ -1,0 +1,203 @@
+{
+  "model": [
+    {
+      "id": "model-autonomous-driving-uc-uuid",
+      "name": "城市道路自动驾驶用例模型"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-autonomous-driving-main-uuid",
+      "type": "Package",
+      "name": "主要用例",
+      "parentId": "model-autonomous-driving-uc-uuid",
+      "description": "原文：城市道路自动驾驶案例。简化：包含城市道路自动驾驶系统的所有核心用例和参与者。"
+    },
+    {
+      "id": "actor-passenger-uuid",
+      "type": "Actor",
+      "name": "乘客",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Primary: 乘客。简化：城市道路自动驾驶系统的主要使用者，负责设定目的地和启动自动驾驶。"
+    },
+    {
+      "id": "actor-traffic-management-uuid",
+      "type": "Actor",
+      "name": "交通管理系统",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Secondary: 交通管理系统。简化：与自动驾驶系统交互的外部系统，提供交通信号等信息。"
+    },
+    {
+      "id": "actor-other-road-users-uuid",
+      "type": "Actor",
+      "name": "其他道路使用者",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Secondary: 其他道路使用者。简化：在道路环境中与自动驾驶车辆产生交互的外部实体，包括行人和其他车辆。"
+    },
+    {
+      "id": "uc-set-destination-uuid",
+      "type": "UseCase",
+      "name": "设定目的地",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：乘客通过人机界面设定目的地。简化：乘客输入自动驾驶的最终目标地点。"
+    },
+    {
+      "id": "uc-start-autonomous-driving-uuid",
+      "type": "UseCase",
+      "name": "启动自动驾驶模式",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：乘客启动自动驾驶模式。简化：乘客激活车辆的自动驾驶功能。"
+    },
+    {
+      "id": "uc-plan-global-path-uuid",
+      "type": "UseCase",
+      "name": "规划全局路径",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：系统规划全局路径并确认。简化：系统根据目的地计算整体行驶路线。"
+    },
+    {
+      "id": "uc-perceive-environment-uuid",
+      "type": "UseCase",
+      "name": "执行环境感知和定位",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：系统执行环境感知和定位。简化：系统通过传感器识别周围环境并确定自身位置。"
+    },
+    {
+      "id": "uc-adjust-driving-strategy-uuid",
+      "type": "UseCase",
+      "name": "实时调整行驶策略",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：根据交通状况实时调整行驶策略。简化：系统根据实时交通信息动态修改驾驶行为。"
+    },
+    {
+      "id": "uc-handle-intersection-uuid",
+      "type": "UseCase",
+      "name": "处理交叉路口和交通信号",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：处理交叉路口和交通信号。简化：系统在交叉路口处根据交通信号规则进行安全通行。"
+    },
+    {
+      "id": "uc-avoid-obstacles-uuid",
+      "type": "UseCase",
+      "name": "避让行人和障碍物",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：避让行人和障碍物。简化：系统检测并安全规避道路上的行人和障碍物体。"
+    },
+    {
+      "id": "uc-auto-parking-uuid",
+      "type": "UseCase",
+      "name": "自动停车",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：到达目的地后自动停车。简化：系统在抵达目的地后自动执行停车操作。"
+    },
+    {
+      "id": "uc-replan-path-uuid",
+      "type": "UseCase",
+      "name": "重新规划绕行路径",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如遇施工路段，系统重新规划绕行路径。简化：系统在检测到道路施工时计算新的替代路线。"
+    },
+    {
+      "id": "uc-degrade-operation-uuid",
+      "type": "UseCase",
+      "name": "降级运行或请求人工接管",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如传感器故障，系统降级运行或请求人工接管。简化：系统在传感器故障时进入安全模式或要求人工干预。"
+    },
+    {
+      "id": "uc-local-perception-driving-uuid",
+      "type": "UseCase",
+      "name": "依靠本地感知继续安全行驶",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如通信中断，系统依靠本地感知继续安全行驶。简化：系统在失去外部通信时仅使用本地传感器维持基本安全行驶。"
+    },
+    {
+      "id": "assoc-passenger-set-destination-uuid",
+      "type": "Association",
+      "sourceId": "actor-passenger-uuid",
+      "targetId": "uc-set-destination-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：乘客通过人机界面设定目的地。简化：乘客使用设定目的地功能。"
+    },
+    {
+      "id": "assoc-passenger-start-driving-uuid",
+      "type": "Association",
+      "sourceId": "actor-passenger-uuid",
+      "targetId": "uc-start-autonomous-driving-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：乘客启动自动驾驶模式。简化：乘客使用启动自动驾驶模式功能。"
+    },
+    {
+      "id": "assoc-traffic-handle-intersection-uuid",
+      "type": "Association",
+      "sourceId": "actor-traffic-management-uuid",
+      "targetId": "uc-handle-intersection-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Secondary: 交通管理系统...处理交通信号。简化：交通管理系统为处理交叉路口和交通信号用例提供交通信号信息。"
+    },
+    {
+      "id": "assoc-other-users-avoid-obstacles-uuid",
+      "type": "Association",
+      "sourceId": "actor-other-road-users-uuid",
+      "targetId": "uc-avoid-obstacles-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：Secondary: 其他道路使用者...避让行人。简化：其他道路使用者是避让行人和障碍物用例中需要规避的对象。"
+    },
+    {
+      "id": "include-start-plan-path-uuid",
+      "type": "Include",
+      "sourceId": "uc-start-autonomous-driving-uuid",
+      "targetId": "uc-plan-global-path-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：系统规划全局路径并确认。简化：启动自动驾驶模式必须包含规划全局路径这一必要步骤。"
+    },
+    {
+      "id": "include-start-perceive-environment-uuid",
+      "type": "Include",
+      "sourceId": "uc-start-autonomous-driving-uuid",
+      "targetId": "uc-perceive-environment-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：系统执行环境感知和定位。简化：启动自动驾驶模式必须包含执行环境感知和定位这一必要步骤。"
+    },
+    {
+      "id": "include-adjust-handle-intersection-uuid",
+      "type": "Include",
+      "sourceId": "uc-adjust-driving-strategy-uuid",
+      "targetId": "uc-handle-intersection-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：根据交通状况实时调整行驶策略...处理交叉路口和交通信号。简化：实时调整行驶策略包含处理交叉路口和交通信号这一具体行为。"
+    },
+    {
+      "id": "include-adjust-avoid-obstacles-uuid",
+      "type": "Include",
+      "sourceId": "uc-adjust-driving-strategy-uuid",
+      "targetId": "uc-avoid-obstacles-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：根据交通状况实时调整行驶策略...避让行人和障碍物。简化：实时调整行驶策略包含避让行人和障碍物这一具体行为。"
+    },
+    {
+      "id": "extend-plan-replan-path-uuid",
+      "type": "Extend",
+      "sourceId": "uc-replan-path-uuid",
+      "targetId": "uc-plan-global-path-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如遇施工路段，系统重新规划绕行路径。简化：重新规划绕行路径是在特定条件（施工路段）下对规划全局路径用例的可选扩展。"
+    },
+    {
+      "id": "extend-adjust-degrade-operation-uuid",
+      "type": "Extend",
+      "sourceId": "uc-degrade-operation-uuid",
+      "targetId": "uc-adjust-driving-strategy-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如传感器故障，系统降级运行或请求人工接管。简化：降级运行或请求人工接管是在传感器故障时对实时调整行驶策略用例的可选扩展。"
+    },
+    {
+      "id": "extend-adjust-local-perception-uuid",
+      "type": "Extend",
+      "sourceId": "uc-local-perception-driving-uuid",
+      "targetId": "uc-adjust-driving-strategy-uuid",
+      "parentId": "pkg-autonomous-driving-main-uuid",
+      "description": "原文：如通信中断，系统依靠本地感知继续安全行驶。简化：依靠本地感知继续安全行驶是在通信中断时对实时调整行驶策略用例的可选扩展。"
+    }
+  ]
+}

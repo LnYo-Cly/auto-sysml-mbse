@@ -1,0 +1,337 @@
+{
+  "model": [
+    {
+      "id": "model-uav-survey-uc-uuid",
+      "name": "无人机测绘用例模型"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-uav-survey-main-uuid",
+      "type": "Package",
+      "name": "主要用例",
+      "parentId": "model-uav-survey-uc-uuid",
+      "description": "原文：无人机测绘案例。简化：包含无人机测绘系统的所有核心用例和参与者。"
+    },
+    {
+      "id": "actor-survey-engineer-uuid",
+      "type": "Actor",
+      "name": "测绘工程师",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：测绘工程师需要在某区域进行地形测绘，他通过地面站软件规划好测绘区域和飞行航线。简化：负责规划、上传并启动无人机测绘任务的主要操作人员。"
+    },
+    {
+      "id": "actor-ground-station-uuid",
+      "type": "Actor",
+      "name": "地面控制站",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：他通过地面站软件规划好测绘区域和飞行航线，上传至无人机后启动自主飞行任务。简化：运行地面站软件，用于任务规划并与无人机通信的外部系统。"
+    },
+    {
+      "id": "actor-flight-controller-uuid",
+      "type": "Actor",
+      "name": "飞行控制器",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：飞行过程中无人机突然检测到电机异常振动，系统自动评估故障等级。简化：无人机上负责飞行控制、状态监控和自主决策的机载系统。"
+    },
+    {
+      "id": "actor-ground-operator-uuid",
+      "type": "Actor",
+      "name": "地面操作员",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：同时向地面站发送警报信息。简化：负责监控无人机状态并接收系统警报的地面人员。"
+    },
+    {
+      "id": "uc-plan-survey-area-uuid",
+      "type": "UseCase",
+      "name": "规划测绘区域和飞行参数",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：规划好测绘区域和飞行航线。简化：定义无人机需要执行测绘任务的地理范围和飞行路径参数。"
+    },
+    {
+      "id": "uc-upload-mission-data-uuid",
+      "type": "UseCase",
+      "name": "上传任务数据至无人机",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：上传任务数据至无人机。简化：将规划好的任务信息从地面站传输到无人机。"
+    },
+    {
+      "id": "uc-pre-flight-check-uuid",
+      "type": "UseCase",
+      "name": "执行起飞前检查并确认",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：执行起飞前检查并确认。简化：在起飞前对无人机系统状态进行最终核查并获得执行许可。"
+    },
+    {
+      "id": "uc-start-autonomous-flight-uuid",
+      "type": "UseCase",
+      "name": "启动自主飞行任务",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：启动自主飞行任务。简化：发出指令，使无人机开始执行预设的飞行计划。"
+    },
+    {
+      "id": "uc-fly-route-collect-data-uuid",
+      "type": "UseCase",
+      "name": "按航线飞行并采集数据",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：无人机按航线飞行并采集数据。简化：无人机自主沿预定航线飞行，并利用传感器收集影像数据。"
+    },
+    {
+      "id": "uc-auto-return-uuid",
+      "type": "UseCase",
+      "name": "自动返航",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：任务完成自动返航。简化：在任务完成或触发特定条件时，无人机自动返回起飞点。"
+    },
+    {
+      "id": "uc-download-image-data-uuid",
+      "type": "UseCase",
+      "name": "下载采集的影像数据",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：下载采集的影像数据。简化：将无人机采集的影像数据从机载存储传输到地面站。"
+    },
+    {
+      "id": "uc-manual-abort-mission-uuid",
+      "type": "UseCase",
+      "name": "手动中止任务",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：如遇恶劣天气，工程师可手动中止任务。简化：由操作人员主动中断正在执行或即将执行的飞行任务。"
+    },
+    {
+      "id": "uc-detect-abnormal-vibration-uuid",
+      "type": "UseCase",
+      "name": "检测异常振动",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：飞行过程中无人机突然检测到电机异常振动。简化：通过传感器识别电机不正常的振动模式。"
+    },
+    {
+      "id": "uc-diagnose-fault-type-uuid",
+      "type": "UseCase",
+      "name": "诊断故障类型和严重程度",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：系统诊断故障类型和严重程度。简化：分析异常数据，确定故障的具体原因和等级。"
+    },
+    {
+      "id": "uc-increase-monitoring-frequency-uuid",
+      "type": "UseCase",
+      "name": "增加监控频率",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：继续任务但增加监控频率。简化：在轻微故障情况下，提升对系统状态的监视速率。"
+    },
+    {
+      "id": "uc-start-return-procedure-uuid",
+      "type": "UseCase",
+      "name": "启动返航程序",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：立即启动返航程序。简化：因严重故障而触发返回基地的飞行程序。"
+    },
+    {
+      "id": "uc-send-fault-report-uuid",
+      "type": "UseCase",
+      "name": "发送故障报告和处置方案",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：向地面站发送故障报告和处置方案。简化：将故障详情和系统采取的应对措施通知地面站。"
+    },
+    {
+      "id": "uc-generate-fault-analysis-uuid",
+      "type": "UseCase",
+      "name": "生成详细故障分析",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：安全降落后生成详细故障分析。简化：在飞行结束后，创建包含故障详情的分析报告。"
+    },
+    {
+      "id": "uc-execute-emergency-landing-uuid",
+      "type": "UseCase",
+      "name": "执行紧急降落程序",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：如多个电机同时故障，执行紧急降落程序。简化：在多重严重故障下，立即执行迫降程序以确保安全。"
+    },
+    {
+      "id": "uc-find-alternate-landing-site-uuid",
+      "type": "UseCase",
+      "name": "寻找备降场地",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：着陆环境不安全时寻找备降场地。简化：当原定降落点存在风险时，自主搜寻并飞往替代降落点。"
+    },
+    {
+      "id": "assoc-engineer-plan-uuid",
+      "type": "Association",
+      "sourceId": "actor-survey-engineer-uuid",
+      "targetId": "uc-plan-survey-area-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：他通过地面站软件规划好测绘区域和飞行航线。简化：测绘工程师执行任务规划功能。"
+    },
+    {
+      "id": "assoc-engineer-upload-uuid",
+      "type": "Association",
+      "sourceId": "actor-survey-engineer-uuid",
+      "targetId": "uc-upload-mission-data-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：上传至无人机后启动自主飞行任务。简化：测绘工程师执行数据上传功能。"
+    },
+    {
+      "id": "assoc-engineer-start-flight-uuid",
+      "type": "Association",
+      "sourceId": "actor-survey-engineer-uuid",
+      "targetId": "uc-start-autonomous-flight-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：上传至无人机后启动自主飞行任务。简化：测绘工程师发出任务启动指令。"
+    },
+    {
+      "id": "assoc-engineer-abort-uuid",
+      "type": "Association",
+      "sourceId": "actor-survey-engineer-uuid",
+      "targetId": "uc-manual-abort-mission-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：工程师可手动中止任务。简化：测绘工程师在特定情况下执行任务中止功能。"
+    },
+    {
+      "id": "assoc-engineer-download-uuid",
+      "type": "Association",
+      "sourceId": "actor-survey-engineer-uuid",
+      "targetId": "uc-download-image-data-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：下载采集的影像数据。简化：测绘工程师执行数据下载功能。"
+    },
+    {
+      "id": "assoc-station-upload-uuid",
+      "type": "Association",
+      "sourceId": "actor-ground-station-uuid",
+      "targetId": "uc-upload-mission-data-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：上传任务数据至无人机。简化：地面控制站作为通信中介，参与数据上传过程。"
+    },
+    {
+      "id": "assoc-station-download-uuid",
+      "type": "Association",
+      "sourceId": "actor-ground-station-uuid",
+      "targetId": "uc-download-image-data-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：下载采集的影像数据。简化：地面控制站作为通信中介和数据接收端，参与数据下载过程。"
+    },
+    {
+      "id": "assoc-station-fault-report-uuid",
+      "type": "Association",
+      "sourceId": "actor-ground-station-uuid",
+      "targetId": "uc-send-fault-report-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：向地面站发送警报信息。简化：地面控制站接收系统发送的故障报告。"
+    },
+    {
+      "id": "assoc-controller-detect-vibration-uuid",
+      "type": "Association",
+      "sourceId": "actor-flight-controller-uuid",
+      "targetId": "uc-detect-abnormal-vibration-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：飞行过程中无人机突然检测到电机异常振动。简化：飞行控制器负责执行异常检测功能。"
+    },
+    {
+      "id": "assoc-controller-diagnose-fault-uuid",
+      "type": "Association",
+      "sourceId": "actor-flight-controller-uuid",
+      "targetId": "uc-diagnose-fault-type-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：系统诊断故障类型和严重程度。简化：飞行控制器负责执行故障诊断功能。"
+    },
+    {
+      "id": "assoc-controller-increase-monitoring-uuid",
+      "type": "Association",
+      "sourceId": "actor-flight-controller-uuid",
+      "targetId": "uc-increase-monitoring-frequency-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：继续任务但增加监控频率。简化：飞行控制器负责执行增加监控频率的决策。"
+    },
+    {
+      "id": "assoc-controller-start-return-uuid",
+      "type": "Association",
+      "sourceId": "actor-flight-controller-uuid",
+      "targetId": "uc-start-return-procedure-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：立即启动返航程序。简化：飞行控制器负责执行启动返航程序的决策。"
+    },
+    {
+      "id": "assoc-controller-send-report-uuid",
+      "type": "Association",
+      "sourceId": "actor-flight-controller-uuid",
+      "targetId": "uc-send-fault-report-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：向地面站发送故障报告和处置方案。简化：飞行控制器负责生成并发送故障信息。"
+    },
+    {
+      "id": "assoc-controller-generate-analysis-uuid",
+      "type": "Association",
+      "sourceId": "actor-flight-controller-uuid",
+      "targetId": "uc-generate-fault-analysis-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：安全降落后生成详细故障分析。简化：飞行控制器负责生成故障分析报告。"
+    },
+    {
+      "id": "assoc-controller-emergency-landing-uuid",
+      "type": "Association",
+      "sourceId": "actor-flight-controller-uuid",
+      "targetId": "uc-execute-emergency-landing-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：执行紧急降落程序。简化：飞行控制器负责在极端情况下执行紧急降落。"
+    },
+    {
+      "id": "assoc-controller-find-landing-site-uuid",
+      "type": "Association",
+      "sourceId": "actor-flight-controller-uuid",
+      "targetId": "uc-find-alternate-landing-site-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：寻找备降场地。简化：飞行控制器负责执行寻找备降场地的决策。"
+    },
+    {
+      "id": "assoc-operator-fault-report-uuid",
+      "type": "Association",
+      "sourceId": "actor-ground-operator-uuid",
+      "targetId": "uc-send-fault-report-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：同时向地面站发送警报信息。简化：地面操作员通过地面站接收并查看故障报告。"
+    },
+    {
+      "id": "include-start-flight-pre-check-uuid",
+      "type": "Include",
+      "sourceId": "uc-start-autonomous-flight-uuid",
+      "targetId": "uc-pre-flight-check-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：执行起飞前检查并确认。简化：启动自主飞行任务前必须完成起飞前检查，这是一个必要的公共前置步骤。"
+    },
+    {
+      "id": "include-fly-route-auto-return-uuid",
+      "type": "Include",
+      "sourceId": "uc-fly-route-collect-data-uuid",
+      "targetId": "uc-auto-return-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：任务完成自动返航。简化：按航线飞行并采集数据这个主要任务流程完成后，必然包含自动返航这一步骤。"
+    },
+    {
+      "id": "extend-fly-route-manual-abort-uuid",
+      "type": "Extend",
+      "sourceId": "uc-manual-abort-mission-uuid",
+      "targetId": "uc-fly-route-collect-data-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：如遇恶劣天气，工程师可手动中止任务。简化：手动中止任务是在特定条件（如恶劣天气）下，对正在进行的飞行任务的可选中断行为。"
+    },
+    {
+      "id": "extend-start-return-send-report-uuid",
+      "type": "Extend",
+      "sourceId": "uc-send-fault-report-uuid",
+      "targetId": "uc-start-return-procedure-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：向地面站发送故障报告和处置方案。简化：在启动返航程序（因严重故障）时，可选地向地面站发送通知信息。"
+    },
+    {
+      "id": "extend-auto-return-generate-analysis-uuid",
+      "type": "Extend",
+      "sourceId": "uc-generate-fault-analysis-uuid",
+      "targetId": "uc-auto-return-uuid",
+      "parentId": "pkg-uav-survey-main-uuid",
+      "description": "原文：安全降落后生成详细故障分析。简化：生成详细故障分析是在自动返航并安全降落后，可选地增加的报告生成功能。"
+    },
+    {
+      "id": "extend-start-return",
+      "description": " 元素：Unnamed（自动生成）"
+    }
+  ]
+}

@@ -1,0 +1,439 @@
+{
+  "model": [
+    {
+      "id": "model-ads",
+      "name": "AutonomousDrivingSystemModel",
+      "description": "原文：自动驾驶系统参数图模型。简化：包含自动驾驶系统各子系统及其性能约束的完整参数图模型。"
+    }
+  ],
+  "elements": [
+    {
+      "id": "pkg-main",
+      "type": "Package",
+      "name": "AutonomousDrivingPackage",
+      "parentId": "model-ads",
+      "description": "原文：自动驾驶系统包。简化：包含自动驾驶系统所有块和约束定义的主要包。"
+    },
+    {
+      "id": "block_perception",
+      "type": "Block",
+      "name": "PerceptionSystem",
+      "parentId": "pkg-main",
+      "description": "原文：检测距离范围0.5-150米，检测精度≥99%。简化：负责环境感知的系统模块，包括目标检测和距离测量功能。"
+    },
+    {
+      "id": "prop1",
+      "type": "Property",
+      "name": "detection_range_min",
+      "propertyKind": "value",
+      "parentId": "block_perception",
+      "typeId": "Real",
+      "description": "原文：检测距离范围0.5-150米。简化：最小检测距离，单位米。"
+    },
+    {
+      "id": "prop2",
+      "type": "Property",
+      "name": "detection_range_max",
+      "propertyKind": "value",
+      "parentId": "block_perception",
+      "typeId": "Real",
+      "description": "原文：检测距离范围0.5-150米。简化：最大检测距离，单位米。"
+    },
+    {
+      "id": "prop3",
+      "type": "Property",
+      "name": "detection_accuracy",
+      "propertyKind": "value",
+      "parentId": "block_perception",
+      "typeId": "Real",
+      "description": "原文：检测精度≥99%。简化：目标检测精度，百分比。"
+    },
+    {
+      "id": "block_localization",
+      "type": "Block",
+      "name": "LocalizationSystem",
+      "parentId": "pkg-main",
+      "description": "原文：GPS精度≤10cm，横向定位误差≤15cm，纵向定位误差≤20cm。简化：负责车辆定位的系统模块，提供高精度的位置信息。"
+    },
+    {
+      "id": "prop4",
+      "type": "Property",
+      "name": "gps_accuracy",
+      "propertyKind": "value",
+      "parentId": "block_localization",
+      "typeId": "Real",
+      "description": "原文：GPS精度≤10cm。简化：GPS定位精度，单位厘米。"
+    },
+    {
+      "id": "prop5",
+      "type": "Property",
+      "name": "lateral_position_error",
+      "propertyKind": "value",
+      "parentId": "block_localization",
+      "typeId": "Real",
+      "description": "原文：横向定位误差≤15cm。简化：横向位置误差，单位厘米。"
+    },
+    {
+      "id": "prop6",
+      "type": "Property",
+      "name": "longitudinal_position_error",
+      "propertyKind": "value",
+      "parentId": "block_localization",
+      "typeId": "Real",
+      "description": "原文：纵向定位误差≤20cm。简化：纵向位置误差，单位厘米。"
+    },
+    {
+      "id": "block_planning",
+      "type": "Block",
+      "name": "PlanningSystem",
+      "parentId": "pkg-main",
+      "description": "原文：每100ms重新规划一次路径，规划延迟≤50ms。简化：负责路径规划和决策的系统模块。"
+    },
+    {
+      "id": "prop7",
+      "type": "Property",
+      "name": "replanning_interval",
+      "propertyKind": "value",
+      "parentId": "block_planning",
+      "typeId": "Real",
+      "description": "原文：每100ms重新规划一次路径。简化：路径重新规划时间间隔，单位毫秒。"
+    },
+    {
+      "id": "prop8",
+      "type": "Property",
+      "name": "planning_latency",
+      "propertyKind": "value",
+      "parentId": "block_planning",
+      "typeId": "Real",
+      "description": "原文：规划延迟≤50ms。简化：规划算法执行延迟，单位毫秒。"
+    },
+    {
+      "id": "block_control",
+      "type": "Block",
+      "name": "ControlSystem",
+      "parentId": "pkg-main",
+      "description": "原文：车道保持误差≤10cm，速度控制精度±1km/h。简化：负责车辆横向和纵向控制的系统模块。"
+    },
+    {
+      "id": "prop9",
+      "type": "Property",
+      "name": "lane_keeping_error",
+      "propertyKind": "value",
+      "parentId": "block_control",
+      "typeId": "Real",
+      "description": "原文：车道保持误差≤10cm。简化：车道保持控制误差，单位厘米。"
+    },
+    {
+      "id": "prop10",
+      "type": "Property",
+      "name": "speed_control_accuracy",
+      "propertyKind": "value",
+      "parentId": "block_control",
+      "typeId": "Real",
+      "description": "原文：速度控制精度±1km/h。简化：速度控制精度，单位公里/小时。"
+    },
+    {
+      "id": "block_computing",
+      "type": "Block",
+      "name": "ComputingSystem",
+      "parentId": "pkg-main",
+      "description": "原文：AI推理性能≥50 TOPS，内存带宽≥200GB/s。简化：负责AI计算和数据处理的计算平台模块。"
+    },
+    {
+      "id": "prop11",
+      "type": "Property",
+      "name": "ai_performance",
+      "propertyKind": "value",
+      "parentId": "block_computing",
+      "typeId": "Real",
+      "description": "原文：AI推理性能≥50 TOPS。简化：AI计算性能，单位TOPS。"
+    },
+    {
+      "id": "prop12",
+      "type": "Property",
+      "name": "memory_bandwidth",
+      "propertyKind": "value",
+      "parentId": "block_computing",
+      "typeId": "Real",
+      "description": "原文：内存带宽≥200GB/s。简化：内存带宽性能，单位GB/s。"
+    },
+    {
+      "id": "block_system",
+      "type": "Block",
+      "name": "AutonomousDrivingSystem",
+      "parentId": "pkg-main",
+      "description": "原文：端到端延迟≤100ms，感知-决策-控制环路频率≥20Hz，平均无故障时间(MTBF)≥10,000小时。简化：顶层自动驾驶系统块，集成所有子系统并定义系统级性能约束。"
+    },
+    {
+      "id": "prop13",
+      "type": "Property",
+      "name": "end_to_end_latency",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：端到端延迟≤100ms。简化：感知-决策-控制全链路延迟，单位毫秒。"
+    },
+    {
+      "id": "prop14",
+      "type": "Property",
+      "name": "control_loop_frequency",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：感知-决策-控制环路频率≥20Hz。简化：控制环路更新频率，单位赫兹。"
+    },
+    {
+      "id": "prop15",
+      "type": "Property",
+      "name": "mtbf",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：平均无故障时间(MTBF)≥10,000小时。简化：系统平均无故障运行时间，单位小时。"
+    },
+    {
+      "id": "prop16",
+      "type": "Property",
+      "name": "max_lateral_acceleration",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：max_lateral_acceleration: Real [m/s²] = 3.0。简化：最大横向加速度，单位m/s²。"
+    },
+    {
+      "id": "prop17",
+      "type": "Property",
+      "name": "max_longitudinal_acceleration",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：max_longitudinal_acceleration: Real [m/s²] = 4.0。简化：最大纵向加速度，单位m/s²。"
+    },
+    {
+      "id": "prop18",
+      "type": "Property",
+      "name": "max_deceleration",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：max_deceleration: Real [m/s²] = 6.0。简化：最大减速度，单位m/s²。"
+    },
+    {
+      "id": "prop19",
+      "type": "Property",
+      "name": "wheelbase",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：wheelbase: Real [m] = 2.8。简化：车辆轴距，单位米。"
+    },
+    {
+      "id": "prop20",
+      "type": "Property",
+      "name": "max_steering_angle",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：max_steering_angle: Real [deg] = 30.0。简化：最大转向角，单位度。"
+    },
+    {
+      "id": "prop21",
+      "type": "Property",
+      "name": "min_turning_radius",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：最小转弯半径: min_turning_radius = wheelbase / tan(max_steering_angle)。简化：车辆最小转弯半径，单位米。"
+    },
+    {
+      "id": "prop22",
+      "type": "Property",
+      "name": "trajectory_curvature",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：最大曲率约束: trajectory_curvature ≤ 1 / min_turning_radius。简化：规划轨迹的曲率。"
+    },
+    {
+      "id": "prop23",
+      "type": "Property",
+      "name": "longitudinal_acceleration",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：加速度约束。简化：车辆纵向加速度，单位m/s²。"
+    },
+    {
+      "id": "prop24",
+      "type": "Property",
+      "name": "lateral_acceleration",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：加速度约束。简化：车辆横向加速度，单位m/s²。"
+    },
+    {
+      "id": "prop25",
+      "type": "Property",
+      "name": "max_total_acceleration",
+      "propertyKind": "value",
+      "parentId": "block_system",
+      "typeId": "Real",
+      "description": "原文：加速度约束。简化：最大总加速度限制，单位m/s²。"
+    },
+    {
+      "id": "cb1",
+      "type": "ConstraintBlock",
+      "name": "PerceptionRangeConstraint",
+      "parentId": "pkg-main",
+      "specification": {
+        "expression": "detection_range_min = 0.5 and detection_range_max = 150",
+        "language": "Math"
+      },
+      "description": "原文：检测距离范围0.5-150米。简化：定义感知系统检测距离范围的约束。"
+    },
+    {
+      "id": "param1",
+      "type": "ConstraintParameter",
+      "name": "detection_range_min",
+      "parentId": "cb1",
+      "typeId": "Real",
+      "description": "原文：检测距离范围0.5-150米。简化：最小检测距离参数。"
+    },
+    {
+      "id": "param2",
+      "type": "ConstraintParameter",
+      "name": "detection_range_max",
+      "parentId": "cb1",
+      "typeId": "Real",
+      "description": "原文：检测距离范围0.5-150米。简化：最大检测距离参数。"
+    },
+    {
+      "id": "cb2",
+      "type": "ConstraintBlock",
+      "name": "DetectionAccuracyConstraint",
+      "parentId": "pkg-main",
+      "specification": {
+        "expression": "detection_accuracy ≥ 0.99",
+        "language": "Math"
+      },
+      "description": "原文：检测精度≥99%。简化：定义感知系统检测精度的约束。"
+    },
+    {
+      "id": "param3",
+      "type": "ConstraintParameter",
+      "name": "detection_accuracy",
+      "parentId": "cb2",
+      "typeId": "Real",
+      "description": "原文：检测精度≥99%。简化：检测精度参数。"
+    },
+    {
+      "id": "cb3",
+      "type": "ConstraintBlock",
+      "name": "LocalizationAccuracyConstraint",
+      "parentId": "pkg-main",
+      "specification": {
+        "expression": "gps_accuracy ≤ 0.1 and lateral_position_error ≤ 0.15 and longitudinal_position_error ≤ 0.2",
+        "language": "Math"
+      },
+      "description": "原文：GPS精度≤10cm，横向定位误差≤15cm，纵向定位误差≤20cm。简化：定义定位系统各项精度指标的约束。"
+    },
+    {
+      "id": "param4",
+      "type": "ConstraintParameter",
+      "name": "gps_accuracy",
+      "parentId": "cb3",
+      "typeId": "Real",
+      "description": "原文：GPS精度≤10cm。简化：GPS精度参数。"
+    },
+    {
+      "id": "param5",
+      "type": "ConstraintParameter",
+      "name": "lateral_position_error",
+      "parentId": "cb3",
+      "typeId": "Real",
+      "description": "原文：横向定位误差≤15cm。简化：横向定位误差参数。"
+    },
+    {
+      "id": "param6",
+      "type": "ConstraintParameter",
+      "name": "longitudinal_position_error",
+      "parentId": "cb3",
+      "typeId": "Real",
+      "description": "原文：纵向定位误差≤20cm。简化：纵向定位误差参数。"
+    },
+    {
+      "id": "cb4",
+      "type": "ConstraintBlock",
+      "name": "PlanningPerformanceConstraint",
+      "parentId": "pkg-main",
+      "specification": {
+        "expression": "replanning_interval = 100 and planning_latency ≤ 50",
+        "language": "Math"
+      },
+      "description": "原文：每100ms重新规划一次路径，规划延迟≤50ms。简化：定义规划系统性能指标的约束。"
+    },
+    {
+      "id": "param7",
+      "type": "ConstraintParameter",
+      "name": "replanning_interval",
+      "parentId": "cb4",
+      "typeId": "Real",
+      "description": "原文：每100ms重新规划一次路径。简化：重新规划间隔参数。"
+    },
+    {
+      "id": "param8",
+      "type": "ConstraintParameter",
+      "name": "planning_latency",
+      "parentId": "cb4",
+      "typeId": "Real",
+      "description": "原文：规划延迟≤50ms。简化：规划延迟参数。"
+    },
+    {
+      "id": "cb5",
+      "type": "ConstraintBlock",
+      "name": "ControlPerformanceConstraint",
+      "parentId": "pkg-main",
+      "specification": {
+        "expression": "lane_keeping_error ≤ 0.1 and speed_control_accuracy ≤ 1.0",
+        "language": "Math"
+      },
+      "description": "原文：车道保持误差≤10cm，速度控制精度±1km/h。简化：定义控制系统性能指标的约束。"
+    },
+    {
+      "id": "param9",
+      "type": "ConstraintParameter",
+      "name": "lane_keeping_error",
+      "parentId": "cb5",
+      "typeId": "Real",
+      "description": "原文：车道保持误差≤10cm。简化：车道保持误差参数。"
+    },
+    {
+      "id": "param10",
+      "type": "ConstraintParameter",
+      "name": "speed_control_accuracy",
+      "parentId": "cb5",
+      "typeId": "Real",
+      "description": "原文：速度控制精度±1km/h。简化：速度控制精度参数。"
+    },
+    {
+      "id": "cb6",
+      "type": "ConstraintBlock",
+      "name": "ComputingPerformanceConstraint",
+      "parentId": "pkg-main",
+      "specification": {
+        "expression": "ai_performance ≥ 50 and memory_bandwidth ≥ 200",
+        "language": "Math"
+      },
+      "description": "原文：AI推理性能≥50 TOPS，内存带宽≥200GB/s。简化：定义计算系统性能指标的约束。"
+    },
+    {
+      "id": "param11",
+      "type": "ConstraintParameter",
+      "name": "ai_performance",
+      "parentId": "cb6",
+      "typeId": "",
+      "description": "自动生成的描述: 这是一个类型为 'ConstraintParameter'，名称为 'ai_performance' 的元素。"
+    }
+  ]
+}
