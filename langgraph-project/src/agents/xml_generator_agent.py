@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from graph.workflow_state import WorkflowState, ProcessStatus
 from xml_generator.unify_sysml_to_csm import generate_unified_xmi
+from exports.remove_orphan_nodes import clean_json_data
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,10 @@ def xml_generator_agent(state: WorkflowState) -> WorkflowState:
         logger.info(f"📖 读取融合JSON文件: {state.fusion_output_path}")
         with open(state.fusion_output_path, 'r', encoding='utf-8') as f:
             json_data = json.load(f)
+        
+        # 清理JSON数据，移除孤立节点
+        logger.info("🧹 清理JSON数据，移除孤立节点...")
+        json_data = clean_json_data(json_data)
         
         # 生成XMI
         logger.info("🔄 开始生成XMI...")
