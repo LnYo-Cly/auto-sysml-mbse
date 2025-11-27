@@ -1,7 +1,14 @@
 import json
+import sys
+import os
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 from collections import defaultdict
+
+# 添加 src 目录到 Python 路径，以便导入 exports 模块
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from exports.remove_orphan_nodes import clean_json_data
 
 # --- 1. 统一的命名空间定义 ---
 NAMESPACES = {
@@ -235,9 +242,12 @@ def build_element_tree(parent_id, parent_xml_element):
                  'xmi:type': 'uml:Parameter', 'direction': elem_data.get('direction', 'in')
              }
              xml_elem = create_element("ownedParameter", attrs, parent_xml_element)
-             type_node = create_element("type", {}, parent=xml_elem)
-             if elem_data.get("typeId"): type_node.set("xmi:idref", elem_data["typeId"])
-             elif elem_data.get("typeHref"): type_node.set("href", elem_data["typeHref"])
+             if elem_data.get("typeId"):
+                type_node = create_element("type", {}, parent=xml_elem)
+                type_node.set("xmi:idref", elem_data["typeId"])
+            
+            # if elem_data.get("typeId"): type_node.set("xmi:idref", elem_data["typeId"])
+             #elif elem_data.get("typeHref"): type_node.set("href", #elem_data["typeHref"])
 
         elif elem_type == "EnumerationLiteral":
             attrs = {'xmi:id': elem_id, 'name': elem_name, 'xmi:type': 'uml:EnumerationLiteral'}
@@ -347,7 +357,7 @@ def build_element_tree(parent_id, parent_xml_element):
                 "Package": "uml:Package", "Block": "uml:Class", "InterfaceBlock": "uml:Class", "Class": "uml:Class",
                 "Requirement": "uml:Class", "ConstraintBlock": "uml:Class", "ValueType": "uml:DataType",
                 "Enumeration": "uml:Enumeration", "Signal": "uml:Signal", "SignalEvent": "uml:SignalEvent",
-                "Event": "uml:AnyReceiveEvent", "Actor": "uml:Actor", "UseCase": "uml:UseCase"
+                "Event": "uml:ReceiveEvent", "Actor": "uml:Actor", "UseCase": "uml:UseCase"
             }
             if elem_type in packaged_element_types:
                 base_attrs['xmi:type'] = packaged_element_types[elem_type]
@@ -619,7 +629,7 @@ def generate_unified_xmi(json_data):
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-    json_file_path = './fused_model_20251109_220212.json'
+    json_file_path = '../data/output/fusion/fused_model_20251112_135538.json'
     output_xmi_file_path = 'output.xmi'
 
     try:
@@ -627,10 +637,12 @@ if __name__ == "__main__":
         with open(json_file_path, 'r', encoding='utf-8') as f:
             print(f"正在读取JSON文件: {json_file_path}")
             json_data = json.load(f)
-        
+        # 直接清理字典数据，返回清理后的字典
+        cleaned_data = clean_json_data(json_data, verbose=True)
+
         # 步骤 2: 调用主生成函数
         print("JSON文件读取成功，开始生成XMI...")
-        unified_xmi_output = generate_unified_xmi(json_data)
+        unified_xmi_output = generate_unified_xmi(cleaned_data)
         
         # 步骤 3: 打印结果到控制台
         print("\n--- 生成的 XMI 内容 ---")
