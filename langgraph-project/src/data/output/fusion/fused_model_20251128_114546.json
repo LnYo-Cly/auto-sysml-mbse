@@ -1,0 +1,4415 @@
+{
+  "model": [
+    {
+      "name": "Model",
+      "id": "master-model",
+      "type": "Model"
+    }
+  ],
+  "elements": [
+    {
+      "parentId": "act-health-check-uuid",
+      "representsId": "blk-sensor-array-uuid",
+      "description": "原文：测试传感器功能（门磁、温度、振动）。简化：此泳道代表传感器相关的自检活动。",
+      "name": "传感器分区",
+      "nodeIds": [
+        "node-health-test-sensors"
+      ],
+      "id": "grp-sensors-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "representsId": "blk-pid-controller-uuid",
+      "description": "原文：执行PID控制算法计算控制量。简化：此泳道代表控制算法计算相关的活动。",
+      "name": "控制算法分区",
+      "nodeIds": [
+        "node-calc-delta",
+        "node-pid-calc"
+      ],
+      "id": "grp-algorithm-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "representsId": "blk-climate-sys-uuid",
+      "description": "原文：调节压缩机转速和风门开度。简化：此泳道代表执行器调节相关的活动。",
+      "name": "执行器分区",
+      "nodeIds": [
+        "node-adjust-compressor",
+        "node-adjust-blower",
+        "node-adjust-dampers"
+      ],
+      "id": "grp-actuators-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：从温度采集开始。简化：温度调节循环的起点。",
+      "name": "开始温度调节",
+      "id": "node-temp-start",
+      "type": "InitialNode"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：读取各区域温度传感器数据。简化：采集车内各区域的实时温度数据。",
+      "name": "读取温度传感器数据",
+      "id": "node-read-sensors",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-read-sensors",
+      "description": "原文：读取各区域温度传感器数据。简化：输出采集到的传感器数据。",
+      "name": "out_sensor_data",
+      "typeId": "blk-temp-reading-uuid",
+      "id": "pin-sensor-data-out",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：计算当前平均温度与目标温度的差值。简化：计算实际温度与设定温度的偏差。",
+      "name": "计算温度差值",
+      "id": "node-calc-delta",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-calc-delta",
+      "description": "原文：读取各区域温度传感器数据。简化：接收传感器数据进行计算。",
+      "name": "in_sensor_data",
+      "typeId": "blk-temp-reading-uuid",
+      "id": "pin-sensor-data-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "node-calc-delta",
+      "description": "原文：IN: target_temp: Real。简化：接收目标温度设定值。",
+      "name": "in_target_temp",
+      "typeId": "blk-temp-reading-uuid",
+      "id": "pin-target-temp-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：温度自动调节过程 - 持续监测车内温度，通过PID控制算法调节压缩机转速和风门开度。简化：该包封装了汽车空调系统的所有控制流程和组件。",
+      "name": "AutomotiveClimateControl",
+      "id": "pkg-climate-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "node-calc-delta",
+      "description": "原文：计算当前平均温度与目标温度的差值。简化：输出计算得到的温度差值。",
+      "name": "out_temp_delta",
+      "typeId": "blk-temp-delta-uuid",
+      "id": "pin-temp-delta-out",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：执行PID控制算法计算控制量。简化：通过PID算法计算出需要的控制量。",
+      "name": "执行PID控制算法",
+      "id": "node-pid-calc",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-pid-calc",
+      "description": "原文：计算当前平均温度与目标温度的差值。简化：接收温度差值作为PID输入。",
+      "name": "in_temp_delta",
+      "typeId": "blk-temp-delta-uuid",
+      "id": "pin-temp-delta-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "node-pid-calc",
+      "description": "原文：执行PID控制算法计算控制量。简化：输出PID计算得到的控制信号。",
+      "name": "out_control_signal",
+      "typeId": "blk-control-sig-uuid",
+      "id": "pin-control-out",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：根据控制量调节压缩机转速。简化：调整压缩机转速以实现温度控制。",
+      "name": "调节压缩机转速",
+      "id": "node-adjust-compressor",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-adjust-compressor",
+      "description": "原文：根据控制量调节压缩机转速。简化：接收控制信号来调节压缩机。",
+      "name": "in_control_signal",
+      "typeId": "blk-control-sig-uuid",
+      "id": "pin-control-compressor-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：调节鼓风机风量。简化：调整鼓风机风速。",
+      "name": "调节鼓风机风量",
+      "id": "node-adjust-blower",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-adjust-blower",
+      "description": "原文：调节鼓风机风量。简化：接收控制信号来调节风量。",
+      "name": "in_control_signal",
+      "typeId": "blk-control-sig-uuid",
+      "id": "pin-control-blower-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：调整风门开度分配气流。简化：调节风门位置以分配气流。",
+      "name": "调整风门开度",
+      "id": "node-adjust-dampers",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-adjust-dampers",
+      "description": "原文：调整风门开度分配气流。简化：接收控制信号来调节风门。",
+      "name": "in_control_signal",
+      "typeId": "blk-control-sig-uuid",
+      "id": "pin-control-dampers-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：等待500ms采样周期。简化：控制循环的延时等待。",
+      "name": "等待采样周期",
+      "id": "node-wait-cycle",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：返回步骤1继续循环。简化：将循环分支合并回主流程。",
+      "name": "循环合并点",
+      "id": "node-loop-merge",
+      "type": "MergeNode"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：读取各区域温度传感器数据。简化：临时存储采集的温度数据。",
+      "name": "温度数据缓存",
+      "typeId": "blk-temp-reading-uuid",
+      "id": "cbuf-temp-data",
+      "type": "CentralBufferNode"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：从温度采集开始。简化：从起始节点到温度读取动作的控制流。",
+      "targetId": "node-read-sensors",
+      "sourceId": "node-temp-start",
+      "id": "edge-start-to-read",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：读取各区域温度传感器数据。简化：将传感器数据传递到计算差值的对象流。",
+      "targetId": "pin-sensor-data-in",
+      "sourceId": "pin-sensor-data-out",
+      "id": "edge-sensor-data-flow",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：计算当前平均温度与目标温度的差值。简化：将温度差值传递到PID算法的对象流。",
+      "targetId": "pin-temp-delta-in",
+      "sourceId": "pin-temp-delta-out",
+      "id": "edge-temp-delta-flow",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：根据控制量调节压缩机转速。简化：将控制信号传递到压缩机调节的对象流。",
+      "targetId": "pin-control-compressor-in",
+      "sourceId": "pin-control-out",
+      "id": "edge-control-to-compressor",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：调节鼓风机风量。简化：将控制信号传递到风量调节的对象流。",
+      "targetId": "pin-control-blower-in",
+      "sourceId": "pin-control-out",
+      "id": "edge-control-to-blower",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：调整风门开度分配气流。简化：将控制信号传递到风门调节的对象流。",
+      "targetId": "pin-control-dampers-in",
+      "sourceId": "pin-control-out",
+      "id": "edge-control-to-dampers",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：等待500ms采样周期。简化：执行器调节完成后进入等待的控制流。",
+      "targetId": "node-wait-cycle",
+      "sourceId": "node-adjust-dampers",
+      "id": "edge-dampers-to-wait",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：等待500ms采样周期。简化：等待完成后进入循环合并的控制流。",
+      "targetId": "node-loop-merge",
+      "sourceId": "node-wait-cycle",
+      "id": "edge-wait-to-merge",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-auto-temp-uuid",
+      "description": "原文：返回步骤1继续循环。简化：从合并点回到读取传感器的控制流，实现持续循环。",
+      "targetId": "node-read-sensors",
+      "sourceId": "node-loop-merge",
+      "id": "edge-merge-to-read",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：用户认证与门锁控制流程: 此流程描述了从用户发起认证请求到门锁执行相应动作的完整序列。简化：该包封装了用户认证和门锁控制的完整流程。",
+      "name": "DoorLockControl",
+      "id": "pkg-doorlock-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-auth-system-uuid",
+      "description": "原文：IN: authenticationRequest。简化：代表用户发起的认证请求数据对象。",
+      "name": "AuthenticationRequest",
+      "id": "blk-auth-request-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-doorlock-uuid",
+      "description": "原文：输入/输出: OUT: lockStatus: LockStatus。简化：代表门锁的当前状态信息。",
+      "name": "LockStatus",
+      "id": "blk-lock-status-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-doorlock-uuid",
+      "description": "原文：3. 查询用户权限数据库。简化：代表从数据库查询到的用户权限信息。",
+      "name": "UserPermission",
+      "id": "blk-user-perm-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-doorlock-uuid",
+      "description": "原文：5. 生成认证结果（成功/失败）。简化：代表认证操作的结果状态。",
+      "name": "AuthResult",
+      "id": "blk-auth-result-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-doorlock-uuid",
+      "description": "原文：用户认证与门锁控制流程。简化：代表负责用户认证的核心系统组件。",
+      "name": "AuthenticationSystem",
+      "id": "blk-auth-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-auth-system-uuid",
+      "description": "原文：6. 发送解锁指令到锁控模块。简化：代表控制门锁机械执行的模块。",
+      "name": "LockControlModule",
+      "id": "blk-lock-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-access-control-uuid",
+      "description": "原文：6. 发送解锁指令到锁控模块。简化：代表控制门锁机械执行的模块。",
+      "name": "LockControlModule",
+      "id": "blk-lock-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：MainControlUnit指示UserInterface亮起绿灯并发出短促悦耳的提示音。简化：用户界面模块，提供视觉和听觉反馈。",
+      "name": "UserInterface",
+      "id": "blk-user-interface-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "representsId": "blk-auth-system-uuid",
+      "description": "原文：用户认证与门锁控制流程。简化：此泳道代表由认证系统执行的核心认证活动。",
+      "name": "认证系统分区",
+      "nodeIds": [
+        "node-auth-receive",
+        "node-auth-validate",
+        "node-auth-query",
+        "node-auth-execute",
+        "node-auth-generate",
+        "node-auth-decision",
+        "node-auth-update",
+        "node-auth-log"
+      ],
+      "id": "grp-auth-system-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "pkg-climate-uuid",
+      "description": "原文：读取各区域温度传感器数据。简化：代表从传感器读取的温度数据。",
+      "name": "TemperatureReading",
+      "id": "blk-temp-reading-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "node-auth-receive",
+      "description": "原文：输入/输出: IN: authRequest: AuthRequest。简化：作为\"接收认证请求\"动作的输入，接收用户认证请求。",
+      "name": "in_authRequest",
+      "typeId": "blk-auth-request-uuid",
+      "id": "pin-auth-receive-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "description": "原文：2. 验证请求格式有效性。简化：验证认证请求的数据格式是否正确。",
+      "name": "验证请求格式有效性",
+      "id": "node-auth-validate",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "description": "原文：3. 查询用户权限数据库。简化：从数据库中查询用户的权限信息。",
+      "name": "查询用户权限数据库",
+      "id": "node-auth-query",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-auth-query",
+      "description": "原文：3. 查询用户权限数据库。简化：作为\"查询用户权限数据库\"动作的输入参数。",
+      "name": "in_userPermission",
+      "typeId": "blk-user-perm-uuid",
+      "id": "pin-auth-query-in",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "description": "原文：4. 执行生物特征或密码验证算法。简化：执行具体的认证算法验证用户身份。",
+      "name": "执行生物特征或密码验证算法",
+      "id": "node-auth-execute",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "description": "原文：5. 生成认证结果（成功/失败）。简化：根据验证结果生成认证状态。",
+      "name": "生成认证结果",
+      "id": "node-auth-generate",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-auth-generate",
+      "description": "原文：5. 生成认证结果（成功/失败）。简化：作为\"生成认证结果\"动作的输出。",
+      "name": "out_authResult",
+      "typeId": "blk-auth-result-uuid",
+      "id": "pin-auth-generate-out",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "description": "原文：8. 更新系统状态日志。简化：记录系统状态变化到日志中。",
+      "name": "更新系统状态日志",
+      "id": "node-auth-update",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "description": "原文：10. 返回最终操作状态。简化：合并不同认证路径的流程。",
+      "name": "认证合并",
+      "id": "node-auth-merge",
+      "type": "MergeNode"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：输入/输出: OUT: lockStatus: LockStatus。简化：作为流程最终输出的门锁状态信息。",
+      "name": "out_lockStatus",
+      "typeId": "blk-lock-status-uuid",
+      "id": "pin-auth-final-out",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "node-unlock-complete-uuid",
+      "description": "原文：输入/输出: OUT: lockStatus: LockStatus。简化：作为流程最终输出的门锁状态信息。",
+      "name": "out_lockStatus",
+      "typeId": "blk-lock-status-uuid",
+      "id": "pin-auth-final-out",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "guard": "",
+      "description": "原文：1. 接收认证请求，2. 验证请求格式有效性。简化：从接收请求到验证格式的控制流转。",
+      "targetId": "node-auth-validate",
+      "sourceId": "node-auth-start",
+      "id": "edge-cf-start-validate",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "guard": "[success]",
+      "description": "原文：6. 如认证成功，发送解锁指令至锁控模块。简化：认证成功时触发的控制流。",
+      "targetId": "node-auth-send",
+      "sourceId": "node-auth-decision",
+      "id": "edge-cf-success-send",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "guard": "[failure]",
+      "description": "原文：5. 生成认证结果（成功/失败）。简化：认证失败时触发的控制流。",
+      "targetId": "node-auth-merge",
+      "sourceId": "node-auth-decision",
+      "id": "edge-cf-fail-merge",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "guard": "",
+      "description": "原文：1. 接收认证请求，2. 验证请求格式有效性。简化：将认证请求数据传递给验证动作。",
+      "targetId": "node-auth-validate",
+      "sourceId": "pin-auth-receive-in",
+      "id": "edge-of-request-validate",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-main-auth-uuid",
+      "guard": "",
+      "description": "原文：3. 查询用户权限数据库，4. 执行生物特征或密码验证算法。简化：将用户权限数据传递给验证算法。",
+      "targetId": "node-auth-execute",
+      "sourceId": "pin-auth-query-in",
+      "id": "edge-of-permission-execute",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：用户认证与门锁开启流程...低电量处理流程...简化：该包封装了门禁控制系统中的两个核心流程：用户认证与门锁开启、低电量处理。",
+      "name": "AccessControlSystem",
+      "id": "pkg-access-control-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-access-control-uuid",
+      "description": "原文：IN: user_credentials: Credential。简化：代表用户认证凭证的数据类型。",
+      "name": "Credential",
+      "id": "blk-credential-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-access-control-uuid",
+      "description": "原文：OUT: access_granted: Boolean。简化：代表访问授权结果的布尔数据类型。",
+      "name": "Boolean",
+      "id": "blk-boolean-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-access-control-uuid",
+      "description": "原文：IN: battery_level: Real。简化：代表电池电量水平的实数数据类型。",
+      "name": "Real",
+      "id": "blk-real-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-access-control-uuid",
+      "description": "原文：OUT: power_mode: PowerMode。简化：代表系统电源模式的数据类型。",
+      "name": "PowerMode",
+      "id": "blk-power-mode-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-access-control-uuid",
+      "description": "原文：低电量处理流程...系统执行一系列节能措施和告警操作。简化：代表负责电源管理和低电量处理的系统模块。",
+      "name": "PowerManagementModule",
+      "id": "blk-power-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-auth-system-uuid",
+      "description": "原文：查询用户数据库进行身份匹配。简化：代表存储用户身份和权限信息的数据库系统。",
+      "name": "UserDatabase",
+      "id": "blk-user-db-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-access-control-uuid",
+      "edges": [
+        "edge-power-cf1",
+        "edge-power-cf2",
+        "edge-power-cf3",
+        "edge-power-cf4",
+        "edge-power-cf5",
+        "edge-power-cf6",
+        "edge-power-cf7",
+        "edge-power-cf8",
+        "edge-power-cf9",
+        "edge-power-cf10"
+      ],
+      "nodes": [
+        "node-power-start",
+        "node-power-detect-voltage",
+        "node-power-check-threshold",
+        "node-power-enable-backup",
+        "node-power-switch-mode",
+        "node-power-send-alert",
+        "node-power-reduce-updates",
+        "node-power-monitor-trend",
+        "node-power-emergency-decision",
+        "node-power-enter-emergency",
+        "node-power-final"
+      ],
+      "description": "原文：低电量处理流程: 当检测到电池电量低于阈值时，系统执行一系列节能措施和告警操作。简化：这是定义系统低电量处理流程的主要活动。",
+      "name": "低电量处理",
+      "groups": [
+        "grp-power-module-uuid"
+      ],
+      "id": "act-low-power-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "representsId": "blk-auth-module-uuid",
+      "description": "原文：验证认证模块各组件状态。简化：此泳道代表认证模块的自检活动。",
+      "name": "认证模块分区",
+      "nodeIds": [
+        "node-health-check-auth-module"
+      ],
+      "id": "grp-auth-module-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "representsId": "blk-power-module-uuid",
+      "description": "原文：低电量处理流程...系统执行一系列节能措施和告警操作。简化：此泳道代表由电源管理模块执行的所有活动。",
+      "name": "电源管理分区",
+      "nodeIds": [
+        "node-power-detect-voltage",
+        "node-power-check-threshold",
+        "node-power-enable-backup",
+        "node-power-switch-mode",
+        "node-power-send-alert",
+        "node-power-reduce-updates",
+        "node-power-monitor-trend",
+        "node-power-emergency-decision",
+        "node-power-enter-emergency"
+      ],
+      "id": "grp-power-module-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-auth-unlock-uuid",
+      "description": "原文：3. 查询用户数据库进行身份匹配。简化：此动作通过查询数据库验证用户身份。",
+      "name": "查询用户数据库进行身份匹配",
+      "id": "node-auth-query-db",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-user-auth-uuid",
+      "description": "原文：5. 验证系统安全状态（电池电量、网络连接）。简化：此动作验证系统的安全状态是否满足开门条件。",
+      "name": "验证系统安全状态",
+      "id": "node-auth-check-security",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-user-auth-uuid",
+      "description": "原文：8. 更新访问日志。简化：此动作更新系统的访问日志记录。",
+      "name": "更新访问日志",
+      "id": "node-auth-update-log",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-auth-receive",
+      "description": "原文：IN: user_credentials: Credential。简化：作为认证流程的输入，接收用户凭证。",
+      "name": "in_credentials",
+      "typeId": "blk-credential-uuid",
+      "id": "pin-auth-in-cred",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "node-unlock-complete-uuid",
+      "description": "原文：OUT: access_granted: Boolean。简化：作为认证流程的输出，返回访问授权结果。",
+      "name": "out_access_granted",
+      "typeId": "blk-boolean-uuid",
+      "id": "pin-auth-out-result",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：1. 周期性检测电池电压（每5分钟）。简化：流程的起点，代表开始周期性电量检测。",
+      "name": "开始电量检测",
+      "id": "node-power-start",
+      "type": "InitialNode"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：1. 周期性检测电池电压（每5分钟）。简化：此动作周期性检测系统的电池电压水平。",
+      "name": "检测电池电压",
+      "id": "node-power-detect-voltage",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：2. 判断电量是否低于20%阈值。简化：此动作判断当前电量是否低于设定的阈值。",
+      "name": "判断电量阈值",
+      "id": "node-power-check-threshold",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：3. 启用超级电容备用电源。简化：此动作启用备用电源系统。",
+      "name": "启用备用电源",
+      "id": "node-power-enable-backup",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：4. 切换至节能模式（关闭非必要外设）。简化：此动作将系统切换到节能运行模式。",
+      "name": "切换节能模式",
+      "id": "node-power-switch-mode",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：5. 通过所有可用渠道发送低电量警告。简化：此动作通过多种渠道发送低电量警告信息。",
+      "name": "发送低电量警告",
+      "id": "node-power-send-alert",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：6. 减少状态更新频率（从30秒延长至5分钟）。简化：此动作降低系统状态更新的频率以节省电量。",
+      "name": "减少状态更新",
+      "id": "node-power-reduce-updates",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：7. 监控电量下降趋势。简化：此动作持续监控电量的下降趋势。",
+      "name": "监控电量趋势",
+      "id": "node-power-monitor-trend",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：8. 在电量低于5%时进入紧急模式。简化：此节点判断是否达到进入紧急模式的电量阈值。",
+      "name": "紧急模式判断",
+      "id": "node-power-emergency-decision",
+      "type": "DecisionNode"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：8. 在电量低于5%时进入紧急模式。简化：此动作将系统切换到紧急运行模式。",
+      "name": "进入紧急模式",
+      "id": "node-power-enter-emergency",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-low-power-uuid",
+      "description": "原文：流程概述-...在保证基本功能的同时最大化剩余使用时间。简化：流程的终点，代表低电量处理完成。",
+      "name": "电量处理完成",
+      "id": "node-power-final",
+      "type": "ActivityFinalNode"
+    },
+    {
+      "parentId": "node-power-detect-voltage",
+      "description": "原文：IN: battery_level: Real。简化：作为低电量处理流程的输入，接收电池电量水平。",
+      "name": "in_battery_level",
+      "typeId": "blk-real-uuid",
+      "id": "pin-power-in-level",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "pkg-climate-uuid",
+      "description": "原文：计算当前平均温度与目标温度的差值。简化：代表实际温度与设定温度的偏差值。",
+      "name": "TemperatureDelta",
+      "id": "blk-temp-delta-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "node-power-final",
+      "description": "原文：OUT: power_mode: PowerMode。简化：作为低电量处理流程的输出，返回当前的电源模式。",
+      "name": "out_power_mode",
+      "typeId": "blk-power-mode-uuid",
+      "id": "pin-power-out-mode",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-user-auth-uuid",
+      "description": "原文：1. 接收用户认证输入。简化：从开始节点到接收认证输入动作的控制流。",
+      "targetId": "node-auth-receive",
+      "sourceId": "node-auth-start",
+      "id": "edge-auth-cf1",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-user-auth-uuid",
+      "description": "原文：2. 验证凭证格式有效性。简化：从接收输入到验证格式动作的控制流。",
+      "targetId": "node-auth-validate-format",
+      "sourceId": "node-auth-receive",
+      "id": "edge-auth-cf2",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-user-auth-uuid",
+      "description": "原文：3. 查询用户数据库进行身份匹配。简化：从格式验证到数据库查询动作的控制流。",
+      "targetId": "node-auth-query-db",
+      "sourceId": "node-auth-validate-format",
+      "id": "edge-auth-cf3",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-user-auth-uuid",
+      "description": "原文：4. 检查访问权限和时间限制。简化：从数据库查询到权限检查动作的控制流。",
+      "targetId": "node-auth-check-permission",
+      "sourceId": "node-auth-query-db",
+      "id": "edge-auth-cf4",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-user-auth-uuid",
+      "description": "原文：5. 验证系统安全状态（电池电量、网络连接）。简化：从权限检查到安全状态验证动作的控制流。",
+      "targetId": "node-auth-check-security",
+      "sourceId": "node-auth-check-permission",
+      "id": "edge-auth-cf5",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：用户开锁流程。简化：该包封装了智能门锁系统的所有相关流程和组件。",
+      "name": "SmartLockSystem",
+      "id": "pkg-smartlock-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：IN: user_credential: CredentialData。简化：代表用户认证凭证的数据类型。",
+      "name": "CredentialData",
+      "id": "blk-credential-data-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：OUT: lock_state: LockState。简化：代表门锁状态的数据类型。",
+      "name": "LockState",
+      "id": "blk-lock-state-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：发送开锁命令(LockCommand.Unlock)。简化：锁控制命令的数据类型。",
+      "name": "LockCommand",
+      "id": "blk-lock-command-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：MainControlUnit将系统状态设置为已认证。简化：系统状态信息的数据类型。",
+      "name": "SystemStatus",
+      "id": "blk-system-status-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：SensorHub模块检测到用户输入（如指纹按压），采集原始凭证数据。简化：负责采集用户输入凭证的传感器模块。",
+      "name": "SensorHub",
+      "id": "blk-sensorhub-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：MainControlUnit调用authenticateUser操作。简化：主控制器，负责认证逻辑和系统控制。",
+      "name": "MainControlUnit",
+      "id": "blk-main-control-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：MotorDriver接通电路，驱动锁舌电机正转。简化：电机驱动模块，负责控制锁舌电机。",
+      "name": "MotorDriver",
+      "id": "blk-motor-driver-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "edges": [
+        "flow-start-to-receive-uuid",
+        "flow-credential-data-uuid",
+        "flow-auth-request-uuid",
+        "flow-auth-result-uuid",
+        "flow-auth-success-uuid",
+        "flow-update-status-uuid",
+        "flow-send-unlock-cmd-uuid",
+        "flow-drive-motor-uuid",
+        "flow-mechanical-complete-uuid",
+        "flow-provide-feedback-uuid",
+        "flow-log-event-uuid",
+        "flow-unlock-complete-uuid",
+        "flow-auth-fail-uuid",
+        "flow-update-fail-count-uuid",
+        "flow-security-check-uuid",
+        "flow-auth-fail-end-uuid"
+      ],
+      "nodes": [
+        "node-start-auth-uuid",
+        "node-receive-credential-uuid",
+        "node-send-auth-request-uuid",
+        "node-execute-auth-uuid",
+        "node-auth-decision-uuid",
+        "node-update-status-uuid",
+        "node-send-unlock-cmd-uuid",
+        "node-drive-motor-uuid",
+        "node-mechanical-complete-uuid",
+        "node-provide-feedback-uuid",
+        "node-log-event-uuid",
+        "node-update-fail-count-uuid",
+        "node-security-check-uuid",
+        "node-unlock-complete-uuid",
+        "node-auth-fail-end-uuid"
+      ],
+      "description": "原文：用户开锁流程。输入/输出: IN: user_credential: CredentialData, OUT: lock_state: LockState。简化：这是定义用户认证和开锁的核心流程活动。",
+      "name": "用户开锁流程",
+      "groups": [
+        "part-sensorhub-uuid",
+        "part-maincontrol-uuid",
+        "part-motordriver-uuid",
+        "part-userinterface-uuid"
+      ],
+      "id": "act-user-unlock-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：用户身份认证流程：接收认证请求 → 指纹识别/数字密码/NFC卡认证 → 2秒内完成认证处理 → 返回成功或失败状态。简化：处理用户身份验证的子活动。",
+      "name": "用户身份认证流程",
+      "id": "act-auth-process-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：锁舌控制流程：收到有效开锁指令 → 电机驱动电路输出12V DC电压 → 驱动锁舌电机正转（开锁）或反转（上锁）→ 1.5秒内完成机械动作。简化：控制锁舌机械运动的子活动。",
+      "name": "锁舌控制流程",
+      "id": "act-latch-control-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "representsId": "blk-main-control-uuid",
+      "description": "原文：MainControlUnit调用authenticateUser操作。简化：此泳道代表由主控制单元执行的所有活动。",
+      "name": "MainControlUnit分区",
+      "nodeIds": [
+        "node-execute-auth-uuid",
+        "node-auth-decision-uuid",
+        "node-update-status-uuid",
+        "node-send-unlock-cmd-uuid",
+        "node-provide-feedback-uuid",
+        "node-log-event-uuid",
+        "node-update-fail-count-uuid",
+        "node-security-check-uuid"
+      ],
+      "id": "part-maincontrol-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "representsId": "blk-user-interface-uuid",
+      "description": "原文：MainControlUnit指示UserInterface亮起绿灯。简化：此泳道代表由用户界面模块执行的所有活动。",
+      "name": "UserInterface分区",
+      "nodeIds": [
+        "node-provide-feedback-uuid"
+      ],
+      "id": "part-userinterface-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "node-receive-credential-uuid",
+      "description": "原文：采集原始凭证数据。简化：作为接收认证凭证动作的输出引脚，提供采集的凭证数据。",
+      "name": "out_credential_data",
+      "typeId": "blk-credential-data-uuid",
+      "id": "pin-credential-out-uuid",
+      "type": "OutputPin"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：SensorHub通过I2C总线将凭证数据发送至MainControlUnit。简化：此动作负责将采集的凭证数据传输到主控制器。",
+      "name": "发送认证请求",
+      "id": "node-send-auth-request-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：MainControlUnit调用authenticateUser操作，将接收到的凭证与存储在内部的授权模板进行比对。简化：此动作执行实际的用户身份验证逻辑。",
+      "behavior": "act-auth-process-uuid",
+      "name": "执行认证逻辑",
+      "id": "node-execute-auth-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "node-execute-auth-uuid",
+      "description": "原文：发送认证请求。简化：作为执行认证逻辑动作的输入引脚，接收认证请求数据。",
+      "name": "in_auth_request",
+      "typeId": "blk-auth-request-uuid",
+      "id": "pin-auth-request-in-uuid",
+      "type": "InputPin"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：基于比对结果，生成认证成功或失败的决定。简化：此决策节点根据认证结果选择不同的执行路径。",
+      "name": "认证决策",
+      "id": "node-auth-decision-uuid",
+      "type": "DecisionNode"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：MainControlUnit将系统状态设置为已认证。简化：在认证成功后更新系统状态。",
+      "name": "更新状态",
+      "id": "node-update-status-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：MainControlUnit通过GPIO向MotorDriver发送开锁命令。简化：发送电机驱动指令以执行开锁操作。",
+      "name": "发送开锁指令",
+      "id": "node-send-unlock-cmd-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：MotorDriver接通电路，驱动锁舌电机正转，缩回锁舌。简化：控制电机执行物理开锁动作。",
+      "behavior": "act-latch-control-uuid",
+      "name": "驱动电机",
+      "id": "node-drive-motor-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：锁舌完全缩回，机械机构触发限位开关，电机停止。简化：检测机械动作完成的节点。",
+      "name": "机械到位",
+      "id": "node-mechanical-complete-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：MainControlUnit生成一条开锁成功事件，并通过CommunicationModule上传至云服务器。简化：记录开锁事件并同步到云端。",
+      "name": "记录事件",
+      "id": "node-log-event-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：MainControlUnit增加failedAttempts计数器。简化：在认证失败时更新失败计数器。",
+      "name": "更新失败计数",
+      "id": "node-update-fail-count-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "pkg-climate-uuid",
+      "description": "原文：执行PID控制算法计算控制量。简化：代表PID算法输出的控制信号。",
+      "name": "ControlSignal",
+      "id": "blk-control-sig-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：如果失败次数>=5: 触发安全锁定，系统进入锁定状态5分钟。简化：执行安全检查以防止暴力破解。",
+      "name": "安全检查",
+      "id": "node-security-check-uuid",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：流程结束: 活动完成，输出lock_state为UNLOCKED。简化：认证成功路径的终点。",
+      "name": "开锁完成",
+      "id": "node-unlock-complete-uuid",
+      "type": "ActivityFinalNode"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：流程结束: 活动完成，输出lock_state保持不变。简化：认证失败路径的终点。",
+      "name": "认证失败结束",
+      "id": "node-auth-fail-end-uuid",
+      "type": "ActivityFinalNode"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：接收认证凭证。简化：从起始节点到接收认证凭证动作的控制流。",
+      "targetId": "node-receive-credential-uuid",
+      "sourceId": "node-start-auth-uuid",
+      "id": "flow-start-to-receive-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "原文：SensorHub通过I2C总线将凭证数据发送至MainControlUnit。简化：将凭证数据从SensorHub传输到MainControlUnit的对象流。",
+      "targetId": "pin-auth-request-in-uuid",
+      "sourceId": "pin-credential-out-uuid",
+      "id": "flow-credential-data-uuid",
+      "type": "ObjectFlow"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "简化：从接收凭证到发送认证请求的控制流。",
+      "targetId": "node-send-auth-request-uuid",
+      "sourceId": "node-receive-credential-uuid",
+      "id": "flow-auth-request-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "description": "简化：从执行认证逻辑到认证决策的控制流。",
+      "targetId": "node-auth-decision-uuid",
+      "sourceId": "node-execute-auth-uuid",
+      "id": "flow-auth-result-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "description": "流：ControlFlow 从 node-auth-decision-uuid 到 node-update-status-uuid",
+      "targetId": "node-update-status-uuid",
+      "sourceId": "node-auth-decision-uuid",
+      "id": "flow-auth-success-uuid",
+      "type": "ControlFlow"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：用户认证与门锁开启流程: 流程概述: 此流程描述了从用户发起认证请求到门锁成功开启的完整序列。简化：该包封装了用户认证和门锁控制相关的所有组件和活动。",
+      "name": "UserAuthenticationSystem",
+      "id": "pkg-auth-system-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：系统自检与健康监控流程: 流程概述: 定期执行的系统健康检查流程，确保所有关键组件正常工作。简化：该包封装了系统自检和健康监控相关的所有组件和活动。",
+      "name": "SystemHealthMonitoring",
+      "id": "pkg-health-monitor-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-auth-system-uuid",
+      "description": "原文：OUT: accessGranted。简化：代表认证成功并授予访问权限的结果对象。",
+      "name": "AccessGranted",
+      "id": "blk-access-granted-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-health-monitor-uuid",
+      "description": "原文：IN: selfTestTrigger。简化：代表触发系统自检的输入信号或事件。",
+      "name": "SelfTestTrigger",
+      "id": "blk-self-test-trigger-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-health-monitor-uuid",
+      "description": "原文：OUT: healthStatus。简化：代表系统健康状态的评估结果报告。",
+      "name": "HealthStatus",
+      "id": "blk-health-status-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-health-monitor-uuid",
+      "description": "原文：测试传感器功能（门磁、温度、振动）。简化：代表系统中各类传感器的集合。",
+      "name": "SensorArray",
+      "id": "blk-sensor-array-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-health-monitor-uuid",
+      "description": "原文：评估电源系统状态。简化：代表系统的电源供应和管理组件。",
+      "name": "PowerSystem",
+      "id": "blk-power-system-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-health-monitor-uuid",
+      "edges": [
+        "edge-health-cf1-start-init",
+        "edge-health-cf2-init-sensors",
+        "edge-health-cf3-sensors-auth",
+        "edge-health-cf4-auth-lock",
+        "edge-health-cf5-lock-comms",
+        "edge-health-cf6-comms-power",
+        "edge-health-cf7-power-report",
+        "edge-health-cf8-report-decide",
+        "edge-health-cf9-decide-end"
+      ],
+      "nodes": [
+        "node-health-start",
+        "node-health-init",
+        "node-health-test-sensors",
+        "node-health-check-auth-module",
+        "node-health-check-lock-mech",
+        "node-health-test-comms",
+        "node-health-check-power",
+        "node-health-generate-report",
+        "node-health-decide-alert",
+        "node-health-end"
+      ],
+      "description": "原文：系统自检与健康监控流程: 流程概述: 定期执行的系统健康检查流程，确保所有关键组件正常工作。简化：这是定义系统定期自检和健康监控流程的主要活动。",
+      "name": "系统自检与健康监控活动",
+      "groups": [
+        "grp-sensors-uuid",
+        "grp-auth-module-uuid",
+        "grp-lock-mech-uuid",
+        "grp-comms-uuid"
+      ],
+      "id": "act-health-check-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "act-user-unlock-uuid",
+      "representsId": "blk-auth-module-uuid",
+      "description": "原文：接收用户认证输入（指纹/PIN/RFID）。简化：此泳道代表由认证输入模块执行的活动。",
+      "name": "认证输入分区",
+      "nodeIds": [
+        "node-auth-receive-input"
+      ],
+      "id": "grp-auth-input-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-auth-unlock-uuid",
+      "representsId": "blk-user-db-uuid",
+      "description": "原文：验证输入数据格式有效性，查询用户数据库进行身份匹配。简化：此泳道代表数据处理和验证相关的活动。",
+      "name": "数据处理分区",
+      "nodeIds": [
+        "node-auth-validate-format",
+        "node-auth-query-db"
+      ],
+      "id": "grp-data-processing-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-auth-unlock-uuid",
+      "representsId": "blk-user-db-uuid",
+      "description": "原文：检查访问权限和时间限制。简化：此泳道代表权限验证和控制相关的活动。",
+      "name": "权限控制分区",
+      "nodeIds": [
+        "node-auth-check-permissions"
+      ],
+      "id": "grp-permission-control-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "representsId": "blk-lock-control-uuid",
+      "description": "原文：检查锁控电机和位置传感器。简化：此泳道代表门锁机械系统的自检活动。",
+      "name": "锁控机械分区",
+      "nodeIds": [
+        "node-health-check-lock-mech"
+      ],
+      "id": "grp-lock-mech-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "representsId": "blk-comms-module-uuid",
+      "description": "原文：测试通信模块连接性。简化：此泳道代表通信系统的自检活动。",
+      "name": "通信分区",
+      "nodeIds": [
+        "node-health-test-comms"
+      ],
+      "id": "grp-comms-uuid",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-auth-unlock-uuid",
+      "description": "原文：5. 验证锁控系统就绪状态。简化：此动作确认门锁系统是否处于可操作状态。",
+      "name": "验证锁控系统就绪状态",
+      "id": "node-auth-check-lock-ready",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "description": "原文：定期执行的系统健康检查流程。简化：流程的起点，代表系统自检序列开始。",
+      "name": "开始自检",
+      "id": "node-health-start",
+      "type": "InitialNode"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "description": "原文：1. 初始化自检序列。简化：此动作初始化系统自检流程。",
+      "name": "初始化自检序列",
+      "id": "node-health-init",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "description": "原文：2. 测试传感器功能（门磁、温度、振动）。简化：此动作检查各类传感器的工作状态。",
+      "name": "测试传感器功能",
+      "id": "node-health-test-sensors",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "description": "原文：3. 验证认证模块各组件状态。简化：此动作验证认证相关硬件的状态。",
+      "name": "验证认证模块各组件状态",
+      "id": "node-health-check-auth-module",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "description": "原文：4. 检查锁控电机和位置传感器。简化：此动作检查门锁机械系统的状态。",
+      "name": "检查锁控电机和位置传感器",
+      "id": "node-health-check-lock-mech",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "description": "原文：5. 测试通信模块连接性。简化：此动作验证通信系统的连接状态。",
+      "name": "测试通信模块连接性",
+      "id": "node-health-test-comms",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "description": "原文：6. 评估电源系统状态。简化：此动作检查电源系统的健康状况。",
+      "name": "评估电源系统状态",
+      "id": "node-health-check-power",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "description": "原文：7. 生成健康状态报告。简化：此动作汇总所有检查结果生成健康报告。",
+      "name": "生成健康状态报告",
+      "id": "node-health-generate-report",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-health-check-uuid",
+      "description": "原文：8. 根据结果决定是否触发维护警报。简化：此动作基于检查结果决定是否需要发出维护警报。",
+      "name": "根据结果决定是否触发维护警报",
+      "id": "node-health-decide-alert",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "description": " 元素",
+      "id": "node-health-end",
+      "type": "UnknownType"
+    },
+    {
+      "description": "包含汽车空调系统的核心功能需求，如温度调节、分区控制、除霜除雾等",
+      "name": "功能需求包",
+      "id": "pkg-functional-req-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "reqId": "REQ-NFN-001",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "text": "从温度传感器检测到变化到执行器开始动作的延迟应小于500ms；用户界面操作响应时间应小于200ms",
+      "description": "原文：从温度传感器检测到变化到执行器开始动作的延迟应小于500ms；用户界面操作响应时间应小于200ms。简化：该需求规定了系统的实时响应性能要求，确保控制及时性和用户体验。背景：快速响应是保证温度控制精度和用户满意度的关键。",
+      "name": "响应时间",
+      "id": "req-response-time-uuid",
+      "type": "Requirement"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：通过Wi-Fi或蜂窝网络连接云服务。职责：负责系统的网络通信功能，支持Wi-Fi和4G LTE连接，实现远程控制和数据传输。组成：包含Wi-Fi模块、4G LTE模块、网络协议栈。技术：采用双网络冗余设计，确保通信可靠性。",
+      "name": "通信模块",
+      "id": "blk-communication-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：电源管理要求。职责：管理系统电源，优化功耗，监控电池状态，提供低电量预警功能。组成：包含电源管理IC、电池监测电路、功耗控制逻辑。技术：采用动态电源管理和休眠唤醒机制实现低功耗运行。",
+      "name": "电源管理模块",
+      "id": "blk-power-management-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：状态数据应每30秒更新一次。测试目的：验证状态监控的准确性和实时性。测试方法：模拟各种门锁状态变化，检查状态数据更新频率和准确性。预期结果：状态数据更新间隔30±5秒，状态识别准确率100%，电池电量监测误差<5%。",
+      "name": "状态监控测试",
+      "id": "tc-status-monitor-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "blockId": "blk-status-monitor-uuid",
+      "description": "原文：系统应持续监控门锁状态。状态监控模块通过锁状态传感器、门位置传感器和电池电量监测电路来满足门锁状态监控需求，采用定时轮询和中断触发机制，实时监控锁定状态、门位置和电池电量，确保状态数据的准确性和实时性。",
+      "requirementId": "req-lock-monitor-uuid",
+      "id": "rel-satisfy-status-monitor-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "blockId": "blk-communication-module-uuid",
+      "description": "原文：通信模块通过Wi-Fi或蜂窝网络连接云服务器。通信模块通过双网络冗余设计和优化的网络协议栈来满足远程控制功能需求，实现<500ms的网络延迟和>99.9%的命令执行成功率，支持可靠的远程锁定/解锁操作。",
+      "requirementId": "req-remote-control-uuid",
+      "id": "rel-satisfy-communication-module-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "blockId": "blk-power-management-uuid",
+      "description": "原文：电源管理要求。电源管理模块通过电源管理IC、电池监测电路和功耗控制逻辑来满足电源管理需求，采用动态电源管理和休眠唤醒机制，优化系统功耗，监控电池状态，提供低电量预警，确保系统的长期稳定运行和电池续航能力。",
+      "requirementId": "req-power-management-uuid",
+      "id": "rel-satisfy-power-management-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：远程控制性能测试验证远程控制功能。通过性能测试验证远程控制功能需求，测试网络延迟、命令执行成功率和网络切换功能，确保<500ms延迟和>99.9%成功率的要求得到满足。",
+      "testCaseId": "tc-remote-control-test-uuid",
+      "requirementId": "req-remote-control-uuid",
+      "id": "rel-verify-remote-control-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：主控制器在收到有效的开锁指令后，应通过电机驱动电路输出12V DC电压。职责：作为系统核心处理单元，协调各模块工作。组成：包含中央处理器、电机驱动电路、通信接口。技术：采用低功耗微控制器和实时操作系统。",
+      "name": "主控制器",
+      "id": "blk-main-controller-uuid",
+      "type": "Block"
+    },
+    {
+      "description": "验证关系：测试验证需求",
+      "testCaseId": "tc-environmental-test-uuid",
+      "requirementId": "req-environmental-adaptability",
+      "id": "rel-verify-environmental-adaptability-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "blockId": "blk-communication-module-uuid",
+      "description": "原文：通过Wi-Fi或蜂窝网络连接云服务。通信模块通过集成Wi-Fi模块和4G LTE模块来满足远程控制功能需求，采用双网络冗余设计和安全通信协议，支持远程锁定/解锁、临时访问码生成和访问日志查询，确保远程控制的可靠性和安全性。",
+      "requirementId": "req-remote-control-uuid",
+      "id": "rel-satisfy-communication-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "reqId": "REQ-FUN-001",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "系统应持续监测车内温度，通过PID控制算法调节压缩机转速和风门开度，使车内温度维持在设定值±1°C范围内",
+      "description": "原文：系统应持续监测车内温度，通过PID控制算法调节压缩机转速和风门开度，使车内温度维持在设定值±1°C范围内。简化：该需求要求系统具备智能温度调节能力，通过闭环控制算法精确维持车内温度稳定。背景：这是空调系统的核心功能，直接影响乘客舒适度。",
+      "name": "温度自动调节",
+      "id": "req-temp-auto-ctrl-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-002",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "系统应支持至少双区独立温度控制，驾驶员侧和副驾驶侧可独立设定温度范围16-32°C，系统通过独立的风门和传感器实现分区调节",
+      "description": "原文：系统应支持至少双区独立温度控制，驾驶员侧和副驾驶侧可独立设定温度范围16-32°C，系统通过独立的风门和传感器实现分区调节。简化：该需求要求系统提供分区温度控制功能，满足不同座位乘客的个性化温度需求。背景：提升驾乘舒适性和用户体验。",
+      "name": "多区域独立控制",
+      "id": "req-multi-zone-ctrl-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-FUN-003",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "系统应提供一键除霜除雾模式，自动将风量调至最大，风向设置为前挡风玻璃，温度设为最高，AC压缩机强制启动以除湿",
+      "description": "原文：系统应提供一键除霜除雾模式，自动将风量调至最大，风向设置为前挡风玻璃，温度设为最高，AC压缩机强制启动以除湿。简化：该需求要求系统具备快速除霜除雾能力，确保行车安全。背景：在恶劣天气条件下保证驾驶员视野清晰。",
+      "name": "除霜除雾功能",
+      "id": "req-defog-function-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-002",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "text": "系统在标准工况（环境温度35°C，车内设定25°C）下的功耗不应超过3kW；COP（性能系数）应大于2.5",
+      "description": "原文：系统在标准工况（环境温度35°C，车内设定25°C）下的功耗不应超过3kW；COP（性能系数）应大于2.5。简化：该需求规定了系统的能效性能指标，确保在满足功能的同时控制能耗。背景：符合节能减排的环保要求。",
+      "name": "能效要求",
+      "id": "req-energy-efficiency-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-NFN-003",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "text": "系统平均无故障时间（MTBF）应大于10,000小时；关键部件（压缩机、控制器）设计寿命应大于整车寿命周期（15年或30万公里）",
+      "description": "原文：系统平均无故障时间（MTBF）应大于10,000小时；关键部件（压缩机、控制器）设计寿命应大于整车寿命周期（15年或30万公里）。简化：该需求规定了系统的可靠性和寿命要求，确保长期稳定运行。背景：满足汽车行业对关键系统的可靠性标准。",
+      "name": "可靠性指标",
+      "id": "req-reliability-uuid",
+      "type": "Requirement"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：通过PID控制算法调节压缩机转速和风门开度。职责：负责实时监测车内温度，执行PID控制算法，调节压缩机转速和风门开度以维持设定温度。组成：包含温度传感器、PID控制器、执行器驱动模块。",
+      "name": "温度控制模块",
+      "id": "blk-temp-control-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统通过独立的风门和传感器实现分区调节。职责：负责管理多区域独立温度控制，处理不同区域的温度设定和调节。组成：包含分区传感器阵列、独立风门控制器、区域温度计算模块。",
+      "name": "分区控制模块",
+      "id": "blk-zone-control-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-climate-uuid",
+      "description": "原文：温度自动调节过程。简化：代表整个空调控制系统。",
+      "name": "ClimateControlSystem",
+      "id": "blk-climate-sys-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：自动将风量调至最大，风向设置为前挡风玻璃，温度设为最高，AC压缩机强制启动以除湿。职责：负责执行一键除霜除雾功能，协调风量、风向、温度和压缩机的工作状态。组成：包含模式切换控制器、风量调节器、压缩机强制启动模块。",
+      "name": "除霜除雾模块",
+      "id": "blk-defog-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：系统应持续监测车内温度并调节相关参数。职责：作为系统核心控制器，协调各功能模块的工作，处理用户界面操作，确保系统整体性能。组成：包含主控芯片、通信接口、电源管理模块。",
+      "name": "系统控制器",
+      "id": "blk-system-controller-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：验证方法: Test。测试目的：验证温度自动调节功能的控制精度。测试方法：在不同环境温度下测试系统维持设定温度的能力，记录温度波动范围。预期结果：车内温度维持在设定值±1°C范围内。",
+      "name": "温度控制精度测试",
+      "id": "tc-temp-precision-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：验证方法: Test。测试目的：验证多区域独立控制功能的正确性。测试方法：分别设置驾驶员侧和副驾驶侧不同温度，测试各区域温度控制独立性。预期结果：各区域温度可独立控制在16-32°C范围内。",
+      "name": "分区控制功能测试",
+      "id": "tc-zone-control-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：验证方法: Demonstration。测试目的：验证除霜除雾功能的完整性和有效性。测试方法：在模拟结霜条件下启动一键除霜模式，观察系统响应和除霜效果。预期结果：系统自动将风量调至最大，风向设置为前挡风玻璃，温度设为最高，AC压缩机强制启动。",
+      "name": "除霜除雾演示测试",
+      "id": "tc-defog-demo-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：验证方法: Test。测试目的：验证系统响应时间性能指标。测试方法：测量温度传感器检测到变化到执行器开始动作的延迟时间，以及用户界面操作响应时间。预期结果：控制延迟小于500ms，界面响应小于200ms。",
+      "name": "系统响应时间测试",
+      "id": "tc-response-time-test-uuid",
+      "type": "TestCase"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "blockId": "blk-temp-control-uuid",
+      "description": "原文：通过PID控制算法调节压缩机转速和风门开度。温度控制模块通过实现PID控制算法和实时温度监测来满足温度自动调节需求，采用闭环控制技术精确调节压缩机转速和风门开度，确保车内温度稳定在设定范围内。",
+      "requirementId": "req-temp-auto-ctrl-uuid",
+      "id": "rel-satisfy-tempctrl-autotemp-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "blockId": "blk-zone-control-uuid",
+      "description": "原文：系统通过独立的风门和传感器实现分区调节。分区控制模块通过配置独立的风门控制系统和分区温度传感器阵列来满足多区域独立控制需求，实现驾驶员侧和副驾驶侧的温度独立调节功能。",
+      "requirementId": "req-multi-zone-ctrl-uuid",
+      "id": "rel-satisfy-zonectrl-multizone-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "blockId": "blk-defog-module-uuid",
+      "description": "原文：自动将风量调至最大，风向设置为前挡风玻璃，温度设为最高，AC压缩机强制启动以除湿。除霜除雾模块通过实现一键模式切换和参数自动调节来满足除霜除雾功能需求，协调风量、风向、温度和压缩机的工作状态，快速清除挡风玻璃上的霜雾。",
+      "requirementId": "req-defog-function-uuid",
+      "id": "rel-satisfy-defogctrl-defogfunc-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "blockId": "blk-system-controller-uuid",
+      "description": "原文：从温度传感器检测到变化到执行器开始动作的延迟应小于500ms。系统控制器通过优化控制算法和硬件响应机制来满足响应时间需求，采用实时操作系统和高效数据处理技术，确保控制延迟和界面响应时间符合性能要求。",
+      "requirementId": "req-response-time-uuid",
+      "id": "rel-satisfy-sysctrl-responsetime-uuid",
+      "type": "Satisfy"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：验证方法: Test。通过温度控制精度测试验证温度自动调节需求，测试在不同工况下系统维持设定温度的能力，确保温度波动范围在±1°C内，验证PID控制算法的有效性和系统稳定性。",
+      "testCaseId": "tc-temp-precision-test-uuid",
+      "requirementId": "req-temp-auto-ctrl-uuid",
+      "id": "rel-verify-temptest-autotemp-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：验证方法: Test。通过分区控制功能测试验证多区域独立控制需求，测试各区域温度设定的独立性和准确性，确保系统能够实现至少双区独立温度控制，温度范围16-32°C可调。",
+      "testCaseId": "tc-zone-control-test-uuid",
+      "requirementId": "req-multi-zone-ctrl-uuid",
+      "id": "rel-verify-zonetest-multizone-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：验证方法: Demonstration。通过除霜除雾演示测试验证除霜除雾功能需求，在模拟结霜条件下观察系统一键启动后的工作状态，验证风量、风向、温度和压缩机的自动调节功能，确保除霜除雾效果符合要求。",
+      "testCaseId": "tc-defog-demo-test-uuid",
+      "requirementId": "req-defog-function-uuid",
+      "id": "rel-verify-defogtest-defogfunc-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "description": "原文：验证方法: Test。通过系统响应时间测试验证响应时间需求，使用高精度计时设备测量控制延迟和界面响应时间，确保温度传感器到执行器的延迟小于500ms，用户界面操作响应时间小于200ms。",
+      "testCaseId": "tc-response-time-test-uuid",
+      "requirementId": "req-response-time-uuid",
+      "id": "rel-verify-responsetest-responsetime-uuid",
+      "type": "Verify"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：车机空调案例。简化：包含车机空调系统的所有核心用例和参与者。",
+      "name": "主要用例",
+      "id": "pkg-car-ac-main-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：参与者: Primary: 驾驶员。简化：主要用户，操作系统功能。",
+      "name": "驾驶员",
+      "id": "actor-driver-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：Secondary: 温度传感器。简化：提供车内温度数据的设备。",
+      "name": "温度传感器",
+      "id": "actor-temp-sensor-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：Secondary: 湿度传感器。简化：提供车内湿度数据的设备。",
+      "name": "湿度传感器",
+      "id": "actor-humidity-sensor-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：设定舒适温度 - 场景简述: 驾驶员在炎热夏日进入车辆，希望通过空调快速降低车内温度至舒适范围。简化：用户设定目标温度，系统自动调节到舒适温度。",
+      "name": "设定舒适温度",
+      "id": "uc-set-comfort-temp-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：驾驶员通过触摸屏设定目标温度为22°C。简化：用户设置期望的温度值。",
+      "name": "设定目标温度",
+      "id": "uc-set-target-temp-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：快速除雾 - 场景简述: 冬季清晨，车窗起雾影响驾驶视野，驾驶员启动一键除雾功能快速清除雾气。简化：用户启动一键除雾功能，系统自动清除车窗雾气。",
+      "name": "快速除雾",
+      "id": "uc-quick-defog-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：驾驶员按下除雾按钮。简化：用户触发除雾模式。",
+      "name": "启动除雾",
+      "id": "uc-start-defog-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：如果外部温度过低，系统同时启动后窗加热辅助除雾。简化：在特定条件下自动启动后窗加热以辅助除雾。",
+      "name": "启动后窗加热",
+      "id": "uc-start-rear-window-heat-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：如果电池电量不足，系统自动进入节能模式，限制最大功耗。简化：在电池电量低时自动降低功耗运行。",
+      "name": "进入节能模式",
+      "id": "uc-enter-energy-save-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：如果温度传感器故障，系统使用默认设置运行并提示用户。简化：系统在异常时向用户发出提示信息。",
+      "name": "提示用户",
+      "id": "uc-notify-user-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：参与者: Primary: 驾驶员。简化：驾驶员启动设定舒适温度功能。",
+      "targetId": "uc-set-comfort-temp-uuid",
+      "sourceId": "actor-driver-uuid",
+      "id": "assoc-driver-set-comfort-temp-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：参与者: Primary: 驾驶员。简化：驾驶员启动快速除雾功能。",
+      "targetId": "uc-quick-defog-uuid",
+      "sourceId": "actor-driver-uuid",
+      "id": "assoc-driver-quick-defog-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：Secondary: 温度传感器。简化：温度传感器为设定舒适温度提供温度数据。",
+      "targetId": "uc-set-comfort-temp-uuid",
+      "sourceId": "actor-temp-sensor-uuid",
+      "id": "assoc-temp-sensor-set-comfort-temp-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：Secondary: 湿度传感器。简化：湿度传感器为快速除雾提供湿度数据。",
+      "targetId": "uc-quick-defog-uuid",
+      "sourceId": "actor-humidity-sensor-uuid",
+      "id": "assoc-humidity-sensor-quick-defog-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：驾驶员通过触摸屏设定目标温度为22°C。简化：设定舒适温度必须包含设定目标温度这一步骤。",
+      "targetId": "uc-set-target-temp-uuid",
+      "sourceId": "uc-set-comfort-temp-uuid",
+      "id": "include-set-comfort-temp-target-temp-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：驾驶员按下除雾按钮。简化：快速除雾必须包含启动除雾这一步骤。",
+      "targetId": "uc-start-defog-uuid",
+      "sourceId": "uc-quick-defog-uuid",
+      "id": "include-quick-defog-start-defog-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：如果外部温度过低，系统同时启动后窗加热辅助除雾。简化：在特定条件下，启动后窗加热扩展了快速除雾的功能。",
+      "targetId": "uc-quick-defog-uuid",
+      "sourceId": "uc-start-rear-window-heat-uuid",
+      "id": "extend-rear-window-heat-quick-defog-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：如果电池电量不足，系统自动进入节能模式，限制最大功耗。简化：在电池电量不足时，进入节能模式扩展设定舒适温度的行为。",
+      "targetId": "uc-set-comfort-temp-uuid",
+      "sourceId": "uc-enter-energy-save-uuid",
+      "id": "extend-energy-save-set-comfort-temp-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-car-ac-main-uuid",
+      "description": "原文：如果温度传感器故障，系统使用默认设置运行并提示用户。简化：在传感器故障时，提示用户扩展设定舒适温度的行为。",
+      "targetId": "uc-set-comfort-temp-uuid",
+      "sourceId": "uc-notify-user-uuid",
+      "id": "extend-notify-user-set-comfort-temp-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：智能门锁系统案例。简化：包含智能门锁系统的所有核心用例和参与者。",
+      "name": "主要用例",
+      "id": "pkg-smart-lock-main-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主李女士在外办公时，需要让快递员将包裹放入室内。简化：房屋的所有者，通过手机APP远程管理临时访问权限。",
+      "name": "房主",
+      "id": "actor-homeowner-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：快递员到达后输入临时密码。简化：需要临时进入房屋的外部人员，使用临时密码进行身份验证。",
+      "name": "快递员",
+      "id": "actor-courier-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统验证通过后开门，完成后自动锁定并通知李女士。简化：提供远程授权和验证服务的云端系统。",
+      "name": "云服务平台",
+      "id": "actor-cloud-service-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：设置有效期（如30分钟）。简化：为临时访问码配置有效时间范围。",
+      "name": "设置有效期",
+      "id": "uc-set-validity-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：执行解锁操作。简化：系统控制门锁执行解锁动作。",
+      "name": "执行解锁操作",
+      "id": "uc-execute-unlock-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：向房主发送通知。简化：系统向房主推送访问事件的通知。",
+      "name": "发送通知",
+      "id": "uc-send-notification-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：访问码过期：显示\"访问码已失效\"提示。简化：当访问码过期时显示错误信息。",
+      "name": "显示访问码已失效提示",
+      "id": "uc-show-expired-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：输入错误超过3次：临时锁定键盘5分钟。简化：在多次输入错误后暂时禁用键盘输入。",
+      "name": "临时锁定键盘",
+      "id": "uc-lock-keyboard-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：网络连接失败：使用本地缓存验证规则。简化：在网络不可用时使用本地存储的验证规则。",
+      "name": "使用本地缓存验证规则",
+      "id": "uc-use-cache-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主登录手机APP验证身份。简化：房主执行登录验证操作。",
+      "targetId": "uc-login-app-auth-uuid",
+      "sourceId": "actor-homeowner-uuid",
+      "id": "assoc-homeowner-login-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统生成一次性访问码。简化：房主触发生成访问码的过程。",
+      "targetId": "uc-generate-code-uuid",
+      "sourceId": "actor-homeowner-uuid",
+      "id": "assoc-homeowner-generate-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：分享访问码给快递员。简化：房主将访问码分享给快递员。",
+      "targetId": "uc-share-code-uuid",
+      "sourceId": "actor-homeowner-uuid",
+      "id": "assoc-homeowner-share-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：向房主发送通知。简化：云服务平台向房主发送通知。",
+      "targetId": "uc-send-notification-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-notify-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：设置有效期（如30分钟）, 系统生成一次性访问码。简化：生成访问码必须包含设置有效期的步骤。",
+      "targetId": "uc-set-validity-uuid",
+      "sourceId": "uc-generate-code-uuid",
+      "id": "include-generate-validity-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：网络连接失败：使用本地缓存验证规则。简化：验证访问码时在网络故障情况下必须使用本地缓存验证。",
+      "targetId": "uc-use-cache-uuid",
+      "sourceId": "uc-validate-code-uuid",
+      "id": "include-validate-cache-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：访问码过期：显示\"访问码已失效\"提示。简化：当验证发现访问码过期时，扩展显示错误提示信息。",
+      "targetId": "uc-validate-code-uuid",
+      "sourceId": "uc-show-expired-uuid",
+      "id": "extend-show-expired-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：输入错误超过3次：临时锁定键盘5分钟。简化：当验证发现多次输入错误时，扩展临时锁定功能。",
+      "targetId": "uc-validate-code-uuid",
+      "sourceId": "uc-lock-keyboard-uuid",
+      "id": "extend-lock-keyboard-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：执行解锁操作, 记录访问日志。简化：成功解锁后扩展记录访问日志的功能。",
+      "targetId": "uc-unlock-door-uuid",
+      "sourceId": "uc-log-access-uuid",
+      "id": "extend-log-access-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：记录访问日志, 向房主发送通知。简化：记录日志后扩展发送通知给房主的功能。",
+      "targetId": "uc-log-access-uuid",
+      "sourceId": "uc-send-notification-uuid",
+      "id": "extend-send-notification-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：参与者: Primary: 授权用户。简化：拥有长期权限进入系统的用户，如房主李华。",
+      "name": "授权用户",
+      "id": "actor-authorized-user-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：Secondary: 家庭安防系统。简化：外部安防系统，接收用户进入的通知。",
+      "name": "家庭安防系统",
+      "id": "actor-home-security-system-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：使用指纹识别开启门锁。简化：通过指纹识别方式开启门锁的完整流程。",
+      "name": "指纹识别开启门锁",
+      "id": "uc-fingerprint-unlock-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统采集指纹特征并加密处理。简化：采集用户指纹特征数据并进行加密。",
+      "name": "采集指纹特征",
+      "id": "uc-collect-fingerprint-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：与存储模板进行匹配验证。简化：将采集的指纹与存储模板比对验证。",
+      "name": "匹配验证指纹",
+      "id": "uc-match-verify-fingerprint-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：检查用户访问权限有效。简化：确认用户是否有权进入。",
+      "name": "检查访问权限",
+      "id": "uc-check-access-permission-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：通知安防系统用户进入。简化：向家庭安防系统发送用户进入消息。",
+      "name": "通知安防系统",
+      "id": "uc-notify-security-system-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主在外办公时，临时授权快递员进入放置包裹。简化：房主远程为访客生成临时访问权限的完整流程。",
+      "name": "远程访客授权",
+      "id": "uc-remote-guest-auth-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：发送访问码给指定访客。简化：将生成的访问码发送给访客。",
+      "name": "发送访问码",
+      "id": "uc-send-access-code-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：访客输入访问码，系统验证有效性。简化：系统校验访问码是否有效且在有效期内。",
+      "name": "验证访问码",
+      "id": "uc-verify-access-code-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：访问完成后自动失效访问码。简化：使临时访问码失效。",
+      "name": "失效访问码",
+      "id": "uc-invalidate-access-code-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：指纹识别失败：提示用户重试或使用备用认证方式。简化：指纹识别失败时采用备用方式认证。",
+      "name": "使用备用认证方式",
+      "id": "uc-use-alternative-auth-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：锁控故障：触发声光报警并发送故障通知。简化：执行解锁故障时触发报警。",
+      "name": "触发声光报警",
+      "id": "uc-trigger-alarm-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：网络中断：本地缓存操作记录，网络恢复后同步。简化：网络故障时本地缓存日志记录。",
+      "name": "本地缓存操作记录",
+      "id": "uc-local-cache-records-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主李华下班回家，使用指纹识别开启门锁。简化：授权用户通过指纹识别开启门锁。",
+      "targetId": "uc-fingerprint-unlock-uuid",
+      "sourceId": "actor-authorized-user-uuid",
+      "id": "assoc-auth-user-fingerprint-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：同时向家庭安防系统发送进入通知。简化：家庭安防系统接收进入通知。",
+      "targetId": "uc-notify-security-system-uuid",
+      "sourceId": "actor-home-security-system-uuid",
+      "id": "assoc-security-notify-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主在外办公时，临时授权快递员进入。简化：房主执行远程访客授权。",
+      "targetId": "uc-remote-guest-auth-uuid",
+      "sourceId": "actor-homeowner-uuid",
+      "id": "assoc-homeowner-remote-auth-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：访客输入访问码，系统验证有效性。简化：访客输入访问码进行验证。",
+      "targetId": "uc-verify-access-code-uuid",
+      "sourceId": "actor-visitor-uuid",
+      "id": "assoc-visitor-verify-code-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：执行门锁开启操作。简化：访客通过验证后执行门锁开启。",
+      "targetId": "uc-execute-lock-open-uuid",
+      "sourceId": "actor-visitor-uuid",
+      "id": "assoc-visitor-execute-open-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主李华下班回家，使用指纹识别开启门锁（作为授权用户）。简化：房主是授权用户的一种特定角色。",
+      "targetId": "actor-authorized-user-uuid",
+      "sourceId": "actor-homeowner-uuid",
+      "id": "gen-homeowner-auth-user-uuid",
+      "type": "Generalization"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：用户将手指放在指纹传感器上，系统采集指纹特征并加密处理。简化：指纹识别开启门锁包含采集指纹特征的步骤。",
+      "targetId": "uc-collect-fingerprint-uuid",
+      "sourceId": "uc-fingerprint-unlock-uuid",
+      "id": "include-fingerprint-collect-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：与存储模板进行匹配验证。简化：指纹识别开启门锁包含匹配验证指纹的步骤。",
+      "targetId": "uc-match-verify-fingerprint-uuid",
+      "sourceId": "uc-fingerprint-unlock-uuid",
+      "id": "include-fingerprint-match-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：检查用户访问权限有效。简化：指纹识别开启门锁包含检查访问权限的步骤。",
+      "targetId": "uc-check-access-permission-uuid",
+      "sourceId": "uc-fingerprint-unlock-uuid",
+      "id": "include-fingerprint-check-perm-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：触发锁控电机执行解锁。简化：指纹识别开启门锁包含执行解锁的步骤。",
+      "targetId": "uc-execute-unlock-uuid",
+      "sourceId": "uc-fingerprint-unlock-uuid",
+      "id": "include-fingerprint-execute-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：更新访问日志。简化：指纹识别开启门锁包含更新访问日志的步骤。",
+      "targetId": "uc-update-access-log-uuid",
+      "sourceId": "uc-fingerprint-unlock-uuid",
+      "id": "include-fingerprint-update-log-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：通知安防系统用户进入。简化：指纹识别开启门锁包含通知安防系统的步骤。",
+      "targetId": "uc-notify-security-system-uuid",
+      "sourceId": "uc-fingerprint-unlock-uuid",
+      "id": "include-fingerprint-notify-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主通过APP请求生成临时访问码。简化：远程访客授权包含生成临时访问码的步骤。",
+      "targetId": "uc-generate-temp-code-uuid",
+      "sourceId": "uc-remote-guest-auth-uuid",
+      "id": "include-remote-generate-code-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：发送访问码给指定访客。简化：远程访客授权包含发送访问码的步骤。",
+      "targetId": "uc-send-access-code-uuid",
+      "sourceId": "uc-remote-guest-auth-uuid",
+      "id": "include-remote-send-code-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：访客输入访问码，系统验证有效性。简化：远程访客授权包含验证访问码的步骤。",
+      "targetId": "uc-verify-access-code-uuid",
+      "sourceId": "uc-remote-guest-auth-uuid",
+      "id": "include-remote-verify-code-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：执行门锁开启操作。简化：远程访客授权包含执行门锁开启的步骤。",
+      "targetId": "uc-execute-lock-open-uuid",
+      "sourceId": "uc-remote-guest-auth-uuid",
+      "id": "include-remote-execute-open-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：访问完成后自动失效访问码。简化：远程访客授权包含失效访问码的步骤。",
+      "targetId": "uc-invalidate-access-code-uuid",
+      "sourceId": "uc-remote-guest-auth-uuid",
+      "id": "include-remote-invalidate-code-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：指纹识别失败：提示用户重试或使用备用认证方式。简化：指纹识别失败时可选择备用认证方式，扩展指纹识别开启门锁用例。",
+      "targetId": "uc-fingerprint-unlock-uuid",
+      "sourceId": "uc-use-alternative-auth-uuid",
+      "id": "extend-alternative-auth-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：锁控故障：触发声光报警并发送故障通知。简化：执行解锁出现故障时触发报警，扩展执行解锁用例。",
+      "targetId": "uc-execute-unlock-uuid",
+      "sourceId": "uc-trigger-alarm-uuid",
+      "id": "extend-trigger-alarm-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：网络中断：本地缓存操作记录，网络恢复后同步。简化：网络故障时本地缓存日志，扩展更新访问日志用例。",
+      "targetId": "uc-update-access-log-uuid",
+      "sourceId": "uc-local-cache-records-uuid",
+      "id": "extend-local-cache-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：住户王先生下班回家，将已注册的食指放在指纹识别器上。简化：已注册指纹的房屋住户，使用指纹识别方式进入房屋。",
+      "name": "注册用户",
+      "id": "actor-registered-user-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主登录手机APP验证身份。简化：房主通过身份验证登录到手机APP。",
+      "name": "登录手机APP验证身份",
+      "id": "uc-login-app-auth-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：选择\"临时访问\"功能。简化：在APP中选择生成临时访问密码的功能。",
+      "name": "选择临时访问功能",
+      "id": "uc-select-temp-access-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：设置访问参数（有效期、使用次数限制）。简化：配置临时访问密码的有效期和使用次数限制。",
+      "name": "设置访问参数",
+      "id": "uc-set-access-params-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统生成一次性密码并加密存储。简化：系统创建一次性使用的临时密码并进行安全存储。",
+      "name": "生成一次性密码并加密存储",
+      "id": "uc-generate-one-time-pwd-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：快递员在门锁键盘输入临时密码。简化：快递员在门锁设备上输入获得的临时密码。",
+      "name": "输入临时密码",
+      "id": "uc-input-temp-password-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：记录访问事件并通知房主。简化：系统记录开门事件并向房主发送通知。",
+      "name": "记录访问事件并通知房主",
+      "id": "uc-record-notify-owner-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：用户按压指纹传感器。简化：用户将手指放在指纹识别设备上。",
+      "name": "按压指纹传感器",
+      "id": "uc-press-fingerprint-sensor-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统采集指纹图像并进行质量检查。简化：系统获取指纹图像并评估其质量是否合格。",
+      "name": "采集指纹图像并进行质量检查",
+      "id": "uc-capture-fingerprint-image-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：提取指纹特征点。简化：从指纹图像中提取独特的生物特征数据。",
+      "name": "提取指纹特征点",
+      "id": "uc-extract-fingerprint-features-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：验证匹配分数超过阈值(0.65)。简化：确认指纹匹配度达到预设的安全阈值。",
+      "name": "验证匹配分数超过阈值",
+      "id": "uc-verify-match-score-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主选择\"临时访问\"功能。简化：房主使用临时访问功能。",
+      "targetId": "uc-select-temp-access-uuid",
+      "sourceId": "actor-homeowner-uuid",
+      "id": "assoc-homeowner-select-temp-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：房主设置访问参数。简化：房主配置临时访问的参数。",
+      "targetId": "uc-set-access-params-uuid",
+      "sourceId": "actor-homeowner-uuid",
+      "id": "assoc-homeowner-set-params-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统生成一次性密码并加密存储。简化：云服务平台负责生成和存储临时密码。",
+      "targetId": "uc-generate-one-time-pwd-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-generate-pwd-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：快递员在门锁键盘输入临时密码。简化：快递员输入临时密码进行验证。",
+      "targetId": "uc-input-temp-password-uuid",
+      "sourceId": "actor-courier-uuid",
+      "id": "assoc-courier-input-pwd-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统验证密码有效性和时效。简化：云服务平台验证临时密码的有效性。",
+      "targetId": "uc-verify-pwd-validity-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-verify-pwd-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统记录访问事件并通知房主。简化：云服务平台记录事件并通知房主。",
+      "targetId": "uc-record-notify-owner-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-record-notify-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：用户按压指纹传感器。简化：注册用户使用指纹传感器进行认证。",
+      "targetId": "uc-press-fingerprint-sensor-uuid",
+      "sourceId": "actor-registered-user-uuid",
+      "id": "assoc-user-press-sensor-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统采集指纹图像并进行质量检查。简化：云服务平台处理指纹图像和质量检查。",
+      "targetId": "uc-capture-fingerprint-image-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-capture-fingerprint-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统提取指纹特征点。简化：云服务平台提取指纹特征数据。",
+      "targetId": "uc-extract-fingerprint-features-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-extract-features-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统与存储模板进行匹配计算。简化：云服务平台执行指纹匹配计算。",
+      "targetId": "uc-match-stored-template-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-match-template-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统验证匹配分数超过阈值。简化：云服务平台验证匹配分数。",
+      "targetId": "uc-verify-match-score-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-verify-score-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统检查用户访问权限。简化：云服务平台检查用户权限。",
+      "targetId": "uc-check-user-permission-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-check-permission-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统更新访问日志。简化：云服务平台记录访问日志。",
+      "targetId": "uc-update-access-log-uuid",
+      "sourceId": "actor-cloud-service-uuid",
+      "id": "assoc-cloud-update-log-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：选择\"临时访问\"功能，设置访问参数（有效期、使用次数限制）。简化：选择临时访问功能必须包含设置访问参数这一步骤。",
+      "targetId": "uc-set-access-params-uuid",
+      "sourceId": "uc-select-temp-access-uuid",
+      "id": "include-select-set-params-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：选择\"临时访问\"功能，系统生成一次性密码并加密存储。简化：选择临时访问功能包含生成和存储一次性密码的过程。",
+      "targetId": "uc-generate-one-time-pwd-uuid",
+      "sourceId": "uc-select-temp-access-uuid",
+      "id": "include-select-generate-pwd-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：系统验证密码有效性和时效，执行解锁操作。简化：验证通过后必须执行解锁操作，这是一个必要的后续步骤。",
+      "targetId": "uc-execute-unlock-uuid",
+      "sourceId": "uc-verify-pwd-validity-uuid",
+      "id": "include-verify-execute-unlock-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-smart-lock-main-uuid",
+      "description": "原文：检查用户访问权限，触发解锁机制。简化：权限验证通过后必须触发解锁机制。",
+      "targetId": "uc-trigger-unlock-mechanism-uuid",
+      "sourceId": "uc-check-user-permission-uuid",
+      "id": "include-check-trigger-unlock-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：包含智能门锁系统的所有功能模块。简化：包含指纹识别、电源管理、通信、机械性能、环境适应性、认证和安全等模块的包。",
+      "name": "SystemModules",
+      "id": "pkg-1",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：指纹识别误识率<0.002%。简化：代表指纹识别模块，包含误识率等性能参数。",
+      "name": "FingerprintModule",
+      "id": "block1",
+      "type": "Block"
+    },
+    {
+      "parentId": "block6",
+      "description": "原文：认证响应时间<2秒。简化：从认证请求到完成认证的最大响应时间。",
+      "name": "authResponseTime",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop1",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_main",
+      "description": "原文：认证响应时间<2秒。简化：从认证请求到完成认证的最大响应时间。",
+      "name": "authResponseTime",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop1",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_main",
+      "description": "原文：状态数据每30秒更新一次。简化：系统状态数据上报的时间间隔。",
+      "name": "statusUpdateInterval",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop2",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_main",
+      "description": "原文：命令执行成功率>99.9%。简化：远程命令被成功执行的概率。",
+      "name": "commandSuccessRate",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop3",
+      "type": "Property"
+    },
+    {
+      "parentId": "block2",
+      "description": "原文：电池规格: 3.7V锂离子电池。简化：主电池的额定电压。",
+      "name": "batteryVoltage",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop4",
+      "type": "Property"
+    },
+    {
+      "parentId": "block2",
+      "description": "原文：容量2600mAh。简化：主电池的总电荷容量。",
+      "name": "batteryCapacity",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop5",
+      "type": "Property"
+    },
+    {
+      "parentId": "block2",
+      "description": "原文：超级电容5.5V 1F。简化：备用超级电容的额定电压。",
+      "name": "superCapVoltage",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop6",
+      "type": "Property"
+    },
+    {
+      "parentId": "block2",
+      "description": "原文：电池电量低警告提前24小时发出。简化：电量不足预警的提前时间。",
+      "name": "lowBatteryWarningTime",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop7",
+      "type": "Property"
+    },
+    {
+      "parentId": "block2",
+      "description": "原文：正常工作模式平均功耗<15mA。简化：系统在活动模式下的平均工作电流。",
+      "name": "activeCurrent",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop8",
+      "type": "Property"
+    },
+    {
+      "parentId": "block2",
+      "description": "原文：低功耗模式功耗<50μA。简化：系统在休眠模式下的静态电流。",
+      "name": "sleepCurrent",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop9",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_mech",
+      "description": "原文：防撬检测灵敏度<2mm位移。简化：触发防撬警报所需的最小物理位移。",
+      "name": "tamperSensitivity",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop10",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_mech",
+      "description": "原文：电机输出扭矩 > 0.06 N·m。简化：电机实际输出的扭矩值。",
+      "name": "motorTorque",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop11",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg-climate-uuid",
+      "description": "原文：读取各区域温度传感器数据。简化：代表温度传感器组件。",
+      "name": "TemperatureSensors",
+      "id": "blk-temp-sensors-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_mech",
+      "description": "原文：springForce: Real [N] (25)。简化：锁具弹簧施加的力。",
+      "name": "springForce",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop12",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_mech",
+      "description": "原文：frictionCoefficient: Real (0.15)。简化：锁具机械结构的摩擦系数。",
+      "name": "frictionCoefficient",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop13",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_mech",
+      "description": "原文：leverArm: Real [m] (0.008)。简化：电机输出到锁舌的力臂长度。",
+      "name": "leverArm",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop14",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_mech",
+      "description": "原文：safetyFactor: Real (2.0)。简化：扭矩设计的安全系数。",
+      "name": "safetyFactor",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop15",
+      "type": "Property"
+    },
+    {
+      "parentId": "block3",
+      "description": "原文：网络延迟<500ms。简化：通信网络的最大传输延迟。",
+      "name": "networkLatency",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop16",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：系统可用性>99.5%。简化：系统可正常工作的时间比例。",
+      "name": "systemAvailability",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop17",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：平均无故障时间>50,000小时。简化：平均故障间隔时间。",
+      "name": "mtbf",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop18",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：standbyCurrent: Real [mA] (0.8)。简化：系统在待机模式下的电流。",
+      "name": "standbyCurrent",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop19",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：activeDutyCycle: Real [%] (5)。简化：活动模式占空比。",
+      "name": "activeDutyCycle",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop20",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：sleepCurrent × sleepDutyCycle。简化：休眠模式占空比。",
+      "name": "sleepDutyCycle",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop21",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：× 0.85 (效率因子)。简化：电池放电效率因子。",
+      "name": "efficiencyFactor",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop22",
+      "type": "Property"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：P_elec: 电子系统功率 [W]。简化：电子控制系统消耗的功率，单位W。",
+      "name": "P_elec",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop23",
+      "type": "Property"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：P_total = P_comp + P_blower + P_elec。简化：系统总功耗，单位W。",
+      "name": "P_total",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop24",
+      "type": "Property"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：COP: 性能系数。简化：制冷性能系数。",
+      "name": "COP",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop25",
+      "type": "Property"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：Q_cooling: 制冷量 [W]。简化：系统制冷能力，单位W。",
+      "name": "Q_cooling",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop26",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg-climate-uuid",
+      "description": "原文：通过PID控制算法。简化：代表PID控制算法模块。",
+      "name": "PIDController",
+      "id": "blk-pid-controller-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：P_comp = f(compressorSpeed, refrigerantPressure)。简化：压缩机转速，单位RPM。",
+      "name": "compressorSpeed",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop27",
+      "type": "Property"
+    },
+    {
+      "parentId": "block1",
+      "description": "原文：P_comp = f(compressorSpeed, refrigerantPressure)。简化：制冷剂压力，单位Pa。",
+      "name": "refrigerantPressure",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop28",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg-sl-unique-id",
+      "description": "原文：此约束关系基于电池放电特性和系统功耗模型，用于预测系统在不同工作模式下的剩余使用时间，支持智能电源管理和低电量预警。简化：计算系统电池在不同工作模式下的预期使用寿命。",
+      "name": "BatteryLifeCalculation",
+      "specification": {
+        "expression": "totalPowerConsumption = (activeCurrent × activeDutyCycle + standbyCurrent × (0.95 - sleepDutyCycle) + sleepCurrent × sleepDutyCycle) × 24; estimatedDays = batteryCapacity / totalPowerConsumption × efficiencyFactor",
+        "language": "Math"
+      },
+      "id": "cb1",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：batteryCapacity: Real [mAh] (2600)。简化：约束方程中的电池容量参数。",
+      "name": "batteryCapacity",
+      "typeId": "Real",
+      "id": "param1",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：activeCurrent: Real [mA] (15)。简化：约束方程中的活动电流参数。",
+      "name": "activeCurrent",
+      "typeId": "Real",
+      "id": "param2",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：standbyCurrent: Real [mA] (0.8)。简化：约束方程中的待机电流参数。",
+      "name": "standbyCurrent",
+      "typeId": "Real",
+      "id": "param3",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：sleepCurrent: Real [mA] (0.05)。简化：约束方程中的休眠电流参数。",
+      "name": "sleepCurrent",
+      "typeId": "Real",
+      "id": "param4",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：activeDutyCycle: Real [%] (5)。简化：约束方程中的活动占空比参数。",
+      "name": "activeDutyCycle",
+      "typeId": "Real",
+      "id": "param5",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-sl-unique-id",
+      "description": "原文：基于门锁机械结构的力学分析，确定电机所需扭矩，确保在各种条件下都能可靠完成锁定和解锁操作。简化：计算机械系统所需的电机扭矩并验证其满足最小要求。",
+      "name": "MotorTorqueRequirement",
+      "specification": {
+        "expression": "requiredTorque = springForce × frictionCoefficient × leverArm × safetyFactor; motorTorque > 0.06",
+        "language": "Math"
+      },
+      "id": "cb2",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：sleepCurrent × sleepDutyCycle。简化：约束方程中的休眠占空比参数。",
+      "name": "sleepDutyCycle",
+      "typeId": "Real",
+      "id": "param6",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-climate-uuid",
+      "edges": [
+        "edge-start-to-read",
+        "edge-sensor-data-flow",
+        "edge-temp-delta-flow",
+        "edge-control-to-compressor",
+        "edge-control-to-blower",
+        "edge-control-to-dampers",
+        "edge-dampers-to-wait",
+        "edge-wait-to-merge",
+        "edge-merge-to-read"
+      ],
+      "nodes": [
+        "node-temp-start",
+        "node-read-sensors",
+        "node-calc-delta",
+        "node-pid-calc",
+        "node-adjust-compressor",
+        "node-adjust-blower",
+        "node-adjust-dampers",
+        "node-wait-cycle",
+        "node-loop-merge",
+        "cbuf-temp-data"
+      ],
+      "description": "原文：此流程描述了系统在自动模式下维持设定温度的完整控制循环。简化：这是定义温度自动调节闭环控制的主要活动。",
+      "name": "自动温度调节流程",
+      "groups": [
+        "grp-sensors-uuid",
+        "grp-algorithm-uuid",
+        "grp-actuators-uuid"
+      ],
+      "id": "act-auto-temp-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：× 0.85 (效率因子)。简化：约束方程中的效率因子参数。",
+      "name": "efficiencyFactor",
+      "typeId": "Real",
+      "id": "param7",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：总功耗 = ...。简化：约束方程计算出的总功耗输出。",
+      "name": "totalPowerConsumption",
+      "typeId": "Real",
+      "id": "param8",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb1",
+      "description": "原文：预计使用天数 = ...。简化：约束方程计算出的预计使用天数输出。",
+      "name": "estimatedDays",
+      "typeId": "Real",
+      "id": "param9",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：数据上传延迟<5秒。简化：定义数据上传延迟的上限约束。",
+      "name": "UploadDelayConstraint",
+      "specification": {
+        "expression": "T_upload < 5",
+        "language": "Math"
+      },
+      "id": "cb3",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb2",
+      "description": "原文：springForce: Real [N] (25)。简化：约束方程中的弹簧力参数。",
+      "name": "springForce",
+      "typeId": "Real",
+      "id": "param10",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb2",
+      "description": "原文：frictionCoefficient: Real (0.15)。简化：约束方程中的摩擦系数参数。",
+      "name": "frictionCoefficient",
+      "typeId": "Real",
+      "id": "param11",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb2",
+      "description": "原文：leverArm: Real [m] (0.008)。简化：约束方程中的力臂参数。",
+      "name": "leverArm",
+      "typeId": "Real",
+      "id": "param12",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb2",
+      "description": "原文：safetyFactor: Real (2.0)。简化：约束方程中的安全系数参数。",
+      "name": "safetyFactor",
+      "typeId": "Real",
+      "id": "param13",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：认证响应时间<2.0秒。简化：定义认证响应时间的上限约束。",
+      "name": "ResponseTimeConstraint",
+      "specification": {
+        "expression": "T_response < 2.0",
+        "language": "Math"
+      },
+      "id": "cb4",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb2",
+      "description": "原文：所需扭矩 = ...。简化：约束方程计算出的所需扭矩输出。",
+      "name": "requiredTorque",
+      "typeId": "Real",
+      "id": "param14",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb2",
+      "description": "原文：电机输出扭矩 > 0.06 N·m。简化：约束方程验证的电机扭矩参数。",
+      "name": "motorTorque",
+      "typeId": "Real",
+      "id": "param15",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "cb4",
+      "description": "原文：frictionCoefficient: 0.12。简化：摩擦系数。",
+      "name": "frictionCoefficient",
+      "typeId": "Real",
+      "id": "param16",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：性能衰减不超过10%。简化：定义性能衰减的上限约束。",
+      "name": "PerformanceDegradationConstraint",
+      "specification": {
+        "expression": "Degradation <= 0.10",
+        "language": "Math"
+      },
+      "id": "cb5",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：指纹识别误识率<0.001%...系统可用性>99.5%。简化：封装智能门锁系统参数图的所有元素，包括电源管理、机械扭矩和系统可靠性约束。",
+      "name": "ParametricDiagram",
+      "id": "pkg-sl-unique-id",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-sl-unique-id",
+      "description": "原文：12V DC电压、电池电压阈值6.0V和5.5V、静态工作电流<50µA。简化：代表电源管理模块，包含电压、电流和阈值参数。",
+      "name": "PowerModule",
+      "id": "block2",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：12V DC电压、电池电压阈值6.0V和5.5V、静态工作电流<50µA。简化：代表电源管理模块，包含电压、电流和阈值参数。",
+      "name": "PowerModule",
+      "id": "block2",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-sl-unique-id",
+      "description": "原文：13.56MHz NFC卡、Wi-Fi协议802.11 b/g/n、数据上传延迟<5秒。简化：代表通信模块，包含NFC频率、Wi-Fi协议和数据传输延迟。",
+      "name": "CommunicationModule",
+      "id": "block3",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：13.56MHz NFC卡、Wi-Fi协议802.11 b/g/n、数据上传延迟<5秒。简化：代表通信模块，包含NFC频率、Wi-Fi协议和数据传输延迟。",
+      "name": "CommunicationModule",
+      "id": "block3",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-health-monitor-uuid",
+      "description": "原文：13.56MHz NFC卡、Wi-Fi协议802.11 b/g/n、数据上传延迟<5秒。简化：代表通信模块，包含NFC频率、Wi-Fi协议和数据传输延迟。",
+      "name": "CommunicationModule",
+      "id": "block3",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-smartlock-uuid",
+      "description": "原文：13.56MHz NFC卡、Wi-Fi协议802.11 b/g/n、数据上传延迟<5秒。简化：代表通信模块，包含NFC频率、Wi-Fi协议和数据传输延迟。",
+      "name": "CommunicationModule",
+      "id": "block3",
+      "type": "Block"
+    },
+    {
+      "parentId": "block3",
+      "description": "原文：数据上传延迟<5秒。简化：在通信模块中实例化上传延迟约束。",
+      "name": "UploadDelayConstraint",
+      "typeId": "cb3",
+      "propertyKind": "constraint",
+      "id": "cp3",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：电池容量2600mAh。简化：将系统电池容量值连接到约束的电池容量参数。",
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param1"
+      },
+      "end1": {
+        "propertyRefId": "prop1"
+      },
+      "id": "conn1",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：待机功耗≤50μA。简化：将系统待机电流值连接到约束的待机电流参数。",
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param2"
+      },
+      "end1": {
+        "propertyRefId": "prop2"
+      },
+      "id": "conn2",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：activeCurrent: 150 [mA]。简化：将系统激活电流值连接到约束的激活电流参数。",
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param3"
+      },
+      "end1": {
+        "propertyRefId": "prop3"
+      },
+      "id": "conn3",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：unlockDuration: 3 [s]。简化：将系统开锁持续时间连接到约束的开锁时长参数。",
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param4"
+      },
+      "end1": {
+        "propertyRefId": "prop4"
+      },
+      "id": "conn4",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：dailyOperations: 20 [count]。简化：将系统每日操作次数连接到约束的每日操作次数参数。",
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param5"
+      },
+      "end1": {
+        "propertyRefId": "prop5"
+      },
+      "id": "conn5",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：总功耗 = standbyCurrent × 24h + activeCurrent × unlockDuration × dailyOperations。简化：将约束计算的总功耗结果连接到系统的总功耗属性。",
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param6"
+      },
+      "end1": {
+        "propertyRefId": "prop6"
+      },
+      "id": "conn6",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：动作时间1.5秒、机械寿命100,000次循环、性能衰减不超过10%。简化：代表机械性能模块，包含动作时间、寿命和性能衰减参数。",
+      "name": "MechanicalModule",
+      "id": "block4",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：环境温度-20°C至+60°C、相对湿度20%至80%。简化：代表环境适应性模块，包含温度和湿度范围。",
+      "name": "EnvironmentalModule",
+      "id": "block5",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：认证响应时间<2.0秒。简化：代表认证模块，包含响应时间参数。",
+      "name": "AuthenticationModule",
+      "id": "block6",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：6位数字密码。简化：代表安全模块，包含密码长度参数。",
+      "name": "SecurityModule",
+      "id": "block7",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：环境温度-20°C至+60°C。简化：定义工作温度范围的约束。",
+      "name": "TemperatureRangeConstraint",
+      "specification": {
+        "expression": "T_min = -20 AND T_max = 60",
+        "language": "Math"
+      },
+      "id": "cb6",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：相对湿度20%至80%。简化：定义工作湿度范围的约束。",
+      "name": "HumidityRangeConstraint",
+      "specification": {
+        "expression": "RH_min = 20 AND RH_max = 80",
+        "language": "Math"
+      },
+      "id": "cb7",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "pkg-1",
+      "description": "原文：电池电压阈值6.0V和5.5V。简化：定义电池电压阈值的约束。",
+      "name": "VoltageThresholdConstraint",
+      "specification": {
+        "expression": "V_th_high = 6.0 AND V_th_low = 5.5",
+        "language": "Math"
+      },
+      "id": "cb8",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "block4",
+      "description": "原文：性能衰减不超过10%。简化：在机械模块中实例化性能衰减约束。",
+      "name": "PerformanceDegradationConstraint",
+      "typeId": "cb5",
+      "propertyKind": "constraint",
+      "id": "cp5",
+      "type": "Property"
+    },
+    {
+      "parentId": "block5",
+      "description": "原文：环境温度-20°C至+60°C。简化：在环境模块中实例化温度范围约束。",
+      "name": "TemperatureRangeConstraint",
+      "typeId": "cb6",
+      "propertyKind": "constraint",
+      "id": "cp6",
+      "type": "Property"
+    },
+    {
+      "parentId": "block5",
+      "description": "原文：相对湿度20%至80%。简化：在",
+      "name": "HumidityRangeConstraint",
+      "typeId": "cb7",
+      "propertyKind": "constraint",
+      "id": "cp7",
+      "type": "Property"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：电池规格: 3.7V锂离子电池, 容量2600mAh, 待机功耗≤50μA, 工作峰值电流≤300mA, 电池续航时间≥6个月。防护等级IP65。简化：封装电池锁系统的参数图元素。",
+      "name": "ParametricDiagram",
+      "id": "pkg-battery-unique-id",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-climate-uuid",
+      "description": "原文：描述车辆启动时空调系统执行的完整自检序列。简化：定义系统启动时的自检子活动。",
+      "name": "系统启动自检流程",
+      "id": "act-self-test-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-sl-unique-id",
+      "description": "原文：系统可用性>99.5%, 平均无故障时间>50,000小时。简化：封装整个智能门锁系统的顶层块，集成所有子系统和全局约束。",
+      "name": "SmartLockSystem",
+      "id": "block_system",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_system",
+      "description": "原文：预计续航时间 = batteryCapacity / 总功耗 × 24h。简化：将约束计算的续航时间结果连接到系统的预计续航时间属性。",
+      "end2": {
+        "partRefId": "cp1",
+        "portRefId": "param7"
+      },
+      "end1": {
+        "propertyRefId": "prop7"
+      },
+      "id": "conn7",
+      "type": "BindingConnector"
+    },
+    {
+      "parentId": "pkg-sl-unique-id",
+      "description": "原文：指纹识别误识率<0.001%, PIN码输入4-8位数字, RFID卡识别13.56MHz NFC标准, 手机蓝牙连接BLE 5.0, 认证响应时间<2秒, 状态数据每30秒更新一次, 网络延迟<500ms, 命令执行成功率>99.9%。简化：负责所有认证方式处理、通信管理和系统控制的中央处理单元。",
+      "name": "MainControlSystem",
+      "id": "block_main",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-sl-unique-id",
+      "description": "原文：防撬检测灵敏度<2mm位移, 电机输出扭矩 > 0.06 N·m。简化：包含锁具机械结构、电机执行器和防撬检测传感器的物理系统。",
+      "name": "MechanicalSystem",
+      "id": "block_mech",
+      "type": "Block"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：两个场景都属于同一安全系统。简化：包含安全检测和系统维护功能的业务包。",
+      "name": "安全服务包",
+      "id": "pkg-security-svc-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-security-svc-uuid",
+      "description": "原文：涉及的生命线: SensorModule。简化：振动传感器模块，负责检测异常震动。",
+      "name": "SensorModule",
+      "id": "cls-sensormodule-uuid",
+      "type": "Class"
+    },
+    {
+      "classifierBehaviorId": "interaction-tamper-alert-uuid",
+      "parentId": "pkg-security-svc-uuid",
+      "description": "原文：涉及的生命线: MainController。简化：系统主控制器，协调所有安全响应和系统更新。",
+      "name": "MainController",
+      "ownedAttributeIds": [
+        "prop-maincontroller-instance-uuid"
+      ],
+      "id": "cls-maincontroller-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-security-svc-uuid",
+      "description": "原文：涉及的生命线: LockControlModule。简化：门锁控制模块，负责锁具加固和警报激活。",
+      "name": "LockControlModule",
+      "id": "cls-lockcontrol-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-security-svc-uuid",
+      "description": "原文：涉及的生命线: CommunicationModule。简化：通信模块，处理安全警报推送和固件下载。",
+      "name": "CommunicationModule",
+      "id": "cls-communication-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-security-uuid",
+      "description": "原文：UserDevice。简化：用户设备，接收安全警报和电池警告。",
+      "name": "UserDevice",
+      "id": "cls-userdevice-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-security-svc-uuid",
+      "description": "原文：涉及的生命线: PowerManagementModule。简化：电源管理模块，检查电池状态。",
+      "name": "PowerManagementModule",
+      "id": "cls-powermanagement-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-security-svc-uuid",
+      "description": "原文：涉及的生命线: CloudServer。简化：云服务器，提供固件更新服务。",
+      "name": "CloudServer",
+      "id": "cls-cloudserver-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "cls-maincontroller-uuid",
+      "description": "原文：涉及的生命线: MainController。简化：主控制器类的实例属性，用于生命线表示。",
+      "name": "maincontroller_instance",
+      "typeId": "cls-maincontroller-uuid",
+      "id": "prop-maincontroller-instance-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-maincontroller-uuid",
+      "lifelineIds": [
+        "ll-sensor-uuid",
+        "ll-maincontroller-uuid",
+        "ll-lockcontrol-uuid",
+        "ll-communication-uuid",
+        "ll-userdevice-uuid"
+      ],
+      "fragmentIds": [
+        "fragment-send-vibrationalert-uuid",
+        "fragment-recv-vibrationalert-uuid",
+        "fragment-send-confirmtampering-uuid",
+        "fragment-recv-confirmtampering-uuid",
+        "fragment-send-tamperingconfirmed-uuid",
+        "fragment-recv-tamperingconfirmed-uuid",
+        "fragment-send-reinforcelock-uuid",
+        "fragment-recv-reinforcelock-uuid",
+        "fragment-send-lockcomplete-uuid",
+        "fragment-recv-lockcomplete-uuid",
+        "fragment-send-sendsecurityalert-uuid",
+        "fragment-recv-sendsecurityalert-uuid",
+        "fragment-send-pushnotification-uuid",
+        "fragment-recv-pushnotification-uuid",
+        "fragment-send-activatealarm-uuid",
+        "fragment-recv-activatealarm-uuid",
+        "fragment-send-alarmactivated-uuid",
+        "fragment-recv-alarmactivated-uuid"
+      ],
+      "description": "原文：场景名称: 防撬检测与报警处理。交互背景: 当有人试图暴力撬开门锁时，振动传感器检测到异常震动模式，系统立即启动多级安全响应。简化：描述检测到撬锁企图时的完整安全响应流程。",
+      "name": "防撬检测与报警处理",
+      "messageIds": [
+        "msg-vibrationalert-uuid",
+        "msg-confirmtampering-uuid",
+        "msg-tamperingconfirmed-uuid",
+        "msg-reinforcelock-uuid",
+        "msg-lockcomplete-uuid",
+        "msg-sendsecurityalert-uuid",
+        "msg-pushnotification-uuid",
+        "msg-activatealarm-uuid",
+        "msg-alarmactivated-uuid"
+      ],
+      "ownedAttributeIds": [
+        "prop-interaction-sensor-uuid",
+        "prop-interaction-lock-uuid",
+        "prop-interaction-comm-uuid",
+        "prop-interaction-userdevice-uuid"
+      ],
+      "id": "interaction-tamper-alert-uuid",
+      "type": "Interaction"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：涉及的生命线: SensorModule。简化：防撬检测交互中传感器模块的实例属性。",
+      "name": "p_sensormodule",
+      "typeId": "cls-sensormodule-uuid",
+      "id": "prop-interaction-sensor-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：涉及的生命线: LockControlModule。简化：防撬检测交互中锁控制模块的实例属性。",
+      "name": "p_lockcontrol",
+      "typeId": "cls-lockcontrol-uuid",
+      "id": "prop-interaction-lock-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：涉及的生命线: CommunicationModule。简化：防撬检测交互中通信模块的实例属性。",
+      "name": "p_communication",
+      "typeId": "cls-communication-uuid",
+      "id": "prop-interaction-comm-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：涉及的生命线: UserDevice。简化：防撬检测交互中用户设备的实例属性。",
+      "name": "p_userdevice",
+      "typeId": "cls-userdevice-uuid",
+      "id": "prop-interaction-userdevice-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "representsId": "prop-interaction-sensor-uuid",
+      "description": "原文：涉及的生命线: SensorModule。简化：代表振动传感器模块的生命线，检测异常震动。",
+      "name": "SensorModule",
+      "id": "ll-sensor-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "representsId": "prop-maincontroller-instance-uuid",
+      "description": "原文：涉及的生命线: MainController。简化：代表主控制器的生命线，协调所有安全响应。",
+      "name": "MainController",
+      "id": "ll-maincontroller-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "representsId": "prop-interaction-lock-uuid",
+      "description": "原文：涉及的生命线: LockControlModule。简化：代表锁控制模块的生命线，执行锁具加固和警报。",
+      "name": "LockControlModule",
+      "id": "ll-lockcontrol-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "representsId": "prop-interaction-comm-uuid",
+      "description": "原文：涉及的生命线: CommunicationModule。简化：代表通信模块的生命线，发送安全警报。",
+      "name": "CommunicationModule",
+      "id": "ll-communication-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "representsId": "prop-interaction-userdevice-uuid",
+      "description": "原文：涉及的生命线: UserDevice。简化：代表用户设备的生命线，接收安全通知。",
+      "name": "UserDevice",
+      "id": "ll-userdevice-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-intrusion-uuid",
+      "arguments": [
+        {
+          "body": "amplitude=8.5g",
+          "language": "text"
+        }
+      ],
+      "description": "原文：SensorHub -> AuthenticationModule: vibrationAlert(amplitude=8.5g)。简化：传感器检测到异常振动，向认证模块发送振动警报。",
+      "sendEventId": "fragment-send-vibrationalert-uuid",
+      "name": "vibrationAlert",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-vibrationalert-uuid",
+      "id": "msg-vibrationalert-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-sensorhub-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：SensorHub -> AuthenticationModule: vibrationAlert。简化：振动警报消息的发送事件。",
+      "messageId": "msg-vibrationalert-uuid",
+      "id": "fragment-send-vibrationalert-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-auth-intrusion-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：SensorHub -> AuthenticationModule: vibrationAlert。简化：振动警报消息的接收事件。",
+      "messageId": "msg-vibrationalert-uuid",
+      "id": "fragment-recv-vibrationalert-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：MainController -> SensorModule: confirmTampering()。简化：主控制器要求传感器确认撬锁行为。",
+      "sendEventId": "fragment-send-confirmtampering-uuid",
+      "name": "confirmTampering",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-confirmtampering-uuid",
+      "id": "msg-confirmtampering-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-maincontroller-uuid",
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：MainController -> SensorModule: confirmTampering。简化：确认撬锁消息的发送事件。",
+      "messageId": "msg-confirmtampering-uuid",
+      "id": "fragment-send-confirmtampering-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-sensor-uuid",
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：MainController -> SensorModule: confirmTampering。简化：确认撬锁消息的接收事件。",
+      "messageId": "msg-confirmtampering-uuid",
+      "id": "fragment-recv-confirmtampering-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "arguments": [
+        {
+          "body": "confidence: 0.92",
+          "language": "text"
+        }
+      ],
+      "description": "原文：SensorModule -> MainController: tamperingConfirmed(confidence: 0.92)。简化：传感器确认撬锁行为并返回置信度。",
+      "sendEventId": "fragment-send-tamperingconfirmed-uuid",
+      "name": "tamperingConfirmed",
+      "messageSort": "reply",
+      "receiveEventId": "fragment-recv-tamperingconfirmed-uuid",
+      "id": "msg-tamperingconfirmed-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-sensor-uuid",
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：SensorModule -> MainController: tamperingConfirmed。简化：撬锁确认消息的发送事件。",
+      "messageId": "msg-tamperingconfirmed-uuid",
+      "id": "fragment-send-tamperingconfirmed-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-maincontroller-uuid",
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：SensorModule -> MainController: tamperingConfirmed。简化：撬锁确认消息的接收事件。",
+      "messageId": "msg-tamperingconfirmed-uuid",
+      "id": "fragment-recv-tamperingconfirmed-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：AuthenticationModule -> LockControlModule: reinforceLock()。简化：认证模块指令锁控制模块加固锁具。",
+      "sendEventId": "fragment-send-reinforcelock-uuid",
+      "name": "reinforceLock",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-reinforcelock-uuid",
+      "id": "msg-reinforcelock-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-auth-intrusion-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：AuthenticationModule -> LockControlModule: reinforceLock。简化：加固锁消息的发送事件。",
+      "messageId": "msg-reinforcelock-uuid",
+      "id": "fragment-send-reinforcelock-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-lock-intrusion-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：AuthenticationModule -> LockControlModule: reinforceLock。简化：加固锁消息的接收事件。",
+      "messageId": "msg-reinforcelock-uuid",
+      "id": "fragment-recv-reinforcelock-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：LockControlModule -> MainController: lockReinforcementComplete()。简化：锁控制模块确认锁具加固完成。",
+      "sendEventId": "fragment-send-lockcomplete-uuid",
+      "name": "lockReinforcementComplete",
+      "messageSort": "reply",
+      "receiveEventId": "fragment-recv-lockcomplete-uuid",
+      "id": "msg-lockcomplete-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-lockcontrol-uuid",
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：LockControlModule -> MainController: lockReinforcementComplete。简化：锁具加固完成消息的发送事件。",
+      "messageId": "msg-lockcomplete-uuid",
+      "id": "fragment-send-lockcomplete-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-maincontroller-uuid",
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：LockControlModule -> MainController: lockReinforcementComplete。简化：锁具加固完成消息的接收事件。",
+      "messageId": "msg-lockcomplete-uuid",
+      "id": "fragment-recv-lockcomplete-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-tamper-alert-uuid",
+      "arguments": [
+        {
+          "body": "\"Tampering detected\"",
+          "language": "text"
+        }
+      ],
+      "description": "原文：MainController -> CommunicationModule: sendSecurityAlert(\"Tampering detected\")。简化：主控制器发送安全警报到通信模块。",
+      "sendEventId": "fragment-send-sendsecurityalert-uuid",
+      "name": "sendSecurityAlert",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-sendsecurityalert-uuid",
+      "id": "msg-sendsecurityalert-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-maincontroller-uuid",
+      "parentId": "interaction-tamper-alert-uuid",
+      "description": "原文：MainController -> CommunicationModule: sendSecurityAlert。简化：发送安全警报消息",
+      "messageId": "msg-sendsecurityalert-uuid",
+      "id": "fragment-send-sendsecurityalert-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：低电量模式切换、温度过高自动调节。简化：包含空调系统核心控制逻辑的包。",
+      "name": "空调控制",
+      "id": "pkg-ac-control-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-ac-control-uuid",
+      "ownedOperationIds": [
+        "op-lowbatteryalert-uuid"
+      ],
+      "description": "原文：涉及的生命线: BatteryManager。简化：电池管理系统，负责监测电池状态。",
+      "name": "BatteryManager",
+      "id": "cls-batterymanager-uuid",
+      "type": "Class"
+    },
+    {
+      "classifierBehaviorId": "interaction-lowpower-uuid",
+      "parentId": "pkg-ac-control-uuid",
+      "ownedOperationIds": [
+        "op-adjustsetpoint-uuid",
+        "op-calculatedeltat-uuid"
+      ],
+      "description": "原文：涉及的生命线: ClimateController。简化：空调控制器，协调各执行器的核心控制单元。",
+      "name": "ClimateController",
+      "id": "cls-climatecontroller-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-ac-control-uuid",
+      "ownedOperationIds": [
+        "op-enterecomode-uuid"
+      ],
+      "description": "原文：涉及的生命线: PowerManager。简化：电源管理器，处理系统电源状态。",
+      "name": "PowerManager",
+      "id": "cls-powermanager-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-ac-control-uuid",
+      "ownedOperationIds": [
+        "op-setspeedlimit-compressor-uuid",
+        "op-setspeed-max-uuid"
+      ],
+      "description": "原文：涉及的生命线: Compressor。简化：压缩机执行器，负责制冷。",
+      "name": "Compressor",
+      "id": "cls-compressor-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-ac-control-uuid",
+      "ownedOperationIds": [
+        "op-setspeedlimit-blower-uuid",
+        "op-setspeed-blower-uuid"
+      ],
+      "description": "原文：涉及的生命线: Blower。简化：鼓风机执行器，负责空气循环。",
+      "name": "Blower",
+      "id": "cls-blower-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-ac-control-uuid",
+      "description": "原文：涉及的生命线: TemperatureSensor。简化：温度传感器，监测车内温度。",
+      "name": "TemperatureSensor",
+      "id": "cls-temperaturesensor-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "cls-batterymanager-uuid",
+      "description": "原文：lowBatteryAlert(15%)。简化：发送低电量警报的操作。",
+      "name": "lowBatteryAlert",
+      "id": "op-lowbatteryalert-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-powermanager-uuid",
+      "description": "原文：enterEcoMode()。简化：进入节能模式的操作。",
+      "name": "enterEcoMode",
+      "id": "op-enterecomode-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-climatecontroller-uuid",
+      "description": "原文：adjustSetpoint(+2°C)。简化：调整温度设定点的操作。",
+      "name": "adjustSetpoint",
+      "id": "op-adjustsetpoint-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-climatecontroller-uuid",
+      "description": "原文：calculateDeltaT(35°C - 22°C = 13°C)。简化：计算温差的操作。",
+      "name": "calculateDeltaT",
+      "id": "op-calculatedeltat-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-compressor-uuid",
+      "description": "原文：setSpeedLimit(4000 RPM)。简化：设置压缩机转速限制的操作。",
+      "name": "setSpeedLimit",
+      "id": "op-setspeedlimit-compressor-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-blower-uuid",
+      "description": "原文：setSpeedLimit(LEVEL_3)。简化：设置鼓风机风速限制的操作。",
+      "name": "setSpeedLimit",
+      "id": "op-setspeedlimit-blower-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-compressor-uuid",
+      "description": "原文：setSpeed(MAX_RPM)。简化：设置压缩机转速的操作。",
+      "name": "setSpeed",
+      "id": "op-setspeed-max-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-blower-uuid",
+      "description": "原文：setSpeed(LEVEL_7)。简化：设置鼓风机风速的操作。",
+      "name": "setSpeed",
+      "id": "op-setspeed-blower-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "pkg-power-uuid",
+      "lifelineIds": [
+        "ll-power-lowpower-uuid",
+        "ll-auth-lowpower-uuid",
+        "ll-comm-lowpower-uuid",
+        "ll-lock-lowpower-uuid",
+        "ll-cloud-lowpower-uuid",
+        "ll-userdevice-lowpower-uuid"
+      ],
+      "description": "原文：电源管理系统检测到电池电量低于临界阈值时，协调各模块进入节能模式，优先保障核心安全功能，同时及时通知用户更换电池。简化：低电量状态下的节能模式协调流程。",
+      "name": "低电量处理流程",
+      "messageIds": [
+        "msg-lowbattery-uuid",
+        "msg-reducemotorpower-uuid",
+        "msg-enablepowersaving-uuid",
+        "msg-reportbattery-uuid",
+        "msg-sendbatteryalert-uuid",
+        "msg-acknowledgepower-uuid",
+        "msg-activatecontingency-uuid"
+      ],
+      "id": "interaction-lowpower-uuid",
+      "type": "Interaction"
+    },
+    {
+      "parentId": "cls-climatecontroller-uuid",
+      "lifelineIds": [
+        "ll-temperaturesensor-overtemp-uuid",
+        "ll-climatecontroller-overtemp-uuid",
+        "ll-compressor-overtemp-uuid",
+        "ll-blower-overtemp-uuid"
+      ],
+      "fragmentIds": [
+        "fragment-send-temperaturereading-uuid",
+        "fragment-recv-temperaturereading-uuid",
+        "fragment-send-calculatedeltat-uuid",
+        "fragment-recv-calculatedeltat-uuid",
+        "fragment-send-setspeed-max-uuid",
+        "fragment-recv-setspeed-max-uuid",
+        "fragment-send-speedack-compressor-uuid",
+        "fragment-recv-speedack-compressor-uuid",
+        "fragment-send-setspeed-blower-uuid",
+        "fragment-recv-setspeed-blower-uuid",
+        "fragment-send-speedack-blower-uuid",
+        "fragment-recv-speedack-blower-uuid",
+        "cf-monitoring-loop-uuid"
+      ],
+      "description": "原文：温度过高自动调节 - 交互背景: 当系统检测到车内温度显著高于设定温度时，自动启动强力制冷模式。简化：描述系统在高温时启动强力制冷的交互流程。",
+      "name": "温度过高自动调节",
+      "messageIds": [
+        "msg-temperaturereading-uuid",
+        "msg-calculatedeltat-uuid",
+        "msg-setspeed-max-uuid",
+        "msg-speedack-compressor-uuid",
+        "msg-setspeed-blower-uuid",
+        "msg-speedack-blower-uuid"
+      ],
+      "id": "interaction-overtemp-uuid",
+      "type": "Interaction"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "representsId": "cls-batterymanager-uuid",
+      "description": "原文：BatteryManager。简化：电池管理系统的生命线实例。",
+      "name": "L1-BatteryManager",
+      "id": "ll-batterymanager-lowpower-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "representsId": "cls-powermanager-uuid",
+      "description": "原文：PowerManager。简化：电源管理器的生命线实例。",
+      "name": "L2-PowerManager",
+      "id": "ll-powermanager-lowpower-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "representsId": "cls-climatecontroller-uuid",
+      "description": "原文：ClimateController。简化：空调控制器的生命线实例。",
+      "name": "L3-ClimateController",
+      "id": "ll-climatecontroller-lowpower-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "representsId": "cls-compressor-uuid",
+      "description": "原文：Compressor。简化：压缩机的生命线实例。",
+      "name": "L4-Compressor",
+      "id": "ll-compressor-lowpower-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "representsId": "cls-blower-uuid",
+      "description": "原文：Blower。简化：鼓风机的生命线实例。",
+      "name": "L5-Blower",
+      "id": "ll-blower-lowpower-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-overtemp-uuid",
+      "representsId": "cls-temperaturesensor-uuid",
+      "description": "原文：TemperatureSensor。简化：温度传感器的生命线实例。",
+      "name": "L1-TemperatureSensor",
+      "id": "ll-temperaturesensor-overtemp-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-overtemp-uuid",
+      "representsId": "cls-climatecontroller-uuid",
+      "description": "原文：ClimateController。简化：空调控制器的生命线实例。",
+      "name": "L2-ClimateController",
+      "id": "ll-climatecontroller-overtemp-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-overtemp-uuid",
+      "representsId": "cls-compressor-uuid",
+      "description": "原文：Compressor。简化：压缩机的生命线实例。",
+      "name": "L3-Compressor",
+      "id": "ll-compressor-overtemp-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-overtemp-uuid",
+      "representsId": "cls-blower-uuid",
+      "description": "原文：Blower。简化：鼓风机的生命线实例。",
+      "name": "L4-Blower",
+      "id": "ll-blower-overtemp-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "arguments": [
+        {
+          "body": "15%",
+          "language": "text"
+        }
+      ],
+      "signatureId": "op-lowbatteryalert-uuid",
+      "description": "原文：BatteryManager -> PowerManager: lowBatteryAlert(15%)。简化：电池管理器向电源管理器发送低电量警报，电量15%。",
+      "sendEventId": "fragment-send-lowbatteryalert-uuid",
+      "name": "lowBatteryAlert",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-lowbatteryalert-uuid",
+      "id": "msg-lowbatteryalert-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-batterymanager-lowpower-uuid",
+      "parentId": "interaction-lowpower-uuid",
+      "description": "原文：BatteryManager发送lowBatteryAlert。简化：低电量警报消息的发送事件。",
+      "messageId": "msg-lowbatteryalert-uuid",
+      "id": "fragment-send-lowbatteryalert-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-powermanager-lowpower-uuid",
+      "parentId": "interaction-lowpower-uuid",
+      "description": "原文：PowerManager接收lowBatteryAlert。简化：低电量警报消息的接收事件。",
+      "messageId": "msg-lowbatteryalert-uuid",
+      "id": "fragment-recv-lowbatteryalert-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "signatureId": "op-enterecomode-uuid",
+      "description": "原文：PowerManager -> ClimateController: enterEcoMode()。简化：电源管理器通知空调控制器进入节能模式。",
+      "sendEventId": "fragment-send-enterecomode-uuid",
+      "name": "enterEcoMode",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-enterecomode-uuid",
+      "id": "msg-enterecomode-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-powermanager-lowpower-uuid",
+      "parentId": "interaction-lowpower-uuid",
+      "description": "原文：PowerManager发送enterEcoMode。简化：进入节能模式消息的发送事件。",
+      "messageId": "msg-enterecomode-uuid",
+      "id": "fragment-send-enterecomode-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-climatecontroller-lowpower-uuid",
+      "parentId": "interaction-lowpower-uuid",
+      "description": "原文：ClimateController接收enterEcoMode。简化：进入节能模式消息的接收事件。",
+      "messageId": "msg-enterecomode-uuid",
+      "id": "fragment-recv-enterecomode-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "arguments": [
+        {
+          "body": "+2°C",
+          "language": "text"
+        }
+      ],
+      "signatureId": "op-adjustsetpoint-uuid",
+      "description": "原文：ClimateController -> ClimateController: adjustSetpoint(+2°C)。简化：空调控制器内部调整设定温度，提高2°C以节能。",
+      "sendEventId": "fragment-send-adjustsetpoint-uuid",
+      "name": "adjustSetpoint",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-adjustsetpoint-uuid",
+      "id": "msg-adjustsetpoint-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-climatecontroller-lowpower-uuid",
+      "parentId": "interaction-lowpower-uuid",
+      "description": "原文：ClimateController发送adjustSetpoint。简化：调整设定温度消息的发送事件。",
+      "messageId": "msg-adjustsetpoint-uuid",
+      "id": "fragment-send-adjustsetpoint-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-climatecontroller-lowpower-uuid",
+      "parentId": "interaction-lowpower-uuid",
+      "description": "原文：ClimateController接收adjustSetpoint。简化：调整设定温度消息的接收事件。",
+      "messageId": "msg-adjustsetpoint-uuid",
+      "id": "fragment-recv-adjustsetpoint-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "arguments": [
+        {
+          "body": "4000 RPM",
+          "language": "text"
+        }
+      ],
+      "signatureId": "op-setspeedlimit-compressor-uuid",
+      "description": "原文：ClimateController -> Compressor: setSpeedLimit(4000 RPM)。简化：空调控制器限制",
+      "sendEventId": "fragment-send-setspeedlimit-compressor-uuid",
+      "name": "setSpeedLimit",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-setspeedlimit-compressor-uuid",
+      "id": "msg-setspeedlimit-compressor-uuid",
+      "type": "Message"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：交互背景: 用户使用指纹识别功能解锁门锁，此序列展示了从指纹采集到门锁开启的完整组件间协作过程。简化：包含指纹认证解锁相关组件的包。",
+      "name": "指纹认证系统",
+      "id": "pkg-fingerprint-system-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-fingerprint-system-uuid",
+      "description": "原文：涉及的生命线: User。简化：使用指纹认证解锁系统的用户，系统外部参与者。",
+      "name": "User",
+      "id": "actor-user-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-fingerprint-system-uuid",
+      "ownedOperationIds": [
+        "op-capture-image-uuid",
+        "op-extract-features-uuid",
+        "op-match-template-uuid"
+      ],
+      "description": "原文：涉及的生命线: AuthenticationModule。简化：负责指纹采集、特征提取和模板匹配的生物特征处理模块。",
+      "name": "AuthenticationModule",
+      "ownedAttributeIds": [
+        "prop-auth-instance-uuid"
+      ],
+      "id": "cls-auth-module-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-fingerprint-system-uuid",
+      "description": "原文：涉及的生命线: MainController。简化：系统主控制器，协调认证结果和锁控制。",
+      "name": "MainController",
+      "ownedAttributeIds": [
+        "prop-main-controller-uuid"
+      ],
+      "id": "cls-main-controller-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-fingerprint-system-uuid",
+      "ownedOperationIds": [
+        "op-engage-motor-uuid"
+      ],
+      "description": "原文：涉及的生命线: LockControlModule。简化：门锁控制模块，负责电机驱动和位置控制。",
+      "name": "LockControlModule",
+      "ownedAttributeIds": [
+        "prop-lock-control-uuid"
+      ],
+      "id": "cls-lock-control-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-fingerprint-system-uuid",
+      "ownedOperationIds": [
+        "op-get-position-uuid"
+      ],
+      "description": "原文：涉及的生命线: SensorModule。简化：传感器模块，提供位置反馈信息。",
+      "name": "SensorModule",
+      "ownedAttributeIds": [
+        "prop-sensor-module-uuid"
+      ],
+      "id": "cls-sensor-module-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "cls-auth-module-uuid",
+      "description": "原文：涉及的生命线: AuthenticationModule。简化：认证模块的实例属性，用于生命线表示。",
+      "name": "auth_instance",
+      "typeId": "cls-auth-module-uuid",
+      "id": "prop-auth-instance-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-main-controller-uuid",
+      "description": "原文：涉及的生命线: MainController。简化：主控制器的实例属性，用于生命线表示。",
+      "name": "main_controller_instance",
+      "typeId": "cls-main-controller-uuid",
+      "id": "prop-main-controller-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-lock-control-uuid",
+      "description": "原文：涉及的生命线: LockControlModule。简化：锁控制模块的实例属性，用于生命线表示。",
+      "name": "lock_control_instance",
+      "typeId": "cls-lock-control-uuid",
+      "id": "prop-lock-control-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-sensor-module-uuid",
+      "description": "原文：涉及的生命线: SensorModule。简化：传感器模块的实例属性，用于生命线表示。",
+      "name": "sensor_module_instance",
+      "typeId": "cls-sensor-module-uuid",
+      "id": "prop-sensor-module-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-auth-module-uuid",
+      "description": "原文：captureFingerprintImage()。简化：采集指纹图像的操作方法。",
+      "name": "captureFingerprintImage",
+      "id": "op-capture-image-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-auth-module-uuid",
+      "description": "原文：extractFeatures()。简化：提取指纹特征的操作方法。",
+      "name": "extractFeatures",
+      "id": "op-extract-features-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-auth-module-uuid",
+      "description": "原文：matchWithTemplate()。简化：与模板进行匹配的操作方法。",
+      "name": "matchWithTemplate",
+      "id": "op-match-template-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-lock-control-uuid",
+      "description": "原文：engageMotor()。简化：驱动电机的操作方法。",
+      "name": "engageMotor",
+      "id": "op-engage-motor-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-sensor-module-uuid",
+      "description": "原文：getPosition()。简化：获取位置信息的操作方法。",
+      "name": "getPosition",
+      "id": "op-get-position-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "pkg-fingerprint-system-uuid",
+      "lifelineIds": [
+        "ll-user-uuid",
+        "ll-auth-module-uuid",
+        "ll-main-controller-uuid",
+        "ll-lock-control-uuid",
+        "ll-sensor-module-uuid"
+      ],
+      "fragmentIds": [
+        "fragment-send-place-finger-uuid",
+        "fragment-recv-place-finger-uuid",
+        "fragment-send-capture-image-uuid",
+        "fragment-recv-capture-image-uuid",
+        "fragment-send-extract-features-uuid",
+        "fragment-recv-extract-features-uuid",
+        "fragment-send-match-template-uuid",
+        "fragment-recv-match-template-uuid",
+        "fragment-send-auth-result-uuid",
+        "fragment-recv-auth-result-uuid",
+        "fragment-send-unlock-command-uuid",
+        "fragment-recv-unlock-command-uuid",
+        "fragment-send-engage-motor-uuid",
+        "fragment-recv-engage-motor-uuid",
+        "fragment-send-get-position-uuid",
+        "fragment-recv-get-position-uuid",
+        "fragment-send-position-feedback-uuid",
+        "fragment-recv-position-feedback-uuid",
+        "fragment-send-operation-complete-uuid",
+        "fragment-recv-operation-complete-uuid",
+        "fragment-send-visual-feedback-uuid",
+        "fragment-recv-visual-feedback-uuid"
+      ],
+      "description": "原文：场景名称: 指纹认证解锁序列。简化：描述用户使用指纹认证解锁门锁的完整交互流程。",
+      "name": "指纹认证解锁序列",
+      "messageIds": [
+        "msg-place-finger-uuid",
+        "msg-capture-image-uuid",
+        "msg-extract-features-uuid",
+        "msg-match-template-uuid",
+        "msg-auth-result-uuid",
+        "msg-unlock-command-uuid",
+        "msg-engage-motor-uuid",
+        "msg-get-position-uuid",
+        "msg-position-feedback-uuid",
+        "msg-operation-complete-uuid",
+        "msg-visual-feedback-uuid"
+      ],
+      "ownedAttributeIds": [
+        "prop-interaction-user-uuid"
+      ],
+      "id": "interaction-fingerprint-unlock-uuid",
+      "type": "Interaction"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：涉及的生命线: User。简化：交互中用户Actor的实例属性。",
+      "name": "p_user",
+      "typeId": "actor-user-uuid",
+      "id": "prop-interaction-user-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "representsId": "prop-interaction-user-uuid",
+      "description": "原文：涉及的生命线: User。简化：代表用户的生命线，发起指纹认证请求并接收最终反馈。",
+      "name": "User",
+      "id": "ll-user-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "representsId": "prop-auth-instance-uuid",
+      "description": "原文：涉及的生命线: AuthenticationModule。简化：代表认证模块的生命线，处理指纹采集、特征提取和匹配。",
+      "name": "AuthenticationModule",
+      "id": "ll-auth-module-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "representsId": "prop-main-controller-uuid",
+      "description": "原文：涉及的生命线: MainController。简化：代表主控制器的生命线，协调认证和锁控制流程。",
+      "name": "MainController",
+      "id": "ll-main-controller-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "representsId": "prop-lock-control-uuid",
+      "description": "原文：涉及的生命线: LockControlModule。简化：代表锁控制模块的生命线，执行解锁操作和电机控制。",
+      "name": "LockControlModule",
+      "id": "ll-lock-control-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "representsId": "prop-sensor-module-uuid",
+      "description": "原文：涉及的生命线: SensorModule。简化：代表传感器模块的生命线，提供位置状态反馈。",
+      "name": "SensorModule",
+      "id": "ll-sensor-module-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "arguments": [
+        {
+          "body": "onSensor",
+          "language": "text"
+        }
+      ],
+      "description": "原文：User -> AuthenticationModule: placeFinger(onSensor)。简化：用户将手指放置在传感器上，触发指纹采集过程。",
+      "sendEventId": "fragment-send-place-finger-uuid",
+      "name": "placeFinger",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-place-finger-uuid",
+      "id": "msg-place-finger-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-user-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：User -> AuthenticationModule: placeFinger(onSensor)。简化：用户放置手指消息的发送事件。",
+      "messageId": "msg-place-finger-uuid",
+      "id": "fragment-send-place-finger-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-auth-module-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：User -> AuthenticationModule: placeFinger(onSensor)。简化：认证模块接收放置手指消息的接收事件。",
+      "messageId": "msg-place-finger-uuid",
+      "id": "fragment-recv-place-finger-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "signatureId": "op-capture-image-uuid",
+      "description": "原文：AuthenticationModule -> AuthenticationModule: captureFingerprintImage()。简化：认证模块内部调用指纹图像采集功能。",
+      "sendEventId": "fragment-send-capture-image-uuid",
+      "name": "captureFingerprintImage",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-capture-image-uuid",
+      "id": "msg-capture-image-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-auth-module-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：AuthenticationModule -> AuthenticationModule: captureFingerprintImage()。简化：采集指纹图像消息的发送事件。",
+      "messageId": "msg-capture-image-uuid",
+      "id": "fragment-send-capture-image-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-auth-module-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：AuthenticationModule -> AuthenticationModule: captureFingerprintImage()。简化：采集指纹图像消息的接收事件。",
+      "messageId": "msg-capture-image-uuid",
+      "id": "fragment-recv-capture-image-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "signatureId": "op-extract-features-uuid",
+      "description": "原文：AuthenticationModule -> AuthenticationModule: extractFeatures()。简化：认证模块内部调用特征提取算法。",
+      "sendEventId": "fragment-send-extract-features-uuid",
+      "name": "extractFeatures",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-extract-features-uuid",
+      "id": "msg-extract-features-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-auth-module-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：AuthenticationModule -> AuthenticationModule: extractFeatures()。简化：提取特征消息的发送事件。",
+      "messageId": "msg-extract-features-uuid",
+      "id": "fragment-send-extract-features-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-auth-module-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：AuthenticationModule -> AuthenticationModule: extractFeatures()。简化：提取特征消息的接收事件。",
+      "messageId": "msg-extract-features-uuid",
+      "id": "fragment-recv-extract-features-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "signatureId": "op-match-template-uuid",
+      "description": "原文：AuthenticationModule -> AuthenticationModule: matchWithTemplate()。简化：认证模块内部调用模板匹配功能。",
+      "sendEventId": "fragment-send-match-template-uuid",
+      "name": "matchWithTemplate",
+      "messageSort": "synchCall",
+      "receiveEventId": "fragment-recv-match-template-uuid",
+      "id": "msg-match-template-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-auth-module-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：AuthenticationModule -> AuthenticationModule: matchWithTemplate()。简化：模板匹配消息的发送事件。",
+      "messageId": "msg-match-template-uuid",
+      "id": "fragment-send-match-template-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-auth-module-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：AuthenticationModule -> AuthenticationModule: matchWithTemplate()。简化：模板匹配消息的接收事件。",
+      "messageId": "msg-match-template-uuid",
+      "id": "fragment-recv-match-template-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "arguments": [
+        {
+          "body": "success",
+          "language": "text"
+        }
+      ],
+      "description": "原文：AuthenticationModule -> MainController: authResult(success)。简化：认证模块向主控制器发送认证成功结果。",
+      "sendEventId": "fragment-send-auth-result-uuid",
+      "name": "authResult",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-auth-result-uuid",
+      "id": "msg-auth-result-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-auth-module-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：AuthenticationModule -> MainController: authResult(success)。简化：认证结果消息的发送事件。",
+      "messageId": "msg-auth-result-uuid",
+      "id": "fragment-send-auth-result-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-main-controller-uuid",
+      "parentId": "interaction-fingerprint-unlock-uuid",
+      "description": "原文：AuthenticationModule -> MainController: authResult(success)。简化：认证结果消息的接收事件。",
+      "messageId": "msg-auth-result-uuid",
+      "id": "fragment-recv-auth-result-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "description": " 元素：Unnamed（自动生成）",
+      "id": "msg",
+      "type": "UnknownType"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：异常入侵检测与响应。简化：包含入侵检测和安全响应相关组件的包。",
+      "name": "安全防护包",
+      "id": "pkg-security-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：低电量处理流程。简化：包含电源管理和节能模式相关组件的包。",
+      "name": "电源管理包",
+      "id": "pkg-power-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-security-uuid",
+      "lifelineIds": [
+        "ll-sensorhub-uuid",
+        "ll-auth-intrusion-uuid",
+        "ll-comm-intrusion-uuid",
+        "ll-lock-intrusion-uuid",
+        "ll-cloud-intrusion-uuid",
+        "ll-userdevice-intrusion-uuid"
+      ],
+      "description": "原文：当系统检测到异常振动或强制开锁企图时，立即启动安全防护协议，包括本地报警、远程通知和证据记录，形成完整的安全事件响应链条。简化：入侵检测与安全响应的完整交互流程。",
+      "name": "异常入侵检测与响应",
+      "messageIds": [
+        "msg-vibrationalert-uuid",
+        "msg-reinforcelock-uuid",
+        "msg-lockreinforced-uuid",
+        "msg-sendintrusionalert-uuid",
+        "msg-uploadeventdata-uuid",
+        "msg-pushnotification-uuid",
+        "msg-increasemonitor-uuid"
+      ],
+      "id": "interaction-intrusion-uuid",
+      "type": "Interaction"
+    },
+    {
+      "parentId": "pkg-security-uuid",
+      "ownedOperationIds": [
+        "op-detectvibration-uuid"
+      ],
+      "description": "原文：涉及的生命线: SensorHub。简化：传感器集线器，负责检测物理异常如振动。",
+      "name": "SensorHub",
+      "id": "cls-sensorhub-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-security-uuid",
+      "ownedOperationIds": [
+        "op-handleintrusion-uuid",
+        "op-managepowerstate-uuid"
+      ],
+      "description": "原文：涉及的生命线: AuthenticationModule。简化：认证模块，协调安全响应和权限验证。",
+      "name": "AuthenticationModule",
+      "id": "cls-auth-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-security-uuid",
+      "ownedOperationIds": [
+        "op-sendalert-uuid",
+        "op-reportstatus-uuid"
+      ],
+      "description": "原文：涉及的生命线: CommunicationModule。简化：通信模块，负责与云端和用户设备通信。",
+      "name": "CommunicationModule",
+      "id": "cls-comm-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-security-uuid",
+      "ownedOperationIds": [
+        "op-reinforcelock-uuid",
+        "op-adjustmotorpower-uuid"
+      ],
+      "description": "原文：涉及的生命线: LockControlModule。简化：锁控制模块，管理锁的机械操作和加固。",
+      "name": "LockControlModule",
+      "id": "cls-lock-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-power-uuid",
+      "ownedOperationIds": [
+        "op-monitorbattery-uuid",
+        "op-activatecontingency-uuid"
+      ],
+      "description": "原文：涉及的生命线: PowerManagementModule。简化：电源管理模块，监控电池状态并协调节能策略。",
+      "name": "PowerManagementModule",
+      "id": "cls-power-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-security-uuid",
+      "description": "原文：CloudService。简化：云端服务，接收事件数据并推送通知。",
+      "name": "CloudService",
+      "id": "cls-cloud-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "interaction-intrusion-uuid",
+      "representsId": "cls-sensorhub-uuid",
+      "description": "原文：涉及的生命线: SensorHub。简化：代表传感器集线器的生命线，检测振动异常。",
+      "name": "L1-SensorHub",
+      "id": "ll-sensorhub-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-lowpower-uuid",
+      "representsId": "cls-power-uuid",
+      "description": "原文：涉及的生命线: PowerManagementModule。简化：代表电源管理模块的生命线，检测低电量状态。",
+      "name": "L1-PowerManagementModule",
+      "id": "ll-power-lowpower-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-intrusion-uuid",
+      "arguments": [
+        {
+          "body": "true",
+          "language": "boolean"
+        }
+      ],
+      "description": "原文：LockControlModule -> AuthenticationModule: lockReinforced(true)。简化：锁控制模块确认锁加固完成。",
+      "sendEventId": "fragment-send-lockreinforced-uuid",
+      "name": "lockReinforced",
+      "messageSort": "reply",
+      "receiveEventId": "fragment-recv-lockreinforced-uuid",
+      "id": "msg-lockreinforced-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-lock-intrusion-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：LockControlModule -> AuthenticationModule: lockReinforced。简化：锁加固确认消息的发送事件。",
+      "messageId": "msg-lockreinforced-uuid",
+      "id": "fragment-send-lockreinforced-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-auth-intrusion-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：LockControlModule -> AuthenticationModule: lockReinforced。简化：锁加固确认消息的接收事件。",
+      "messageId": "msg-lockreinforced-uuid",
+      "id": "fragment-recv-lockreinforced-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：AuthenticationModule -> CommunicationModule: sendIntrusionAlert()。简化：认证模块通知通信模块发送入侵警报。",
+      "sendEventId": "fragment-send-sendintrusionalert-uuid",
+      "name": "sendIntrusionAlert",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-sendintrusionalert-uuid",
+      "id": "msg-sendintrusionalert-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-auth-intrusion-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：AuthenticationModule -> CommunicationModule: sendIntrusionAlert。简化：发送入侵警报消息的发送事件。",
+      "messageId": "msg-sendintrusionalert-uuid",
+      "id": "fragment-send-sendintrusionalert-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-comm-intrusion-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：AuthenticationModule -> CommunicationModule: sendIntrusionAlert。简化：发送入侵警报消息的接收事件。",
+      "messageId": "msg-sendintrusionalert-uuid",
+      "id": "fragment-recv-sendintrusionalert-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-intrusion-uuid",
+      "arguments": [
+        {
+          "body": "timestamp, sensorData",
+          "language": "text"
+        }
+      ],
+      "description": "原文：CommunicationModule -> CloudService: uploadEventData(timestamp, sensorData)。简化：通信模块向云端服务上传事件数据和时间戳。",
+      "sendEventId": "fragment-send-uploadeventdata-uuid",
+      "name": "uploadEventData",
+      "messageSort": "asynchCall",
+      "receiveEventId": "fragment-recv-uploadeventdata-uuid",
+      "id": "msg-uploadeventdata-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-comm-intrusion-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：CommunicationModule -> CloudService: uploadEventData。简化：上传事件数据消息的发送事件。",
+      "messageId": "msg-uploadeventdata-uuid",
+      "id": "fragment-send-uploadeventdata-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-cloud-intrusion-uuid",
+      "parentId": "interaction-intrusion-uuid",
+      "description": "原文：CommunicationModule -> CloudService: uploadEventData。简化：上传事件数据消息的接收事件。",
+      "messageId": "msg-uploadeventdata-uuid",
+      "id": "fragment-recv-uploadeventdata-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "description": " 元素：Unnamed（自动生成）",
+      "id": "msg-pushnotification-uuid",
+      "type": "UnknownType"
+    }
+  ]
+}

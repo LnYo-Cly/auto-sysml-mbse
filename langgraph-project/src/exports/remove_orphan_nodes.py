@@ -32,6 +32,7 @@ class OrphanNodeRemover:
     9. 列表类型引用（如 nodes, edges, groups）中的ID不存在
     10. 嵌套对象中的引用（如 end1, end2 中的引用）
     11. 特定类型元素缺少必需的字段（如 MessageOccurrenceSpecification 缺少 parentId, coveredId）
+    12. Satisfy/Verify/DeriveReqt 关系中的 blockId, requirementId, testCaseId 等引用不存在
     """
     
     # 需要检查的单值ID引用字段
@@ -45,6 +46,15 @@ class OrphanNodeRemover:
         'representsId',
         'coveredId',
         'classifierBehaviorId',
+        # Satisfy/Verify/DeriveReqt 关系字段
+        'blockId',
+        'requirementId',
+        'testCaseId',
+        'derivedRequirementId',
+        'sourceRequirementId',
+        # 其他可能的引用字段
+        'signalId',
+        'behavior',
     ]
     
     # 可选检查的类型引用字段（可能是内置类型如 Real, Integer 等）
@@ -83,6 +93,10 @@ class OrphanNodeRemover:
         'Lifeline': ['parentId', 'representsId'],
         'Association': ['parentId'],
         'Generalization': ['sourceId', 'targetId'],
+        # 需求关系类型
+        'Satisfy': ['blockId', 'requirementId'],
+        'Verify': ['testCaseId', 'requirementId'],
+        'DeriveReqt': ['derivedRequirementId', 'sourceRequirementId'],
     }
     
     def __init__(self, check_type_refs: bool = False, verbose: bool = True):

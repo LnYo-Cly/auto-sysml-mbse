@@ -9,7 +9,7 @@ from typing import List, Tuple
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from connections import config
 import ollama
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
@@ -28,6 +28,17 @@ class EntityComparisonItem(BaseModel):
     index: int = Field(..., description="输入列表中的索引位置")
     is_same_entity: bool = Field(..., description="是否为同一实体")
     reasoning: str = Field(..., description="判断理由")
+
+    @model_validator(mode='before')
+    @classmethod
+    def fix_keys(cls, data):
+        if isinstance(data, dict):
+            # 修复 LLM 可能产生的键名幻觉
+            if 'same_entity' in data and 'is_same_entity' not in data:
+                data['is_same_entity'] = data['same_entity']
+            if 'is_same' in data and 'is_same_entity' not in data:
+                data['is_same_entity'] = data['is_same']
+        return data
 
 class BatchEntityComparisonResult(BaseModel):
     """批量结果的整体结构"""

@@ -8,7 +8,7 @@ from collections import defaultdict
 # 添加 src 目录到 Python 路径，以便导入 exports 模块
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from exports.remove_orphan_nodes import clean_json_data
+from exports.repair_orphan_references import repair_json_data
 
 # --- 1. 统一的命名空间定义 ---
 NAMESPACES = {
@@ -171,7 +171,20 @@ def create_activity_specific_element(parent_xml_element, elem_id):
         if elem_type in ["Package", "Activity", "Class", "ControlFlow", "ObjectFlow", "InitialNode", "ActivityFinalNode", "FlowFinalNode", "DecisionNode", "MergeNode", "ForkNode", "JoinNode", "CallBehaviorAction", "ActivityParameterNode", "InputPin", "OutputPin", "ActivityPartition", "LiteralUnlimitedNatural", "OpaqueExpression", "CentralBufferNode"]:
             attrs["xmi:type"] = f"uml:{elem_type}"
         if element_tag in ['edge', 'node', 'argument', 'result', 'group']: attrs["visibility"] = "public"
-        if elem_type in ["ControlFlow", "ObjectFlow"]: attrs.update({"source": elem_data["sourceId"], "target": elem_data["targetId"]})
+        if elem_type in ["ControlFlow", "ObjectFlow"]:
+            source_id, target_id = elem_data["sourceId"], elem_data["targetId"]
+            def get_valid_node_id(ref_id):
+                ref_elem = elements_by_id.get(ref_id)
+                if ref_elem and ref_elem.get("type") in ["Class", "Block", "InterfaceBlock", "Actor", "Component"]:
+                    act_id = parent_xml_element.get('xmi:id') or "unknown_act"
+                    proxy_id = f"proxy_{act_id}_{ref_id}"
+                    if proxy_id not in processed_elements:
+                        node_attrs = {"xmi:type": "uml:CentralBufferNode", "xmi:id": proxy_id, "name": (ref_elem.get("name") or "") + "_Proxy", "type": ref_id, "visibility": "public"}
+                        create_element("node", node_attrs, parent_xml_element)
+                        processed_elements.add(proxy_id)
+                    return proxy_id
+                return ref_id
+            attrs.update({"source": get_valid_node_id(source_id), "target": get_valid_node_id(target_id)})
         elif elem_type == "CallBehaviorAction" and "behavior" in elem_data: attrs["behavior"] = elem_data["behavior"]
         elif elem_type in ["InputPin", "OutputPin", "ActivityParameterNode", "CentralBufferNode"] and "typeId" in elem_data: attrs["type"] = elem_data["typeId"]
         elif elem_type == "ActivityPartition" and "representsId" in elem_data: attrs["represents"] = elem_data["representsId"]
@@ -502,6 +515,102 @@ def process_sequence_covered_by():
                 else:
                     print(f"警告: 为 fragment '{elem_id}' 添加 coveredBy 时未找到 lifeline '{ll_id}' 的XML节点。")
 
+def validate_and_clean_model(root_element):
+    """
+    全面检查并清理无效引用的元素。
+    采用迭代方式，直到没有新元素被删除为止（处理级联删除）。
+    """
+    max_passes = 10
+    print("开始执行模型完整性检查与清理...")
+    
+    for pass_num in range(max_passes):
+        removed_count = 0
+        existing_ids = set()
+        # 1. 收集当前所有ID
+        for elem in root_element.iter():
+            xmi_id = elem.get('xmi:id')
+            if xmi_id:
+                existing_ids.add(xmi_id)
+        
+        # 1.1 收集所有被边引用的节点ID（source/target）
+        referenced_node_ids = set()
+        for elem in root_element.iter():
+            if elem.tag == 'edge':
+                s, t = elem.get('source'), elem.get('target')
+                if s: referenced_node_ids.add(s)
+                if t: referenced_node_ids.add(t)
+        
+        elements_to_remove = []
+        
+        # 2. 检查引用完整性
+        for parent in root_element.iter():
+            for child in list(parent):
+                should_remove = False
+                reason = ""
+                
+                # 2.0 检查孤立的 CentralBufferNode（没有被任何边引用）
+                if child.tag == 'node' and child.get('xmi:type') == 'uml:CentralBufferNode':
+                    node_id = child.get('xmi:id')
+                    if node_id and node_id not in referenced_node_ids:
+                        should_remove, reason = True, f"CentralBufferNode '{node_id}' not referenced by any edge"
+                
+                # 2.1 检查 source/target (Edge, Transition)
+                if child.tag in ['edge', 'transition']:
+                    s, t = child.get('source'), child.get('target')
+                    if s and s not in existing_ids: should_remove, reason = True, f"source '{s}' missing"
+                    elif t and t not in existing_ids: should_remove, reason = True, f"target '{t}' missing"
+                
+                # 2.2 检查 message (MessageOccurrenceSpecification)
+                elif child.get('xmi:type') == 'uml:MessageOccurrenceSpecification':
+                    m = child.get('message')
+                    if m and m not in existing_ids: should_remove, reason = True, f"message '{m}' missing"
+                    
+                    c = child.get('covered')
+                    if c and c not in existing_ids: should_remove, reason = True, f"covered lifeline '{c}' missing"
+
+                # 2.3 检查 sendEvent/receiveEvent (Message)
+                elif child.tag == 'message':
+                    se, re = child.get('sendEvent'), child.get('receiveEvent')
+                    if se and se not in existing_ids: should_remove, reason = True, f"sendEvent '{se}' missing"
+                    elif re and re not in existing_ids: should_remove, reason = True, f"receiveEvent '{re}' missing"
+                
+                # 2.4 检查 coveredBy (Lifeline children)
+                elif child.tag == 'coveredBy':
+                    ref = child.get('xmi:idref')
+                    if ref and ref not in existing_ids: should_remove, reason = True, f"coveredBy ref '{ref}' missing"
+
+                # 2.5 检查 Stereotypes (base_X)
+                else:
+                    for attr, val in child.attrib.items():
+                        if attr.startswith('base_') and val not in existing_ids:
+                            should_remove, reason = True, f"base element '{val}' for stereotype missing"
+                            break
+                    
+                    # 2.6 检查 Abstraction (client/supplier)
+                    if not should_remove and child.get('xmi:type') == 'uml:Abstraction':
+                        for sub in child:
+                            if sub.tag in ['client', 'supplier']:
+                                ref = sub.get('xmi:idref')
+                                if ref and ref not in existing_ids:
+                                    should_remove, reason = True, f"abstraction {sub.tag} '{ref}' missing"
+                                    break
+                
+                if should_remove:
+                    elements_to_remove.append((parent, child, reason))
+        
+        if not elements_to_remove:
+            break
+            
+        # 3. 执行删除
+        for parent, child, reason in elements_to_remove:
+            try:
+                parent.remove(child)
+                removed_count += 1
+            except ValueError:
+                pass 
+        
+        print(f"  清理轮次 {pass_num+1}: 移除了 {removed_count} 个无效元素。")
+
 def apply_stereotypes(root_element):
     """在XML根级别应用所有收集到的构造型"""
     stereotype_map = {
@@ -616,8 +725,14 @@ def generate_unified_xmi(json_data):
     process_associations()
     process_sequence_covered_by()
     
+    # 5.5 验证并清理无效的边连接
+    validate_and_clean_model(xmi_root)
+    
     # 6. 应用所有构造型
     apply_stereotypes(xmi_root)
+    
+    # 6.5 再次清理（因为构造型可能引用了已删除的元素，或者构造型本身无效）
+    validate_and_clean_model(xmi_root)
 
     # 7. 美化并返回XML字符串
     rough_string = ET.tostring(xmi_root, encoding='unicode', method='xml')
@@ -629,7 +744,7 @@ def generate_unified_xmi(json_data):
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-    json_file_path = '../data/output/fusion/fused_model_20251112_135538.json'
+    json_file_path = '../data/output/fusion/fused_model_20251128_114546.json'
     output_xmi_file_path = 'output.xmi'
 
     try:
@@ -637,8 +752,8 @@ if __name__ == "__main__":
         with open(json_file_path, 'r', encoding='utf-8') as f:
             print(f"正在读取JSON文件: {json_file_path}")
             json_data = json.load(f)
-        # 直接清理字典数据，返回清理后的字典
-        cleaned_data = clean_json_data(json_data, verbose=True)
+        # 使用智能修复工具清理数据（规则修复 + 删除无法修复的节点）
+        cleaned_data = repair_json_data(json_data, verbose=True)
 
         # 步骤 2: 调用主生成函数
         print("JSON文件读取成功，开始生成XMI...")

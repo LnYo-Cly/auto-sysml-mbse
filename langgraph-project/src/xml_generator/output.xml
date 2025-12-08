@@ -4,254 +4,1092 @@
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="SysML_Profile_App">
       <appliedProfile href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML"/>
     </profileApplication>
-    <packagedElement xmi:id="pkg-systemstart-uuid" name="SystemStartupSelfCheck" xmi:type="uml:Package">
-      <packagedElement xmi:id="blk-bootcmd-uuid" name="BootCommand" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="blk-statusrep-uuid" name="StatusReport" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="blk-system-uuid" name="System" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="act-systemstart-uuid" name="系统启动自检活动" xmi:type="uml:Activity">
-        <partition xmi:idref="grp-system-uuid"/>
-        <edge xmi:id="edge-bootcmd-to-power" xmi:type="uml:ControlFlow" visibility="public" source="node-start-boot" target="node-check-power">
-          <weight xmi:id="_edge_bootcmd_to_power_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-          <guard xmi:id="_edge_bootcmd_to_power_guard_expr" xmi:type="uml:OpaqueExpression">
-            <body>[power_ok]</body>
-            <language>English</language>
-          </guard>
+    <packagedElement xmi:id="pkg-nonfunctional-req-uuid" name="Nonfunctional Req" xmi:type="uml:Package"/>
+    <packagedElement xmi:id="pkg-climate-uuid" name="AutomotiveClimateControl" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-temp-reading-uuid" name="TemperatureReading" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-temp-delta-uuid" name="TemperatureDelta" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-control-sig-uuid" name="ControlSignal" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-climate-sys-uuid" name="ClimateControlSystem" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-temp-sensors-uuid" name="TemperatureSensors" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-pid-controller-uuid" name="PIDController" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="act-auto-temp-uuid" name="自动温度调节流程" xmi:type="uml:Activity">
+        <partition xmi:idref="grp-algorithm-uuid"/>
+        <partition xmi:idref="grp-actuators-uuid"/>
+        <edge xmi:id="edge-start-to-read" xmi:type="uml:ControlFlow" visibility="public" source="node-temp-start" target="node-read-sensors">
+          <weight xmi:id="_edge_start_to_read_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
         </edge>
-        <edge xmi:id="edge-power-to-sensors" xmi:type="uml:ControlFlow" visibility="public" source="node-check-power" target="node-check-sensors">
-          <weight xmi:id="_edge_power_to_sensors_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-          <guard xmi:id="_edge_power_to_sensors_guard_expr" xmi:type="uml:OpaqueExpression">
-            <body>[sensors_ok]</body>
-            <language>English</language>
-          </guard>
+        <edge xmi:id="edge-sensor-data-flow" xmi:type="uml:ObjectFlow" visibility="public" source="pin-sensor-data-out" target="pin-sensor-data-in">
+          <weight xmi:id="_edge_sensor_data_flow_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
         </edge>
-        <edge xmi:id="edge-sensors-to-actuators" xmi:type="uml:ControlFlow" visibility="public" source="node-check-sensors" target="node-check-actuators">
-          <weight xmi:id="_edge_sensors_to_actuators_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-          <guard xmi:id="_edge_sensors_to_actuators_guard_expr" xmi:type="uml:OpaqueExpression">
-            <body>[actuators_ok]</body>
-            <language>English</language>
-          </guard>
+        <edge xmi:id="edge-temp-delta-flow" xmi:type="uml:ObjectFlow" visibility="public" source="pin-temp-delta-out" target="pin-temp-delta-in">
+          <weight xmi:id="_edge_temp_delta_flow_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
         </edge>
-        <edge xmi:id="edge-actuators-to-control" xmi:type="uml:ControlFlow" visibility="public" source="node-check-actuators" target="node-initialize-control">
-          <weight xmi:id="_edge_actuators_to_control_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-          <guard xmi:id="_edge_actuators_to_control_guard_expr" xmi:type="uml:OpaqueExpression">
-            <body>[control_ok]</body>
-            <language>English</language>
-          </guard>
+        <edge xmi:id="edge-control-to-compressor" xmi:type="uml:ObjectFlow" visibility="public" source="pin-control-out" target="pin-control-compressor-in">
+          <weight xmi:id="_edge_control_to_compressor_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
         </edge>
-        <edge xmi:id="edge-control-to-return" xmi:type="uml:ControlFlow" visibility="public" source="node-initialize-control" target="node-return-status">
-          <weight xmi:id="_edge_control_to_return_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-          <guard xmi:id="_edge_control_to_return_guard_expr" xmi:type="uml:OpaqueExpression">
-            <body>[return_ok]</body>
-            <language>English</language>
-          </guard>
+        <edge xmi:id="edge-control-to-blower" xmi:type="uml:ObjectFlow" visibility="public" source="pin-control-out" target="pin-control-blower-in">
+          <weight xmi:id="_edge_control_to_blower_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
         </edge>
-        <edge xmi:id="edge-return-to-idle" xmi:type="uml:ControlFlow" visibility="public" source="node-return-status" target="node-enter-idle">
-          <weight xmi:id="_edge_return_to_idle_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-          <guard xmi:id="_edge_return_to_idle_guard_expr" xmi:type="uml:OpaqueExpression">
-            <body>[status_ok]</body>
-            <language>English</language>
-          </guard>
+        <edge xmi:id="edge-control-to-dampers" xmi:type="uml:ObjectFlow" visibility="public" source="pin-control-out" target="pin-control-dampers-in">
+          <weight xmi:id="_edge_control_to_dampers_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
         </edge>
-        <edge xmi:id="edge-idle-to-end" xmi:type="uml:ControlFlow" visibility="public" source="node-enter-idle" target="node-end">
-          <weight xmi:id="_edge_idle_to_end_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-          <guard xmi:id="_edge_idle_to_end_guard_expr" xmi:type="uml:OpaqueExpression">
-            <body>[idle_ok]</body>
-            <language>English</language>
-          </guard>
+        <edge xmi:id="edge-dampers-to-wait" xmi:type="uml:ControlFlow" visibility="public" source="node-adjust-dampers" target="node-wait-cycle">
+          <weight xmi:id="_edge_dampers_to_wait_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
         </edge>
-        <node xmi:id="node-start-boot" name="接收开机指令" xmi:type="uml:InitialNode" visibility="public"/>
-        <node xmi:id="node-check-power" name="检查电源状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
-        <node xmi:id="node-check-sensors" name="检查传感器状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
-        <node xmi:id="node-check-actuators" name="检查执行器状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
-        <node xmi:id="node-initialize-control" name="初始化控制模块" xmi:type="uml:CallBehaviorAction" visibility="public"/>
-        <node xmi:id="node-return-status" name="返回系统状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
-        <node xmi:id="node-enter-idle" name="进入待机状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
-        <node xmi:id="node-end" name="流程结束" xmi:type="uml:ActivityFinalNode" visibility="public"/>
-        <group xmi:id="grp-system-uuid" name="系统分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-system-uuid"/>
+        <edge xmi:id="edge-wait-to-merge" xmi:type="uml:ControlFlow" visibility="public" source="node-wait-cycle" target="node-loop-merge">
+          <weight xmi:id="_edge_wait_to_merge_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="edge-merge-to-read" xmi:type="uml:ControlFlow" visibility="public" source="node-loop-merge" target="node-read-sensors">
+          <weight xmi:id="_edge_merge_to_read_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <node xmi:id="node-temp-start" name="开始温度调节" xmi:type="uml:InitialNode" visibility="public"/>
+        <node xmi:id="node-read-sensors" name="读取温度传感器数据" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <result xmi:id="pin-sensor-data-out" name="out_sensor_data" xmi:type="uml:OutputPin" visibility="public" type="blk-temp-reading-uuid"/>
+        </node>
+        <node xmi:id="node-calc-delta" name="计算温度差值" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <argument xmi:id="pin-sensor-data-in" name="in_sensor_data" xmi:type="uml:InputPin" visibility="public" type="blk-temp-reading-uuid"/>
+          <argument xmi:id="pin-target-temp-in" name="in_target_temp" xmi:type="uml:InputPin" visibility="public" type="blk-temp-reading-uuid"/>
+          <result xmi:id="pin-temp-delta-out" name="out_temp_delta" xmi:type="uml:OutputPin" visibility="public" type="blk-temp-delta-uuid"/>
+        </node>
+        <node xmi:id="node-pid-calc" name="执行PID控制算法" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <argument xmi:id="pin-temp-delta-in" name="in_temp_delta" xmi:type="uml:InputPin" visibility="public" type="blk-temp-delta-uuid"/>
+          <result xmi:id="pin-control-out" name="out_control_signal" xmi:type="uml:OutputPin" visibility="public" type="blk-control-sig-uuid"/>
+        </node>
+        <node xmi:id="node-adjust-compressor" name="调节压缩机转速" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <argument xmi:id="pin-control-compressor-in" name="in_control_signal" xmi:type="uml:InputPin" visibility="public" type="blk-control-sig-uuid"/>
+        </node>
+        <node xmi:id="node-adjust-blower" name="调节鼓风机风量" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <argument xmi:id="pin-control-blower-in" name="in_control_signal" xmi:type="uml:InputPin" visibility="public" type="blk-control-sig-uuid"/>
+        </node>
+        <node xmi:id="node-adjust-dampers" name="调整风门开度" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <argument xmi:id="pin-control-dampers-in" name="in_control_signal" xmi:type="uml:InputPin" visibility="public" type="blk-control-sig-uuid"/>
+        </node>
+        <node xmi:id="node-wait-cycle" name="等待采样周期" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-loop-merge" name="循环合并点" xmi:type="uml:MergeNode" visibility="public"/>
+        <node xmi:id="cbuf-temp-data" name="温度数据缓存" xmi:type="uml:CentralBufferNode" visibility="public" type="blk-temp-reading-uuid"/>
+        <group xmi:id="grp-algorithm-uuid" name="控制算法分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-pid-controller-uuid">
+          <node xmi:idref="node-calc-delta"/>
+          <node xmi:idref="node-pid-calc"/>
+        </group>
+        <group xmi:id="grp-actuators-uuid" name="执行器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-climate-sys-uuid">
+          <node xmi:idref="node-adjust-compressor"/>
+          <node xmi:idref="node-adjust-blower"/>
+          <node xmi:idref="node-adjust-dampers"/>
+        </group>
+      </packagedElement>
+      <packagedElement xmi:id="act-self-test-uuid" name="系统启动自检流程" xmi:type="uml:Activity"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-doorlock-uuid" name="DoorLockControl" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-lock-status-uuid" name="LockStatus" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-user-perm-uuid" name="UserPermission" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-auth-result-uuid" name="AuthResult" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-auth-system-uuid" name="AuthenticationSystem" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-access-control-uuid" name="AccessControlSystem" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-lock-module-uuid" name="LockControlModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-credential-uuid" name="Credential" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-boolean-uuid" name="Boolean" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-real-uuid" name="Real" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-power-mode-uuid" name="PowerMode" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-power-module-uuid" name="PowerManagementModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="act-low-power-uuid" name="低电量处理" xmi:type="uml:Activity">
+        <partition xmi:idref="grp-power-module-uuid"/>
+        <node xmi:id="node-power-start" name="开始电量检测" xmi:type="uml:InitialNode" visibility="public"/>
+        <node xmi:id="node-power-detect-voltage" name="检测电池电压" xmi:type="uml:CallBehaviorAction" visibility="public">
+          <argument xmi:id="pin-power-in-level" name="in_battery_level" xmi:type="uml:InputPin" visibility="public" type="blk-real-uuid"/>
+        </node>
+        <node xmi:id="node-power-check-threshold" name="判断电量阈值" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-power-enable-backup" name="启用备用电源" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-power-switch-mode" name="切换节能模式" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-power-send-alert" name="发送低电量警告" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-power-reduce-updates" name="减少状态更新" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-power-monitor-trend" name="监控电量趋势" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-power-emergency-decision" name="紧急模式判断" xmi:type="uml:DecisionNode" visibility="public">
+          <inPartition xmi:idref="grp-power-module-uuid"/>
+        </node>
+        <node xmi:id="node-power-enter-emergency" name="进入紧急模式" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-power-final" name="电量处理完成" xmi:type="uml:ActivityFinalNode" visibility="public"/>
+        <group xmi:id="grp-power-module-uuid" name="电源管理分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-power-module-uuid">
+          <node xmi:idref="node-power-detect-voltage"/>
+          <node xmi:idref="node-power-check-threshold"/>
+          <node xmi:idref="node-power-enable-backup"/>
+          <node xmi:idref="node-power-switch-mode"/>
+          <node xmi:idref="node-power-send-alert"/>
+          <node xmi:idref="node-power-reduce-updates"/>
+          <node xmi:idref="node-power-monitor-trend"/>
+          <node xmi:idref="node-power-emergency-decision"/>
+          <node xmi:idref="node-power-enter-emergency"/>
+        </group>
       </packagedElement>
     </packagedElement>
-    <packagedElement xmi:id="pkg-aircon-func-uuid" name="空调系统功能" xmi:type="uml:Package">
-      <packagedElement xmi:id="req-aircon-control-uuid" name="空调系统控制" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="req-aircon-precision-uuid" name="温度控制精度" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="req-aircon-energy-uuid" name="能耗管理" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="req-aircon-response-uuid" name="响应时间" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="req-aircon-reliability-uuid" name="系统可靠性" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="blk-aircon-control-uuid" name="空调控制系统" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="tc-aircon-control-uuid" name="空调系统控制测试" xmi:type="uml:Activity">
-        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_aircon_control_uuid_verdict_param" name="verdict" direction="return">
+    <packagedElement xmi:id="pkg-smartlock-uuid" name="SmartLockSystem" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-user-interface-uuid" name="UserInterface" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-credential-data-uuid" name="CredentialData" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-lock-state-uuid" name="LockState" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-lock-command-uuid" name="LockCommand" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-system-status-uuid" name="SystemStatus" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-sensorhub-uuid" name="SensorHub" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-main-control-uuid" name="MainControlUnit" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-motor-driver-uuid" name="MotorDriver" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="act-user-unlock-uuid" name="用户开锁流程" xmi:type="uml:Activity">
+        <partition xmi:idref="part-maincontrol-uuid"/>
+        <partition xmi:idref="part-userinterface-uuid"/>
+        <partition xmi:idref="grp-auth-input-uuid"/>
+        <node xmi:type="uml:CentralBufferNode" xmi:id="proxy_act-user-unlock-uuid_blk-auth-request-uuid" name="AuthenticationRequest_Proxy" type="blk-auth-request-uuid" visibility="public"/>
+        <node xmi:type="uml:CentralBufferNode" xmi:id="proxy_act-user-unlock-uuid_blk-credential-uuid" name="Credential_Proxy" type="blk-credential-uuid" visibility="public"/>
+        <edge xmi:id="flow-start-to-receive-uuid" xmi:type="uml:ControlFlow" visibility="public" source="proxy_act-user-unlock-uuid_blk-auth-request-uuid" target="proxy_act-user-unlock-uuid_blk-credential-uuid">
+          <weight xmi:id="_flow_start_to_receive_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="flow-auth-request-uuid" xmi:type="uml:ControlFlow" visibility="public" source="proxy_act-user-unlock-uuid_blk-credential-uuid" target="node-send-auth-request-uuid">
+          <weight xmi:id="_flow_auth_request_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <edge xmi:id="flow-auth-result-uuid" xmi:type="uml:ControlFlow" visibility="public" source="node-execute-auth-uuid" target="node-auth-decision-uuid">
+          <weight xmi:id="_flow_auth_result_uuid_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
+        </edge>
+        <node xmi:id="node-send-auth-request-uuid" name="发送认证请求" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-execute-auth-uuid" name="执行认证逻辑" xmi:type="uml:CallBehaviorAction" visibility="public" behavior="act-auth-process-uuid">
+          <argument xmi:id="pin-auth-request-in-uuid" name="in_auth_request" xmi:type="uml:InputPin" visibility="public" type="blk-auth-request-uuid"/>
+        </node>
+        <node xmi:id="node-auth-decision-uuid" name="认证决策" xmi:type="uml:DecisionNode" visibility="public">
+          <inPartition xmi:idref="part-maincontrol-uuid"/>
+        </node>
+        <node xmi:id="node-update-status-uuid" name="更新状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-send-unlock-cmd-uuid" name="发送开锁指令" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-drive-motor-uuid" name="驱动电机" xmi:type="uml:CallBehaviorAction" visibility="public" behavior="act-latch-control-uuid"/>
+        <node xmi:id="node-mechanical-complete-uuid" name="机械到位" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-log-event-uuid" name="记录事件" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-update-fail-count-uuid" name="更新失败计数" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-security-check-uuid" name="安全检查" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-unlock-complete-uuid" name="开锁完成" xmi:type="uml:ActivityFinalNode" visibility="public"/>
+        <node xmi:id="node-auth-fail-end-uuid" name="认证失败结束" xmi:type="uml:ActivityFinalNode" visibility="public"/>
+        <group xmi:id="part-maincontrol-uuid" name="MainControlUnit分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-main-control-uuid">
+          <node xmi:idref="node-execute-auth-uuid"/>
+          <node xmi:idref="node-auth-decision-uuid"/>
+          <node xmi:idref="node-update-status-uuid"/>
+          <node xmi:idref="node-send-unlock-cmd-uuid"/>
+          <node xmi:idref="node-log-event-uuid"/>
+          <node xmi:idref="node-update-fail-count-uuid"/>
+          <node xmi:idref="node-security-check-uuid"/>
+        </group>
+        <group xmi:id="part-userinterface-uuid" name="UserInterface分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-user-interface-uuid"/>
+        <group xmi:id="grp-auth-input-uuid" name="认证输入分区" xmi:type="uml:ActivityPartition" visibility="public" represents="block6"/>
+      </packagedElement>
+      <packagedElement xmi:id="act-auth-process-uuid" name="用户身份认证流程" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-latch-control-uuid" name="锁舌控制流程" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="block3" name="CommunicationModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop16" name="networkLatency" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="cp3" name="UploadDelayConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb3"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-auth-system-uuid" name="UserAuthenticationSystem" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-auth-request-uuid" name="AuthenticationRequest" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-user-db-uuid" name="UserDatabase" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-access-granted-uuid" name="AccessGranted" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-health-monitor-uuid" name="SystemHealthMonitoring" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-self-test-trigger-uuid" name="SelfTestTrigger" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-health-status-uuid" name="HealthStatus" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-sensor-array-uuid" name="SensorArray" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-power-system-uuid" name="PowerSystem" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="act-health-check-uuid" name="系统自检与健康监控活动" xmi:type="uml:Activity">
+        <partition xmi:idref="grp-sensors-uuid"/>
+        <partition xmi:idref="grp-auth-module-uuid"/>
+        <partition xmi:idref="grp-lock-mech-uuid"/>
+        <partition xmi:idref="grp-comms-uuid"/>
+        <node xmi:id="node-health-start" name="开始自检" xmi:type="uml:InitialNode" visibility="public"/>
+        <node xmi:id="node-health-init" name="初始化自检序列" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-health-test-sensors" name="测试传感器功能" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-health-check-auth-module" name="验证认证模块各组件状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-health-check-lock-mech" name="检查锁控电机和位置传感器" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-health-test-comms" name="测试通信模块连接性" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-health-check-power" name="评估电源系统状态" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-health-generate-report" name="生成健康状态报告" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <node xmi:id="node-health-decide-alert" name="根据结果决定是否触发维护警报" xmi:type="uml:CallBehaviorAction" visibility="public"/>
+        <group xmi:id="grp-sensors-uuid" name="传感器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-sensor-array-uuid">
+          <node xmi:idref="node-health-test-sensors"/>
+        </group>
+        <group xmi:id="grp-auth-module-uuid" name="认证模块分区" xmi:type="uml:ActivityPartition" visibility="public" represents="block6">
+          <node xmi:idref="node-health-check-auth-module"/>
+        </group>
+        <group xmi:id="grp-lock-mech-uuid" name="锁控机械分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-lock-module-uuid">
+          <node xmi:idref="node-health-check-lock-mech"/>
+        </group>
+        <group xmi:id="grp-comms-uuid" name="通信分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-lock-module-uuid">
+          <node xmi:idref="node-health-test-comms"/>
+        </group>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-functional-req-uuid" name="功能需求包" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-communication-module-uuid" name="通信模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-status-monitor-test-uuid" name="状态监控测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_status_monitor_test_uuid_verdict_param" name="verdict" direction="return">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
         </ownedParameter>
-        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_aircon_control_uuid_verdict_node" name="verdict" parameter="_tc_aircon_control_uuid_verdict_param">
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_status_monitor_test_uuid_verdict_node" name="verdict" parameter="_tc_status_monitor_test_uuid_verdict_param">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
         </node>
       </packagedElement>
-      <packagedElement xmi:id="tc-aircon-precision-uuid" name="温度控制精度测试" xmi:type="uml:Activity">
-        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_aircon_precision_uuid_verdict_param" name="verdict" direction="return">
+      <packagedElement xmi:id="blk-main-controller-uuid" name="主控制器" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-temp-auto-ctrl-uuid" name="温度自动调节" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-multi-zone-ctrl-uuid" name="多区域独立控制" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-defog-function-uuid" name="除霜除雾功能" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-temp-control-uuid" name="温度控制模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-zone-control-uuid" name="分区控制模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-defog-module-uuid" name="除霜除雾模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-system-controller-uuid" name="系统控制器" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-temp-precision-test-uuid" name="温度控制精度测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_temp_precision_test_uuid_verdict_param" name="verdict" direction="return">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
         </ownedParameter>
-        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_aircon_precision_uuid_verdict_node" name="verdict" parameter="_tc_aircon_precision_uuid_verdict_param">
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_temp_precision_test_uuid_verdict_node" name="verdict" parameter="_tc_temp_precision_test_uuid_verdict_param">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
         </node>
       </packagedElement>
-      <packagedElement xmi:id="tc-aircon-energy-uuid" name="能耗管理测试" xmi:type="uml:Activity">
-        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_aircon_energy_uuid_verdict_param" name="verdict" direction="return">
+      <packagedElement xmi:id="tc-zone-control-test-uuid" name="分区控制功能测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_zone_control_test_uuid_verdict_param" name="verdict" direction="return">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
         </ownedParameter>
-        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_aircon_energy_uuid_verdict_node" name="verdict" parameter="_tc_aircon_energy_uuid_verdict_param">
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_zone_control_test_uuid_verdict_node" name="verdict" parameter="_tc_zone_control_test_uuid_verdict_param">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
         </node>
       </packagedElement>
-    </packagedElement>
-    <packagedElement xmi:id="pkg-air-con-control-uuid" name="空调控制包" xmi:type="uml:Package">
-      <packagedElement xmi:id="blk-air-con-system-uuid" name="空调系统" xmi:type="uml:Class">
-        <classifierBehavior xmi:idref="sm-air-con-uuid"/>
-        <ownedBehavior xmi:id="sm-air-con-uuid" name="空调状态机" xmi:type="uml:StateMachine">
-          <region xmi:id="region-air-con-main-uuid" name="主区域" xmi:type="uml:Region">
-            <subvertex xmi:id="state-off-uuid" name="关闭" xmi:type="uml:State"/>
-            <subvertex xmi:id="state-standby-uuid" name="待机" xmi:type="uml:State"/>
-            <subvertex xmi:id="state-running-uuid" name="运行" xmi:type="uml:State"/>
-            <subvertex xmi:id="ps-main-initial-uuid" xmi:type="uml:Pseudostate"/>
-            <transition xmi:id="trans-initial-to-off-uuid" xmi:type="uml:Transition" source="ps-main-initial-uuid" target="state-off-uuid"/>
-            <transition xmi:id="trans-off-to-standby-uuid" xmi:type="uml:Transition" source="state-off-uuid" target="state-standby-uuid"/>
-            <transition xmi:id="trans-standby-to-running-uuid" xmi:type="uml:Transition" source="state-standby-uuid" target="state-running-uuid"/>
-            <transition xmi:id="trans-running-to-off-uuid" xmi:type="uml:Transition" source="state-running-uuid" target="state-off-uuid"/>
-          </region>
-        </ownedBehavior>
+      <packagedElement xmi:id="tc-defog-demo-test-uuid" name="除霜除雾演示测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_defog_demo_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_defog_demo_test_uuid_verdict_node" name="verdict" parameter="_tc_defog_demo_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
       </packagedElement>
-      <packagedElement xmi:id="event-power-on-uuid" name="power_on" xmi:type="uml:ReceiveEvent"/>
-      <packagedElement xmi:id="event-temperature-change-uuid" name="temperature_change" xmi:type="uml:ReceiveEvent"/>
-      <packagedElement xmi:id="event-humidity-change-uuid" name="humidity_change" xmi:type="uml:ReceiveEvent"/>
-      <packagedElement xmi:id="event-power-off-uuid" name="power_off" xmi:type="uml:ReceiveEvent"/>
+      <packagedElement xmi:id="rel-satisfy-tempctrl-autotemp-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-temp-control-uuid"/>
+        <supplier xmi:idref="req-temp-auto-ctrl-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-zonectrl-multizone-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-zone-control-uuid"/>
+        <supplier xmi:idref="req-multi-zone-ctrl-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-satisfy-defogctrl-defogfunc-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="blk-defog-module-uuid"/>
+        <supplier xmi:idref="req-defog-function-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-temptest-autotemp-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-temp-precision-test-uuid"/>
+        <supplier xmi:idref="req-temp-auto-ctrl-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-zonetest-multizone-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-zone-control-test-uuid"/>
+        <supplier xmi:idref="req-multi-zone-ctrl-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="rel-verify-defogtest-defogfunc-uuid" xmi:type="uml:Abstraction">
+        <client xmi:idref="tc-defog-demo-test-uuid"/>
+        <supplier xmi:idref="req-defog-function-uuid"/>
+      </packagedElement>
     </packagedElement>
-    <packagedElement xmi:id="pkg-air-con-behaviors-uuid" name="空调行为库" xmi:type="uml:Package">
-      <packagedElement xmi:id="act-close-all-executors-uuid" name="关闭所有执行器" xmi:type="uml:Activity"/>
-      <packagedElement xmi:id="act-initialize-sensors-executors-uuid" name="初始化传感器和执行器" xmi:type="uml:Activity"/>
-      <packagedElement xmi:id="act-monitor-env-params-uuid" name="监测环境参数" xmi:type="uml:Activity"/>
-      <packagedElement xmi:id="act-start-cooling-heating-uuid" name="启动制冷或制热系统" xmi:type="uml:Activity"/>
-      <packagedElement xmi:id="act-adjust-temperature-humidity-uuid" name="调节温度和湿度" xmi:type="uml:Activity"/>
-      <packagedElement xmi:id="act-stop-cooling-heating-uuid" name="关闭制冷或制热系统" xmi:type="uml:Activity"/>
+    <packagedElement xmi:id="req-response-time-uuid" name="响应时间" xmi:type="uml:Class"/>
+    <packagedElement xmi:id="blk-power-management-uuid" name="电源管理模块" xmi:type="uml:Class"/>
+    <packagedElement xmi:id="req-energy-efficiency-uuid" name="能效要求" xmi:type="uml:Class"/>
+    <packagedElement xmi:id="req-reliability-uuid" name="可靠性指标" xmi:type="uml:Class"/>
+    <packagedElement xmi:id="tc-response-time-test-uuid" name="系统响应时间测试" xmi:type="uml:Activity">
+      <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_response_time_test_uuid_verdict_param" name="verdict" direction="return">
+        <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+      </ownedParameter>
+      <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_response_time_test_uuid_verdict_node" name="verdict" parameter="_tc_response_time_test_uuid_verdict_param">
+        <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+      </node>
     </packagedElement>
-    <packagedElement xmi:id="pkg-air-con-control-main-uuid" name="主要用例" xmi:type="uml:Package">
+    <packagedElement xmi:id="rel-satisfy-sysctrl-responsetime-uuid" xmi:type="uml:Abstraction">
+      <client xmi:idref="blk-system-controller-uuid"/>
+      <supplier xmi:idref="req-response-time-uuid"/>
+    </packagedElement>
+    <packagedElement xmi:id="rel-verify-responsetest-responsetime-uuid" xmi:type="uml:Abstraction">
+      <client xmi:idref="tc-response-time-test-uuid"/>
+      <supplier xmi:idref="req-response-time-uuid"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-car-ac-main-uuid" name="主要用例" xmi:type="uml:Package">
       <packagedElement xmi:id="actor-driver-uuid" name="驾驶员" xmi:type="uml:Actor"/>
-      <packagedElement xmi:id="actor-touch-screen-uuid" name="车载触摸屏" xmi:type="uml:Actor"/>
-      <packagedElement xmi:id="uc-control-air-con-uuid" name="控制空调系统" xmi:type="uml:UseCase"/>
-      <packagedElement xmi:id="assoc-driver-control-uuid" xmi:type="uml:Association">
-        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_driver_control_uuid_source_end" type="actor-driver-uuid" association="assoc-driver-control-uuid"/>
-        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_driver_control_uuid_target_end" type="uc-control-air-con-uuid" association="assoc-driver-control-uuid"/>
-        <memberEnd xmi:idref="_assoc_driver_control_uuid_source_end"/>
-        <memberEnd xmi:idref="_assoc_driver_control_uuid_target_end"/>
+      <packagedElement xmi:id="actor-temp-sensor-uuid" name="温度传感器" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-humidity-sensor-uuid" name="湿度传感器" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="uc-set-comfort-temp-uuid" name="设定舒适温度" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-set-target-temp-uuid" name="设定目标温度" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-quick-defog-uuid" name="快速除雾" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-start-defog-uuid" name="启动除雾" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-start-rear-window-heat-uuid" name="启动后窗加热" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-enter-energy-save-uuid" name="进入节能模式" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-notify-user-uuid" name="提示用户" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="assoc-driver-set-comfort-temp-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_driver_set_comfort_temp_uuid_source_end" type="actor-driver-uuid" association="assoc-driver-set-comfort-temp-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_driver_set_comfort_temp_uuid_target_end" type="uc-set-comfort-temp-uuid" association="assoc-driver-set-comfort-temp-uuid"/>
+        <memberEnd xmi:idref="_assoc_driver_set_comfort_temp_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_driver_set_comfort_temp_uuid_target_end"/>
       </packagedElement>
-      <packagedElement xmi:id="assoc-touch-screen-control-uuid" xmi:type="uml:Association">
-        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_touch_screen_control_uuid_source_end" type="actor-touch-screen-uuid" association="assoc-touch-screen-control-uuid"/>
-        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_touch_screen_control_uuid_target_end" type="uc-control-air-con-uuid" association="assoc-touch-screen-control-uuid"/>
-        <memberEnd xmi:idref="_assoc_touch_screen_control_uuid_source_end"/>
-        <memberEnd xmi:idref="_assoc_touch_screen_control_uuid_target_end"/>
+      <packagedElement xmi:id="assoc-driver-quick-defog-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_driver_quick_defog_uuid_source_end" type="actor-driver-uuid" association="assoc-driver-quick-defog-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_driver_quick_defog_uuid_target_end" type="uc-quick-defog-uuid" association="assoc-driver-quick-defog-uuid"/>
+        <memberEnd xmi:idref="_assoc_driver_quick_defog_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_driver_quick_defog_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-temp-sensor-set-comfort-temp-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_temp_sensor_set_comfort_temp_uuid_source_end" type="actor-temp-sensor-uuid" association="assoc-temp-sensor-set-comfort-temp-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_temp_sensor_set_comfort_temp_uuid_target_end" type="uc-set-comfort-temp-uuid" association="assoc-temp-sensor-set-comfort-temp-uuid"/>
+        <memberEnd xmi:idref="_assoc_temp_sensor_set_comfort_temp_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_temp_sensor_set_comfort_temp_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-humidity-sensor-quick-defog-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_humidity_sensor_quick_defog_uuid_source_end" type="actor-humidity-sensor-uuid" association="assoc-humidity-sensor-quick-defog-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_humidity_sensor_quick_defog_uuid_target_end" type="uc-quick-defog-uuid" association="assoc-humidity-sensor-quick-defog-uuid"/>
+        <memberEnd xmi:idref="_assoc_humidity_sensor_quick_defog_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_humidity_sensor_quick_defog_uuid_target_end"/>
       </packagedElement>
     </packagedElement>
-    <packagedElement xmi:id="pkg-unique-id" name="ParametricDiagram" xmi:type="uml:Package">
-      <packagedElement xmi:id="block1" name="TemperatureControlSystem" xmi:type="uml:Class">
-        <ownedAttribute xmi:id="prop1" name="T_current" xmi:type="uml:Property" visibility="public" aggregation="none">
-          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:id="prop2" name="T_target" xmi:type="uml:Property" visibility="public" aggregation="none">
-          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:id="prop3" name="Q" xmi:type="uml:Property" visibility="public" aggregation="none">
-          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:id="prop4" name="t" xmi:type="uml:Property" visibility="public" aggregation="none">
-          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:id="cp1" name="TemperatureControlEquation" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb1"/>
-        <ownedConnector xmi:id="conn1" xmi:type="uml:Connector">
-          <end xmi:id="_conn1_end_1" xmi:type="uml:ConnectorEnd" role="prop1"/>
-          <end xmi:id="_conn1_end_2" xmi:type="uml:ConnectorEnd" role="param1" partWithPort="cp1"/>
-        </ownedConnector>
-        <ownedConnector xmi:id="conn2" xmi:type="uml:Connector">
-          <end xmi:id="_conn2_end_1" xmi:type="uml:ConnectorEnd" role="prop2"/>
-          <end xmi:id="_conn2_end_2" xmi:type="uml:ConnectorEnd" role="param2" partWithPort="cp1"/>
-        </ownedConnector>
-        <ownedConnector xmi:id="conn3" xmi:type="uml:Connector">
-          <end xmi:id="_conn3_end_1" xmi:type="uml:ConnectorEnd" role="prop3"/>
-          <end xmi:id="_conn3_end_2" xmi:type="uml:ConnectorEnd" role="param3" partWithPort="cp1"/>
-        </ownedConnector>
-        <ownedConnector xmi:id="conn4" xmi:type="uml:Connector">
-          <end xmi:id="_conn4_end_1" xmi:type="uml:ConnectorEnd" role="prop4"/>
-          <end xmi:id="_conn4_end_2" xmi:type="uml:ConnectorEnd" role="param4" partWithPort="cp1"/>
-        </ownedConnector>
+    <packagedElement xmi:id="pkg-smart-lock-main-uuid" name="主要用例" xmi:type="uml:Package">
+      <packagedElement xmi:id="actor-homeowner-uuid" name="房主" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-courier-uuid" name="快递员" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-cloud-service-uuid" name="云服务平台" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="uc-set-validity-uuid" name="设置有效期" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-execute-unlock-uuid" name="执行解锁操作" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-send-notification-uuid" name="发送通知" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-show-expired-uuid" name="显示访问码已失效提示" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-lock-keyboard-uuid" name="临时锁定键盘" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-use-cache-uuid" name="使用本地缓存验证规则" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="actor-authorized-user-uuid" name="授权用户" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-home-security-system-uuid" name="家庭安防系统" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="uc-fingerprint-unlock-uuid" name="指纹识别开启门锁" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-collect-fingerprint-uuid" name="采集指纹特征" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-match-verify-fingerprint-uuid" name="匹配验证指纹" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-check-access-permission-uuid" name="检查访问权限" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-notify-security-system-uuid" name="通知安防系统" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-remote-guest-auth-uuid" name="远程访客授权" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-send-access-code-uuid" name="发送访问码" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-verify-access-code-uuid" name="验证访问码" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-invalidate-access-code-uuid" name="失效访问码" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-use-alternative-auth-uuid" name="使用备用认证方式" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-trigger-alarm-uuid" name="触发声光报警" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-local-cache-records-uuid" name="本地缓存操作记录" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="actor-registered-user-uuid" name="注册用户" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="uc-login-app-auth-uuid" name="登录手机APP验证身份" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-select-temp-access-uuid" name="选择临时访问功能" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-set-access-params-uuid" name="设置访问参数" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-generate-one-time-pwd-uuid" name="生成一次性密码并加密存储" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-input-temp-password-uuid" name="输入临时密码" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-record-notify-owner-uuid" name="记录访问事件并通知房主" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-press-fingerprint-sensor-uuid" name="按压指纹传感器" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-capture-fingerprint-image-uuid" name="采集指纹图像并进行质量检查" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-extract-fingerprint-features-uuid" name="提取指纹特征点" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-verify-match-score-uuid" name="验证匹配分数超过阈值" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="assoc-homeowner-login-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_homeowner_login_uuid_source_end" type="actor-homeowner-uuid" association="assoc-homeowner-login-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_homeowner_login_uuid_target_end" type="uc-login-app-auth-uuid" association="assoc-homeowner-login-uuid"/>
+        <memberEnd xmi:idref="_assoc_homeowner_login_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_homeowner_login_uuid_target_end"/>
       </packagedElement>
-      <packagedElement xmi:id="cb1" name="TemperatureControlEquation" xmi:type="uml:Class">
-        <ownedRule xmi:type="uml:Constraint" xmi:id="cb1_cr">
-          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb1_spec">
-            <body>T_current + (Q * t) = T_target</body>
+      <packagedElement xmi:id="assoc-cloud-notify-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_notify_uuid_source_end" type="actor-cloud-service-uuid" association="assoc-cloud-notify-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_notify_uuid_target_end" type="uc-send-notification-uuid" association="assoc-cloud-notify-uuid"/>
+        <memberEnd xmi:idref="_assoc_cloud_notify_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_cloud_notify_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-auth-user-fingerprint-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_auth_user_fingerprint_uuid_source_end" type="actor-authorized-user-uuid" association="assoc-auth-user-fingerprint-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_auth_user_fingerprint_uuid_target_end" type="uc-fingerprint-unlock-uuid" association="assoc-auth-user-fingerprint-uuid"/>
+        <memberEnd xmi:idref="_assoc_auth_user_fingerprint_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_auth_user_fingerprint_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-security-notify-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_security_notify_uuid_source_end" type="actor-home-security-system-uuid" association="assoc-security-notify-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_security_notify_uuid_target_end" type="uc-notify-security-system-uuid" association="assoc-security-notify-uuid"/>
+        <memberEnd xmi:idref="_assoc_security_notify_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_security_notify_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-homeowner-remote-auth-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_homeowner_remote_auth_uuid_source_end" type="actor-homeowner-uuid" association="assoc-homeowner-remote-auth-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_homeowner_remote_auth_uuid_target_end" type="uc-remote-guest-auth-uuid" association="assoc-homeowner-remote-auth-uuid"/>
+        <memberEnd xmi:idref="_assoc_homeowner_remote_auth_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_homeowner_remote_auth_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-homeowner-select-temp-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_homeowner_select_temp_uuid_source_end" type="actor-homeowner-uuid" association="assoc-homeowner-select-temp-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_homeowner_select_temp_uuid_target_end" type="uc-select-temp-access-uuid" association="assoc-homeowner-select-temp-uuid"/>
+        <memberEnd xmi:idref="_assoc_homeowner_select_temp_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_homeowner_select_temp_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-homeowner-set-params-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_homeowner_set_params_uuid_source_end" type="actor-homeowner-uuid" association="assoc-homeowner-set-params-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_homeowner_set_params_uuid_target_end" type="uc-set-access-params-uuid" association="assoc-homeowner-set-params-uuid"/>
+        <memberEnd xmi:idref="_assoc_homeowner_set_params_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_homeowner_set_params_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-cloud-generate-pwd-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_generate_pwd_uuid_source_end" type="actor-cloud-service-uuid" association="assoc-cloud-generate-pwd-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_generate_pwd_uuid_target_end" type="uc-generate-one-time-pwd-uuid" association="assoc-cloud-generate-pwd-uuid"/>
+        <memberEnd xmi:idref="_assoc_cloud_generate_pwd_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_cloud_generate_pwd_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-courier-input-pwd-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_courier_input_pwd_uuid_source_end" type="actor-courier-uuid" association="assoc-courier-input-pwd-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_courier_input_pwd_uuid_target_end" type="uc-input-temp-password-uuid" association="assoc-courier-input-pwd-uuid"/>
+        <memberEnd xmi:idref="_assoc_courier_input_pwd_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_courier_input_pwd_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-cloud-record-notify-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_record_notify_uuid_source_end" type="actor-cloud-service-uuid" association="assoc-cloud-record-notify-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_record_notify_uuid_target_end" type="uc-record-notify-owner-uuid" association="assoc-cloud-record-notify-uuid"/>
+        <memberEnd xmi:idref="_assoc_cloud_record_notify_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_cloud_record_notify_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-user-press-sensor-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_user_press_sensor_uuid_source_end" type="actor-registered-user-uuid" association="assoc-user-press-sensor-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_user_press_sensor_uuid_target_end" type="uc-press-fingerprint-sensor-uuid" association="assoc-user-press-sensor-uuid"/>
+        <memberEnd xmi:idref="_assoc_user_press_sensor_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_user_press_sensor_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-cloud-capture-fingerprint-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_capture_fingerprint_uuid_source_end" type="actor-cloud-service-uuid" association="assoc-cloud-capture-fingerprint-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_capture_fingerprint_uuid_target_end" type="uc-capture-fingerprint-image-uuid" association="assoc-cloud-capture-fingerprint-uuid"/>
+        <memberEnd xmi:idref="_assoc_cloud_capture_fingerprint_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_cloud_capture_fingerprint_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-cloud-extract-features-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_extract_features_uuid_source_end" type="actor-cloud-service-uuid" association="assoc-cloud-extract-features-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_extract_features_uuid_target_end" type="uc-extract-fingerprint-features-uuid" association="assoc-cloud-extract-features-uuid"/>
+        <memberEnd xmi:idref="_assoc_cloud_extract_features_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_cloud_extract_features_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-cloud-verify-score-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_verify_score_uuid_source_end" type="actor-cloud-service-uuid" association="assoc-cloud-verify-score-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_verify_score_uuid_target_end" type="uc-verify-match-score-uuid" association="assoc-cloud-verify-score-uuid"/>
+        <memberEnd xmi:idref="_assoc_cloud_verify_score_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_cloud_verify_score_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-cloud-check-permission-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_check_permission_uuid_source_end" type="actor-cloud-service-uuid" association="assoc-cloud-check-permission-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_check_permission_uuid_target_end" type="blk-user-perm-uuid" association="assoc-cloud-check-permission-uuid"/>
+        <memberEnd xmi:idref="_assoc_cloud_check_permission_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_cloud_check_permission_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-cloud-update-log-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_update_log_uuid_source_end" type="actor-cloud-service-uuid" association="assoc-cloud-update-log-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_cloud_update_log_uuid_target_end" type="blk-access-granted-uuid" association="assoc-cloud-update-log-uuid"/>
+        <memberEnd xmi:idref="_assoc_cloud_update_log_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_cloud_update_log_uuid_target_end"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-1" name="SystemModules" xmi:type="uml:Package">
+      <packagedElement xmi:id="block1" name="FingerprintModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop23" name="P_elec" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop24" name="P_total" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop25" name="COP" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop26" name="Q_cooling" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop27" name="compressorSpeed" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop28" name="refrigerantPressure" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="cb3" name="UploadDelayConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb3_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb3_spec">
+            <body>T_upload &lt; 5</body>
             <language>Math</language>
           </specification>
         </ownedRule>
-        <ownedAttribute xmi:id="param1" name="T_current" xmi:type="uml:Port" visibility="public" aggregation="none">
+      </packagedElement>
+      <packagedElement xmi:id="cb4" name="ResponseTimeConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb4_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb4_spec">
+            <body>T_response &lt; 2.0</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param16" name="frictionCoefficient" xmi:type="uml:Port" visibility="public" aggregation="none">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
         </ownedAttribute>
-        <ownedAttribute xmi:id="param2" name="T_target" xmi:type="uml:Port" visibility="public" aggregation="none">
+      </packagedElement>
+      <packagedElement xmi:id="cb5" name="PerformanceDegradationConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb5_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb5_spec">
+            <body>Degradation &lt;= 0.10</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+      </packagedElement>
+      <packagedElement xmi:id="block2" name="PowerModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop4" name="batteryVoltage" xmi:type="uml:Property" visibility="public" aggregation="none">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
         </ownedAttribute>
-        <ownedAttribute xmi:id="param3" name="Q" xmi:type="uml:Port" visibility="public" aggregation="none">
+        <ownedAttribute xmi:id="prop5" name="batteryCapacity" xmi:type="uml:Property" visibility="public" aggregation="none">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
         </ownedAttribute>
-        <ownedAttribute xmi:id="param4" name="t" xmi:type="uml:Port" visibility="public" aggregation="none">
+        <ownedAttribute xmi:id="prop6" name="superCapVoltage" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop7" name="lowBatteryWarningTime" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop8" name="activeCurrent" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop9" name="sleepCurrent" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="block4" name="MechanicalModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="cp5" name="PerformanceDegradationConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb5"/>
+      </packagedElement>
+      <packagedElement xmi:id="block5" name="EnvironmentalModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="cp6" name="TemperatureRangeConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb6"/>
+        <ownedAttribute xmi:id="cp7" name="HumidityRangeConstraint" xmi:type="uml:Property" visibility="public" aggregation="none" type="cb7"/>
+      </packagedElement>
+      <packagedElement xmi:id="block6" name="AuthenticationModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="block7" name="SecurityModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cb6" name="TemperatureRangeConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb6_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb6_spec">
+            <body>T_min = -20 AND T_max = 60</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+      </packagedElement>
+      <packagedElement xmi:id="cb7" name="HumidityRangeConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb7_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb7_spec">
+            <body>RH_min = 20 AND RH_max = 80</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+      </packagedElement>
+      <packagedElement xmi:id="cb8" name="VoltageThresholdConstraint" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb8_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb8_spec">
+            <body>V_th_high = 6.0 AND V_th_low = 5.5</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-sl-unique-id" name="ParametricDiagram" xmi:type="uml:Package">
+      <packagedElement xmi:id="cb1" name="BatteryLifeCalculation" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb1_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb1_spec">
+            <body>totalPowerConsumption = (activeCurrent × activeDutyCycle + standbyCurrent × (0.95 - sleepDutyCycle) + sleepCurrent × sleepDutyCycle) × 24; estimatedDays = batteryCapacity / totalPowerConsumption × efficiencyFactor</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param1" name="batteryCapacity" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param2" name="activeCurrent" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param3" name="standbyCurrent" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param4" name="sleepCurrent" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param5" name="activeDutyCycle" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param6" name="sleepDutyCycle" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param7" name="efficiencyFactor" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param8" name="totalPowerConsumption" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param9" name="estimatedDays" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="cb2" name="MotorTorqueRequirement" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb2_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb2_spec">
+            <body>requiredTorque = springForce × frictionCoefficient × leverArm × safetyFactor; motorTorque &gt; 0.06</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param10" name="springForce" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param11" name="frictionCoefficient" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param12" name="leverArm" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param13" name="safetyFactor" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param14" name="requiredTorque" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="param15" name="motorTorque" xmi:type="uml:Port" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="block_system" name="SmartLockSystem" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop17" name="systemAvailability" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop18" name="mtbf" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop19" name="standbyCurrent" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop20" name="activeDutyCycle" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop21" name="sleepDutyCycle" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop22" name="efficiencyFactor" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedConnector xmi:id="conn1" xmi:type="uml:Connector">
+          <end xmi:id="_conn1_end_1" xmi:type="uml:ConnectorEnd" role="prop1"/>
+          <end xmi:id="_conn1_end_2" xmi:type="uml:ConnectorEnd" role="param1"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn2" xmi:type="uml:Connector">
+          <end xmi:id="_conn2_end_1" xmi:type="uml:ConnectorEnd" role="prop2"/>
+          <end xmi:id="_conn2_end_2" xmi:type="uml:ConnectorEnd" role="param2"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn3" xmi:type="uml:Connector">
+          <end xmi:id="_conn3_end_1" xmi:type="uml:ConnectorEnd" role="prop3"/>
+          <end xmi:id="_conn3_end_2" xmi:type="uml:ConnectorEnd" role="param3"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn4" xmi:type="uml:Connector">
+          <end xmi:id="_conn4_end_1" xmi:type="uml:ConnectorEnd" role="prop4"/>
+          <end xmi:id="_conn4_end_2" xmi:type="uml:ConnectorEnd" role="param4"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn5" xmi:type="uml:Connector">
+          <end xmi:id="_conn5_end_1" xmi:type="uml:ConnectorEnd" role="prop5"/>
+          <end xmi:id="_conn5_end_2" xmi:type="uml:ConnectorEnd" role="param5"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn6" xmi:type="uml:Connector">
+          <end xmi:id="_conn6_end_1" xmi:type="uml:ConnectorEnd" role="prop6"/>
+          <end xmi:id="_conn6_end_2" xmi:type="uml:ConnectorEnd" role="param6"/>
+        </ownedConnector>
+        <ownedConnector xmi:id="conn7" xmi:type="uml:Connector">
+          <end xmi:id="_conn7_end_1" xmi:type="uml:ConnectorEnd" role="prop7"/>
+          <end xmi:id="_conn7_end_2" xmi:type="uml:ConnectorEnd" role="param7"/>
+        </ownedConnector>
+      </packagedElement>
+      <packagedElement xmi:id="block_main" name="MainControlSystem" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop1" name="authResponseTime" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop2" name="statusUpdateInterval" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop3" name="commandSuccessRate" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:id="block_mech" name="MechanicalSystem" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop10" name="tamperSensitivity" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop11" name="motorTorque" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop12" name="springForce" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop13" name="frictionCoefficient" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop14" name="leverArm" xmi:type="uml:Property" visibility="public" aggregation="none">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:id="prop15" name="safetyFactor" xmi:type="uml:Property" visibility="public" aggregation="none">
           <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.Real"/>
         </ownedAttribute>
       </packagedElement>
     </packagedElement>
-    <packagedElement xmi:id="pkg-vehicle-sys-uuid" name="车载系统" xmi:type="uml:Package">
-      <packagedElement xmi:id="actor-user-uuid" name="用户" xmi:type="uml:Actor"/>
-      <packagedElement xmi:id="block-touchscreen-uuid" name="触摸屏" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="block-aircondsys-uuid" name="空调系统" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="interaction-user-set-temp-uuid" name="UserSetsTemperature" xmi:type="uml:Interaction">
-        <lifeline xmi:id="ll-touchscreen-uuid" name="L2-触摸屏" xmi:type="uml:Lifeline" represents="block-touchscreen-uuid">
-          <coveredBy xmi:idref="fragment-send-sendtemp-uuid"/>
-        </lifeline>
-        <lifeline xmi:id="ll-aircondsys-uuid" name="L3-空调系统" xmi:type="uml:Lifeline" represents="block-aircondsys-uuid">
-          <coveredBy xmi:idref="fragment-recv-sendtemp-uuid"/>
-          <coveredBy xmi:idref="fragment-send-adjustsys-uuid"/>
-          <coveredBy xmi:idref="fragment-recv-adjustsys-uuid"/>
-        </lifeline>
-        <message xmi:id="msg-sendtemp-uuid" name="发送温度设置" xmi:type="uml:Message" sendEvent="fragment-send-sendtemp-uuid" receiveEvent="fragment-recv-sendtemp-uuid" messageSort="synchCall"/>
-        <fragment xmi:id="fragment-send-sendtemp-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-touchscreen-uuid" message="msg-sendtemp-uuid"/>
-        <fragment xmi:id="fragment-recv-sendtemp-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-aircondsys-uuid" message="msg-sendtemp-uuid"/>
-        <message xmi:id="msg-adjustsys-uuid" name="调整系统" xmi:type="uml:Message" sendEvent="fragment-send-adjustsys-uuid" receiveEvent="fragment-recv-adjustsys-uuid" messageSort="synchCall"/>
-        <fragment xmi:id="fragment-send-adjustsys-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-aircondsys-uuid" message="msg-adjustsys-uuid"/>
-        <fragment xmi:id="fragment-recv-adjustsys-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-aircondsys-uuid" message="msg-adjustsys-uuid"/>
+    <packagedElement xmi:id="pkg-battery-unique-id" name="ParametricDiagram" xmi:type="uml:Package"/>
+    <packagedElement xmi:id="pkg-security-svc-uuid" name="安全服务包" xmi:type="uml:Package">
+      <packagedElement xmi:id="cls-sensormodule-uuid" name="SensorModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-maincontroller-uuid" name="MainController" xmi:type="uml:Class">
+        <classifierBehavior xmi:idref="interaction-tamper-alert-uuid"/>
+        <ownedAttribute xmi:id="prop-maincontroller-instance-uuid" name="maincontroller_instance" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-maincontroller-uuid"/>
+        <ownedBehavior xmi:id="interaction-tamper-alert-uuid" name="防撬检测与报警处理" xmi:type="uml:Interaction">
+          <ownedAttribute xmi:id="prop-interaction-sensor-uuid" name="p_sensormodule" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-sensormodule-uuid"/>
+          <ownedAttribute xmi:id="prop-interaction-lock-uuid" name="p_lockcontrol" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-lockcontrol-uuid"/>
+          <ownedAttribute xmi:id="prop-interaction-comm-uuid" name="p_communication" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-communication-uuid"/>
+          <ownedAttribute xmi:id="prop-interaction-userdevice-uuid" name="p_userdevice" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-userdevice-uuid"/>
+          <lifeline xmi:id="ll-sensor-uuid" name="SensorModule" xmi:type="uml:Lifeline" represents="prop-interaction-sensor-uuid">
+            <coveredBy xmi:idref="fragment-recv-confirmtampering-uuid"/>
+            <coveredBy xmi:idref="fragment-send-tamperingconfirmed-uuid"/>
+          </lifeline>
+          <lifeline xmi:id="ll-maincontroller-uuid" name="MainController" xmi:type="uml:Lifeline" represents="prop-maincontroller-instance-uuid">
+            <coveredBy xmi:idref="fragment-send-confirmtampering-uuid"/>
+            <coveredBy xmi:idref="fragment-recv-tamperingconfirmed-uuid"/>
+            <coveredBy xmi:idref="fragment-recv-lockcomplete-uuid"/>
+          </lifeline>
+          <lifeline xmi:id="ll-lockcontrol-uuid" name="LockControlModule" xmi:type="uml:Lifeline" represents="prop-interaction-lock-uuid">
+            <coveredBy xmi:idref="fragment-recv-reinforcelock-uuid"/>
+            <coveredBy xmi:idref="fragment-send-lockcomplete-uuid"/>
+            <coveredBy xmi:idref="fragment-send-lockreinforced-uuid"/>
+          </lifeline>
+          <lifeline xmi:id="ll-communication-uuid" name="CommunicationModule" xmi:type="uml:Lifeline" represents="prop-interaction-comm-uuid">
+            <coveredBy xmi:idref="fragment-recv-sendintrusionalert-uuid"/>
+            <coveredBy xmi:idref="fragment-send-uploadeventdata-uuid"/>
+          </lifeline>
+          <lifeline xmi:id="ll-userdevice-uuid" name="UserDevice" xmi:type="uml:Lifeline" represents="prop-interaction-userdevice-uuid"/>
+          <message xmi:id="msg-confirmtampering-uuid" name="confirmTampering" xmi:type="uml:Message" sendEvent="fragment-send-confirmtampering-uuid" receiveEvent="fragment-recv-confirmtampering-uuid" messageSort="synchCall"/>
+          <fragment xmi:id="fragment-send-confirmtampering-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-maincontroller-uuid" message="msg-confirmtampering-uuid"/>
+          <fragment xmi:id="fragment-recv-confirmtampering-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-sensor-uuid" message="msg-confirmtampering-uuid"/>
+          <message xmi:id="msg-tamperingconfirmed-uuid" name="tamperingConfirmed" xmi:type="uml:Message" sendEvent="fragment-send-tamperingconfirmed-uuid" receiveEvent="fragment-recv-tamperingconfirmed-uuid" messageSort="reply">
+            <argument xmi:type="uml:OpaqueExpression">
+              <body>confidence: 0.92</body>
+              <language>text</language>
+            </argument>
+          </message>
+          <fragment xmi:id="fragment-send-tamperingconfirmed-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-sensor-uuid" message="msg-tamperingconfirmed-uuid"/>
+          <fragment xmi:id="fragment-recv-tamperingconfirmed-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-maincontroller-uuid" message="msg-tamperingconfirmed-uuid"/>
+          <message xmi:id="msg-lockcomplete-uuid" name="lockReinforcementComplete" xmi:type="uml:Message" sendEvent="fragment-send-lockcomplete-uuid" receiveEvent="fragment-recv-lockcomplete-uuid" messageSort="reply"/>
+          <fragment xmi:id="fragment-send-lockcomplete-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-lockcontrol-uuid" message="msg-lockcomplete-uuid"/>
+          <fragment xmi:id="fragment-recv-lockcomplete-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-maincontroller-uuid" message="msg-lockcomplete-uuid"/>
+        </ownedBehavior>
       </packagedElement>
+      <packagedElement xmi:id="cls-lockcontrol-uuid" name="LockControlModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-communication-uuid" name="CommunicationModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-powermanagement-uuid" name="PowerManagementModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-cloudserver-uuid" name="CloudServer" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-ac-control-uuid" name="空调控制" xmi:type="uml:Package">
+      <packagedElement xmi:id="cls-batterymanager-uuid" name="BatteryManager" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-lowbatteryalert-uuid" name="lowBatteryAlert" xmi:type="uml:Operation"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-climatecontroller-uuid" name="ClimateController" xmi:type="uml:Class">
+        <classifierBehavior xmi:idref="interaction-lowpower-uuid"/>
+        <ownedOperation xmi:id="op-adjustsetpoint-uuid" name="adjustSetpoint" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-calculatedeltat-uuid" name="calculateDeltaT" xmi:type="uml:Operation"/>
+        <ownedBehavior xmi:id="interaction-overtemp-uuid" name="温度过高自动调节" xmi:type="uml:Interaction">
+          <lifeline xmi:id="ll-temperaturesensor-overtemp-uuid" name="L1-TemperatureSensor" xmi:type="uml:Lifeline" represents="cls-temperaturesensor-uuid"/>
+          <lifeline xmi:id="ll-climatecontroller-overtemp-uuid" name="L2-ClimateController" xmi:type="uml:Lifeline" represents="cls-climatecontroller-uuid"/>
+          <lifeline xmi:id="ll-compressor-overtemp-uuid" name="L3-Compressor" xmi:type="uml:Lifeline" represents="cls-compressor-uuid"/>
+          <lifeline xmi:id="ll-blower-overtemp-uuid" name="L4-Blower" xmi:type="uml:Lifeline" represents="cls-blower-uuid"/>
+        </ownedBehavior>
+      </packagedElement>
+      <packagedElement xmi:id="cls-powermanager-uuid" name="PowerManager" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-enterecomode-uuid" name="enterEcoMode" xmi:type="uml:Operation"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-compressor-uuid" name="Compressor" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-setspeedlimit-compressor-uuid" name="setSpeedLimit" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-setspeed-max-uuid" name="setSpeed" xmi:type="uml:Operation"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-blower-uuid" name="Blower" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-setspeedlimit-blower-uuid" name="setSpeedLimit" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-setspeed-blower-uuid" name="setSpeed" xmi:type="uml:Operation"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-temperaturesensor-uuid" name="TemperatureSensor" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-fingerprint-system-uuid" name="指纹认证系统" xmi:type="uml:Package">
+      <packagedElement xmi:id="actor-user-uuid" name="User" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="cls-auth-module-uuid" name="AuthenticationModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop-auth-instance-uuid" name="auth_instance" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-auth-module-uuid"/>
+        <ownedOperation xmi:id="op-capture-image-uuid" name="captureFingerprintImage" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-extract-features-uuid" name="extractFeatures" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-match-template-uuid" name="matchWithTemplate" xmi:type="uml:Operation"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-main-controller-uuid" name="MainController" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop-main-controller-uuid" name="main_controller_instance" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-main-controller-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-lock-control-uuid" name="LockControlModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop-lock-control-uuid" name="lock_control_instance" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-lock-control-uuid"/>
+        <ownedOperation xmi:id="op-engage-motor-uuid" name="engageMotor" xmi:type="uml:Operation"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-sensor-module-uuid" name="SensorModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop-sensor-module-uuid" name="sensor_module_instance" xmi:type="uml:Property" visibility="public" aggregation="none" type="cls-sensor-module-uuid"/>
+        <ownedOperation xmi:id="op-get-position-uuid" name="getPosition" xmi:type="uml:Operation"/>
+      </packagedElement>
+      <packagedElement xmi:id="interaction-fingerprint-unlock-uuid" name="指纹认证解锁序列" xmi:type="uml:Interaction">
+        <ownedAttribute xmi:id="prop-interaction-user-uuid" name="p_user" xmi:type="uml:Property" visibility="public" aggregation="none" type="actor-user-uuid"/>
+        <lifeline xmi:id="ll-user-uuid" name="User" xmi:type="uml:Lifeline" represents="prop-interaction-user-uuid">
+          <coveredBy xmi:idref="fragment-send-place-finger-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-auth-module-uuid" name="AuthenticationModule" xmi:type="uml:Lifeline" represents="prop-auth-instance-uuid">
+          <coveredBy xmi:idref="fragment-recv-vibrationalert-uuid"/>
+          <coveredBy xmi:idref="fragment-send-reinforcelock-uuid"/>
+          <coveredBy xmi:idref="fragment-recv-place-finger-uuid"/>
+          <coveredBy xmi:idref="fragment-send-capture-image-uuid"/>
+          <coveredBy xmi:idref="fragment-recv-capture-image-uuid"/>
+          <coveredBy xmi:idref="fragment-send-extract-features-uuid"/>
+          <coveredBy xmi:idref="fragment-recv-extract-features-uuid"/>
+          <coveredBy xmi:idref="fragment-send-match-template-uuid"/>
+          <coveredBy xmi:idref="fragment-recv-match-template-uuid"/>
+          <coveredBy xmi:idref="fragment-send-auth-result-uuid"/>
+          <coveredBy xmi:idref="fragment-recv-lockreinforced-uuid"/>
+          <coveredBy xmi:idref="fragment-send-sendintrusionalert-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-main-controller-uuid" name="MainController" xmi:type="uml:Lifeline" represents="prop-main-controller-uuid">
+          <coveredBy xmi:idref="fragment-recv-auth-result-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-lock-control-uuid" name="LockControlModule" xmi:type="uml:Lifeline" represents="prop-lock-control-uuid"/>
+        <lifeline xmi:id="ll-sensor-module-uuid" name="SensorModule" xmi:type="uml:Lifeline" represents="prop-sensor-module-uuid"/>
+        <message xmi:id="msg-place-finger-uuid" name="placeFinger" xmi:type="uml:Message" sendEvent="fragment-send-place-finger-uuid" receiveEvent="fragment-recv-place-finger-uuid" messageSort="asynchCall">
+          <argument xmi:type="uml:OpaqueExpression">
+            <body>onSensor</body>
+            <language>text</language>
+          </argument>
+        </message>
+        <fragment xmi:id="fragment-send-place-finger-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-user-uuid" message="msg-place-finger-uuid"/>
+        <fragment xmi:id="fragment-recv-place-finger-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-place-finger-uuid"/>
+        <message xmi:id="msg-capture-image-uuid" name="captureFingerprintImage" xmi:type="uml:Message" sendEvent="fragment-send-capture-image-uuid" receiveEvent="fragment-recv-capture-image-uuid" signature="op-capture-image-uuid" messageSort="synchCall"/>
+        <fragment xmi:id="fragment-send-capture-image-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-capture-image-uuid"/>
+        <fragment xmi:id="fragment-recv-capture-image-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-capture-image-uuid"/>
+        <message xmi:id="msg-extract-features-uuid" name="extractFeatures" xmi:type="uml:Message" sendEvent="fragment-send-extract-features-uuid" receiveEvent="fragment-recv-extract-features-uuid" signature="op-extract-features-uuid" messageSort="synchCall"/>
+        <fragment xmi:id="fragment-send-extract-features-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-extract-features-uuid"/>
+        <fragment xmi:id="fragment-recv-extract-features-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-extract-features-uuid"/>
+        <message xmi:id="msg-match-template-uuid" name="matchWithTemplate" xmi:type="uml:Message" sendEvent="fragment-send-match-template-uuid" receiveEvent="fragment-recv-match-template-uuid" signature="op-match-template-uuid" messageSort="synchCall"/>
+        <fragment xmi:id="fragment-send-match-template-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-match-template-uuid"/>
+        <fragment xmi:id="fragment-recv-match-template-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-match-template-uuid"/>
+        <message xmi:id="msg-auth-result-uuid" name="authResult" xmi:type="uml:Message" sendEvent="fragment-send-auth-result-uuid" receiveEvent="fragment-recv-auth-result-uuid" messageSort="asynchCall">
+          <argument xmi:type="uml:OpaqueExpression">
+            <body>success</body>
+            <language>text</language>
+          </argument>
+        </message>
+        <fragment xmi:id="fragment-send-auth-result-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-auth-result-uuid"/>
+        <fragment xmi:id="fragment-recv-auth-result-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-main-controller-uuid" message="msg-auth-result-uuid"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-security-uuid" name="安全防护包" xmi:type="uml:Package">
+      <packagedElement xmi:id="cls-userdevice-uuid" name="UserDevice" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="interaction-intrusion-uuid" name="异常入侵检测与响应" xmi:type="uml:Interaction">
+        <message xmi:id="msg-vibrationalert-uuid" name="vibrationAlert" xmi:type="uml:Message" sendEvent="fragment-send-vibrationalert-uuid" receiveEvent="fragment-recv-vibrationalert-uuid" messageSort="asynchCall">
+          <argument xmi:type="uml:OpaqueExpression">
+            <body>amplitude=8.5g</body>
+            <language>text</language>
+          </argument>
+        </message>
+        <fragment xmi:id="fragment-send-vibrationalert-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-sensorhub-uuid" message="msg-vibrationalert-uuid"/>
+        <fragment xmi:id="fragment-recv-vibrationalert-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-vibrationalert-uuid"/>
+        <message xmi:id="msg-reinforcelock-uuid" name="reinforceLock" xmi:type="uml:Message" sendEvent="fragment-send-reinforcelock-uuid" receiveEvent="fragment-recv-reinforcelock-uuid" messageSort="synchCall"/>
+        <fragment xmi:id="fragment-send-reinforcelock-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-reinforcelock-uuid"/>
+        <fragment xmi:id="fragment-recv-reinforcelock-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-lockcontrol-uuid" message="msg-reinforcelock-uuid"/>
+        <lifeline xmi:id="ll-sensorhub-uuid" name="L1-SensorHub" xmi:type="uml:Lifeline" represents="cls-sensorhub-uuid">
+          <coveredBy xmi:idref="fragment-send-vibrationalert-uuid"/>
+        </lifeline>
+        <message xmi:id="msg-lockreinforced-uuid" name="lockReinforced" xmi:type="uml:Message" sendEvent="fragment-send-lockreinforced-uuid" receiveEvent="fragment-recv-lockreinforced-uuid" messageSort="reply">
+          <argument xmi:type="uml:OpaqueExpression">
+            <body>true</body>
+            <language>boolean</language>
+          </argument>
+        </message>
+        <fragment xmi:id="fragment-send-lockreinforced-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-lockcontrol-uuid" message="msg-lockreinforced-uuid"/>
+        <fragment xmi:id="fragment-recv-lockreinforced-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-lockreinforced-uuid"/>
+        <message xmi:id="msg-sendintrusionalert-uuid" name="sendIntrusionAlert" xmi:type="uml:Message" sendEvent="fragment-send-sendintrusionalert-uuid" receiveEvent="fragment-recv-sendintrusionalert-uuid" messageSort="asynchCall"/>
+        <fragment xmi:id="fragment-send-sendintrusionalert-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-sendintrusionalert-uuid"/>
+        <fragment xmi:id="fragment-recv-sendintrusionalert-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-communication-uuid" message="msg-sendintrusionalert-uuid"/>
+        <message xmi:id="msg-uploadeventdata-uuid" name="uploadEventData" xmi:type="uml:Message" sendEvent="fragment-send-uploadeventdata-uuid" receiveEvent="fragment-recv-uploadeventdata-uuid" messageSort="asynchCall">
+          <argument xmi:type="uml:OpaqueExpression">
+            <body>timestamp, sensorData</body>
+            <language>text</language>
+          </argument>
+        </message>
+        <fragment xmi:id="fragment-send-uploadeventdata-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-communication-uuid" message="msg-uploadeventdata-uuid"/>
+        <fragment xmi:id="fragment-recv-uploadeventdata-uuid" xmi:type="uml:MessageOccurrenceSpecification" message="msg-uploadeventdata-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-sensorhub-uuid" name="SensorHub" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-auth-uuid" name="AuthenticationModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-comm-uuid" name="CommunicationModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-lock-uuid" name="LockControlModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-cloud-uuid" name="CloudService" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-power-uuid" name="电源管理包" xmi:type="uml:Package">
+      <packagedElement xmi:id="interaction-lowpower-uuid" name="低电量处理流程" xmi:type="uml:Interaction">
+        <lifeline xmi:id="ll-batterymanager-lowpower-uuid" name="L1-BatteryManager" xmi:type="uml:Lifeline" represents="cls-batterymanager-uuid">
+          <coveredBy xmi:idref="fragment-send-lowbatteryalert-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-powermanager-lowpower-uuid" name="L2-PowerManager" xmi:type="uml:Lifeline" represents="cls-powermanager-uuid">
+          <coveredBy xmi:idref="fragment-recv-lowbatteryalert-uuid"/>
+          <coveredBy xmi:idref="fragment-send-enterecomode-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-climatecontroller-lowpower-uuid" name="L3-ClimateController" xmi:type="uml:Lifeline" represents="cls-climatecontroller-uuid">
+          <coveredBy xmi:idref="fragment-recv-enterecomode-uuid"/>
+          <coveredBy xmi:idref="fragment-send-adjustsetpoint-uuid"/>
+          <coveredBy xmi:idref="fragment-recv-adjustsetpoint-uuid"/>
+        </lifeline>
+        <lifeline xmi:id="ll-compressor-lowpower-uuid" name="L4-Compressor" xmi:type="uml:Lifeline" represents="cls-compressor-uuid"/>
+        <lifeline xmi:id="ll-blower-lowpower-uuid" name="L5-Blower" xmi:type="uml:Lifeline" represents="cls-blower-uuid"/>
+        <message xmi:id="msg-lowbatteryalert-uuid" name="lowBatteryAlert" xmi:type="uml:Message" sendEvent="fragment-send-lowbatteryalert-uuid" receiveEvent="fragment-recv-lowbatteryalert-uuid" signature="op-lowbatteryalert-uuid" messageSort="asynchCall">
+          <argument xmi:type="uml:OpaqueExpression">
+            <body>15%</body>
+            <language>text</language>
+          </argument>
+        </message>
+        <fragment xmi:id="fragment-send-lowbatteryalert-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-batterymanager-lowpower-uuid" message="msg-lowbatteryalert-uuid"/>
+        <fragment xmi:id="fragment-recv-lowbatteryalert-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-powermanager-lowpower-uuid" message="msg-lowbatteryalert-uuid"/>
+        <message xmi:id="msg-enterecomode-uuid" name="enterEcoMode" xmi:type="uml:Message" sendEvent="fragment-send-enterecomode-uuid" receiveEvent="fragment-recv-enterecomode-uuid" signature="op-enterecomode-uuid" messageSort="asynchCall"/>
+        <fragment xmi:id="fragment-send-enterecomode-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-powermanager-lowpower-uuid" message="msg-enterecomode-uuid"/>
+        <fragment xmi:id="fragment-recv-enterecomode-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-climatecontroller-lowpower-uuid" message="msg-enterecomode-uuid"/>
+        <message xmi:id="msg-adjustsetpoint-uuid" name="adjustSetpoint" xmi:type="uml:Message" sendEvent="fragment-send-adjustsetpoint-uuid" receiveEvent="fragment-recv-adjustsetpoint-uuid" signature="op-adjustsetpoint-uuid" messageSort="asynchCall">
+          <argument xmi:type="uml:OpaqueExpression">
+            <body>+2°C</body>
+            <language>text</language>
+          </argument>
+        </message>
+        <fragment xmi:id="fragment-send-adjustsetpoint-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-climatecontroller-lowpower-uuid" message="msg-adjustsetpoint-uuid"/>
+        <fragment xmi:id="fragment-recv-adjustsetpoint-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-climatecontroller-lowpower-uuid" message="msg-adjustsetpoint-uuid"/>
+        <lifeline xmi:id="ll-power-lowpower-uuid" name="L1-PowerManagementModule" xmi:type="uml:Lifeline" represents="cls-power-uuid"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-power-uuid" name="PowerManagementModule" xmi:type="uml:Class"/>
     </packagedElement>
   </uml:Model>
-  <sysml:Block xmi:id="_blk_bootcmd_uuid_app" base_Class="blk-bootcmd-uuid"/>
-  <sysml:Block xmi:id="_blk_statusrep_uuid_app" base_Class="blk-statusrep-uuid"/>
-  <sysml:Block xmi:id="_blk_system_uuid_app" base_Class="blk-system-uuid"/>
-  <sysml:Block xmi:id="_blk_aircon_control_uuid_app" base_Class="blk-aircon-control-uuid"/>
-  <sysml:Block xmi:id="_blk_air_con_system_uuid_app" base_Class="blk-air-con-system-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_sensors_uuid_app" base_ActivityPartition="grp-sensors-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_algorithm_uuid_app" base_ActivityPartition="grp-algorithm-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_actuators_uuid_app" base_ActivityPartition="grp-actuators-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_auth_module_uuid_app" base_ActivityPartition="grp-auth-module-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_power_module_uuid_app" base_ActivityPartition="grp-power-module-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_part_maincontrol_uuid_app" base_ActivityPartition="part-maincontrol-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_part_userinterface_uuid_app" base_ActivityPartition="part-userinterface-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_auth_input_uuid_app" base_ActivityPartition="grp-auth-input-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_lock_mech_uuid_app" base_ActivityPartition="grp-lock-mech-uuid"/>
+  <sysml:AllocateActivityPartition xmi:id="_grp_comms_uuid_app" base_ActivityPartition="grp-comms-uuid"/>
+  <sysml:Block xmi:id="_blk_auth_request_uuid_app" base_Class="blk-auth-request-uuid"/>
+  <sysml:Block xmi:id="_blk_lock_status_uuid_app" base_Class="blk-lock-status-uuid"/>
+  <sysml:Block xmi:id="_blk_user_perm_uuid_app" base_Class="blk-user-perm-uuid"/>
+  <sysml:Block xmi:id="_blk_auth_result_uuid_app" base_Class="blk-auth-result-uuid"/>
+  <sysml:Block xmi:id="_blk_auth_system_uuid_app" base_Class="blk-auth-system-uuid"/>
+  <sysml:Block xmi:id="_blk_lock_module_uuid_app" base_Class="blk-lock-module-uuid"/>
+  <sysml:Block xmi:id="_blk_user_interface_uuid_app" base_Class="blk-user-interface-uuid"/>
+  <sysml:Block xmi:id="_blk_temp_reading_uuid_app" base_Class="blk-temp-reading-uuid"/>
+  <sysml:Block xmi:id="_blk_credential_uuid_app" base_Class="blk-credential-uuid"/>
+  <sysml:Block xmi:id="_blk_boolean_uuid_app" base_Class="blk-boolean-uuid"/>
+  <sysml:Block xmi:id="_blk_real_uuid_app" base_Class="blk-real-uuid"/>
+  <sysml:Block xmi:id="_blk_power_mode_uuid_app" base_Class="blk-power-mode-uuid"/>
+  <sysml:Block xmi:id="_blk_power_module_uuid_app" base_Class="blk-power-module-uuid"/>
+  <sysml:Block xmi:id="_blk_user_db_uuid_app" base_Class="blk-user-db-uuid"/>
+  <sysml:Block xmi:id="_blk_temp_delta_uuid_app" base_Class="blk-temp-delta-uuid"/>
+  <sysml:Block xmi:id="_blk_credential_data_uuid_app" base_Class="blk-credential-data-uuid"/>
+  <sysml:Block xmi:id="_blk_lock_state_uuid_app" base_Class="blk-lock-state-uuid"/>
+  <sysml:Block xmi:id="_blk_lock_command_uuid_app" base_Class="blk-lock-command-uuid"/>
+  <sysml:Block xmi:id="_blk_system_status_uuid_app" base_Class="blk-system-status-uuid"/>
+  <sysml:Block xmi:id="_blk_sensorhub_uuid_app" base_Class="blk-sensorhub-uuid"/>
+  <sysml:Block xmi:id="_blk_main_control_uuid_app" base_Class="blk-main-control-uuid"/>
+  <sysml:Block xmi:id="_blk_motor_driver_uuid_app" base_Class="blk-motor-driver-uuid"/>
+  <sysml:Block xmi:id="_blk_control_sig_uuid_app" base_Class="blk-control-sig-uuid"/>
+  <sysml:Block xmi:id="_blk_access_granted_uuid_app" base_Class="blk-access-granted-uuid"/>
+  <sysml:Block xmi:id="_blk_self_test_trigger_uuid_app" base_Class="blk-self-test-trigger-uuid"/>
+  <sysml:Block xmi:id="_blk_health_status_uuid_app" base_Class="blk-health-status-uuid"/>
+  <sysml:Block xmi:id="_blk_sensor_array_uuid_app" base_Class="blk-sensor-array-uuid"/>
+  <sysml:Block xmi:id="_blk_power_system_uuid_app" base_Class="blk-power-system-uuid"/>
+  <sysml:Block xmi:id="_blk_communication_module_uuid_app" base_Class="blk-communication-module-uuid"/>
+  <sysml:Block xmi:id="_blk_power_management_uuid_app" base_Class="blk-power-management-uuid"/>
+  <sysml:Block xmi:id="_blk_main_controller_uuid_app" base_Class="blk-main-controller-uuid"/>
+  <sysml:Block xmi:id="_blk_temp_control_uuid_app" base_Class="blk-temp-control-uuid"/>
+  <sysml:Block xmi:id="_blk_zone_control_uuid_app" base_Class="blk-zone-control-uuid"/>
+  <sysml:Block xmi:id="_blk_climate_sys_uuid_app" base_Class="blk-climate-sys-uuid"/>
+  <sysml:Block xmi:id="_blk_defog_module_uuid_app" base_Class="blk-defog-module-uuid"/>
+  <sysml:Block xmi:id="_blk_system_controller_uuid_app" base_Class="blk-system-controller-uuid"/>
   <sysml:Block xmi:id="_block1_app" base_Class="block1"/>
-  <sysml:Block xmi:id="_block_touchscreen_uuid_app" base_Class="block-touchscreen-uuid"/>
-  <sysml:Block xmi:id="_block_aircondsys_uuid_app" base_Class="block-aircondsys-uuid"/>
-  <sysml:AllocateActivityPartition xmi:id="_grp_system_uuid_app" base_ActivityPartition="grp-system-uuid"/>
-  <sysml:Requirement xmi:id="_req_aircon_control_uuid_app" base_Class="req-aircon-control-uuid" Id="REQ-FUN-001" Text="系统应能够根据用户设定和外部环境自动调节车内温度，包括制冷、制热和除湿功能，并通过CAN总线与车辆其他系统进行数据交换"/>
-  <sysml:Requirement xmi:id="_req_aircon_precision_uuid_app" base_Class="req-aircon-precision-uuid" Id="REQ-FUN-002" Text="系统应能够将车内温度控制在设定温度的±0.5°C范围内，并通过PID控制算法实现精确调节"/>
-  <sysml:Requirement xmi:id="_req_aircon_energy_uuid_app" base_Class="req-aircon-energy-uuid" Id="REQ-FUN-003" Text="系统应通过智能算法优化制冷和制热过程，以最小化能耗，并实现节能模式"/>
-  <sysml:Requirement xmi:id="_req_aircon_response_uuid_app" base_Class="req-aircon-response-uuid" Id="REQ-NFN-001" Text="系统在接收到温度调整指令后，应在2秒内开始响应，并通过实时监控确保系统响应时间不超过3秒"/>
-  <sysml:Requirement xmi:id="_req_aircon_reliability_uuid_app" base_Class="req-aircon-reliability-uuid" Id="REQ-NFN-002" Text="系统的平均无故障时间（MTBF）应大于10,000小时，并通过冗余设计提高系统的可靠性"/>
-  <sysml:TestCase xmi:id="_tc_aircon_control_uuid_app" base_Behavior="tc-aircon-control-uuid"/>
-  <sysml:TestCase xmi:id="_tc_aircon_precision_uuid_app" base_Behavior="tc-aircon-precision-uuid"/>
-  <sysml:TestCase xmi:id="_tc_aircon_energy_uuid_app" base_Behavior="tc-aircon-energy-uuid"/>
+  <sysml:Block xmi:id="_blk_temp_sensors_uuid_app" base_Class="blk-temp-sensors-uuid"/>
+  <sysml:Block xmi:id="_blk_pid_controller_uuid_app" base_Class="blk-pid-controller-uuid"/>
+  <sysml:Block xmi:id="_block2_app" base_Class="block2"/>
+  <sysml:Block xmi:id="_block3_app" base_Class="block3"/>
+  <sysml:Block xmi:id="_block4_app" base_Class="block4"/>
+  <sysml:Block xmi:id="_block5_app" base_Class="block5"/>
+  <sysml:Block xmi:id="_block6_app" base_Class="block6"/>
+  <sysml:Block xmi:id="_block7_app" base_Class="block7"/>
+  <sysml:Block xmi:id="_block_system_app" base_Class="block_system"/>
+  <sysml:Block xmi:id="_block_main_app" base_Class="block_main"/>
+  <sysml:Block xmi:id="_block_mech_app" base_Class="block_mech"/>
+  <sysml:Requirement xmi:id="_req_response_time_uuid_app" base_Class="req-response-time-uuid" Id="REQ-NFN-001" Text="从温度传感器检测到变化到执行器开始动作的延迟应小于500ms；用户界面操作响应时间应小于200ms"/>
+  <sysml:Requirement xmi:id="_req_temp_auto_ctrl_uuid_app" base_Class="req-temp-auto-ctrl-uuid" Id="REQ-FUN-001" Text="系统应持续监测车内温度，通过PID控制算法调节压缩机转速和风门开度，使车内温度维持在设定值±1°C范围内"/>
+  <sysml:Requirement xmi:id="_req_multi_zone_ctrl_uuid_app" base_Class="req-multi-zone-ctrl-uuid" Id="REQ-FUN-002" Text="系统应支持至少双区独立温度控制，驾驶员侧和副驾驶侧可独立设定温度范围16-32°C，系统通过独立的风门和传感器实现分区调节"/>
+  <sysml:Requirement xmi:id="_req_defog_function_uuid_app" base_Class="req-defog-function-uuid" Id="REQ-FUN-003" Text="系统应提供一键除霜除雾模式，自动将风量调至最大，风向设置为前挡风玻璃，温度设为最高，AC压缩机强制启动以除湿"/>
+  <sysml:Requirement xmi:id="_req_energy_efficiency_uuid_app" base_Class="req-energy-efficiency-uuid" Id="REQ-NFN-002" Text="系统在标准工况（环境温度35°C，车内设定25°C）下的功耗不应超过3kW；COP（性能系数）应大于2.5"/>
+  <sysml:Requirement xmi:id="_req_reliability_uuid_app" base_Class="req-reliability-uuid" Id="REQ-NFN-003" Text="系统平均无故障时间（MTBF）应大于10,000小时；关键部件（压缩机、控制器）设计寿命应大于整车寿命周期（15年或30万公里）"/>
+  <sysml:TestCase xmi:id="_tc_status_monitor_test_uuid_app" base_Behavior="tc-status-monitor-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_temp_precision_test_uuid_app" base_Behavior="tc-temp-precision-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_zone_control_test_uuid_app" base_Behavior="tc-zone-control-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_defog_demo_test_uuid_app" base_Behavior="tc-defog-demo-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_response_time_test_uuid_app" base_Behavior="tc-response-time-test-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_tempctrl_autotemp_uuid_app" base_Abstraction="rel-satisfy-tempctrl-autotemp-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_zonectrl_multizone_uuid_app" base_Abstraction="rel-satisfy-zonectrl-multizone-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_defogctrl_defogfunc_uuid_app" base_Abstraction="rel-satisfy-defogctrl-defogfunc-uuid"/>
+  <sysml:Satisfy xmi:id="_rel_satisfy_sysctrl_responsetime_uuid_app" base_Abstraction="rel-satisfy-sysctrl-responsetime-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_temptest_autotemp_uuid_app" base_Abstraction="rel-verify-temptest-autotemp-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_zonetest_multizone_uuid_app" base_Abstraction="rel-verify-zonetest-multizone-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_defogtest_defogfunc_uuid_app" base_Abstraction="rel-verify-defogtest-defogfunc-uuid"/>
+  <sysml:Verify xmi:id="_rel_verify_responsetest_responsetime_uuid_app" base_Abstraction="rel-verify-responsetest-responsetime-uuid"/>
   <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop1_app" base_Property="prop1"/>
   <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop2_app" base_Property="prop2"/>
   <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop3_app" base_Property="prop3"/>
   <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop4_app" base_Property="prop4"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop5_app" base_Property="prop5"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop6_app" base_Property="prop6"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop7_app" base_Property="prop7"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop8_app" base_Property="prop8"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop9_app" base_Property="prop9"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop10_app" base_Property="prop10"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop11_app" base_Property="prop11"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop12_app" base_Property="prop12"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop13_app" base_Property="prop13"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop14_app" base_Property="prop14"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop15_app" base_Property="prop15"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop16_app" base_Property="prop16"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop17_app" base_Property="prop17"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop18_app" base_Property="prop18"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop19_app" base_Property="prop19"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop20_app" base_Property="prop20"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop21_app" base_Property="prop21"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop22_app" base_Property="prop22"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop23_app" base_Property="prop23"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop24_app" base_Property="prop24"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop25_app" base_Property="prop25"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop26_app" base_Property="prop26"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop27_app" base_Property="prop27"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop28_app" base_Property="prop28"/>
   <sysml:ConstraintBlock xmi:id="_cb1_app" base_Class="cb1"/>
+  <sysml:ConstraintBlock xmi:id="_cb2_app" base_Class="cb2"/>
+  <sysml:ConstraintBlock xmi:id="_cb3_app" base_Class="cb3"/>
+  <sysml:ConstraintBlock xmi:id="_cb4_app" base_Class="cb4"/>
+  <sysml:ConstraintBlock xmi:id="_cb5_app" base_Class="cb5"/>
+  <sysml:ConstraintBlock xmi:id="_cb6_app" base_Class="cb6"/>
+  <sysml:ConstraintBlock xmi:id="_cb7_app" base_Class="cb7"/>
+  <sysml:ConstraintBlock xmi:id="_cb8_app" base_Class="cb8"/>
   <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param1_app" base_Port="param1"/>
   <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param2_app" base_Port="param2"/>
   <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param3_app" base_Port="param3"/>
   <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param4_app" base_Port="param4"/>
-  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp1_app" base_Property="cp1"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param5_app" base_Port="param5"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param6_app" base_Port="param6"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param7_app" base_Port="param7"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param8_app" base_Port="param8"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param9_app" base_Port="param9"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param10_app" base_Port="param10"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param11_app" base_Port="param11"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param12_app" base_Port="param12"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param13_app" base_Port="param13"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param14_app" base_Port="param14"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param15_app" base_Port="param15"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param16_app" base_Port="param16"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp3_app" base_Property="cp3"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp5_app" base_Property="cp5"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp6_app" base_Property="cp6"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintProperty xmi:id="_cp7_app" base_Property="cp7"/>
   <sysml:BindingConnector xmi:id="_conn1_app" base_Connector="conn1"/>
   <sysml:BindingConnector xmi:id="_conn2_app" base_Connector="conn2"/>
   <sysml:BindingConnector xmi:id="_conn3_app" base_Connector="conn3"/>
   <sysml:BindingConnector xmi:id="_conn4_app" base_Connector="conn4"/>
+  <sysml:BindingConnector xmi:id="_conn5_app" base_Connector="conn5"/>
+  <sysml:BindingConnector xmi:id="_conn6_app" base_Connector="conn6"/>
+  <sysml:BindingConnector xmi:id="_conn7_app" base_Connector="conn7"/>
 </xmi:XMI>
