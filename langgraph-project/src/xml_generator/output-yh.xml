@@ -33,7 +33,7 @@
       <packagedElement xmi:id="blk-login-event-uuid" name="LoginEvent" xmi:type="uml:Class"/>
     </packagedElement>
     <packagedElement xmi:id="pkg-acs-uuid" name="AccessControlSystem" xmi:type="uml:Package">
-      <packagedElement xmi:id="act-main-operation-uuid" name="主系统操作流程" xmi:type="uml:Activity" isReentrant="true" node="node-retract-latch-uuid node-hold-unlock-uuid node-extend-latch-uuid node-publish-status-uuid node-exec-remote-cmd-uuid node-result-decision-uuid node-event-decision-uuid node-auth-merge-uuid cbuf-cloud-cmd-uuid node-auth-receive" group="part-ui-uuid part-lock-act-uuid part-cloud-if-uuid part-alarm-ind-uuid">
+      <packagedElement xmi:id="act-main-operation-uuid" name="主系统操作流程" xmi:type="uml:Activity" isReentrant="true" node="node-retract-latch-uuid node-hold-unlock-uuid node-extend-latch-uuid node-publish-status-uuid node-exec-remote-cmd-uuid node-result-decision-uuid node-event-decision-uuid node-auth-merge-uuid node-auth-receive" group="part-ui-uuid part-lock-act-uuid part-cloud-if-uuid part-alarm-ind-uuid">
         <partition xmi:idref="part-ui-uuid"/>
         <partition xmi:idref="part-lock-act-uuid"/>
         <partition xmi:idref="part-cloud-if-uuid"/>
@@ -52,7 +52,7 @@
         </ownedNode>
         <ownedGroup xmi:id="part-ui-uuid" name="用户界面分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-comm-uuid"/>
         <ownedGroup xmi:id="part-lock-act-uuid" name="锁体执行器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-lock-status-uuid"/>
-        <ownedGroup xmi:id="part-cloud-if-uuid" name="云服务接口分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-cloud-if-uuid" node="node-publish-status-uuid node-exec-remote-cmd-uuid cbuf-cloud-cmd-uuid"/>
+        <ownedGroup xmi:id="part-cloud-if-uuid" name="云服务接口分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-cloud-if-uuid" node="node-publish-status-uuid node-exec-remote-cmd-uuid"/>
         <ownedGroup xmi:id="part-alarm-ind-uuid" name="告警指示器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-alarm-msg-uuid"/>
       </packagedElement>
       <packagedElement xmi:id="blk-auth-req-uuid" name="AuthenticationRequest" xmi:type="uml:Class"/>
@@ -76,7 +76,7 @@
       <packagedElement xmi:id="blk-env-status-uuid" name="环境状态" xmi:type="uml:Class"/>
       <packagedElement xmi:id="blk-ctrl-output-uuid" name="控制输出" xmi:type="uml:Class"/>
       <packagedElement xmi:id="blk-hvac-request-uuid" name="HVAC负载请求" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="act-cabin-temp-reg-uuid" name="座舱温度调节流程" xmi:type="uml:Activity" isReentrant="true" node="proxy_act-cabin-temp-reg-uuid_blk-control-sig-uuid node-temp-start node-read-sensors node-calc-delta node-adjust-compressor node-adjust-blower node-adjust-dampers node-wait-cycle node-loop-merge node-start-uuid node-call-cabin-reg-uuid node-call-defog-uuid node-call-vehicle-net-uuid node-decision-defog-uuid node-merge-uuid node-fork-parallel-uuid node-join-parallel-uuid node-final-uuid" group="grp-algorithm-uuid grp-actuators-uuid part-hvac-ctrl-uuid">
+      <packagedElement xmi:id="act-cabin-temp-reg-uuid" name="座舱温度调节流程" xmi:type="uml:Activity" isReentrant="true" node="node-temp-start node-read-sensors node-calc-delta node-adjust-compressor node-adjust-blower node-adjust-dampers node-wait-cycle node-loop-merge node-start-uuid node-call-cabin-reg-uuid node-call-defog-uuid node-call-vehicle-net-uuid node-decision-defog-uuid node-merge-uuid node-fork-parallel-uuid node-join-parallel-uuid node-final-uuid" group="grp-algorithm-uuid grp-actuators-uuid part-hvac-ctrl-uuid">
         <partition xmi:idref="grp-algorithm-uuid"/>
         <partition xmi:idref="grp-actuators-uuid"/>
         <partition xmi:idref="part-hvac-ctrl-uuid"/>
@@ -85,15 +85,6 @@
         </edge>
         <edge xmi:id="edge-sensor-data-flow" xmi:type="uml:ObjectFlow" visibility="public" source="pin-sensor-data-out" target="pin-sensor-data-in" activity="act-cabin-temp-reg-uuid">
           <weight xmi:id="_edge_sensor_data_flow_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-        </edge>
-        <edge xmi:id="edge-control-to-compressor" xmi:type="uml:ObjectFlow" visibility="public" target="pin-control-compressor-in" activity="act-cabin-temp-reg-uuid">
-          <weight xmi:id="_edge_control_to_compressor_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-        </edge>
-        <edge xmi:id="edge-control-to-blower" xmi:type="uml:ObjectFlow" visibility="public" target="pin-control-blower-in" activity="act-cabin-temp-reg-uuid">
-          <weight xmi:id="_edge_control_to_blower_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-        </edge>
-        <edge xmi:id="edge-control-to-dampers" xmi:type="uml:ObjectFlow" visibility="public" target="pin-control-dampers-in" activity="act-cabin-temp-reg-uuid">
-          <weight xmi:id="_edge_control_to_dampers_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
         </edge>
         <edge xmi:id="edge-dampers-to-wait" xmi:type="uml:ControlFlow" visibility="public" source="node-adjust-dampers" target="node-wait-cycle" activity="act-cabin-temp-reg-uuid">
           <weight xmi:id="_edge_dampers_to_wait_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
@@ -160,7 +151,7 @@
         <ownedNode xmi:id="node-final-uuid" name="活动最终节点" xmi:type="uml:ActivityFinalNode" visibility="public"/>
         <ownedGroup xmi:id="grp-algorithm-uuid" name="控制算法分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-pid-controller-uuid"/>
         <ownedGroup xmi:id="grp-actuators-uuid" name="执行器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-climate-sys-uuid" node="node-adjust-compressor node-adjust-blower node-adjust-dampers"/>
-        <ownedGroup xmi:id="part-hvac-ctrl-uuid" name="HVAC控制器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-hvac-controller-uuid" node="node-read-inputs-uuid node-output-actuators-uuid node-call-cabin-reg-uuid node-call-defog-uuid node-call-vehicle-net-uuid node-decision-defog-uuid node-merge-uuid"/>
+        <ownedGroup xmi:id="part-hvac-ctrl-uuid" name="HVAC控制器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-hvac-controller-uuid" node="node-call-cabin-reg-uuid node-call-defog-uuid node-call-vehicle-net-uuid node-decision-defog-uuid node-merge-uuid"/>
       </packagedElement>
       <packagedElement xmi:id="act-defog-uuid" name="自动除霜/除雾流程" xmi:type="uml:Activity" isReentrant="true"/>
       <packagedElement xmi:id="act-vehicle-net-uuid" name="与车辆网络集成活动" xmi:type="uml:Activity" isReentrant="true"/>
@@ -205,20 +196,10 @@
       <packagedElement xmi:id="blk-nfc-reader-uuid" name="NFCRFID_Reader" xmi:type="uml:Class"/>
       <packagedElement xmi:id="blk-lock-driver-uuid" name="LockMechanismDriver" xmi:type="uml:Class"/>
       <packagedElement xmi:id="blk-cloud-svc-uuid" name="CloudService" xmi:type="uml:Class"/>
-      <packagedElement xmi:id="act-main-auth-control-uuid" name="主认证与控制流程" xmi:type="uml:Activity" isReentrant="true" node="proxy_act-main-auth-control-uuid_blk-auth-req-uuid node-auth-execute node-auth-generate node-auth-update node-auth-merge node-auth-result-decision-uuid node-start-auth node-select-method node-decision-method node-merge-auth node-gen-auth-result node-decision-result node-trigger-unlock node-record-failure node-gen-alarm-event" group="grp-auth-system-uuid grp-user-interface-uuid part-auth-mod-uuid">
+      <packagedElement xmi:id="act-main-auth-control-uuid" name="主认证与控制流程" xmi:type="uml:Activity" isReentrant="true" node="node-auth-execute node-auth-generate node-auth-update node-auth-merge node-auth-result-decision-uuid node-start-auth node-select-method node-decision-method node-merge-auth node-gen-auth-result node-decision-result node-trigger-unlock node-record-failure node-gen-alarm-event" group="grp-auth-system-uuid grp-user-interface-uuid part-auth-mod-uuid">
         <partition xmi:idref="grp-auth-system-uuid"/>
         <partition xmi:idref="grp-user-interface-uuid"/>
         <partition xmi:idref="part-auth-mod-uuid"/>
-        <edge xmi:id="edge-cf-fail-merge" xmi:type="uml:ControlFlow" visibility="public" target="node-auth-merge" activity="act-main-auth-control-uuid">
-          <weight xmi:id="_edge_cf_fail_merge_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-          <guard xmi:id="_edge_cf_fail_merge_guard_expr" xmi:type="uml:OpaqueExpression">
-            <body>[failure]</body>
-            <language>Math</language>
-          </guard>
-        </edge>
-        <edge xmi:id="edge-of-request-validate" xmi:type="uml:ObjectFlow" visibility="public" source="pin-auth-receive-in" activity="act-main-auth-control-uuid">
-          <weight xmi:id="_edge_of_request_validate_weight" xmi:type="uml:LiteralUnlimitedNatural" value="1"/>
-        </edge>
         <ownedNode xmi:id="node-auth-execute" name="执行生物特征或密码验证算法" xmi:type="uml:CallBehaviorAction" visibility="public"/>
         <ownedNode xmi:id="node-auth-generate" name="生成认证结果" xmi:type="uml:CallBehaviorAction" visibility="public">
           <result xmi:id="pin-auth-generate-out" name="out_authResult" xmi:type="uml:OutputPin" visibility="public" type="blk-auth-req-uuid"/>
@@ -270,7 +251,7 @@
         <ownedGroup xmi:id="grp-tire-model-uuid" name="轮胎模型分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-tire-model-uuid"/>
         <ownedGroup xmi:id="grp-ext-if-mgr-uuid" name="外部接口管理器分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-ext-if-mgr-uuid"/>
         <ownedGroup xmi:id="grp-validation-engine-uuid" name="验证引擎分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-validation-engine-uuid"/>
-        <ownedGroup xmi:id="grp-vehicle-dyn-uuid" name="车辆动力学模型分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-vehicle-dyn-uuid" node="node-cmd-process"/>
+        <ownedGroup xmi:id="grp-vehicle-dyn-uuid" name="车辆动力学模型分区" xmi:type="uml:ActivityPartition" visibility="public" represents="blk-vehicle-dyn-uuid"/>
       </packagedElement>
       <packagedElement xmi:id="act-sensor-gen-uuid" name="传感器数据生成与输出" xmi:type="uml:Activity" isReentrant="true"/>
       <packagedElement xmi:id="act-tire-force-uuid" name="轮胎力计算" xmi:type="uml:Activity" isReentrant="true"/>
@@ -1626,16 +1607,16 @@
             <coveredBy xmi:idref="fragment-send-cloud-command-uuid"/>
             <coveredBy xmi:idref="fragment-recv-upload-audit-log-uuid"/>
           </lifeline>
-          <message xmi:id="msg-cloud-command-uuid" name="下发指令" xmi:type="uml:Message" sendEvent="fragment-send-cloud-command-uuid" receiveEvent="fragment-recv-cloud-command-uuid" signature="op-issue-command-uuid" messageSort="asynchCall"/>
+          <message xmi:id="msg-cloud-command-uuid" name="下发指令" xmi:type="uml:Message" sendEvent="fragment-send-cloud-command-uuid" receiveEvent="fragment-recv-cloud-command-uuid" messageSort="asynchCall"/>
           <fragment xmi:id="fragment-send-cloud-command-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-cloud-uuid-3" message="msg-cloud-command-uuid"/>
           <fragment xmi:id="fragment-recv-cloud-command-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-system-uuid-3" message="msg-cloud-command-uuid"/>
           <message xmi:id="msg-upload-audit-log-uuid" name="上传审计日志" xmi:type="uml:Message" sendEvent="fragment-send-upload-audit-log-uuid" receiveEvent="fragment-recv-upload-audit-log-uuid" messageSort="asynchCall"/>
           <fragment xmi:id="fragment-send-upload-audit-log-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-system-uuid-3" message="msg-upload-audit-log-uuid"/>
           <fragment xmi:id="fragment-recv-upload-audit-log-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-cloud-uuid-3" message="msg-upload-audit-log-uuid"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d1ad65e3-afae-4eb7-adde-7e8e16abca6e" visibility="public"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="17772887-948d-4365-82d9-d560d944ba43" visibility="public"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="a4a29051-8f95-4c4d-ac4e-13b7a40d07f6" visibility="public"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="e356efd7-027b-4a7c-a6fb-55bf7efe720a" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="83350ba0-013b-4da0-ae96-41f00bba4a88" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="5e7701ba-8b9e-409e-b7fc-94298ef69475" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="e500fc4b-1dcf-4dfd-99f0-e59ac418556d" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="664eff36-e4a6-4c4f-bab3-1e16b27b1eaf" visibility="public"/>
         </ownedBehavior>
       </packagedElement>
       <packagedElement xmi:id="cls-cloud-server-uuid" name="云端服务器" xmi:type="uml:Class"/>
@@ -1737,16 +1718,16 @@
         </message>
         <fragment xmi:id="fragment-send-auth-result-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-auth-result-uuid"/>
         <fragment xmi:id="fragment-recv-auth-result-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-main-controller-uuid" message="msg-auth-result-uuid"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="1b6b0303-fd2e-4e93-8481-dd338e931d2e" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="3ac0a3f4-6c63-4eed-9b81-da6fac8a412b" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="cbb28271-80d5-4c32-b8ac-cecee78031a5" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="4d311d8c-ce97-44fa-a792-c71dee52c6af" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="2396edc7-0638-4bab-a255-f7adce99fdb2" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="72289871-a316-4470-b5a1-9887c3559458" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="228d8649-d63f-492e-9559-aa93dd326d76" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="bfc4bfde-fe31-45a3-b701-d2bb7da191d7" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="339b54da-1f13-48fc-a161-db1d88f48720" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="7ebcd157-9bc2-41dc-a21b-c8ba379102b5" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="b52c5761-3d7d-4051-83e6-29475ab74587" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d629c165-9f3d-439f-ab84-39e3b4543de0" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d84c4841-af5b-48a3-9915-a3180cdbacb8" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="c195bf4b-dc0a-4918-9925-51dab78807fd" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="971a2afe-8f0d-4744-b68d-9fbc67f1f00f" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="6903ab9c-a027-4aa6-afbb-a48579f66a07" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="c2efa4ba-6c82-4e96-bfd8-7f9f98807c67" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="b2be5da5-5d13-4bff-bb99-48ca58f908b9" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="19ba9a11-e0b2-47a1-be26-18aaf6a39add" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="f773bbe3-5e4b-4856-9ec0-96fedf050cbb" visibility="public"/>
       </packagedElement>
     </packagedElement>
     <packagedElement xmi:id="pkg-security-uuid" name="安全防护包" xmi:type="uml:Package">
@@ -1822,22 +1803,22 @@
         </message>
         <fragment xmi:id="fragment-send-uploadeventdata-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-communication-uuid" message="msg-uploadeventdata-uuid"/>
         <fragment xmi:id="fragment-recv-uploadeventdata-uuid" xmi:type="uml:MessageOccurrenceSpecification" message="msg-uploadeventdata-uuid"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="bf0465be-e648-46d8-8db9-33201565c13a" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="a7a9a217-b46f-4763-b9f5-e6f1785a874b" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="84c7f7cd-e778-4c1b-be9a-7e28bdf405d2" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="ec920ac8-947f-496a-abbe-f0d71a7d0c60" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="71ffbfcb-36cd-4182-8f2f-4f355ea444ff" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="74e9390d-a855-473d-9639-ccf834e20e9e" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="8c9d7a2b-7daf-43fa-8370-df37ea5bbf0b" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d2f4123f-8203-4e5b-b47d-65d18a1c60de" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="bb8a803a-02ea-4ff0-89ec-590674764f19" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="bfd9158b-d660-49d7-b27d-3d38168f3c16" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="60801939-a875-4e1a-8601-e509a6b41388" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="758a0b85-9321-40bd-85be-6b119a9ec3a2" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="a6d72657-a146-4bf8-8174-57b87cd16290" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="05ef3b0b-e961-47d7-8902-afd0e363b982" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="4a46ba43-081d-48da-b041-fb9e1c57de66" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="385c11aa-564d-489b-8707-c0369d7b41e4" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="c180cd39-e942-4000-a84e-881886c26722" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="9b876675-2698-490f-8c99-c38066b1e5c3" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="57927a39-eebf-4a5e-9983-adbcb7329461" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="036924ec-9ecd-4aee-99ab-00ba36a969a8" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="57073ac3-c696-49b7-a310-4c0483c1fd14" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="86c90cda-d5ca-4e29-a389-ef633fe669f7" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="7574f942-be22-490b-9fbd-17a017c8cc7e" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="cfcb6364-f223-482f-a5da-20a1e174e84e" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d256b8ff-c175-4168-92d0-30a11f2da651" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="1bbf268d-af82-4912-926b-40630f2009b8" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="92b8cafa-32d4-4638-8eb9-62405d93bac0" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="29e05535-58dd-4cf1-8e62-ddf206871916" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="c83f1618-c037-48cb-8f3a-4ff3854baa4b" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="44a1c10a-5330-407b-9cba-babe6bd56213" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="4d1fa1f7-c9f3-4171-92de-ad98173f8755" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="5ab59638-3a22-42cd-beed-917d7a58ff7e" visibility="public"/>
       </packagedElement>
       <packagedElement xmi:id="cls-sensorhub-uuid" name="SensorHub" xmi:type="uml:Class"/>
       <packagedElement xmi:id="cls-auth-uuid" name="AuthenticationModule" xmi:type="uml:Class"/>
@@ -1881,12 +1862,12 @@
         <fragment xmi:id="fragment-send-adjustsetpoint-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-climatecontroller-lowpower-uuid" message="msg-adjustsetpoint-uuid"/>
         <fragment xmi:id="fragment-recv-adjustsetpoint-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-climatecontroller-lowpower-uuid" message="msg-adjustsetpoint-uuid"/>
         <lifeline xmi:id="ll-power-lowpower-uuid" name="L1-PowerManagementModule" xmi:type="uml:Lifeline"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="2f8e5892-e0b8-430c-a851-31265978bfc7" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="88bafd24-4bf5-4f31-88df-687dbf95f653" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="48ce661e-2e86-45ac-89a3-d7f55d37f6bc" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="79c6a1a3-0e13-4f1e-84ce-ac6683d993b2" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="4883d16e-ebda-4551-80df-cfc48fe10243" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="5369f23a-d465-4e4d-adac-61b1777e03a4" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="a9bd7351-810c-41ec-b89d-ee5b412f266e" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="c5bd29f2-0578-4fb2-9cad-dc2d15ee1818" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="771c67d0-8b83-48da-9f20-9777c4734073" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="9a27daf0-8822-4380-a234-28e4166d5d69" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="0b05bb43-d44f-4b89-bdae-6b1416ecca6b" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="6c5aadf9-f374-4ee7-a985-a3e8805fa4ae" visibility="public"/>
       </packagedElement>
     </packagedElement>
   </uml:Model>

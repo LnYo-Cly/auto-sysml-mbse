@@ -106,7 +106,18 @@ def process_and_build_activity_content(activity_xml_elem, activity_id):
     content = activity_elements[activity_id]
     
     placeholder_elements = {}
-    node_ids, edge_ids, group_ids = content.get("nodes", []), content.get("edges", []), content.get("groups", [])
+    node_ids = [n for n in content.get("nodes", []) if elements_by_id.get(n, {}).get("type") != "CentralBufferNode"]
+    edge_ids = []
+    for eid in content.get("edges", []):
+        ed = elements_by_id.get(eid)
+        if not ed: continue
+        src_type = elements_by_id.get(ed.get("sourceId"), {}).get("type")
+        tgt_type = elements_by_id.get(ed.get("targetId"), {}).get("type")
+        if src_type == "CentralBufferNode" or tgt_type == "CentralBufferNode":
+            print(f"跳过 Edge '{eid}'，因源/目标为 CentralBufferNode")
+            continue
+        edge_ids.append(eid)
+    group_ids = content.get("groups", [])
     
     for edge_id in edge_ids:
         edge_data = elements_by_id.get(edge_id)
@@ -124,9 +135,18 @@ def process_and_build_activity_content(activity_xml_elem, activity_id):
         if group_data:
             for node_edge_id in group_data.get("nodeIds", []):
                 node_edge_data = elements_by_id.get(node_edge_id)
-                if node_edge_data:
-                    ref_type = 'GroupNodeRef' if node_edge_data["type"] not in ["ControlFlow", "ObjectFlow"] else 'GroupEdgeRef'
-                    placeholder_elements[generate_unique_id(group_id, node_edge_id + "_grpRef")] = {"id": node_edge_id, "type": ref_type, "parentId": group_id}
+                if not node_edge_data: 
+                    print(f"跳过分区 '{group_id}' 的节点引用 '{node_edge_id}'，节点不存在于 elements_by_id")
+                    continue
+                if node_edge_data.get("type") in ["CentralBufferNode", "UnknownType"]:
+                    print(f"跳过分区 '{group_id}' 的节点引用 '{node_edge_id}'，类型 {node_edge_data.get('type')}")
+                    continue
+                # 检查该节点是否在当前活动的 node_ids 中（即是否会被生成）
+                if node_edge_id not in node_ids and node_edge_data["type"] not in ["ControlFlow", "ObjectFlow"]:
+                    print(f"跳过分区 '{group_id}' 的节点引用 '{node_edge_id}'，该节点不在当前活动的 nodes 列表中")
+                    continue
+                ref_type = 'GroupNodeRef' if node_edge_data["type"] not in ["ControlFlow", "ObjectFlow"] else 'GroupEdgeRef'
+                placeholder_elements[generate_unique_id(group_id, node_edge_id + "_grpRef")] = {"id": node_edge_id, "type": ref_type, "parentId": group_id}
     
     activity_partitions_in_activity = [g for g in group_ids if elements_by_id.get(g, {}).get('type') == 'ActivityPartition']
     for node_id in node_ids:
@@ -162,6 +182,9 @@ def create_activity_specific_element(parent_xml_element, elem_id):
     }
     element_tag = tag_map.get(elem_type)
     if not element_tag: return
+    if elem_type == "CentralBufferNode":
+        print(f"跳过 CentralBufferNode '{elem_id}' 的生成（已禁用）")
+        return
 
     attrs = {}
     if "Ref" in elem_type: attrs["xmi:idref"] = elem_data["id"]
@@ -173,18 +196,11 @@ def create_activity_specific_element(parent_xml_element, elem_id):
         if element_tag in ['edge', 'node', 'argument', 'result', 'group']: attrs["visibility"] = "public"
         if elem_type in ["ControlFlow", "ObjectFlow"]:
             source_id, target_id = elem_data["sourceId"], elem_data["targetId"]
-            def get_valid_node_id(ref_id):
-                ref_elem = elements_by_id.get(ref_id)
-                if ref_elem and ref_elem.get("type") in ["Class", "Block", "InterfaceBlock", "Actor", "Component"]:
-                    act_id = parent_xml_element.get('xmi:id') or "unknown_act"
-                    proxy_id = f"proxy_{act_id}_{ref_id}"
-                    if proxy_id not in processed_elements:
-                        node_attrs = {"xmi:type": "uml:CentralBufferNode", "xmi:id": proxy_id, "name": (ref_elem.get("name") or "") + "_Proxy", "type": ref_id, "visibility": "public"}
-                        create_element("node", node_attrs, parent_xml_element)
-                        processed_elements.add(proxy_id)
-                    return proxy_id
-                return ref_id
-            attrs.update({"source": get_valid_node_id(source_id), "target": get_valid_node_id(target_id)})
+            invalid_types = {"CentralBufferNode", "Class", "Block", "InterfaceBlock", "Actor", "Component"}
+            if elements_by_id.get(source_id, {}).get("type") in invalid_types or elements_by_id.get(target_id, {}).get("type") in invalid_types:
+                print(f"跳过 Edge '{elem_id}'，因源/目标类型不支持或为 CentralBufferNode")
+                return
+            attrs.update({"source": source_id, "target": target_id})
         elif elem_type == "CallBehaviorAction" and "behavior" in elem_data: attrs["behavior"] = elem_data["behavior"]
         elif elem_type in ["InputPin", "OutputPin", "ActivityParameterNode", "CentralBufferNode"] and "typeId" in elem_data: attrs["type"] = elem_data["typeId"]
         elif elem_type == "ActivityPartition" and "representsId" in elem_data: attrs["represents"] = elem_data["representsId"]
@@ -326,11 +342,15 @@ def build_element_tree(parent_id, parent_xml_element):
             if parent_xmi_type != 'uml:Interaction':
                 print(f"跳过 Message '{elem_id}'，父元素类型 {parent_xmi_type} 非 Interaction")
                 continue
+            signature_id = elem_data.get('signatureId')
+            if signature_id and signature_id not in elements_by_id:
+                print(f"跳过 Message.signature 对 op '{signature_id}' 的引用，未在元素集中找到")
+                signature_id = None
             attrs = {
                 'xmi:id': elem_id, 'name': elem_name, 'xmi:type': 'uml:Message',
                 'sendEvent': elem_data.get('sendEventId'),
                 'receiveEvent': elem_data.get('receiveEventId'),
-                'signature': elem_data.get('signatureId'),
+                'signature': signature_id,
                 'messageSort': elem_data.get('messageSort')
             }
             xml_elem = create_element("message", attrs, parent_xml_element)
@@ -616,6 +636,16 @@ def validate_and_clean_model(root_element):
                 elif child.tag == 'coveredBy':
                     ref = child.get('xmi:idref')
                     if ref and ref not in existing_ids: should_remove, reason = True, f"coveredBy ref '{ref}' missing"
+
+                # 2.4.1 检查 group/partition 内的 node idref（悬挂节点引用）
+                elif child.tag == 'node' and child.get('xmi:idref'):
+                    ref = child.get('xmi:idref')
+                    if ref and ref not in existing_ids: should_remove, reason = True, f"partition node ref '{ref}' missing"
+
+                # 2.4.2 检查 partition/inPartition 的 idref
+                elif child.tag in ['partition', 'inPartition'] and child.get('xmi:idref'):
+                    ref = child.get('xmi:idref')
+                    if ref and ref not in existing_ids: should_remove, reason = True, f"{child.tag} ref '{ref}' missing"
 
                 # 2.5 检查 Stereotypes (base_X)
                 else:
