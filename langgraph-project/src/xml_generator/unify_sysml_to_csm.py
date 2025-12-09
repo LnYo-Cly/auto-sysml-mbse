@@ -311,6 +311,10 @@ def build_element_tree(parent_id, parent_xml_element):
             xml_elem = create_element(tag, attrs, parent_xml_element)
         
         elif elem_type == "Lifeline":
+            parent_xmi_type = parent_xml_element.get('xmi:type')
+            if parent_xmi_type != 'uml:Interaction':
+                print(f"跳过 Lifeline '{elem_id}'，父元素类型 {parent_xmi_type} 非 Interaction")
+                continue
             attrs = {
                 'xmi:id': elem_id, 'name': elem_name,
                 'xmi:type': 'uml:Lifeline', 'represents': elem_data.get('representsId')
@@ -318,6 +322,10 @@ def build_element_tree(parent_id, parent_xml_element):
             xml_elem = create_element("lifeline", attrs, parent_xml_element)
             
         elif elem_type == "Message":
+            parent_xmi_type = parent_xml_element.get('xmi:type')
+            if parent_xmi_type != 'uml:Interaction':
+                print(f"跳过 Message '{elem_id}'，父元素类型 {parent_xmi_type} 非 Interaction")
+                continue
             attrs = {
                 'xmi:id': elem_id, 'name': elem_name, 'xmi:type': 'uml:Message',
                 'sendEvent': elem_data.get('sendEventId'),
@@ -333,6 +341,10 @@ def build_element_tree(parent_id, parent_xml_element):
                 if "language" in arg_data: create_element("language", text=arg_data["language"], parent=arg_elem)
 
         elif elem_type in ["MessageOccurrenceSpecification", "DestructionOccurrenceSpecification", "CombinedFragment"]:
+            parent_xmi_type = parent_xml_element.get('xmi:type')
+            if parent_xmi_type not in ['uml:Interaction', 'uml:InteractionOperand', 'uml:CombinedFragment']:
+                print(f"跳过 Fragment '{elem_id}'，父元素类型 {parent_xmi_type} 非 Interaction/Operand/CombinedFragment")
+                continue
             attrs = {
                 'xmi:id': elem_id, 'name': elem_name,
                 'xmi:type': f"uml:{elem_type}"
@@ -350,10 +362,18 @@ def build_element_tree(parent_id, parent_xml_element):
                     create_element("covered", {"xmi:idref": ll_id}, parent=xml_elem)
 
         elif elem_type == "InteractionOperand":
+            parent_xmi_type = parent_xml_element.get('xmi:type')
+            if parent_xmi_type not in ['uml:Interaction', 'uml:CombinedFragment']:
+                print(f"跳过 InteractionOperand '{elem_id}'，父元素类型 {parent_xmi_type} 非 Interaction/CombinedFragment")
+                continue
             attrs = {'xmi:id': elem_id, 'name': elem_name, 'xmi:type': 'uml:InteractionOperand'}
             xml_elem = create_element("operand", attrs, parent_xml_element)
 
         elif elem_type == "InteractionConstraint":
+            parent_xmi_type = parent_xml_element.get('xmi:type')
+            if parent_xmi_type not in ['uml:Interaction', 'uml:InteractionOperand', 'uml:CombinedFragment']:
+                print(f"跳过 InteractionConstraint '{elem_id}'，父元素类型 {parent_xmi_type} 非 Interaction/Operand/CombinedFragment")
+                continue
             attrs = {'xmi:id': elem_id, 'name': elem_name, 'xmi:type': 'uml:InteractionConstraint'}
             xml_elem = create_element("guard", attrs, parent_xml_element)
             spec_data = elem_data.get("specification")
@@ -364,13 +384,18 @@ def build_element_tree(parent_id, parent_xml_element):
                 if "language" in spec_data: create_element("language", text=spec_data["language"], parent=spec_elem)
         
         else:
+            if elem_type == "Event":
+                # UML ReceiveEvent 放在顶层在部分工具中不被接受；此处跳过避免生成无父容器事件
+                print(f"跳过 Event '{elem_id}'，避免生成顶层 ReceiveEvent")
+                xml_elem = None
+                continue
             base_attrs = {'xmi:id': elem_id, 'name': elem_name}
             
             packaged_element_types = {
                 "Package": "uml:Package", "Block": "uml:Class", "InterfaceBlock": "uml:Class", "Class": "uml:Class",
                 "Requirement": "uml:Class", "ConstraintBlock": "uml:Class", "ValueType": "uml:DataType",
                 "Enumeration": "uml:Enumeration", "Signal": "uml:Signal", "SignalEvent": "uml:SignalEvent",
-                "Event": "uml:ReceiveEvent", "Actor": "uml:Actor", "UseCase": "uml:UseCase"
+                "Actor": "uml:Actor", "UseCase": "uml:UseCase"
             }
             if elem_type in packaged_element_types:
                 base_attrs['xmi:type'] = packaged_element_types[elem_type]
@@ -402,12 +427,17 @@ def build_element_tree(parent_id, parent_xml_element):
                     create_element("type", {"href": "http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"}, node)
 
             elif elem_type in ['DeriveReqt', 'Satisfy', 'Verify']:
-                base_attrs['xmi:type'] = 'uml:Abstraction'
-                xml_elem = create_element("packagedElement", base_attrs, parent_xml_element)
                 client_supplier_map = {'DeriveReqt': ('derivedRequirementId', 'sourceRequirementId'), 'Satisfy': ('blockId', 'requirementId'), 'Verify': ('testCaseId', 'requirementId')}
                 client_key, supplier_key = client_supplier_map[elem_type]
-                if elem_data.get(client_key): create_element('client', {'xmi:idref': elem_data[client_key]}, xml_elem)
-                if elem_data.get(supplier_key): create_element('supplier', {'xmi:idref': elem_data[supplier_key]}, xml_elem)
+                client_id, supplier_id = elem_data.get(client_key), elem_data.get(supplier_key)
+                if not client_id or not supplier_id:
+                    print(f"跳过 {elem_type} '{elem_id}'，缺少 client 或 supplier: {client_key}={client_id}, {supplier_key}={supplier_id}")
+                    xml_elem = None
+                else:
+                    base_attrs['xmi:type'] = 'uml:Abstraction'
+                    xml_elem = create_element("packagedElement", base_attrs, parent_xml_element)
+                    create_element('client', {'xmi:idref': client_id}, xml_elem)
+                    create_element('supplier', {'xmi:idref': supplier_id}, xml_elem)
 
             elif elem_type == "StateMachine":
                 tag = 'ownedBehavior' if parent_type == "Block" else 'packagedElement'
@@ -424,10 +454,15 @@ def build_element_tree(parent_id, parent_xml_element):
                 if "exit" in elem_data: create_behavior_activity_xml(xml_elem, "exit", elem_data["exit"], owner_name)
                 if "doActivity" in elem_data: create_behavior_activity_xml(xml_elem, "doActivity", elem_data["doActivity"], owner_name)
             elif elem_type == "Pseudostate":
-                kind = elem_data.get("kind", "")
-                base_attrs['xmi:type'] = "uml:FinalState" if kind in ["finalState", "final"] else "uml:Pseudostate"
-                if kind not in ["initial", "finalState", "final"]: base_attrs["kind"] = kind
-                xml_elem = create_element('subvertex', base_attrs, parent_xml_element)
+                # 仅在父级为 Region/State/StateMachine 时才生成
+                if parent_type not in ["Region", "State", "StateMachine"]:
+                    print(f"跳过 Pseudostate '{elem_id}'，父类型 {parent_type} 非 Region/State/StateMachine")
+                    xml_elem = None
+                else:
+                    kind = elem_data.get("kind", "")
+                    base_attrs['xmi:type'] = "uml:FinalState" if kind in ["finalState", "final"] else "uml:Pseudostate"
+                    if kind not in ["initial", "finalState", "final"]: base_attrs["kind"] = kind
+                    xml_elem = create_element('subvertex', base_attrs, parent_xml_element)
             elif elem_type == "Transition":
                 base_attrs.update({'xmi:type': 'uml:Transition', 'source': elem_data['sourceId'], 'target': elem_data['targetId']})
                 xml_elem = create_element('transition', base_attrs, parent_xml_element)
@@ -539,6 +574,9 @@ def validate_and_clean_model(root_element):
                 s, t = elem.get('source'), elem.get('target')
                 if s: referenced_node_ids.add(s)
                 if t: referenced_node_ids.add(t)
+            idref = elem.get('xmi:idref')
+            if idref:
+                referenced_node_ids.add(idref)
         
         elements_to_remove = []
         
@@ -744,7 +782,7 @@ def generate_unified_xmi(json_data):
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-    json_file_path = '../data/output/fusion/fused_model_20251128_114546.json'
+    json_file_path = '../data/output/fusion/fused_model_20251209_161449.json'
     output_xmi_file_path = 'output.xmi'
 
     try:

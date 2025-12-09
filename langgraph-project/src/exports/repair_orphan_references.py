@@ -71,6 +71,7 @@ class OrphanReferenceRepairer:
         'sourceRequirementId': ['Requirement'],
         'signalId': ['Signal'],
         'behavior': ['Activity'],
+        'typeId': ['Block', 'Class', 'Signal', 'DataType', 'ValueType', 'Interface', 'Activity', 'StateMachine', 'Actor', 'UseCase'],
     }
     
     # 列表类型的ID引用字段
