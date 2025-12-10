@@ -2,6 +2,8 @@
 
 import sys
 import os
+import re
+import json
 from typing import Dict, Any, List
 
 from connections.database_connectors import get_neo4j_driver
@@ -229,7 +231,13 @@ class Neo4jFusionManager:
         if not element or not canonical_key:
             return
 
-        elem_type = element.get('type', 'UnknownType')
+        # 规范化标签，避免空值或非法字符导致 Cypher 语法错误
+        raw_type = element.get('type')
+        elem_type = raw_type if raw_type else 'UnknownType'
+        elem_type_sanitized = re.sub(r'[^A-Za-z0-9_]', '_', elem_type)
+        if not elem_type_sanitized.strip('_'):
+            print(f"跳过元素 '{element.get('id')}'，因 type 为空或非法: '{raw_type}'")
+            return
         
         # 准备属性字典，我们将把元素的所有非结构性信息作为属性存储
         # 我们需要处理复杂数据类型（如列表、字典），将其转换为Neo4j兼容的格式
@@ -254,7 +262,7 @@ class Neo4jFusionManager:
         # 2. ON CREATE 设置所有初始属性
         # 3. ON MATCH 更新属性（对于结构化融合，覆盖通常是可接受的策略）
         query = f"""
-        MERGE (n:{elem_type} {{canonicalKey: $canonicalKey}})
+        MERGE (n:`{elem_type_sanitized}` {{canonicalKey: $canonicalKey}})
         ON CREATE SET n = $props
         ON MATCH SET n += $props
         """
@@ -266,25 +274,62 @@ class Neo4jFusionManager:
             print(f"   错误: {e}")
             print(f"   元素数据: {element}")
     
-    def fuse_elements_batch(self, elements_with_keys: Dict[str, str], all_elements_map: Dict[str, Dict]):
+    def _sanitize_label(self, raw_type: str) -> str:
+        if not raw_type:
+            return ""
+        return re.sub(r"[^A-Za-z0-9_]", "_", raw_type)
+
+    def _prepare_node_payload(self, element: Dict[str, Any], canonical_key: str):
+        raw_type = element.get("type") or "UnknownType"
+        label = self._sanitize_label(raw_type)
+        if not label.strip('_'):
+            print(f"跳过元素 '{element.get('id')}'，因 type 为空或非法: '{raw_type}'")
+            return None
+        props = {
+            'original_id': element.get('id'),
+            'canonicalKey': canonical_key,
+            'name': element.get('name')
+        }
+        for key, value in element.items():
+            if key in ['id', 'type', 'name']:
+                continue
+            if isinstance(value, (str, int, float, bool)):
+                props[key] = value
+            elif isinstance(value, (list, dict)):
+                props[key] = json.dumps(value, ensure_ascii=False)
+        return label, {'canonicalKey': canonical_key, 'props': props}
+
+    def fuse_elements_batch(self, elements_with_keys: Dict[str, str], all_elements_map: Dict[str, Dict], chunk_size: int = 1000):
         """
-        批量融合所有元素。
-        
-        Args:
-            elements_with_keys (Dict[str, str]): 原始ID到规范键的映射.
-            all_elements_map (Dict[str, Dict]): 原始ID到完整元素对象的映射.
+        批量融合所有元素，按类型分组并用 UNWIND+MERGE 批处理以提升速度。
         """
         print(f"\n开始批量融合 {len(elements_with_keys)} 个元素到 Neo4j...")
-        
-        count = 0
-        total = len(elements_with_keys)
+        buckets: Dict[str, List[Dict[str, Any]]] = {}
+
         for original_id, canonical_key in elements_with_keys.items():
             element_data = all_elements_map.get(original_id)
-            if element_data:
-                self.fuse_element(element_data, canonical_key)
-                count += 1
-                # 简单的进度条
-                print(f"\r  进度: {count}/{total} ({count/total:.1%})", end="")
+            if not element_data:
+                continue
+            prepared = self._prepare_node_payload(element_data, canonical_key)
+            if not prepared:
+                continue
+            label, row = prepared
+            buckets.setdefault(label, []).append(row)
+
+        total = sum(len(v) for v in buckets.values())
+        processed = 0
+        for label, rows in buckets.items():
+            query = f"""
+            UNWIND $batch AS row
+            MERGE (n:`{label}` {{canonicalKey: row.canonicalKey}})
+            ON CREATE SET n = row.props
+            ON MATCH SET n += row.props
+            """
+            for i in range(0, len(rows), chunk_size):
+                batch = rows[i:i+chunk_size]
+                self._execute_write(query, {'batch': batch})
+                processed += len(batch)
+                print(f"\r  进度: {processed}/{total} ({processed/total:.1%})", end="")
 
         print("\n✅ 所有元素节点融合完毕。")
 

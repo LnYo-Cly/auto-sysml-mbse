@@ -28,7 +28,7 @@ class SemanticFusionManager:
     负责通过向量相似度来识别潜在的重复实体。
     """
     # 余弦相似度阈值，只有高于此值的才被认为是强相似
-    SIMILARITY_THRESHOLD = 0.80
+    SIMILARITY_THRESHOLD = 0.98
 
     def __init__(self):
         """初始化管理器，连接pgvector并准备Ollama客户端。"""
