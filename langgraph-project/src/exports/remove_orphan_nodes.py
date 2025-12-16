@@ -43,6 +43,7 @@ class OrphanNodeRemover:
         'sendEventId',
         'receiveEventId',
         'messageId',
+        'signatureId',
         'representsId',
         'coveredId',
         'classifierBehaviorId',
@@ -74,6 +75,13 @@ class OrphanNodeRemover:
         'nodes',
         'edges', 
         'groups',
+        'nodeIds',
+        'triggerIds',
+        'lifelineIds',
+        'messageIds',
+        'fragmentIds',
+        'ownedAttributeIds',
+        'ownedOperationIds',
     ]
     
     # 嵌套对象中需要检查的ID引用字段
@@ -112,6 +120,7 @@ class OrphanNodeRemover:
         self.all_ids: Set[str] = set()
         self.removed_elements: List[Dict] = []
         self.removal_reasons: Dict[str, str] = {}
+        self.allowed_message_sorts = {'asynchCall', 'synchCall', 'reply'}
         
     def _log(self, message: str):
         """打印日志信息"""
@@ -247,6 +256,11 @@ class OrphanNodeRemover:
         element_id = element.get('id', 'unknown')
         element_name = element.get('name', 'unnamed')
         element_type = element.get('type', 'unknown')
+
+        # 规范化 messageSort 值
+        if 'messageSort' in element and element['messageSort'] not in self.allowed_message_sorts:
+            element['messageSort'] = 'asynchCall'
+            self._log(f"  [规范化] {element_type}: {element_name} messageSort -> asynchCall")
         
         # 首先检查是否缺少必需字段
         missing_field = self._check_required_fields(element)

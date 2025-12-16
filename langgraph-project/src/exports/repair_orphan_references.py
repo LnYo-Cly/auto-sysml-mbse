@@ -61,6 +61,7 @@ class OrphanReferenceRepairer:
         'sendEventId': ['MessageOccurrenceSpecification'],
         'receiveEventId': ['MessageOccurrenceSpecification'],
         'messageId': ['Message'],
+        'signatureId': ['Operation', 'Signal', 'Behavior'],
         'representsId': ['Block', 'Class', 'Actor', 'Property'],
         'coveredId': ['Lifeline'],
         'classifierBehaviorId': ['StateMachine', 'Activity'],
@@ -75,7 +76,21 @@ class OrphanReferenceRepairer:
     }
     
     # 列表类型的ID引用字段
-    LIST_ID_FIELDS = ['nodes', 'edges', 'groups', 'nodeIds', 'memberEndIds', 'navigableOwnedEndIds', 'triggerIds', 'coveredLifelineIds']
+    LIST_ID_FIELDS = [
+        'nodes',
+        'edges',
+        'groups',
+        'nodeIds',
+        'memberEndIds',
+        'navigableOwnedEndIds',
+        'triggerIds',
+        'coveredLifelineIds',
+        'lifelineIds',
+        'messageIds',
+        'fragmentIds',
+        'ownedAttributeIds',
+        'ownedOperationIds',
+    ]
     
     # 嵌套对象中的ID引用字段
     NESTED_ID_FIELDS = {
@@ -135,6 +150,8 @@ class OrphanReferenceRepairer:
         self.created_elements: List[Dict] = []
         self.deleted_elements: List[Dict] = []
         self.iteration_stats: List[Dict] = []
+
+        self.allowed_message_sorts = {'asynchCall', 'synchCall', 'reply'}
         
     def _log(self, message: str):
         """打印日志"""
@@ -174,6 +191,11 @@ class OrphanReferenceRepairer:
             [(字段名, 无效引用ID), ...]
         """
         broken = []
+
+        # messageSort 不是引用字段，提前规范化
+        if 'messageSort' in element and element['messageSort'] not in self.allowed_message_sorts:
+            element['messageSort'] = 'asynchCall'
+            self._log(f"  [规范化] {element.get('type')}: {element.get('name', element.get('id'))} messageSort -> asynchCall")
         
         # 检查单值引用字段
         for field in self.REFERENCE_FIELD_TYPES.keys():

@@ -311,15 +311,32 @@ def build_element_tree(parent_id, parent_xml_element):
 
         elif elem_type in ["AssemblyConnector", "BindingConnector"]:
             attrs = {'xmi:id': elem_id, 'name': elem_name, 'xmi:type': 'uml:Connector'}
-            xml_elem = create_element("ownedConnector", attrs, parent_xml_element)
             ends = elem_data.get('end', [])
             if 'end1' in elem_data: ends = [elem_data['end1'], elem_data['end2']]
-            for i, end_data in enumerate(ends):
-                end_id = end_data.get('id') or generate_unique_id(elem_id, f"end_{i+1}")
-                end_attrs = {'xmi:id': end_id, 'xmi:type': 'uml:ConnectorEnd'}
-                end_attrs['role'] = end_data.get('portRefId') or end_data.get('propertyRefId')
-                end_attrs['partWithPort'] = end_data.get('partRefId')
-                create_element('end', end_attrs, parent=xml_elem)
+
+            # 如果端点引用的元素不存在或未生成，则跳过整个连接器，避免悬挂引用
+            missing_ref = False
+            for end_data in ends:
+                for ref_key in ['portRefId', 'propertyRefId', 'partRefId']:
+                    ref_id = end_data.get(ref_key)
+                    if not ref_id:
+                        continue
+                    if ref_id not in elements_by_id or ref_id not in xml_elements_by_id:
+                        missing_ref = True
+                        print(f"跳过 {elem_type} '{elem_id}'，端点引用不存在或未生成: {ref_key}={ref_id}")
+                        break
+                if missing_ref:
+                    break
+            if missing_ref:
+                xml_elem = None
+            else:
+                xml_elem = create_element("ownedConnector", attrs, parent_xml_element)
+                for i, end_data in enumerate(ends):
+                    end_id = end_data.get('id') or generate_unique_id(elem_id, f"end_{i+1}")
+                    end_attrs = {'xmi:id': end_id, 'xmi:type': 'uml:ConnectorEnd'}
+                    end_attrs['role'] = end_data.get('portRefId') or end_data.get('propertyRefId')
+                    end_attrs['partWithPort'] = end_data.get('partRefId')
+                    create_element('end', end_attrs, parent=xml_elem)
         
         elif elem_type == "Interaction":
             tag = "ownedBehavior" if parent_type in ["Class", "Block", "Operation"] else "packagedElement"
@@ -415,7 +432,7 @@ def build_element_tree(parent_id, parent_xml_element):
                 "Package": "uml:Package", "Block": "uml:Class", "InterfaceBlock": "uml:Class", "Class": "uml:Class",
                 "Requirement": "uml:Class", "ConstraintBlock": "uml:Class", "ValueType": "uml:DataType",
                 "Enumeration": "uml:Enumeration", "Signal": "uml:Signal", "SignalEvent": "uml:SignalEvent",
-                "Actor": "uml:Actor", "UseCase": "uml:UseCase"
+                "Actor": "uml:Actor", "UseCase": "uml:UseCase", "TimeEvent": "uml:TimeEvent"
             }
             if elem_type in packaged_element_types:
                 base_attrs['xmi:type'] = packaged_element_types[elem_type]
@@ -488,7 +505,12 @@ def build_element_tree(parent_id, parent_xml_element):
                 xml_elem = create_element('transition', base_attrs, parent_xml_element)
                 if "triggerIds" in elem_data:
                     for i, event_id in enumerate(elem_data["triggerIds"]):
-                        trigger = create_element('trigger', {'xmi:type': 'uml:Trigger', 'xmi:id': f"{elem_id}_tr_{i}"}, xml_elem); create_element('event', {'xmi:idref': event_id}, trigger)
+                        # 仅当事件元素存在时才生成 trigger -> event 引用，避免悬挂引用
+                        if event_id in elements_by_id:
+                            trigger = create_element('trigger', {'xmi:type': 'uml:Trigger', 'xmi:id': f"{elem_id}_tr_{i}"}, xml_elem)
+                            create_element('event', {'xmi:idref': event_id}, trigger)
+                        else:
+                            print(f"跳过 Transition '{elem_id}' 的 trigger 引用，事件不存在: {event_id}")
                 if 'guard' in elem_data and 'expression' in elem_data['guard']:
                     guard_data = elem_data['guard']
                     guard = create_element('guard', {'xmi:type': 'uml:Constraint', 'xmi:id': f"{elem_id}_guard"}, xml_elem)
@@ -812,7 +834,7 @@ def generate_unified_xmi(json_data):
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-    json_file_path = '../data/output/fusion/fused_model_20251209_161449.json'
+    json_file_path = './fused_model_20251210_174327.json'
     output_xmi_file_path = 'output.xmi'
 
     try:
