@@ -364,14 +364,6 @@ class OrphanReferenceRepairer:
         if new_ref:
             return new_ref, "名称关键词匹配"
         
-        # 策略3: 创建缺失父级（仅对 parentId）
-        if field == 'parentId':
-            new_parent = self._create_missing_parent(broken_ref, element)
-            if new_parent:
-                self.all_ids.add(broken_ref)
-                self.elements_by_id[broken_ref] = new_parent
-                return broken_ref, "创建缺失父级"
-        
         # 策略4: 使用大模型（如果启用）
         if use_llm and self.llm_client:
             new_ref = self._llm_repair(element, field, broken_ref, expected_types)

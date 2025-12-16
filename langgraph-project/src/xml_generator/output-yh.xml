@@ -45,10 +45,10 @@
         <message xmi:id="msg-periodic-status-uuid" name="周期性状态上报" xmi:type="uml:Message" sendEvent="fragment-send-periodic-status-uuid" receiveEvent="fragment-recv-periodic-status-uuid" messageSort="asynchCall"/>
         <fragment xmi:id="fragment-send-periodic-status-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-system-uuid-1" message="msg-periodic-status-uuid"/>
         <fragment xmi:id="fragment-recv-periodic-status-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-cloud-intrusion-uuid" message="msg-periodic-status-uuid"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="4f73784e-8087-43d5-95e3-cd993e3ee151" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d82d5f7d-936a-4964-97f3-eeccfb9229f3" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="b157e6f8-f4af-4645-9f1f-e45a10168d4f" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="8ad388ba-21a0-4a99-8fd0-b88eee534f22" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="db8f9620-337a-40b3-9f5d-3a0d98a09a3c" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="e247687f-b173-43e4-b38e-d138138e5a42" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="1523dc36-21c3-40f2-9ee9-af13390cf65d" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d77a2974-439b-4636-9118-02a2e8c16ab7" visibility="public"/>
       </packagedElement>
       <packagedElement xmi:id="interaction-notify-creator-uuid" name="发送凭证使用通知" xmi:type="uml:Interaction">
         <ownedAttribute xmi:id="prop-interaction-creator-uuid" name="p_cred_creator" xmi:type="uml:Property" visibility="public" aggregation="none" type="blk-credential-uuid"/>
@@ -2200,12 +2200,12 @@
           <message xmi:id="msg-lockcomplete-uuid" name="lockReinforcementComplete" xmi:type="uml:Message" sendEvent="fragment-send-lockcomplete-uuid" receiveEvent="fragment-recv-lockcomplete-uuid" messageSort="reply"/>
           <fragment xmi:id="fragment-send-lockcomplete-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-lockcontrol-uuid" message="msg-lockcomplete-uuid"/>
           <fragment xmi:id="fragment-recv-lockcomplete-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-maincontroller-uuid" message="msg-lockcomplete-uuid"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="1bd4c4cb-5960-4d50-acf4-77d150040dc6" visibility="public"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="6d1489c9-aab2-4ff3-a62b-b6527a203b08" visibility="public"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="1e79bc06-e933-450d-b910-6f7b0ab1edda" visibility="public"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="9f7eedd1-9901-4a7e-9e64-b68474f9f5bb" visibility="public"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="4006bc3d-ef58-4044-bebe-567331374b09" visibility="public"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="0a2e852b-b3b8-4cb8-8219-eebd39f992dd" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="840c9d21-cb5d-4a85-876f-a7a6640c24cc" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="784646ff-3744-41f6-a6de-ba4f29e748fe" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="8480d44c-ba14-4269-8cab-44961c52f07f" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="ab2072e9-05b8-43db-b2de-3e69afc3941f" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="f9d3030c-f405-4e67-9529-814e1463d847" visibility="public"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="7f74ebe0-a676-4e45-86ed-f56f60f5e1b9" visibility="public"/>
         </ownedBehavior>
       </packagedElement>
       <packagedElement xmi:id="cls-lockcontrol-uuid" name="LockControlModule" xmi:type="uml:Class"/>
@@ -2243,10 +2243,10 @@
       <fragment xmi:id="fragment-send-exec-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-ecu-uuid" message="msg-exec-ctrl-uuid"/>
       <fragment xmi:id="fragment-recv-exec-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-compressor-uuid" message="msg-exec-ctrl-uuid"/>
       <message xmi:id="msg-timing-constraint-uuid" name="时序约束" xmi:type="uml:Message" messageSort="asynchCall"/>
-      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="9673be91-a5b5-4d3e-900f-9e9ebabfa4a0" visibility="public"/>
-      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="018715bf-6792-485c-b9ff-08f3b9bc78ab" visibility="public"/>
-      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="1376e9fa-50d3-4af5-a055-0a0c7cba6472" visibility="public"/>
-      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="b120630f-3557-4a55-aa7c-4d2a921a64b0" visibility="public"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="109604bb-ffed-4ae5-91c2-a6b4f77de48b" visibility="public"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="99ec109c-fe4f-4f3e-b958-f9e339a2ace2" visibility="public"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="2aacd774-de97-48b6-b797-8679a5f952bc" visibility="public"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="ae8c6d9b-fc0a-4726-984c-11a3c69dbfff" visibility="public"/>
     </packagedElement>
     <packagedElement xmi:id="pkg-fingerprint-system-uuid" name="指纹认证系统" xmi:type="uml:Package">
       <packagedElement xmi:id="actor-user-uuid" name="User" xmi:type="uml:Actor"/>
@@ -2312,16 +2312,16 @@
         </message>
         <fragment xmi:id="fragment-send-auth-result-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-auth-module-uuid" message="msg-auth-result-uuid"/>
         <fragment xmi:id="fragment-recv-auth-result-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-main-controller-uuid" message="msg-auth-result-uuid"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="f19c79f9-26b7-4857-8b66-651480bd39a5" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="9c90cbe0-b530-4f84-8793-ceab1b9350a9" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="696bc582-d444-43f7-bf4e-e51506819810" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d6898093-26f2-46cb-a29f-53f7f7732529" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="f165cf42-befa-4ea9-8dd7-067a267eae98" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="e725d89f-df13-47cc-bb7d-f79e1a525f75" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d93dd541-167b-427e-9311-7aaf97949380" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="cdad72b1-9003-475e-905b-949378fcd64f" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="897e63b7-bb3e-4914-a07c-a28bb20a4487" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="0c43b6d5-f704-4527-9f5b-3b33bc7fdc44" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="21610375-c52d-4a2b-9658-bbcee889128b" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="0fad336d-6d45-4d2b-aba7-8d39ff2e16d9" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="da49f197-8e5e-4706-9fba-a55045d9cdec" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="51ccc02a-be44-47f9-bdb3-cc04e784d0cb" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="80381680-af3a-4192-8a81-ac922fe44f90" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="73ed66e2-8593-4462-b8d1-1113e29acdfe" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="4a2ced98-1462-488e-9a3a-b09cae1fafa8" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="b518e5ec-fec6-4052-b4b1-7f2eead0962b" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="1465e534-3444-473f-82cf-d78833036cd2" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="b86a119e-38c7-4cbc-9c06-8fbf4e14d978" visibility="public"/>
       </packagedElement>
     </packagedElement>
     <packagedElement xmi:id="pkg-security-uuid" name="安全防护包" xmi:type="uml:Package">
@@ -2380,16 +2380,16 @@
         </message>
         <fragment xmi:id="fragment-send-uploadeventdata-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-comm-intrusion-uuid" message="msg-uploadeventdata-uuid"/>
         <fragment xmi:id="fragment-recv-uploadeventdata-uuid" xmi:type="uml:MessageOccurrenceSpecification" covered="ll-cloud-intrusion-uuid" message="msg-uploadeventdata-uuid"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="d21a6613-79e3-4eed-8399-5626fbb970d7" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="6a3df854-436a-4968-b7db-8c0d2f8d6dc6" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="7f381755-fa37-4c34-8c39-0e7801510d04" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="6d92513a-f83f-4d5e-809d-21923d5df870" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="fd2608da-40d5-4f36-9044-4195b971b320" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="f0a2ea26-c0d6-48d9-aa9e-b38b9c3a9712" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="f2f011bd-6415-4d04-9d14-1bf2ef1e525d" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="494ba208-9759-4ec4-a8b9-ef6b19bfdb33" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="210bfb3c-3a97-4da1-99df-d8ec56be5698" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="ee8897c8-44c7-4ce6-acb3-750e7cb6883b" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="7ba200ed-6d4c-4cbe-a6b7-a3d187540ede" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="0911fd65-dfba-4d31-a0a0-343bfdf344de" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="cc2a5664-7948-4815-bb17-993f5aafb669" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="b1daf34d-a209-4e5d-9c62-c450a95d0418" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="bb0443ee-f2f8-4aea-8be2-0f51aef45fd8" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="136e4b85-786f-4604-bc3e-9085d78d7ec4" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="024bc7a4-cc70-4971-98fd-d1710b4d6c4f" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="51bafda7-df21-4ab4-b2df-3df5cd40319f" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="4b7b464d-3df5-4e7e-bad8-9ab7a3d0514e" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="2f5dcf73-bef8-4e2e-be40-81d2fe32b80e" visibility="public"/>
       </packagedElement>
       <packagedElement xmi:id="cls-sensorhub-uuid" name="SensorHub" xmi:type="uml:Class"/>
       <packagedElement xmi:id="cls-auth-uuid" name="AuthenticationModule" xmi:type="uml:Class"/>
@@ -2438,12 +2438,12 @@
         <lifeline xmi:id="ll-lock-lowpower-uuid" name="L4-LockControlModule" xmi:type="uml:Lifeline"/>
         <lifeline xmi:id="ll-cloud-lowpower-uuid" name="L5-CloudService" xmi:type="uml:Lifeline"/>
         <lifeline xmi:id="ll-userdevice-lowpower-uuid" name="L6-UserDevice" xmi:type="uml:Lifeline"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="b965c190-641b-4b4e-9d32-94b2e5624a14" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="2913df7c-0e6b-439a-93cc-1e2be92083b4" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="0f196081-1ff7-4865-942f-71e6521bbe5e" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="0d4278be-ba7e-4830-ac15-03a227107ccc" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="a2b6b6df-f2e3-4f04-b442-8bb53b9f4647" visibility="public"/>
-        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="f959b71e-de22-4d8c-a0c9-5bb433e7ff34" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="45b9bb71-d34a-4c32-888b-f803a9554922" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="89cfbb92-48fc-441b-a193-98afb39fe841" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="1e760267-b2e7-4677-9d89-fb7f7219a39b" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="61ed2024-d60c-4a92-bc4c-5c54e58c62f3" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="1b0b134c-7e0b-480a-acda-f321e5fd9530" visibility="public"/>
+        <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="79386c4d-249a-4557-8047-bc1970a1a287" visibility="public"/>
       </packagedElement>
       <packagedElement xmi:id="cls-power-uuid" name="PowerManagementModule" xmi:type="uml:Class"/>
     </packagedElement>
