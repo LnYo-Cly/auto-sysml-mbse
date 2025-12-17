@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20131001" xmlns:sysml="http://www.omg.org/spec/SysML/20181001/SysML" xmlns:MD_Customization_for_SysML__additional_stereotypes="http://www.magicdraw.com/spec/Customization/180/SysML" xmlns:DSL_Customization="http://www.magicdraw.com/schemas/DSL_Customization.xmi" xmlns:StandardProfile="http://www.omg.org/spec/UML/20131001/StandardProfile" xmlns:MagicDraw_Profile="http://www.omg.org/spec/UML/20131001/MagicDrawProfile" xmlns:MD_Customization_for_Requirements__additional_stereotypes="http://www.magicdraw.com/spec/Customization/180/Requirements" xmlns:Validation_Profile="http://www.magicdraw.com/schemas/Validation_Profile.xmi" xmi:version="2.5">
+  <uml:Model xmi:type="uml:Model" xmi:id="master-model" name="Model">
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="SysML_Profile_App">
+      <appliedProfile href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML"/>
+    </profileApplication>
+    <packagedElement xmi:id="pkg-airborne-security" name="机载融合终端安全模块系统" xmi:type="uml:Package">
+      <packagedElement xmi:id="act-auth-keyagreement" name="认证鉴权与密钥协商流程" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-service-crypto" name="业务信息加解密/完保处理流程" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-selfcheck" name="自检处理流程" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-software-upgrade" name="软件在线升级流程" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-data-dispatch" name="数据调度处理流程" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="blk-auth-request-msg" name="认证鉴权请求消息" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-auth-response-msg" name="鉴权响应消息" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-keyset" name="密钥集" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-service-data" name="业务信息数据" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-security-status" name="安全态势信息" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-software-upgrade-pkg" name="软件升级包" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-auth-process-module" name="认证鉴权处理模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-security-module-core" name="安全模块 (eSIM/处理器软件)" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-service-crypto-module" name="业务信息加解密/完保处理模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-data-dispatch-module" name="数据调度处理模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-selfcheck-module" name="自检处理模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-security-status-module" name="安全态势管理模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-key-management-module" name="密钥管理模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-sat-terminal" name="卫星终端" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-sat-network" name="卫星网络/核心网" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-hardware-design-uuid" name="HardwareDesign" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-noise-source-uuid" name="NoiseSourceChip" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-ddr3-uuid" name="DDR3" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-emmc-uuid" name="eMMC" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-arm-processor-module-uuid" name="ARMProcessorModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop-arm-tsm" name="_tsm_arm" xmi:type="uml:Property" visibility="private" aggregation="none" association="assoc-tsm-arm" type="block_security_module"/>
+      </packagedElement>
+      <packagedElement xmi:id="blk-fpga-processor-module-uuid" name="FPGAProcessorModule" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-software-design-uuid" name="SoftwareDesign" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-fpga-software-uuid" name="FPGASoftware" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-processor-software-uuid" name="ProcessorSoftware" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-communication-unit-uuid" name="CommunicationUnit" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-crypto-unit-uuid" name="CryptoUnit" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-business-unit-uuid" name="BusinessUnit" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-log-management-module-uuid" name="LogManagementModule" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-external-interface-unit-uuid" name="ExternalInterfaceUnit" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-business-crypto-module-uuid" name="BusinessCryptoModule" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-security-architecture-uuid" name="SecurityArchitecture" xmi:type="uml:Package"/>
+    <packagedElement xmi:id="pkg-security-protocol-uuid" name="SecurityProtocol" xmi:type="uml:Package"/>
+    <packagedElement xmi:id="pkg-crypto-design-uuid" name="CryptoDesign" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-crypto-algorithm-ip-uuid" name="CryptoAlgorithmIP" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-functional-req-uuid" name="功能需求" xmi:type="uml:Package">
+      <packagedElement xmi:id="req-support-crypto-algo-uuid" name="支持国密算法" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-satellite-modes-uuid" name="支持多卫星体制" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-protect-nas-as-signaling-uuid" name="保护NAS/AS信令" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-protect-user-plane-data-uuid" name="保护话音数据业务" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-direct-encryption-uuid" name="支持终端间直通加密" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-online-key-mgmt-uuid" name="支持在线密钥管理" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-security-posture-report-uuid" name="支持安全态势上报" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-rng-self-test-uuid" name="支持随机数自检" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-algo-key-verification-uuid" name="支持算法与密钥检验" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-software-upgrade-rollback-uuid" name="支持软件升级与回退" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-secure-access-storage-uuid" name="支持安全访问与存储" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-operation-logging-uuid" name="支持工作日志记录" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-support-esim-auth-uuid" name="基于eSIM实现入网鉴权" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-performance-req-uuid" name="性能需求" xmi:type="uml:Package">
+      <packagedElement xmi:id="req-auth-latency-uuid" name="认证鉴权时延要求" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-uplink-throughput-uuid" name="上行业务保护吞吐量" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-downlink-throughput-uuid" name="下行业务保护吞吐量" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-local-key-destruction-time-uuid" name="本地密码资源销毁时间" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-interface-mech-uuid" name="接口与机电热需求" xmi:type="uml:Package">
+      <packagedElement xmi:id="req-operating-voltage-uuid" name="工作电压要求" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-power-consumption-uuid" name="功耗要求" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="req-temperature-range-uuid" name="工作与存储温度范围" xmi:type="uml:Class"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-design-constraint-uuid" name="设计与实现约束" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-power-module-uuid" name="电源模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-arm-software-uuid" name="ARM应用软件模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-fpga-logic-uuid" name="FPGA业务处理逻辑模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="blk-structure-thermal-uuid" name="结构与散热模块" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="tc-crypto-algo-test-uuid" name="国密算法功能与性能测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_crypto_algo_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_crypto_algo_test_uuid_verdict_node" name="verdict" parameter="_tc_crypto_algo_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+      <packagedElement xmi:id="tc-satellite-mode-test-uuid" name="多卫星体制协议一致性测试" xmi:type="uml:Activity">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_tc_satellite_mode_test_uuid_verdict_param" name="verdict" direction="return">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </ownedParameter>
+        <node xmi:type="uml:ActivityParameterNode" xmi:id="_tc_satellite_mode_test_uuid_verdict_node" name="verdict" parameter="_tc_satellite_mode_test_uuid_verdict_param">
+          <type href="http://www.omg.org/spec/SysML/20181001/SysML.xmi#SysML_dataType.VerdictKind"/>
+        </node>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-device-app-uuid" name="设备管理应用包" xmi:type="uml:Package">
+      <packagedElement xmi:id="blk-device-management-unit-uuid" name="设备管理单元" xmi:type="uml:Class">
+        <classifierBehavior xmi:idref="sm-device-finite-state-uuid"/>
+        <ownedBehavior xmi:id="sm-device-finite-state-uuid" name="设备有限状态机" xmi:type="uml:StateMachine">
+          <region xmi:id="region-device-main-uuid" name="主区域" xmi:type="uml:Region">
+            <subvertex xmi:id="ps-device-main-initial-uuid" xmi:type="uml:Pseudostate"/>
+            <subvertex xmi:id="state-initializing-uuid" name="初始化" xmi:type="uml:State">
+              <doActivity xmi:type="uml:Activity" xmi:id="wrapper-do-initializing-uuid" name="执行各模块初始化">
+                <node xmi:type="uml:InitialNode" xmi:id="wrapper-do-initializing-uuid_initial"/>
+                <node xmi:type="uml:CallBehaviorAction" xmi:id="wrapper-do-initializing-uuid_cba" behavior="act-perform-module-initialization-uuid" name="Call_执行各模块初始化"/>
+                <node xmi:type="uml:ActivityFinalNode" xmi:id="wrapper-do-initializing-uuid_final"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-initializing-uuid_cf1" source="wrapper-do-initializing-uuid_initial" target="wrapper-do-initializing-uuid_cba"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-initializing-uuid_cf2" source="wrapper-do-initializing-uuid_cba" target="wrapper-do-initializing-uuid_final"/>
+              </doActivity>
+            </subvertex>
+            <subvertex xmi:id="state-normal-operation-uuid" name="正常运行" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-software-upgrading-uuid" name="软件升级中" xmi:type="uml:State">
+              <region xmi:id="region-upgrading-sub-uuid" name="升级子区域" xmi:type="uml:Region">
+                <subvertex xmi:id="ps-upgrading-sub-initial-uuid" xmi:type="uml:Pseudostate"/>
+                <subvertex xmi:id="state-receive-verify-uuid" name="接收并校验版本" xmi:type="uml:State"/>
+                <subvertex xmi:id="ps-upgrade-verify-choice-uuid" xmi:type="uml:Pseudostate" kind="choice"/>
+                <subvertex xmi:id="state-backup-store-uuid" name="备份与存储" xmi:type="uml:State"/>
+                <subvertex xmi:id="state-async-trial-run-uuid" name="异步试运行" xmi:type="uml:State">
+                  <doActivity xmi:type="uml:Activity" xmi:id="wrapper-do-async-trial-uuid" name="异步试运行新软件版本">
+                    <node xmi:type="uml:InitialNode" xmi:id="wrapper-do-async-trial-uuid_initial"/>
+                    <node xmi:type="uml:CallBehaviorAction" xmi:id="wrapper-do-async-trial-uuid_cba" behavior="act-async-trial-run-software-uuid" name="Call_异步试运行新软件版本"/>
+                    <node xmi:type="uml:ActivityFinalNode" xmi:id="wrapper-do-async-trial-uuid_final"/>
+                    <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-async-trial-uuid_cf1" source="wrapper-do-async-trial-uuid_initial" target="wrapper-do-async-trial-uuid_cba"/>
+                    <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-async-trial-uuid_cf2" source="wrapper-do-async-trial-uuid_cba" target="wrapper-do-async-trial-uuid_final"/>
+                  </doActivity>
+                </subvertex>
+                <subvertex xmi:id="ps-upgrade-trial-choice-uuid" xmi:type="uml:Pseudostate" kind="choice"/>
+                <subvertex xmi:id="state-switch-version-uuid" name="切换版本" xmi:type="uml:State"/>
+                <transition xmi:id="trans-subinit-to-receive-uuid" xmi:type="uml:Transition" source="ps-upgrading-sub-initial-uuid" target="state-receive-verify-uuid"/>
+                <transition xmi:id="trans-verify-to-choice-uuid" xmi:type="uml:Transition" source="state-receive-verify-uuid" target="ps-upgrade-verify-choice-uuid"/>
+                <transition xmi:id="trans-choice-ok-to-backup-uuid" xmi:type="uml:Transition" source="ps-upgrade-verify-choice-uuid" target="state-backup-store-uuid">
+                  <guard xmi:type="uml:Constraint" xmi:id="trans-choice-ok-to-backup-uuid_guard">
+                    <specification xmi:type="uml:OpaqueExpression" xmi:id="trans-choice-ok-to-backup-uuid_guard_spec">
+                      <body>[校验通过]</body>
+                      <language>English</language>
+                    </specification>
+                  </guard>
+                </transition>
+                <transition xmi:id="trans-choice-fail-to-exit-uuid" xmi:type="uml:Transition" source="ps-upgrade-verify-choice-uuid" target="state-software-upgrading-uuid">
+                  <guard xmi:type="uml:Constraint" xmi:id="trans-choice-fail-to-exit-uuid_guard">
+                    <specification xmi:type="uml:OpaqueExpression" xmi:id="trans-choice-fail-to-exit-uuid_guard_spec">
+                      <body>[校验不通过]</body>
+                      <language>English</language>
+                    </specification>
+                  </guard>
+                </transition>
+                <transition xmi:id="trans-backup-to-trial-uuid" xmi:type="uml:Transition" source="state-backup-store-uuid" target="state-async-trial-run-uuid"/>
+                <transition xmi:id="trans-trial-to-choice2-uuid" xmi:type="uml:Transition" source="state-async-trial-run-uuid" target="ps-upgrade-trial-choice-uuid"/>
+                <transition xmi:id="trans-choice2-ok-to-switch-uuid" xmi:type="uml:Transition" source="ps-upgrade-trial-choice-uuid" target="state-switch-version-uuid">
+                  <guard xmi:type="uml:Constraint" xmi:id="trans-choice2-ok-to-switch-uuid_guard">
+                    <specification xmi:type="uml:OpaqueExpression" xmi:id="trans-choice2-ok-to-switch-uuid_guard_spec">
+                      <body>[试运行结果正确]</body>
+                      <language>English</language>
+                    </specification>
+                  </guard>
+                </transition>
+                <transition xmi:id="trans-choice2-fail-to-exit-uuid" xmi:type="uml:Transition" source="ps-upgrade-trial-choice-uuid" target="state-software-upgrading-uuid">
+                  <guard xmi:type="uml:Constraint" xmi:id="trans-choice2-fail-to-exit-uuid_guard">
+                    <specification xmi:type="uml:OpaqueExpression" xmi:id="trans-choice2-fail-to-exit-uuid_guard_spec">
+                      <body>[试运行结果异常]</body>
+                      <language>English</language>
+                    </specification>
+                  </guard>
+                </transition>
+                <transition xmi:id="trans-switch-to-exit-uuid" xmi:type="uml:Transition" source="state-switch-version-uuid" target="state-software-upgrading-uuid"/>
+              </region>
+            </subvertex>
+            <subvertex xmi:id="state-upgrade-failure-handling-uuid" name="升级失败处理" xmi:type="uml:State">
+              <doActivity xmi:type="uml:Activity" xmi:id="wrapper-do-failure-handling-uuid" name="执行版本回退">
+                <node xmi:type="uml:InitialNode" xmi:id="wrapper-do-failure-handling-uuid_initial"/>
+                <node xmi:type="uml:CallBehaviorAction" xmi:id="wrapper-do-failure-handling-uuid_cba" behavior="act-perform-version-rollback-uuid" name="Call_执行版本回退"/>
+                <node xmi:type="uml:ActivityFinalNode" xmi:id="wrapper-do-failure-handling-uuid_final"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-failure-handling-uuid_cf1" source="wrapper-do-failure-handling-uuid_initial" target="wrapper-do-failure-handling-uuid_cba"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-do-failure-handling-uuid_cf2" source="wrapper-do-failure-handling-uuid_cba" target="wrapper-do-failure-handling-uuid_final"/>
+              </doActivity>
+            </subvertex>
+            <transition xmi:id="trans-power-on-to-init-uuid" xmi:type="uml:Transition" source="ps-device-main-initial-uuid" target="state-initializing-uuid"/>
+            <transition xmi:id="trans-init-to-normal-uuid" xmi:type="uml:Transition" source="state-initializing-uuid" target="state-normal-operation-uuid"/>
+            <transition xmi:id="trans-normal-to-upgrading-uuid" xmi:type="uml:Transition" source="state-normal-operation-uuid" target="state-software-upgrading-uuid">
+              <trigger xmi:type="uml:Trigger" xmi:id="trans-normal-to-upgrading-uuid_tr_0">
+                <event xmi:idref="event-receive-upgrade-cmd-event-uuid"/>
+              </trigger>
+            </transition>
+            <transition xmi:id="trans-upgrading-to-normal-uuid" xmi:type="uml:Transition" source="state-software-upgrading-uuid" target="state-normal-operation-uuid">
+              <effect xmi:type="uml:Activity" xmi:id="wrapper-effect-t4-uuid" name="响应升级成功消息">
+                <node xmi:type="uml:InitialNode" xmi:id="wrapper-effect-t4-uuid_initial"/>
+                <node xmi:type="uml:CallBehaviorAction" xmi:id="wrapper-effect-t4-uuid_cba" behavior="act-respond-upgrade-success-uuid" name="Call_响应升级成功消息"/>
+                <node xmi:type="uml:ActivityFinalNode" xmi:id="wrapper-effect-t4-uuid_final"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-effect-t4-uuid_cf1" source="wrapper-effect-t4-uuid_initial" target="wrapper-effect-t4-uuid_cba"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-effect-t4-uuid_cf2" source="wrapper-effect-t4-uuid_cba" target="wrapper-effect-t4-uuid_final"/>
+              </effect>
+            </transition>
+            <transition xmi:id="trans-upgrading-to-failure-uuid" xmi:type="uml:Transition" source="state-software-upgrading-uuid" target="state-upgrade-failure-handling-uuid">
+              <effect xmi:type="uml:Activity" xmi:id="wrapper-effect-t5-uuid" name="响应升级失败消息">
+                <node xmi:type="uml:InitialNode" xmi:id="wrapper-effect-t5-uuid_initial"/>
+                <node xmi:type="uml:CallBehaviorAction" xmi:id="wrapper-effect-t5-uuid_cba" behavior="act-respond-upgrade-failure-uuid" name="Call_响应升级失败消息"/>
+                <node xmi:type="uml:ActivityFinalNode" xmi:id="wrapper-effect-t5-uuid_final"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-effect-t5-uuid_cf1" source="wrapper-effect-t5-uuid_initial" target="wrapper-effect-t5-uuid_cba"/>
+                <edge xmi:type="uml:ControlFlow" xmi:id="wrapper-effect-t5-uuid_cf2" source="wrapper-effect-t5-uuid_cba" target="wrapper-effect-t5-uuid_final"/>
+              </effect>
+            </transition>
+            <transition xmi:id="trans-failure-to-normal-uuid" xmi:type="uml:Transition" source="state-upgrade-failure-handling-uuid" target="state-normal-operation-uuid"/>
+          </region>
+        </ownedBehavior>
+        <ownedBehavior xmi:id="sm-self-test-uuid" name="随机数自检状态机" xmi:type="uml:StateMachine">
+          <region xmi:id="region-self-test-main-uuid" name="自检主区域" xmi:type="uml:Region">
+            <subvertex xmi:id="ps-self-test-initial-uuid" xmi:type="uml:Pseudostate"/>
+            <subvertex xmi:id="state-power-on-self-test-uuid" name="开机自检" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-periodic-self-test-uuid" name="周期自检" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-realtime-self-test-uuid" name="实时自检" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-normal-service-uuid" name="正常服务" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-abnormal-alarm-uuid" name="异常告警" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-stop-service-uuid" name="停止服务" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-abnormal-exit-uuid" name="异常退出" xmi:type="uml:State"/>
+          </region>
+        </ownedBehavior>
+        <ownedBehavior xmi:id="sm-security-module-uuid" name="安全模块管理状态机" xmi:type="uml:StateMachine">
+          <region xmi:id="region-security-main-uuid" name="安全管理主区域" xmi:type="uml:Region">
+            <subvertex xmi:id="ps-security-initial-uuid" xmi:type="uml:Pseudostate"/>
+            <subvertex xmi:id="state-receive-command-uuid" name="接收命令" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-execute-operation-uuid" name="执行操作" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-indicate-destruction-uuid" name="指示销毁" xmi:type="uml:State"/>
+            <subvertex xmi:id="state-send-response-uuid" name="发送响应消息" xmi:type="uml:State"/>
+          </region>
+        </ownedBehavior>
+      </packagedElement>
+      <packagedElement xmi:id="event-receive-upgrade-cmd-event-uuid" name="收到软件升级命令事件" xmi:type="uml:SignalEvent"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-device-behaviors-uuid" name="设备行为库" xmi:type="uml:Package">
+      <packagedElement xmi:id="act-perform-module-initialization-uuid" name="执行各模块初始化" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-async-trial-run-software-uuid" name="异步试运行新软件版本" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-perform-version-rollback-uuid" name="执行版本回退" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-respond-upgrade-success-uuid" name="响应升级成功消息" xmi:type="uml:Activity"/>
+      <packagedElement xmi:id="act-respond-upgrade-failure-uuid" name="响应升级失败消息" xmi:type="uml:Activity"/>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-avionics-main-uuid" name="主要用例" xmi:type="uml:Package">
+      <packagedElement xmi:id="actor-system-admin-uuid" name="系统管理员" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-remote-update-operator-uuid" name="远程更新操作员" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="actor-simulation-tester-uuid" name="仿真测试人员" xmi:type="uml:Actor"/>
+      <packagedElement xmi:id="uc-confidential-processing-uuid" name="进行保密处理" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-manage-device-uuid" name="管理设备" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-manage-password-uuid" name="管理密码" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-perceive-security-posture-uuid" name="感知安全态势" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-perform-remote-update-uuid" name="进行远程软件更新" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-perform-simulation-modeling-uuid" name="进行仿真建模" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-perform-digital-collaborative-design-uuid" name="进行数字化协同设计" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-conduct-digital-design-uuid" name="开展数字化设计" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-perform-simulation-verification-uuid" name="进行仿真验证" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-build-software-simulation-system-uuid" name="构建软件模拟系统" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-setup-data-simulation-verification-software-uuid" name="搭建数据仿真验证软件" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-simulate-main-business-functions-uuid" name="仿真主要业务功能" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="uc-test-verification-functions-uuid" name="测试验证功能" xmi:type="uml:UseCase"/>
+      <packagedElement xmi:id="assoc-admin-manage-device-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_admin_manage_device_uuid_source_end" type="actor-system-admin-uuid" association="assoc-admin-manage-device-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_admin_manage_device_uuid_target_end" type="uc-manage-device-uuid" association="assoc-admin-manage-device-uuid"/>
+        <memberEnd xmi:idref="_assoc_admin_manage_device_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_admin_manage_device_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-admin-manage-password-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_admin_manage_password_uuid_source_end" type="actor-system-admin-uuid" association="assoc-admin-manage-password-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_admin_manage_password_uuid_target_end" type="uc-manage-password-uuid" association="assoc-admin-manage-password-uuid"/>
+        <memberEnd xmi:idref="_assoc_admin_manage_password_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_admin_manage_password_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-admin-perceive-security-posture-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_admin_perceive_security_posture_uuid_source_end" type="actor-system-admin-uuid" association="assoc-admin-perceive-security-posture-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_admin_perceive_security_posture_uuid_target_end" type="uc-perceive-security-posture-uuid" association="assoc-admin-perceive-security-posture-uuid"/>
+        <memberEnd xmi:idref="_assoc_admin_perceive_security_posture_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_admin_perceive_security_posture_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-operator-perform-remote-update-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_operator_perform_remote_update_uuid_source_end" type="actor-remote-update-operator-uuid" association="assoc-operator-perform-remote-update-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_operator_perform_remote_update_uuid_target_end" type="uc-perform-remote-update-uuid" association="assoc-operator-perform-remote-update-uuid"/>
+        <memberEnd xmi:idref="_assoc_operator_perform_remote_update_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_operator_perform_remote_update_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-tester-perform-simulation-verification-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_tester_perform_simulation_verification_uuid_source_end" type="actor-simulation-tester-uuid" association="assoc-tester-perform-simulation-verification-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_tester_perform_simulation_verification_uuid_target_end" type="uc-perform-simulation-verification-uuid" association="assoc-tester-perform-simulation-verification-uuid"/>
+        <memberEnd xmi:idref="_assoc_tester_perform_simulation_verification_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_tester_perform_simulation_verification_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-tester-test-verification-functions-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_tester_test_verification_functions_uuid_source_end" type="actor-simulation-tester-uuid" association="assoc-tester-test-verification-functions-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_tester_test_verification_functions_uuid_target_end" type="uc-test-verification-functions-uuid" association="assoc-tester-test-verification-functions-uuid"/>
+        <memberEnd xmi:idref="_assoc_tester_test_verification_functions_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_tester_test_verification_functions_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-tester-conduct-digital-design-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_tester_conduct_digital_design_uuid_source_end" type="actor-simulation-tester-uuid" association="assoc-tester-conduct-digital-design-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_tester_conduct_digital_design_uuid_target_end" type="uc-conduct-digital-design-uuid" association="assoc-tester-conduct-digital-design-uuid"/>
+        <memberEnd xmi:idref="_assoc_tester_conduct_digital_design_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_tester_conduct_digital_design_uuid_target_end"/>
+      </packagedElement>
+      <packagedElement xmi:id="assoc-tester-setup-data-simulation-verification-software-uuid" xmi:type="uml:Association">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_tester_setup_data_simulation_verification_software_uuid_source_end" type="actor-simulation-tester-uuid" association="assoc-tester-setup-data-simulation-verification-software-uuid"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_assoc_tester_setup_data_simulation_verification_software_uuid_target_end" type="uc-setup-data-simulation-verification-software-uuid" association="assoc-tester-setup-data-simulation-verification-software-uuid"/>
+        <memberEnd xmi:idref="_assoc_tester_setup_data_simulation_verification_software_uuid_source_end"/>
+        <memberEnd xmi:idref="_assoc_tester_setup_data_simulation_verification_software_uuid_target_end"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg_main" name="SecurityModule" xmi:type="uml:Package">
+      <packagedElement xmi:id="block_security_module" name="SecurityProcessingModule" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop_auth_delay" name="AuthenticationDelay" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_uplink_capability" name="UplinkProtectionCapability" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_downlink_capability" name="DownlinkProtectionCapability" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_key_destruction_time" name="LocalKeyDestructionTime" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_algorithm_performance" name="AlgorithmCorePerformance" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_transmission_overhead" name="TransmissionOverhead" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_processing_overhead" name="ProcessingOverhead" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+      </packagedElement>
+      <packagedElement xmi:id="block_physical_spec" name="PhysicalSpecifications" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop_tolerance" name="DimensionalTolerance" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+      </packagedElement>
+      <packagedElement xmi:id="block_environmental" name="EnvironmentalSpecifications" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop_operating_temp_max" name="OperatingTemperatureMax" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_storage_temp_min" name="StorageTemperatureMin" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_storage_temp_max" name="StorageTemperatureMax" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+      </packagedElement>
+      <packagedElement xmi:id="block_resource_usage" name="ResourceUtilization" xmi:type="uml:Class">
+        <ownedAttribute xmi:id="prop_cpu_usage" name="CPU_UsageRate" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_memory_usage" name="Memory_UsageRate" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_storage_usage" name="Storage_UsageRate" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_fpga_lut_usage" name="FPGA_LUT_UsageRate" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_fpga_ff_usage" name="FPGA_FF_UsageRate" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="prop_fpga_ram_usage" name="FPGA_RAM_UsageRate" xmi:type="uml:Property" visibility="public" aggregation="none"/>
+      </packagedElement>
+      <packagedElement xmi:id="cb_auth_delay_req" name="AuthDelayRequirement" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_auth_delay_req_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_auth_delay_req_spec">
+            <body>AuthenticationDelay &lt;= 200</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param_auth_delay" name="AuthenticationDelay" xmi:type="uml:Port" visibility="public" aggregation="none"/>
+      </packagedElement>
+      <packagedElement xmi:id="cb_uplink_cap_req" name="UplinkCapabilityRequirement" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_uplink_cap_req_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_uplink_cap_req_spec">
+            <body>UplinkProtectionCapability &gt;= 200</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+      </packagedElement>
+      <packagedElement xmi:id="cb_downlink_cap_req" name="DownlinkCapabilityRequirement" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_downlink_cap_req_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_downlink_cap_req_spec">
+            <body>DownlinkProtectionCapability &gt;= 200</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param_downlink_cap" name="DownlinkProtectionCapability" xmi:type="uml:Port" visibility="public" aggregation="none"/>
+      </packagedElement>
+      <packagedElement xmi:id="cb_key_dest_req" name="KeyDestructionTimeRequirement" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_key_dest_req_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_key_dest_req_spec">
+            <body>LocalKeyDestructionTime &lt;= 60</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param_key_dest_time" name="LocalKeyDestructionTime" xmi:type="uml:Port" visibility="public" aggregation="none"/>
+      </packagedElement>
+      <packagedElement xmi:id="cb_auth_delay_decomp" name="AuthDelayDecomposition" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_auth_delay_decomp_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_auth_delay_decomp_spec">
+            <body>AuthenticationDelay = TransmissionOverhead + ProcessingOverhead</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param_auth_delay2" name="AuthenticationDelay" xmi:type="uml:Port" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="param_trans_overhead" name="TransmissionOverhead" xmi:type="uml:Port" visibility="public" aggregation="none"/>
+        <ownedAttribute xmi:id="param_proc_overhead" name="ProcessingOverhead" xmi:type="uml:Port" visibility="public" aggregation="none"/>
+      </packagedElement>
+      <packagedElement xmi:id="cb_trans_overhead_limit" name="TransmissionOverheadLimit" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_trans_overhead_limit_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_trans_overhead_limit_spec">
+            <body>TransmissionOverhead &lt;= 1</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+        <ownedAttribute xmi:id="param_trans_overhead2" name="TransmissionOverhead" xmi:type="uml:Port" visibility="public" aggregation="none"/>
+      </packagedElement>
+      <packagedElement xmi:id="cb_proc_overhead_limit" name="ProcessingOverheadLimit" xmi:type="uml:Class">
+        <ownedRule xmi:type="uml:Constraint" xmi:id="cb_proc_overhead_limit_cr">
+          <specification xmi:type="uml:OpaqueExpression" xmi:id="cb_proc_overhead_limit_spec">
+            <body>ProcessingOverhead &lt;= 50</body>
+            <language>Math</language>
+          </specification>
+        </ownedRule>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:id="pkg-security-auth-uuid" name="安全认证流程" xmi:type="uml:Package">
+      <packagedElement xmi:id="cls-sat-terminal-uuid" name="卫星终端" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-security-module-uuid" name="机载融合终端安全模块" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-generate-suci-uuid" name="加密SUPI生成SUCI" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-exec-5g-aka-uuid" name="执行5G AKA及密钥派生" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-process-nas-sec-uuid" name="处理NAS信令安全" xmi:type="uml:Operation"/>
+        <ownedOperation xmi:id="op-process-as-sec-uuid" name="处理AS信令安全" xmi:type="uml:Operation"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-access-network-uuid" name="卫星网络/接入网" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-core-auth-system-uuid" name="核心网认证鉴权系统" xmi:type="uml:Class">
+        <ownedOperation xmi:id="op-auth-5g-aka-uuid" name="执行5G AKA认证" xmi:type="uml:Operation"/>
+      </packagedElement>
+      <packagedElement xmi:id="cls-core-network-uuid" name="核心网" xmi:type="uml:Class"/>
+      <packagedElement xmi:id="cls-core-or-sat-base-uuid" name="核心网/星载基站" xmi:type="uml:Class"/>
+    </packagedElement>
+  </uml:Model>
+  <sysml:Block xmi:id="_blk_auth_request_msg_app" base_Class="blk-auth-request-msg"/>
+  <sysml:Block xmi:id="_blk_auth_response_msg_app" base_Class="blk-auth-response-msg"/>
+  <sysml:Block xmi:id="_blk_keyset_app" base_Class="blk-keyset"/>
+  <sysml:Block xmi:id="_blk_service_data_app" base_Class="blk-service-data"/>
+  <sysml:Block xmi:id="_blk_security_status_app" base_Class="blk-security-status"/>
+  <sysml:Block xmi:id="_blk_software_upgrade_pkg_app" base_Class="blk-software-upgrade-pkg"/>
+  <sysml:Block xmi:id="_blk_auth_process_module_app" base_Class="blk-auth-process-module"/>
+  <sysml:Block xmi:id="_blk_security_module_core_app" base_Class="blk-security-module-core"/>
+  <sysml:Block xmi:id="_blk_service_crypto_module_app" base_Class="blk-service-crypto-module"/>
+  <sysml:Block xmi:id="_blk_data_dispatch_module_app" base_Class="blk-data-dispatch-module"/>
+  <sysml:Block xmi:id="_blk_selfcheck_module_app" base_Class="blk-selfcheck-module"/>
+  <sysml:Block xmi:id="_blk_security_status_module_app" base_Class="blk-security-status-module"/>
+  <sysml:Block xmi:id="_blk_key_management_module_app" base_Class="blk-key-management-module"/>
+  <sysml:Block xmi:id="_blk_sat_terminal_app" base_Class="blk-sat-terminal"/>
+  <sysml:Block xmi:id="_blk_sat_network_app" base_Class="blk-sat-network"/>
+  <sysml:Block xmi:id="_blk_crypto_algorithm_ip_uuid_app" base_Class="blk-crypto-algorithm-ip-uuid"/>
+  <sysml:Block xmi:id="_blk_noise_source_uuid_app" base_Class="blk-noise-source-uuid"/>
+  <sysml:Block xmi:id="_blk_ddr3_uuid_app" base_Class="blk-ddr3-uuid"/>
+  <sysml:Block xmi:id="_blk_emmc_uuid_app" base_Class="blk-emmc-uuid"/>
+  <sysml:Block xmi:id="_blk_power_module_uuid_app" base_Class="blk-power-module-uuid"/>
+  <sysml:Block xmi:id="_blk_arm_processor_module_uuid_app" base_Class="blk-arm-processor-module-uuid"/>
+  <sysml:Block xmi:id="_blk_fpga_processor_module_uuid_app" base_Class="blk-fpga-processor-module-uuid"/>
+  <sysml:Block xmi:id="_blk_fpga_software_uuid_app" base_Class="blk-fpga-software-uuid"/>
+  <sysml:Block xmi:id="_blk_processor_software_uuid_app" base_Class="blk-processor-software-uuid"/>
+  <sysml:Block xmi:id="_blk_communication_unit_uuid_app" base_Class="blk-communication-unit-uuid"/>
+  <sysml:Block xmi:id="_blk_device_management_unit_uuid_app" base_Class="blk-device-management-unit-uuid"/>
+  <sysml:Block xmi:id="_blk_crypto_unit_uuid_app" base_Class="blk-crypto-unit-uuid"/>
+  <sysml:Block xmi:id="_blk_business_unit_uuid_app" base_Class="blk-business-unit-uuid"/>
+  <sysml:Block xmi:id="_blk_log_management_module_uuid_app" base_Class="blk-log-management-module-uuid"/>
+  <sysml:Block xmi:id="_blk_external_interface_unit_uuid_app" base_Class="blk-external-interface-unit-uuid"/>
+  <sysml:Block xmi:id="_blk_business_crypto_module_uuid_app" base_Class="blk-business-crypto-module-uuid"/>
+  <sysml:Block xmi:id="_blk_arm_software_uuid_app" base_Class="blk-arm-software-uuid"/>
+  <sysml:Block xmi:id="_blk_fpga_logic_uuid_app" base_Class="blk-fpga-logic-uuid"/>
+  <sysml:Block xmi:id="_blk_structure_thermal_uuid_app" base_Class="blk-structure-thermal-uuid"/>
+  <sysml:Block xmi:id="_block_security_module_app" base_Class="block_security_module"/>
+  <sysml:Block xmi:id="_block_physical_spec_app" base_Class="block_physical_spec"/>
+  <sysml:Block xmi:id="_block_environmental_app" base_Class="block_environmental"/>
+  <sysml:Block xmi:id="_block_resource_usage_app" base_Class="block_resource_usage"/>
+  <sysml:Requirement xmi:id="_req_support_crypto_algo_uuid_app" base_Class="req-support-crypto-algo-uuid" Id="(1)" Text="支持SM2、SM3、SM4、ZUC-256等国密算法"/>
+  <sysml:Requirement xmi:id="_req_support_satellite_modes_uuid_app" base_Class="req-support-satellite-modes-uuid" Id="(2)" Text="支持低轨卫星互联网宽带体制、宽带演进体制以及高轨体制工作"/>
+  <sysml:Requirement xmi:id="_req_protect_nas_as_signaling_uuid_app" base_Class="req-protect-nas-as-signaling-uuid" Id="(3)" Text="支持终端通信过程中NAS、AS信令信息的机密性和完整性保护"/>
+  <sysml:Requirement xmi:id="_req_protect_user_plane_data_uuid_app" base_Class="req-protect-user-plane-data-uuid" Id="(4)" Text="支持终端通信过程中话音、数据等业务信息的机密性和完整性保护"/>
+  <sysml:Requirement xmi:id="_req_support_direct_encryption_uuid_app" base_Class="req-support-direct-encryption-uuid" Id="(5)" Text="支持终端到终端不落地通信加密"/>
+  <sysml:Requirement xmi:id="_req_support_online_key_mgmt_uuid_app" base_Class="req-support-online-key-mgmt-uuid" Id="(6)" Text="支持密钥更新、密钥销毁等在线安全管理功能"/>
+  <sysml:Requirement xmi:id="_req_support_security_posture_report_uuid_app" base_Class="req-support-security-posture-report-uuid" Id="(7)" Text="支持终端安全模块自检结果、密钥状态、输入帧计数、输出帧计数、错误帧计数等态势信息采集与上报"/>
+  <sysml:Requirement xmi:id="_req_support_rng_self_test_uuid_app" base_Class="req-support-rng-self-test-uuid" Id="(8)" Text="具有随机数开机自检和实时自检功能"/>
+  <sysml:Requirement xmi:id="_req_support_algo_key_verification_uuid_app" base_Class="req-support-algo-key-verification-uuid" Id="(9)" Text="支持密码算法正确性检验，支持密钥的完整性检验"/>
+  <sysml:Requirement xmi:id="_req_support_software_upgrade_rollback_uuid_app" base_Class="req-support-software-upgrade-rollback-uuid" Id="(10)" Text="支持软件版本升级，升级失败后支持版本回退"/>
+  <sysml:Requirement xmi:id="_req_support_secure_access_storage_uuid_app" base_Class="req-support-secure-access-storage-uuid" Id="(11)" Text="支持安全访问控制及安全存储"/>
+  <sysml:Requirement xmi:id="_req_support_operation_logging_uuid_app" base_Class="req-support-operation-logging-uuid" Id="(12)" Text="支持工作日志记录"/>
+  <sysml:Requirement xmi:id="_req_support_esim_auth_uuid_app" base_Class="req-support-esim-auth-uuid" Id="(13)" Text="基于eSIM芯片实现入网鉴权功能"/>
+  <sysml:Requirement xmi:id="_req_auth_latency_uuid_app" base_Class="req-auth-latency-uuid" Id="(1)" Text="认证鉴权处理时延≤200ms"/>
+  <sysml:Requirement xmi:id="_req_uplink_throughput_uuid_app" base_Class="req-uplink-throughput-uuid" Id="(2)" Text="上行业务机密性、完整性保护能力≥200Mbps"/>
+  <sysml:Requirement xmi:id="_req_downlink_throughput_uuid_app" base_Class="req-downlink-throughput-uuid" Id="(3)" Text="下行业务机密性、完整性保护能力≥200Mbps"/>
+  <sysml:Requirement xmi:id="_req_local_key_destruction_time_uuid_app" base_Class="req-local-key-destruction-time-uuid" Id="(4)" Text="本地密码资源销毁时间≤60s"/>
+  <sysml:Requirement xmi:id="_req_operating_voltage_uuid_app" base_Class="req-operating-voltage-uuid" Id="工作电压" Text="工作电压12V"/>
+  <sysml:Requirement xmi:id="_req_power_consumption_uuid_app" base_Class="req-power-consumption-uuid" Id="功耗要求" Text="功耗要求不超过20W"/>
+  <sysml:Requirement xmi:id="_req_temperature_range_uuid_app" base_Class="req-temperature-range-uuid" Id="环境适应性要求" Text="工作温度：-40℃~60℃；存贮温度：-55℃~70℃"/>
+  <sysml:TestCase xmi:id="_tc_crypto_algo_test_uuid_app" base_Behavior="tc-crypto-algo-test-uuid"/>
+  <sysml:TestCase xmi:id="_tc_satellite_mode_test_uuid_app" base_Behavior="tc-satellite-mode-test-uuid"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_auth_delay_app" base_Property="prop_auth_delay"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_uplink_capability_app" base_Property="prop_uplink_capability"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_downlink_capability_app" base_Property="prop_downlink_capability"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_key_destruction_time_app" base_Property="prop_key_destruction_time"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_algorithm_performance_app" base_Property="prop_algorithm_performance"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_transmission_overhead_app" base_Property="prop_transmission_overhead"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_processing_overhead_app" base_Property="prop_processing_overhead"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_tolerance_app" base_Property="prop_tolerance"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_operating_temp_max_app" base_Property="prop_operating_temp_max"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_storage_temp_min_app" base_Property="prop_storage_temp_min"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_storage_temp_max_app" base_Property="prop_storage_temp_max"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_cpu_usage_app" base_Property="prop_cpu_usage"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_memory_usage_app" base_Property="prop_memory_usage"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_storage_usage_app" base_Property="prop_storage_usage"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_fpga_lut_usage_app" base_Property="prop_fpga_lut_usage"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_fpga_ff_usage_app" base_Property="prop_fpga_ff_usage"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ValueProperty xmi:id="_prop_fpga_ram_usage_app" base_Property="prop_fpga_ram_usage"/>
+  <sysml:ConstraintBlock xmi:id="_cb_auth_delay_req_app" base_Class="cb_auth_delay_req"/>
+  <sysml:ConstraintBlock xmi:id="_cb_uplink_cap_req_app" base_Class="cb_uplink_cap_req"/>
+  <sysml:ConstraintBlock xmi:id="_cb_downlink_cap_req_app" base_Class="cb_downlink_cap_req"/>
+  <sysml:ConstraintBlock xmi:id="_cb_key_dest_req_app" base_Class="cb_key_dest_req"/>
+  <sysml:ConstraintBlock xmi:id="_cb_auth_delay_decomp_app" base_Class="cb_auth_delay_decomp"/>
+  <sysml:ConstraintBlock xmi:id="_cb_trans_overhead_limit_app" base_Class="cb_trans_overhead_limit"/>
+  <sysml:ConstraintBlock xmi:id="_cb_proc_overhead_limit_app" base_Class="cb_proc_overhead_limit"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_auth_delay_app" base_Port="param_auth_delay"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_downlink_cap_app" base_Port="param_downlink_cap"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_key_dest_time_app" base_Port="param_key_dest_time"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_auth_delay2_app" base_Port="param_auth_delay2"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_trans_overhead_app" base_Port="param_trans_overhead"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_proc_overhead_app" base_Port="param_proc_overhead"/>
+  <MD_Customization_for_SysML__additional_stereotypes:ConstraintParameter xmi:id="_param_trans_overhead2_app" base_Port="param_trans_overhead2"/>
+</xmi:XMI>

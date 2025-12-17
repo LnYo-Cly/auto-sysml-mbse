@@ -56,6 +56,7 @@ class OrphanReferenceRepairer:
     # ID引用字段及其期望的目标类型
     REFERENCE_FIELD_TYPES = {
         'parentId': ['Package', 'Block', 'Class', 'Activity', 'Interaction', 'StateMachine', 'Region', 'Model', 'ConstraintBlock'],
+        'associationId': ['Association'],
         'sourceId': ['State', 'Pseudostate', 'InitialNode', 'ActivityFinalNode', 'FlowFinalNode', 'DecisionNode', 'MergeNode', 'ForkNode', 'JoinNode', 'CallBehaviorAction', 'Actor', 'UseCase', 'Block', 'Class', 'Lifeline'],
         'targetId': ['State', 'Pseudostate', 'InitialNode', 'ActivityFinalNode', 'FlowFinalNode', 'DecisionNode', 'MergeNode', 'ForkNode', 'JoinNode', 'CallBehaviorAction', 'Actor', 'UseCase', 'Block', 'Class', 'Requirement', 'Lifeline'],
         'sendEventId': ['MessageOccurrenceSpecification'],
