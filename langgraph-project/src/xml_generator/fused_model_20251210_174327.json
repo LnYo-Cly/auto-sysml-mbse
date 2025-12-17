@@ -502,9 +502,7 @@
       "representsId": "blk-ui-module-uuid",
       "description": "原文：UserInterfaceModule核心职责...简化：此泳道包含用户交互相关的子活动，如执行NFC、PIN、指纹验证。",
       "name": "用户界面分区",
-      "nodeIds": [
-        "act-perform-auth-uuid"
-      ],
+      "nodeIds": ["act-perform-auth-uuid"],
       "id": "part-ui-uuid",
       "type": "ActivityPartition"
     },
@@ -513,10 +511,7 @@
       "representsId": "blk-lock-act-uuid",
       "description": "原文：锁体控制流程...简化：此泳道包含控制锁舌运动的动作，如收回、伸出。",
       "name": "锁体执行器分区",
-      "nodeIds": [
-        "act-perform-lockctrl-uuid",
-        "cbuf-latch-status-uuid"
-      ],
+      "nodeIds": ["act-perform-lockctrl-uuid", "cbuf-latch-status-uuid"],
       "id": "part-lock-act-uuid",
       "type": "ActivityPartition"
     },
@@ -538,9 +533,7 @@
       "representsId": "blk-alarm-ind-uuid",
       "description": "原文：根据主控指令，控制指示灯光子模块...蜂鸣器...发出警报声。简化：此泳道包含触发声光告警的动作。",
       "name": "告警指示器分区",
-      "nodeIds": [
-        "node-trigger-alarm-uuid"
-      ],
+      "nodeIds": ["node-trigger-alarm-uuid"],
       "id": "part-alarm-ind-uuid",
       "type": "ActivityPartition"
     },
@@ -666,10 +659,7 @@
       "representsId": "blk-lock-module-uuid",
       "description": "原文：6. 发送解锁指令到锁控模块。简化：此泳道代表由锁控模块执行的所有活动。",
       "name": "锁控模块分区",
-      "nodeIds": [
-        "node-auth-send-unlock",
-        "node-auth-monitor-lock"
-      ],
+      "nodeIds": ["node-auth-send-unlock", "node-auth-monitor-lock"],
       "id": "grp-lock-module-uuid",
       "type": "ActivityPartition"
     },
@@ -678,9 +668,7 @@
       "representsId": "blk-user-interface-uuid",
       "description": "原文：9. 向用户提供视觉/听觉反馈。简化：此泳道代表用户界面相关的反馈活动。",
       "name": "用户界面分区",
-      "nodeIds": [
-        "node-auth-feedback"
-      ],
+      "nodeIds": ["node-auth-feedback"],
       "id": "grp-user-interface-uuid",
       "type": "ActivityPartition"
     },
@@ -1090,9 +1078,7 @@
       "representsId": "blk-blower-motor-uuid",
       "description": "原文：控制鼓风机转速。简化：此泳道代表与“BlowerMotor”相关的控制活动（输出PWM信号）。",
       "name": "鼓风机分区",
-      "nodeIds": [
-        "node-actuate-uuid"
-      ],
+      "nodeIds": ["node-actuate-uuid"],
       "id": "part-blower-uuid",
       "type": "ActivityPartition"
     },
@@ -1101,9 +1087,7 @@
       "representsId": "blk-airmode-act-uuid",
       "description": "原文：步进电机驱动风门运动至目标位置。简化：此泳道代表由“AirModeActuator”执行的出风模式切换活动。",
       "name": "模式风门分区",
-      "nodeIds": [
-        "node-actuate-uuid"
-      ],
+      "nodeIds": ["node-actuate-uuid"],
       "id": "part-airmode-act-uuid",
       "type": "ActivityPartition"
     },
@@ -1112,9 +1096,7 @@
       "representsId": "blk-ecu-uuid",
       "description": "原文：等待ECU响应。简化：此泳道代表“EngineControlUnit”对压缩机请求的响应活动。",
       "name": "ECU分区",
-      "nodeIds": [
-        "cbuf-wait-ecu-uuid"
-      ],
+      "nodeIds": ["cbuf-wait-ecu-uuid"],
       "id": "part-ecu-uuid",
       "type": "ActivityPartition"
     },
@@ -1123,9 +1105,7 @@
       "representsId": "blk-aqs-uuid",
       "description": "原文：接收AQS信号。简化：此泳道代表“AirQualitySensor”提供TVOC浓度数据的活动。",
       "name": "AQS传感器分区",
-      "nodeIds": [
-        "node-receive-aqs-uuid"
-      ],
+      "nodeIds": ["node-receive-aqs-uuid"],
       "id": "part-aqs-uuid",
       "type": "ActivityPartition"
     },
@@ -1134,9 +1114,7 @@
       "representsId": "blk-user-panel-uuid",
       "description": "原文：用户通过操作面板发出指令。简化：此泳道代表“UserPanel”接收用户输入的活动。",
       "name": "用户面板分区",
-      "nodeIds": [
-        "node-process-cmd-uuid"
-      ],
+      "nodeIds": ["node-process-cmd-uuid"],
       "id": "part-user-panel-uuid",
       "type": "ActivityPartition"
     },
@@ -1279,9 +1257,7 @@
       ],
       "description": "原文：活动名称: 自动温度控制流程；此活动描述了在“AUTO”模式下，系统如何周期性地（例如每100ms）执行闭环温度控制。简化：这是定义HVAC系统在自动模式下，周期性执行闭环温度调节的核心活动。",
       "name": "自动温度控制流程",
-      "groups": [
-        "part-hvac-ctrl-uuid"
-      ],
+      "groups": ["part-hvac-ctrl-uuid"],
       "id": "act-auto-temp-ctrl-uuid",
       "type": "Activity"
     },
@@ -1573,10 +1549,7 @@
       ],
       "description": "原文：用户认证与门锁开启流程: 此流程描述了从用户发起认证请求到门锁成功开启的完整序列。简化：这是定义用户认证和门锁开启流程的主要活动。",
       "name": "用户认证与门锁开启",
-      "groups": [
-        "grp-auth-module-uuid",
-        "grp-lock-module-uuid"
-      ],
+      "groups": ["grp-auth-module-uuid", "grp-lock-module-uuid"],
       "id": "act-user-auth-uuid",
       "type": "Activity"
     },
@@ -1609,9 +1582,7 @@
       ],
       "description": "原文：低电量处理流程: 当检测到电池电量低于阈值时，系统执行一系列节能措施和告警操作。简化：这是定义系统低电量处理流程的主要活动。",
       "name": "低电量处理",
-      "groups": [
-        "grp-power-module-uuid"
-      ],
+      "groups": ["grp-power-module-uuid"],
       "id": "act-low-power-uuid",
       "type": "Activity"
     },
@@ -1620,9 +1591,7 @@
       "representsId": "blk-auth-module-uuid",
       "description": "原文：验证认证模块各组件状态。简化：此泳道代表认证模块的自检活动。",
       "name": "认证模块分区",
-      "nodeIds": [
-        "node-health-check-auth-module"
-      ],
+      "nodeIds": ["node-health-check-auth-module"],
       "id": "grp-auth-module-uuid",
       "type": "ActivityPartition"
     },
@@ -1897,9 +1866,7 @@
       "representsId": "blk-sensor-periph-uuid",
       "description": "原文：使用12位ADC每24小时或每次唤醒时监测电池电压；读取标签UID。简化：此泳道包含由传感器和外设模块执行的物理信号采集动作。",
       "name": "传感器外设分区",
-      "nodeIds": [
-        "node-power-measure-uuid"
-      ],
+      "nodeIds": ["node-power-measure-uuid"],
       "id": "part-sensor-periph-uuid",
       "type": "ActivityPartition"
     },
@@ -1908,9 +1875,7 @@
       "representsId": "blk-actuator-periph-uuid",
       "description": "原文：蜂鸣器短鸣/长鸣，LED闪烁；通过电机驱动电路执行开锁动作。简化：此泳道包含由执行器模块执行的物理动作，如驱动电机开锁。",
       "name": "执行器外设分区",
-      "nodeIds": [
-        "node-auth-unlock-uuid"
-      ],
+      "nodeIds": ["node-auth-unlock-uuid"],
       "id": "part-actuator-periph-uuid",
       "type": "ActivityPartition"
     },
@@ -1932,9 +1897,7 @@
       "representsId": "blk-secure-storage-uuid",
       "description": "原文：与存储的哈希值比对；与本地加密存储的授权UID列表比对；同步至门锁本地安全存储。简化：此泳道包含与安全存储组件交互的动作，如存储和读取凭证。",
       "name": "安全存储分区",
-      "nodeIds": [
-        "node-temp-sync-uuid"
-      ],
+      "nodeIds": ["node-temp-sync-uuid"],
       "id": "part-secure-storage-uuid",
       "type": "ActivityPartition"
     },
@@ -2112,10 +2075,7 @@
       "representsId": "blk-motor-driver-uuid",
       "description": "原文：MotorDriver接通电路，驱动锁舌电机正转。简化：此泳道代表由电机驱动模块执行的所有活动。",
       "name": "MotorDriver分区",
-      "nodeIds": [
-        "node-drive-motor-uuid",
-        "node-mechanical-complete-uuid"
-      ],
+      "nodeIds": ["node-drive-motor-uuid", "node-mechanical-complete-uuid"],
       "id": "part-motordriver-uuid",
       "type": "ActivityPartition"
     },
@@ -2124,9 +2084,7 @@
       "representsId": "blk-user-interface-uuid",
       "description": "原文：MainControlUnit指示UserInterface亮起绿灯。简化：此泳道代表由用户界面模块执行的所有活动。",
       "name": "UserInterface分区",
-      "nodeIds": [
-        "node-provide-feedback-uuid"
-      ],
+      "nodeIds": ["node-provide-feedback-uuid"],
       "id": "part-userinterface-uuid",
       "type": "ActivityPartition"
     },
@@ -2481,9 +2439,7 @@
       "representsId": "blk-fp-sensor-uuid",
       "description": "此泳道代表由“FingerprintSensor”执行的活动，主要是图像采集。",
       "name": "指纹传感器分区",
-      "nodeIds": [
-        "node-fp-capture-uuid"
-      ],
+      "nodeIds": ["node-fp-capture-uuid"],
       "id": "grp-fp-sensor-uuid",
       "type": "ActivityPartition"
     },
@@ -2505,10 +2461,7 @@
       "representsId": "blk-ui-uuid",
       "description": "此泳道代表由“UserInterface”执行的活动，包括PIN码输入和本地告警触发。",
       "name": "用户界面分区",
-      "nodeIds": [
-        "node-pin-input-uuid",
-        "node-trigger-local-alert-uuid"
-      ],
+      "nodeIds": ["node-pin-input-uuid", "node-trigger-local-alert-uuid"],
       "id": "grp-ui-uuid",
       "type": "ActivityPartition"
     },
@@ -2517,9 +2470,7 @@
       "representsId": "blk-nfc-reader-uuid",
       "description": "此泳道代表由“NFCRFID_Reader”执行的活动，即读取卡UID。",
       "name": "NFC读卡器分区",
-      "nodeIds": [
-        "node-nfc-read-uuid"
-      ],
+      "nodeIds": ["node-nfc-read-uuid"],
       "id": "grp-nfc-reader-uuid",
       "type": "ActivityPartition"
     },
@@ -2547,9 +2498,7 @@
       "representsId": "blk-lock-driver-uuid",
       "description": "此泳道代表由“LockMechanismDriver”执行的活动，即接收并执行开锁指令。",
       "name": "锁体驱动分区",
-      "nodeIds": [
-        "node-send-unlock-uuid"
-      ],
+      "nodeIds": ["node-send-unlock-uuid"],
       "id": "grp-lock-driver-uuid",
       "type": "ActivityPartition"
     },
@@ -2896,11 +2845,7 @@
       "representsId": "blk-sensor-sim-uuid",
       "description": "原文：传感器数据生成与输出活动。简化：此泳道代表由“SensorSimulator”执行的所有活动，包括IMU、GNSS、轮速数据的生成。",
       "name": "传感器模拟器分区",
-      "nodeIds": [
-        "node-imu-gen",
-        "node-gnss-gen",
-        "node-wss-gen"
-      ],
+      "nodeIds": ["node-imu-gen", "node-gnss-gen", "node-wss-gen"],
       "id": "grp-sensor-sim-uuid",
       "type": "ActivityPartition"
     },
@@ -2909,10 +2854,7 @@
       "representsId": "blk-tire-model-uuid",
       "description": "原文：轮胎力计算活动。简化：此泳道代表由“TireModel”执行的所有活动，包括调用Pacejka模型和调整路面摩擦。",
       "name": "轮胎模型分区",
-      "nodeIds": [
-        "node-pacejka-calc",
-        "node-mu-adjust"
-      ],
+      "nodeIds": ["node-pacejka-calc", "node-mu-adjust"],
       "id": "grp-tire-model-uuid",
       "type": "ActivityPartition"
     },
@@ -2955,9 +2897,7 @@
       "representsId": "blk-vehicle-dyn-uuid",
       "description": "原文：处理指令，驱动车辆模型。简化：此泳道代表由“VehicleDynamicsModel”执行的核心计算活动。",
       "name": "车辆动力学模型分区",
-      "nodeIds": [
-        "node-cmd-process"
-      ],
+      "nodeIds": ["node-cmd-process"],
       "id": "grp-vehicle-dyn-uuid",
       "type": "ActivityPartition"
     },
@@ -3199,9 +3139,7 @@
       "representsId": "blk-auth-module-uuid",
       "description": "原文：接收用户认证输入（指纹/PIN/RFID）。简化：此泳道代表由认证输入模块执行的活动。",
       "name": "认证输入分区",
-      "nodeIds": [
-        "node-auth-receive-input"
-      ],
+      "nodeIds": ["node-auth-receive-input"],
       "id": "grp-auth-input-uuid",
       "type": "ActivityPartition"
     },
@@ -3210,10 +3148,7 @@
       "representsId": "blk-user-db-uuid",
       "description": "原文：验证输入数据格式有效性，查询用户数据库进行身份匹配。简化：此泳道代表数据处理和验证相关的活动。",
       "name": "数据处理分区",
-      "nodeIds": [
-        "node-auth-validate-format",
-        "node-auth-query-db"
-      ],
+      "nodeIds": ["node-auth-validate-format", "node-auth-query-db"],
       "id": "grp-data-processing-uuid",
       "type": "ActivityPartition"
     },
@@ -3222,9 +3157,7 @@
       "representsId": "blk-user-db-uuid",
       "description": "原文：检查访问权限和时间限制。简化：此泳道代表权限验证和控制相关的活动。",
       "name": "权限控制分区",
-      "nodeIds": [
-        "node-auth-check-permissions"
-      ],
+      "nodeIds": ["node-auth-check-permissions"],
       "id": "grp-permission-control-uuid",
       "type": "ActivityPartition"
     },
@@ -3246,9 +3179,7 @@
       "representsId": "blk-lock-control-uuid",
       "description": "原文：检查锁控电机和位置传感器。简化：此泳道代表门锁机械系统的自检活动。",
       "name": "锁控机械分区",
-      "nodeIds": [
-        "node-health-check-lock-mech"
-      ],
+      "nodeIds": ["node-health-check-lock-mech"],
       "id": "grp-lock-mech-uuid",
       "type": "ActivityPartition"
     },
@@ -3257,9 +3188,7 @@
       "representsId": "blk-comms-module-uuid",
       "description": "原文：测试通信模块连接性。简化：此泳道代表通信系统的自检活动。",
       "name": "通信分区",
-      "nodeIds": [
-        "node-health-test-comms"
-      ],
+      "nodeIds": ["node-health-test-comms"],
       "id": "grp-comms-uuid",
       "type": "ActivityPartition"
     },
@@ -5578,9 +5507,7 @@
     },
     {
       "parentId": "region-circulation-main-uuid",
-      "triggerIds": [
-        "event-circulation-check-event-uuid"
-      ],
+      "triggerIds": ["event-circulation-check-event-uuid"],
       "description": "原文：从外循环到内循环：...。简化：当满足触发条件时，离开外循环状态前往决策点的转换。",
       "targetId": "ps-choice-out-to-in-uuid",
       "sourceId": "state-outside-circulation-uuid",
@@ -5613,9 +5540,7 @@
     },
     {
       "parentId": "region-circulation-main-uuid",
-      "triggerIds": [
-        "event-circulation-check-event-uuid"
-      ],
+      "triggerIds": ["event-circulation-check-event-uuid"],
       "description": "原文：从内循环到外循环：...。简化：当满足触发条件时，离开内循环状态前往决策点的转换。",
       "targetId": "ps-choice-in-to-out-uuid",
       "sourceId": "state-inside-circulation-uuid",
@@ -7058,9 +6983,7 @@
       "representsId": "blk-sensor-array-uuid",
       "description": "原文：测试传感器功能（门磁、温度、振动）。简化：此泳道代表传感器相关的自检活动。",
       "name": "传感器分区",
-      "nodeIds": [
-        "node-health-test-sensors"
-      ],
+      "nodeIds": ["node-health-test-sensors"],
       "id": "grp-sensors-uuid",
       "type": "ActivityPartition"
     },
@@ -7450,10 +7373,7 @@
       "representsId": "blk-pid-controller-uuid",
       "description": "原文：执行PID控制算法计算控制量。简化：此泳道代表控制算法计算相关的活动。",
       "name": "控制算法分区",
-      "nodeIds": [
-        "node-calc-delta",
-        "node-pid-calc"
-      ],
+      "nodeIds": ["node-calc-delta", "node-pid-calc"],
       "id": "grp-algorithm-uuid",
       "type": "ActivityPartition"
     },
@@ -7591,11 +7511,6 @@
       "name": "ParametricDiagram",
       "id": "pkg-sl-unique-id",
       "type": "Package"
-    },
-    {
-      "description": "自动生成的描述: 这是一个类型为 ''，名称为 'Unnamed' 的元素。",
-      "id": "cp1",
-      "type": ""
     },
     {
       "parentId": "block1",
@@ -9749,9 +9664,7 @@
       "parentId": "pkg-security-svc-uuid",
       "description": "原文：涉及的生命线: MainController。简化：系统主控制器，协调所有安全响应和系统更新。",
       "name": "MainController",
-      "ownedAttributeIds": [
-        "prop-maincontroller-instance-uuid"
-      ],
+      "ownedAttributeIds": ["prop-maincontroller-instance-uuid"],
       "id": "cls-maincontroller-uuid",
       "type": "Class"
     },
@@ -10103,9 +10016,7 @@
     },
     {
       "parentId": "pkg-core-uuid",
-      "ownedOperationIds": [
-        "op-issue-command-uuid"
-      ],
+      "ownedOperationIds": ["op-issue-command-uuid"],
       "description": "原文：云端服务器。简化：接收状态、告警、日志，并下发指令的远程服务器。",
       "name": "云端服务器",
       "id": "cls-cloud-server-uuid",
@@ -10120,10 +10031,7 @@
     },
     {
       "parentId": "cls-system-uuid",
-      "lifelineIds": [
-        "ll-system-uuid-1",
-        "ll-cloud-uuid-1"
-      ],
+      "lifelineIds": ["ll-system-uuid-1", "ll-cloud-uuid-1"],
       "fragmentIds": [
         "fragment-send-establish-conn-uuid",
         "fragment-recv-establish-conn-uuid",
@@ -10132,10 +10040,7 @@
       ],
       "description": "原文：系统与云端服务器建立基于MQTT over TLS 1.3的持久连接，周期性上报状态消息。简化：描述系统初始化连接并定期上报状态的交互。",
       "name": "建立连接与状态上报",
-      "messageIds": [
-        "msg-establish-conn-uuid",
-        "msg-periodic-status-uuid"
-      ],
+      "messageIds": ["msg-establish-conn-uuid", "msg-periodic-status-uuid"],
       "id": "interaction-connect-report-uuid",
       "type": "Interaction"
     },
@@ -10278,22 +10183,15 @@
     },
     {
       "parentId": "cls-system-uuid",
-      "lifelineIds": [
-        "ll-system-uuid-4",
-        "ll-creator-uuid"
-      ],
+      "lifelineIds": ["ll-system-uuid-4", "ll-creator-uuid"],
       "fragmentIds": [
         "fragment-send-realtime-notify-uuid",
         "fragment-recv-realtime-notify-uuid"
       ],
       "description": "原文：当临时凭证被使用时，系统向凭证创建者发送实时通知。简化：描述系统在临时凭证被使用时，向凭证创建者发送通知的交互。",
       "name": "发送凭证使用通知",
-      "messageIds": [
-        "msg-realtime-notify-uuid"
-      ],
-      "ownedAttributeIds": [
-        "prop-interaction-creator-uuid"
-      ],
+      "messageIds": ["msg-realtime-notify-uuid"],
+      "ownedAttributeIds": ["prop-interaction-creator-uuid"],
       "id": "interaction-notify-creator-uuid",
       "type": "Interaction"
     },
@@ -10326,11 +10224,7 @@
     },
     {
       "parentId": "model-compressor-ctrl-uuid",
-      "lifelineIds": [
-        "ll-ac-ctrl-uuid",
-        "ll-ecu-uuid",
-        "ll-compressor-uuid"
-      ],
+      "lifelineIds": ["ll-ac-ctrl-uuid", "ll-ecu-uuid", "ll-compressor-uuid"],
       "fragmentIds": [
         "fragment-send-can-uuid",
         "fragment-recv-can-uuid",
@@ -10439,9 +10333,7 @@
     },
     {
       "parentId": "pkg-ac-control-uuid",
-      "ownedOperationIds": [
-        "op-lowbatteryalert-uuid"
-      ],
+      "ownedOperationIds": ["op-lowbatteryalert-uuid"],
       "description": "原文：涉及的生命线: BatteryManager。简化：电池管理系统，负责监测电池状态。",
       "name": "BatteryManager",
       "id": "cls-batterymanager-uuid",
@@ -10461,9 +10353,7 @@
     },
     {
       "parentId": "pkg-ac-control-uuid",
-      "ownedOperationIds": [
-        "op-enterecomode-uuid"
-      ],
+      "ownedOperationIds": ["op-enterecomode-uuid"],
       "description": "原文：涉及的生命线: PowerManager。简化：电源管理器，处理系统电源状态。",
       "name": "PowerManager",
       "id": "cls-powermanager-uuid",
@@ -10819,9 +10709,7 @@
       ],
       "description": "原文：涉及的生命线: AuthenticationModule。简化：负责指纹采集、特征提取和模板匹配的生物特征处理模块。",
       "name": "AuthenticationModule",
-      "ownedAttributeIds": [
-        "prop-auth-instance-uuid"
-      ],
+      "ownedAttributeIds": ["prop-auth-instance-uuid"],
       "id": "cls-auth-module-uuid",
       "type": "Class"
     },
@@ -10829,35 +10717,25 @@
       "parentId": "pkg-fingerprint-system-uuid",
       "description": "原文：涉及的生命线: MainController。简化：系统主控制器，协调认证结果和锁控制。",
       "name": "MainController",
-      "ownedAttributeIds": [
-        "prop-main-controller-uuid"
-      ],
+      "ownedAttributeIds": ["prop-main-controller-uuid"],
       "id": "cls-main-controller-uuid",
       "type": "Class"
     },
     {
       "parentId": "pkg-fingerprint-system-uuid",
-      "ownedOperationIds": [
-        "op-engage-motor-uuid"
-      ],
+      "ownedOperationIds": ["op-engage-motor-uuid"],
       "description": "原文：涉及的生命线: LockControlModule。简化：门锁控制模块，负责电机驱动和位置控制。",
       "name": "LockControlModule",
-      "ownedAttributeIds": [
-        "prop-lock-control-uuid"
-      ],
+      "ownedAttributeIds": ["prop-lock-control-uuid"],
       "id": "cls-lock-control-uuid",
       "type": "Class"
     },
     {
       "parentId": "pkg-fingerprint-system-uuid",
-      "ownedOperationIds": [
-        "op-get-position-uuid"
-      ],
+      "ownedOperationIds": ["op-get-position-uuid"],
       "description": "原文：涉及的生命线: SensorModule。简化：传感器模块，提供位置反馈信息。",
       "name": "SensorModule",
-      "ownedAttributeIds": [
-        "prop-sensor-module-uuid"
-      ],
+      "ownedAttributeIds": ["prop-sensor-module-uuid"],
       "id": "cls-sensor-module-uuid",
       "type": "Class"
     },
@@ -10976,9 +10854,7 @@
         "msg-operation-complete-uuid",
         "msg-visual-feedback-uuid"
       ],
-      "ownedAttributeIds": [
-        "prop-interaction-user-uuid"
-      ],
+      "ownedAttributeIds": ["prop-interaction-user-uuid"],
       "id": "interaction-fingerprint-unlock-uuid",
       "type": "Interaction"
     },
@@ -11220,9 +11096,7 @@
     },
     {
       "parentId": "pkg-security-uuid",
-      "ownedOperationIds": [
-        "op-detectvibration-uuid"
-      ],
+      "ownedOperationIds": ["op-detectvibration-uuid"],
       "description": "原文：涉及的生命线: SensorHub。简化：传感器集线器，负责检测物理异常如振动。",
       "name": "SensorHub",
       "id": "cls-sensorhub-uuid",
@@ -11241,10 +11115,7 @@
     },
     {
       "parentId": "pkg-security-uuid",
-      "ownedOperationIds": [
-        "op-sendalert-uuid",
-        "op-reportstatus-uuid"
-      ],
+      "ownedOperationIds": ["op-sendalert-uuid", "op-reportstatus-uuid"],
       "description": "原文：涉及的生命线: CommunicationModule。简化：通信模块，负责与云端和用户设备通信。",
       "name": "CommunicationModule",
       "id": "cls-comm-uuid",

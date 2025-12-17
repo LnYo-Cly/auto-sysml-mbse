@@ -1,0 +1,1984 @@
+{
+  "model": [
+    {
+      "name": "Model",
+      "id": "master-model",
+      "type": "Model"
+    }
+  ],
+  "elements": [
+    {
+      "parentId": "master-model",
+      "description": "原文：机载融合终端安全模块可以同时完成高轨、宽带演进两种技术体制终端安全功能。简化：该包封装了机载融合终端安全模块的所有软件处理流程、功能模块和数据类型。",
+      "name": "TerminalSecurityModule",
+      "id": "pkg-tsm",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "edges": [
+        "flow-start-init",
+        "flow-init-config",
+        "flow-config-gen",
+        "flow-gen-auth",
+        "flow-auth-decision",
+        "flow-decision-success",
+        "flow-decision-failure",
+        "flow-success-nas",
+        "flow-nas-process",
+        "flow-success-as",
+        "flow-as-up",
+        "flow-up-fpga",
+        "flow-failure-merge",
+        "flow-process-merge",
+        "flow-merge-end"
+      ],
+      "nodes": [
+        "node-main-start",
+        "node-main-init",
+        "node-main-config-fpga",
+        "node-main-gen-suci",
+        "node-main-auth",
+        "node-main-decision-auth",
+        "node-main-nas-key",
+        "node-main-process-nas",
+        "node-main-as-key",
+        "node-main-up-key",
+        "node-main-fpga-process",
+        "node-main-merge-auth",
+        "cbuf-main-crypto-res"
+      ],
+      "description": "原文：机载融合终端安全模块可以同时完成高轨、宽带演进两种技术体制终端安全功能。工作时，首先按照统一的方案依次完成终端身份信息隐藏、与卫星网络的双向身份认证与密钥协商，然后根据各技术体制对AS信令、NAS信令、终端业务数据进行机密性、完整性保护。简化：这是定义从设备上电到提供完整安全服务的顶层活动，涵盖了初始化、认证、密钥派生和安全处理。",
+      "name": "主工作流程",
+      "groups": [
+        "part-proc-sw",
+        "part-fpga-sw"
+      ],
+      "id": "act-main-workflow",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "edges": [
+        "flow-upgrade-start-verify",
+        "flow-verify-decision",
+        "flow-decision-pass",
+        "flow-pass-backup",
+        "flow-backup-store",
+        "flow-store-trial",
+        "flow-trial-decision",
+        "flow-decision-normal",
+        "flow-normal-execute",
+        "flow-execute-respond",
+        "flow-decision-abnormal",
+        "flow-abnormal-rollback",
+        "flow-rollback-respond",
+        "flow-decision-fail",
+        "flow-fail-respond"
+      ],
+      "nodes": [
+        "node-upgrade-start",
+        "node-upgrade-verify",
+        "node-upgrade-decision-verify",
+        "node-upgrade-backup",
+        "node-upgrade-store",
+        "node-upgrade-trial-run",
+        "node-upgrade-decision-trial",
+        "node-upgrade-execute",
+        "node-upgrade-rollback",
+        "node-upgrade-respond"
+      ],
+      "description": "原文：软件在线升级：终端安全模块通过业务接口收到待升级的软件版本...从而实现软件版本的升级。简化：这是一个独立的、用于描述软件版本升级、回退和验证流程的活动。",
+      "name": "软件在线升级流程",
+      "groups": [],
+      "id": "act-software-upgrade",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "edges": [],
+      "nodes": [],
+      "description": "原文：自检处理：密码机自检包括上电开机自检、周期自检和实时自检。简化：这是一个描述不同触发条件下（上电、周期、实时）执行自检并处理结果的活动。",
+      "name": "自检处理流程",
+      "groups": [],
+      "id": "act-self-test",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "edges": [],
+      "nodes": [],
+      "description": "原文：销毁处理：在线毁钥时，由核心网侧密码管理设备发起终端安全模块的在线毁钥指令...离线毁钥一般应用于紧急情况...。简化：这是一个描述在线和离线两种模式下安全销毁密钥和敏感参数流程的活动。",
+      "name": "销毁处理流程",
+      "groups": [],
+      "id": "act-destruction",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：终端安全模块通过业务接口收到待升级的软件版本。简化：代表待升级或已安装的软件二进制包。",
+      "name": "SoftwarePackage",
+      "id": "blk-software-pkg",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：处理器软件实现对FPGA软件密码资源的配置。简化：代表用于加解密和完整性保护的密钥、算法参数等资源。",
+      "name": "CryptoResource",
+      "id": "blk-crypto-res",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：将加密后的临时身份标识SUCI发送给卫星终端。简化：代表加密后的用户订阅隐藏标识符。",
+      "name": "SUCI",
+      "id": "blk-suci",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：认证鉴权处理模块从接收消息缓存获取认证鉴权请求消息。简化：代表来自网络的认证请求消息。",
+      "name": "AuthRequest",
+      "id": "blk-auth-req",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：处理完成后，根据处理结果将正确处理、MAC异常和synch失败等结果...统一进行响应。简化：代表发送给终端的认证响应消息，包含成功或失败信息。",
+      "name": "AuthResponse",
+      "id": "blk-auth-resp",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：并将安全上下文加密安全存储于非易失性存储器中。简化：代表包含密钥、序列号等状态的安全会话上下文。",
+      "name": "SecurityContext",
+      "id": "blk-sec-ctx",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：从外部接口FIFO缓存获取请求消息。简化：代表需要通过安全模块处理的通用业务请求或响应消息。",
+      "name": "ServiceMessage",
+      "id": "blk-svc-msg",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：由核心网侧密码管理设备发起终端安全模块的在线毁钥指令。简化：代表触发密钥销毁的命令消息。",
+      "name": "DestructionCommand",
+      "id": "blk-dest-cmd",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：并将安全态势信息以周期以及事件触发方式主动上报安全态势感知系统。简化：代表包含自检结果、密钥状态等信息的态势上报数据。",
+      "name": "StatusReport",
+      "id": "blk-status-rpt",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：处理器软件进行初始化处理...处理器软件实现对FPGA软件密码资源的配置。简化：代表运行在处理器（如ARM）上的主控软件，负责管理、控制和复杂协议处理。",
+      "name": "ProcessorSoftware",
+      "id": "blk-proc-sw",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：FPGA软件通过RGMII/SGMII接口收到业务信息加解密/完保请求消息后，直接交给FPGA内部的业务信息加解密/完保处理模块进行处理。简化：代表运行在FPGA上的逻辑和软件，负责高性能、实时的数据面安全处理。",
+      "name": "FPGASoftware",
+      "id": "blk-fpga-sw",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：数据调度处理模块调度处理流程。简化：代表FPGA内部负责消息分类和路由的子系统。",
+      "name": "DataSchedulingModule",
+      "id": "blk-data-sched",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：业务信息加解密/完保处理模块处理流程。简化：代表FPGA内部具体执行加解密和完整性保护算法的核心处理单元。",
+      "name": "CryptoProcessingModule",
+      "id": "blk-crypto-proc",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：认证鉴权处理模块从接收消息缓存获取认证鉴权请求消息，并调用eSIM进行鉴权处理。简化：代表负责执行5G AKA等认证协议的功能模块。",
+      "name": "AuthModule",
+      "id": "blk-auth-mod",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：密钥管理模块主要实现用户密钥安全管理，包括密钥导入、密钥更新、密钥销毁、密钥派生等密钥本地操作。简化：代表负责密钥全生命周期管理的软件模块。",
+      "name": "KeyManagementModule",
+      "id": "blk-key-mgmt",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：卫星终端向机载融合终端安全模块申请临时身份标识SUCI。简化：代表与安全模块交互的外部终端设备。",
+      "name": "SatelliteTerminal",
+      "id": "blk-sat-term",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-tsm",
+      "description": "原文：认证鉴权系统与机载融合终端安全模块进行双向身份认证。简化：代表外部的卫星核心网认证系统。",
+      "name": "CoreNetwork",
+      "id": "blk-core-net",
+      "type": "Block"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "representsId": "blk-proc-sw",
+      "description": "原文：处理器软件进行初始化处理...处理器软件实现对FPGA软件密码资源的配置。简化：此泳道包含所有由ProcessorSoftware执行的动作，如初始化、协议处理、资源管理等。",
+      "name": "处理器软件分区",
+      "nodeIds": [
+        "node-main-init",
+        "node-main-config-fpga",
+        "node-main-gen-suci",
+        "node-main-auth",
+        "node-main-nas-key",
+        "node-main-as-key",
+        "node-main-up-key"
+      ],
+      "id": "part-proc-sw",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "representsId": "blk-fpga-sw",
+      "description": "原文：FPGA软件通过RGMII/SGMII接口收到业务信息加解密/完保请求消息后，直接交给FPGA内部的业务信息加解密/完保处理模块进行处理。简化：此泳道包含所有由FPGASoftware及其子模块（如数据调度、加解密处理）执行的动作。",
+      "name": "FPGA软件分区",
+      "nodeIds": [
+        "node-main-fpga-process",
+        "cbuf-main-crypto-res"
+      ],
+      "id": "part-fpga-sw",
+      "type": "ActivityPartition"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：终端安全模块设备上电后。简化：流程的起点，代表设备上电事件。",
+      "name": "设备上电",
+      "id": "node-main-start",
+      "type": "InitialNode"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：处理器软件进行初始化处理，包括硬件初始化、上电自检、密码资源加载等，完成开机认证并进入正常工作状态。简化：此动作完成设备启动所需的所有初始化步骤。",
+      "name": "执行初始化处理",
+      "id": "node-main-init",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：处理器软件实现对FPGA软件密码资源的配置。简化：此动作将初始化后的密码资源配置到FPGA处理单元。",
+      "name": "配置FPGA密码资源",
+      "id": "node-main-config-fpga",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：机载融合终端安全模块用网络的公钥对终端永久身份标识SUPI加密，将加密后的临时身份标识SUCI发送给卫星终端。简化：此动作负责生成并输出加密的临时身份标识。",
+      "name": "生成并发送SUCI",
+      "id": "node-main-gen-suci",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：认证鉴权系统与机载融合终端安全模块进行双向身份认证，认证遵循5G AKA协议，认证通过后按照5G密钥派生方法派生出后续所需密钥。简化：此动作代表与网络进行完整的5G AKA协议交互，并生成基础密钥。",
+      "name": "执行双向身份认证与密钥协商",
+      "id": "node-main-auth",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：安全模块收到鉴权请求消息后，验证鉴权参数是否正确。简化：此决策节点根据鉴权参数验证结果决定后续流程走向（成功或失败）。",
+      "name": "认证成功？",
+      "id": "node-main-decision-auth",
+      "type": "DecisionNode"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：终端安全模块收到并开启NAS安全模式，同时通过认证鉴权后得到KAMF密钥派生得到KNASint和KNASenc密钥。简化：此动作根据KAMF派生出NAS层加解密和完整性保护密钥。",
+      "name": "派生并应用NAS安全密钥",
+      "id": "node-main-nas-key",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：开启NAS安全模式后，终端安全模块根据终端输入NAS信息的加解密/完保密钥类型，对NAS信令分别进行仅加解密处理、仅完保处理或加解密+完保处理。简化：此动作使用NAS密钥对信令进行安全处理。",
+      "name": "处理NAS信令",
+      "id": "node-main-process-nas",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：终端安全模块收到并开启AS安全模式，同时通过认证鉴权后得到KAMF密钥派生得到终端网侧的KgNB、KRRCint和KRRCenc密钥。简化：此动作根据KAMF派生出AS层（RRC）加解密和完整性保护密钥。",
+      "name": "派生并应用AS安全密钥",
+      "id": "node-main-as-key",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：终端安全模块收到UP安全激活指示后，根据UP安全策略指示派生KUPint和/或KUPenc密钥。简化：此动作根据UP安全策略派生出用户面数据的加解密和完整性保护密钥。",
+      "name": "派生并应用UP安全密钥",
+      "id": "node-main-up-key",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：FPGA软件通过RGMII/SGMII接口收到业务信息加解密/完保请求消息后，直接交给FPGA内部的业务信息加解密/完保处理模块进行处理。简化：此动作代表在FPGA内对业务数据（如用户面数据）进行高速安全处理。",
+      "name": "处理业务信息（FPGA）",
+      "id": "node-main-fpga-process",
+      "type": "CallBehaviorAction"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：如果验证成功，则发送鉴权响应消息给卫星终端...如果验证失败，则发送鉴权失败消息给卫星终端。简化：此合并节点将认证成功和失败两条路径汇合，以便进行后续可能的统一处理（如日志记录）。",
+      "name": "合并认证路径",
+      "id": "node-main-merge-auth",
+      "type": "MergeNode"
+    },
+    {
+      "parentId": "act-main-workflow",
+      "description": "原文：密码资源缓存在RAM中，由处理器软件配置和更新。简化：这是一个共享缓冲区，用于存放可供FPGA业务处理模块使用的密码资源（如密钥）。",
+      "name": "密码资源缓存",
+      "typeId": "blk-crypto-res",
+      "id": "cbuf-main-crypto-res",
+      "type": "CentralBufferNode"
+    },
+    {
+      "parentId": "act-software-upgrade",
+      "description": "原文：终端安全模块通过业务接口收到",
+      "name": "接收待升级软件",
+      "id": "node-upgrade-start",
+      "type": "InitialNode"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：2.2 硬件设计。简化：包含所有硬件相关块和定义的包。",
+      "name": "HardwareDesign",
+      "id": "pkg-hardware-design-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：2.3 软件设计。简化：包含所有软件相关块和定义的包。",
+      "name": "SoftwareDesign",
+      "id": "pkg-software-design-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：FPGA逻辑实现SM3、SM4、SM4-GCM、ZUC-256算法；FPGA逻辑采用动态加载方式。职责：承载算法IP核和业务信息加解密/完保处理模块的逻辑，提供硬件加速和灵活配置能力。组成：由处理器软件动态加载的比特流文件。技术：支持在线升级，针对不同卫星体制可做适配。",
+      "name": "FPGA逻辑",
+      "id": "blk-fpga-logic-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-hardware-design-uuid",
+      "isAbstract": false,
+      "description": "原文：ARM处理器功能：负责流程调度和执行其他管理类消息。简化：ARM处理器硬件块定义。",
+      "name": "ARMProcessor",
+      "id": "blk-arm-processor-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：基于eSIM芯片实现入网鉴权功能；密钥和敏感信息采用分层加密方式安全存储与eSIM芯片的安全FLASH区。职责：提供硬件级安全环境，执行入网鉴权、密钥派生、敏感信息安全存储及远程安全管理操作。组成：独立的安全芯片。技术：内部完成密码运算，Z7处理器仅能获取派生出的业务密钥。",
+      "name": "eSIM芯片",
+      "id": "blk-esim-chip-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-hardware-design-uuid",
+      "isAbstract": false,
+      "description": "原文：电源模块功能：输入DC12V，实现电源转换处理。简化：电源转换模块硬件块定义。",
+      "name": "PowerModule",
+      "id": "blk-power-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：FPGA处理软件实现通过SGMII接口与终端实现业务通信...。简化：运行于FPGA上的软件功能块定义。",
+      "name": "FPGAProcessingSoftware",
+      "id": "blk-fpga-processing-software-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：处理器软件具备SM2、SM3、SM4国密算法，用于处理除业务信息加解密/完保处理外的所有业务处理。职责：负责系统控制、协议处理、非实时性密码运算（如SM2）、密钥管理、态势信息采集、日志记录、软件升级调度等。组成：运行于精简Linux操作系统上的应用软件。技术：支持动态加载和升级。",
+      "name": "处理器软件 (ARM/Z7)",
+      "id": "blk-processor-software-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：处理器软件架构包括：通信单元...。简化：处理器软件内部的通信功能单元块定义。",
+      "name": "CommunicationUnit",
+      "id": "blk-communication-unit-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：处理器软件架构包括：...外部接口单元（RS232、离散量接口）。简化：处理器软件内部的外部接口管理单元块定义。",
+      "name": "ExternalInterfaceUnit",
+      "id": "blk-external-interface-unit-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：处理器软件架构包括：设备管理单元...。简化：处理器软件内部的设备管理功能单元块定义。",
+      "name": "DeviceManagementUnit",
+      "id": "blk-device-management-unit-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：处理器软件架构包括：密码单元...。简化：处理器软件内部的密码管理功能单元块定义。",
+      "name": "CryptographyUnit",
+      "id": "blk-cryptography-unit-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：处理器软件架构包括：业务单元...。简化：处理器软件内部的业务信息处理功能单元块定义。",
+      "name": "BusinessUnit",
+      "id": "blk-business-unit-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：处理器软件架构包括：本地日志管理。简化：处理器软件内部的日志管理功能块定义。",
+      "name": "LocalLogManagement",
+      "id": "blk-local-log-management-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：FPGA处理软件架构包括：FIFO缓存（接收缓存和发送缓存）。简化：FPGA处理软件内部的数据缓存模块块定义。",
+      "name": "FIFOCache",
+      "id": "blk-fifo-cache-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：FPGA处理软件架构包括：数据调度处理模块。简化：FPGA处理软件内部的数据调度处理模块块定义。",
+      "name": "DataSchedulingProcessingModule",
+      "id": "blk-data-scheduling-processing-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-software-design-uuid",
+      "isAbstract": false,
+      "description": "原文：FPGA处理软件架构包括：业务信息加解密/完保处理模块。简化：FPGA处理软件内部的业务信息加解密和完整性保护处理模块块定义。",
+      "name": "BusinessInfoCryptoModule",
+      "id": "blk-business-info-crypto-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：算法IP核主要实现SM3、SM4、ZUC-256的算法运算。职责：在FPGA中实现高性能的密码算法硬件逻辑，为业务信息加解密/完保处理模块提供高速运算能力。组成：包含SM3、SM4、SM4-GCM、ZUC-256等算法IP。技术：FPGA逻辑实现，性能要求不小于800Mbps。",
+      "name": "算法IP核",
+      "id": "blk-algorithm-ip-core-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "model-terminal-security-module-uuid",
+      "isAbstract": false,
+      "description": "原文：机载融合终端安全模块以独立板卡的形态嵌入到各类宽带卫星通信终端中。简化：宿主系统，即宽带卫星通信终端块定义。",
+      "name": "SatelliteTerminal",
+      "id": "blk-satellite-terminal-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "model-terminal-security-module-uuid",
+      "isAbstract": false,
+      "description": "原文：系统环境：...核心网（5G核心网）。简化：5G核心网外部系统块定义。",
+      "name": "CoreNetwork",
+      "id": "blk-core-network-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "model-terminal-security-module-uuid",
+      "isAbstract": false,
+      "description": "原文：终端安全模块、...认证鉴权中心...。简化：认证鉴权中心外部系统块定义。",
+      "name": "AuthenticationCenter",
+      "id": "blk-authentication-center-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "model-terminal-security-module-uuid",
+      "isAbstract": false,
+      "description": "原文：终端安全模块。包含处理器软件...和FPGA逻辑...。简化：机载融合终端安全模块，是整个系统的核心功能块。",
+      "name": "TerminalSecurityModule",
+      "id": "blk-terminal-security-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "blk-terminal-security-module-uuid",
+      "description": "原文：终端安全模块核心硬件模块由ARM处理模块和FPGA处理模块构成。简化：终端安全模块的组成部分，ARM处理器硬件。",
+      "name": "armProcessor",
+      "associationId": "assoc-tsm-armproc",
+      "typeId": "blk-arm-processor-uuid",
+      "propertyKind": "part",
+      "id": "prop-tsm-armproc",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-terminal-security-module-uuid",
+      "description": "原文：终端安全模块核心硬件模块由ARM处理模块和FPGA处理模块构成。简化：终端安全模块的组成部分，FPGA逻辑硬件。",
+      "name": "fpgaLogic",
+      "associationId": "assoc-tsm-fpgalogic",
+      "typeId": "blk-fpga-logic-uuid",
+      "propertyKind": "part",
+      "id": "prop-tsm-fpgalogic",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-terminal-security-module-uuid",
+      "description": "原文：终端安全模块包含以下主要组件/模块：...eSIM芯片。简化：终端安全模块的组成部分，eSIM安全芯片。",
+      "name": "esimChip",
+      "associationId": "assoc-tsm-esim",
+      "typeId": "blk-esim-chip-uuid",
+      "propertyKind": "part",
+      "id": "prop-tsm-esim",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-terminal-security-module-uuid",
+      "description": "原文：终端安全模块包含以下主要组件/模块：...电源模块。简化：终端安全模块的组成部分，电源转换模块。",
+      "name": "powerModule",
+      "associationId": "assoc-tsm-power",
+      "typeId": "blk-power-module-uuid",
+      "propertyKind": "part",
+      "id": "prop-tsm-power",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-terminal-security-module-uuid",
+      "description": "原文：终端安全模块软件由FPGA处理软件和处理器软件构成。简化：终端安全模块的组成部分，运行于ARM的处理器软件。",
+      "name": "processorSoftware",
+      "associationId": "assoc-tsm-procsw",
+      "typeId": "blk-processor-software-uuid",
+      "propertyKind": "part",
+      "id": "prop-tsm-procsw",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-terminal-security-module-uuid",
+      "description": "原文：终端安全模块软件由FPGA处理软件和处理器软件构成。简化：终端安全模块的组成部分，运行于FPGA的处理软件。",
+      "name": "fpgaProcessingSoftware",
+      "associationId": "assoc-tsm-fpgasw",
+      "typeId": "blk-fpga-processing-software-uuid",
+      "propertyKind": "part",
+      "id": "prop-tsm-fpgasw",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-arm-processor-uuid",
+      "visibility": "private",
+      "description": "原文：终端安全模块核心硬件模块由ARM处理模块...构成。简化：对包含此ARM处理器的终端安全模块的反向引用。",
+      "name": "_tsm_armproc",
+      "associationId": "assoc-tsm-armproc",
+      "typeId": "blk-terminal-security-module-uuid",
+      "propertyKind": "reference",
+      "id": "prop-armproc-tsm",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-fpga-logic-uuid",
+      "visibility": "private",
+      "description": "原文：终端安全模块核心硬件模块由...FPGA处理模块构成。简化：对包含此FPGA逻辑的终端安全模块的反向引用。",
+      "name": "_tsm_fpgalogic",
+      "associationId": "assoc-tsm-fpgalogic",
+      "typeId": "blk-terminal-security-module-uuid",
+      "propertyKind": "reference",
+      "id": "prop-fpgalogic-tsm",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-processor-software-uuid",
+      "visibility": "private",
+      "description": "原文：终端安全模块软件由...处理器软件构成。简化：对包含此处理器软件的终端安全模块的反向引用。",
+      "name": "_tsm_procsw",
+      "associationId": "assoc-tsm-procsw",
+      "typeId": "blk-terminal-security-module-uuid",
+      "propertyKind": "reference",
+      "id": "prop-procsw-tsm",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-processor-software-uuid",
+      "description": "原文：处理器软件架构包括：通信单元...。简化：处理器软件的组成部分，通信功能单元。",
+      "name": "communicationUnit",
+      "associationId": "assoc-procsw-comm",
+      "typeId": "blk-communication-unit-uuid",
+      "propertyKind": "part",
+      "id": "prop-procsw-comm",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-processor-software-uuid",
+      "description": "原文：处理器软件架构包括：外部接口单元...。简化：处理器软件的组成部分，外部接口管理单元。",
+      "name": "externalInterfaceUnit",
+      "associationId": "assoc-procsw-extif",
+      "typeId": "blk-external-interface-unit-uuid",
+      "propertyKind": "part",
+      "id": "prop-procsw-extif",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-processor-software-uuid",
+      "description": "原文：处理器软件架构包括：设备管理单元...。简化：处理器软件的组成部分，设备管理功能单元。",
+      "name": "deviceManagementUnit",
+      "associationId": "assoc-procsw-devmgr",
+      "typeId": "blk-device-management-unit-uuid",
+      "propertyKind": "part",
+      "id": "prop-procsw-devmgr",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-processor-software-uuid",
+      "description": "原文：处理器软件架构包括：密码单元...。简化：处理器软件的组成部分，密码管理功能单元。",
+      "name": "cryptographyUnit",
+      "associationId": "assoc-procsw-crypto",
+      "typeId": "blk-cryptography-unit-uuid",
+      "propertyKind": "part",
+      "id": "prop-procsw-crypto",
+      "type": "Property"
+    },
+    {
+      "parentId": "blk-processor-software-uuid",
+      "description": "自动生成的描述: 这是一个 Property 类型的元素，名为 'businessUnit'。",
+      "name": "businessUnit",
+      "associationId": "assoc-procsw-b",
+      "typeId": "blk-business-unit-uuid",
+      "propertyKind": "part",
+      "id": "prop-procsw-biz",
+      "type": "Property"
+    },
+    {
+      "description": "该包包含终端安全模块所有核心功能、性能、接口及安全相关的需求。",
+      "name": "功能需求",
+      "id": "pkg-functional-req-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "description": "该包包含终端安全模块的物理、环境、可靠性、可维护性及开发过程相关的需求。",
+      "name": "非功能需求",
+      "id": "pkg-nonfunctional-req-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "description": "该包包含对系统架构、实现技术、开发流程等方面的强制性约束和指导原则。",
+      "name": "设计约束",
+      "id": "pkg-design-constraint-uuid",
+      "type": "Package",
+      "parentId": "master-model"
+    },
+    {
+      "reqId": "REQ-001",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持SM2、SM3、SM4、ZUC-256等国密算法",
+      "description": "原文：支持SM2、SM3、SM4、ZUC-256等国密算法。简化：该需求要求终端安全模块必须集成并支持一系列国家商用密码算法，以满足国家信息安全标准。背景：这是实现所有后续加密、解密、完整性保护和认证功能的基础。",
+      "name": "支持国密算法",
+      "id": "req-support-gm-algorithms-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-002",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持低轨卫星互联网宽带体制、宽带演进体制以及高轨体制工作",
+      "description": "原文：支持低轨卫星互联网宽带体制、宽带演进体制以及高轨体制工作。简化：该需求要求模块具备对不同卫星通信技术体制的兼容性和适配能力，确保能在多种卫星网络环境中部署和运行。",
+      "name": "支持多卫星体制",
+      "id": "req-support-multi-satellite-systems-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-004",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持终端通信过程中话音、数据等业务信息的机密性和完整性保护",
+      "description": "原文：支持终端通信过程中话音、数据等业务信息的机密性和完整性保护。简化：该需求要求模块能够对用户的实际通信内容（话音和数据）进行加密和完整性保护，确保业务数据传输的私密性和可靠性。",
+      "name": "保护话音/数据业务安全",
+      "id": "req-protect-voice-data-traffic-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-005",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持终端到终端不落地通信加密",
+      "description": "原文：支持终端到终端不落地通信加密。简化：该需求要求模块支持端到端的加密通信模式，数据在传输过程中无需在中间节点解密，直接从源终端加密传输到目标终端，提供更高等级的安全保障。",
+      "name": "支持端到端加密",
+      "id": "req-support-e2e-encryption-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-006",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持密钥更新、密钥销毁等在线安全管理功能",
+      "description": "原文：支持密钥更新、密钥销毁等在线安全管理功能。简化：该需求要求模块具备远程或本地对密钥生命周期进行动态管理的能力，包括密钥的更新替换和紧急销毁，以应对密钥泄露或策略变更。",
+      "name": "支持在线密钥管理",
+      "id": "req-support-online-key-management-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-007",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持终端安全模块自检结果、密钥状态、输入帧计数、输出帧计数、错误帧计数等态势信息采集与上报",
+      "description": "原文：支持终端安全模块自检结果、密钥状态、输入帧计数、输出帧计数、错误帧计数等态势信息采集与上报。简化：该需求要求模块能够监控自身运行状态和密码操作统计信息，并主动上报，为系统安全运维和态势感知提供数据支持。",
+      "name": "支持安全态势信息上报",
+      "id": "req-support-security-status-reporting-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-008",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "具有随机数开机自检和实时自检功能",
+      "description": "原文：具有随机数开机自检和实时自检功能。简化：该需求要求模块在上电和运行期间，定期对随机数生成器的质量进行检测，确保其生成的随机数具有足够的不可预测性，满足密码学安全要求。背景：按照国密随机数自检标准进行。",
+      "name": "支持随机数自检",
+      "id": "req-support-random-number-self-test-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-009",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持密码算法正确性检验，支持密钥的完整性检验",
+      "description": "原文：支持密码算法正确性检验，支持密钥的完整性检验。简化：该需求要求模块具备对自身实现的密码算法逻辑进行正确性验证的能力，并对存储或使用的密钥进行完整性校验，防止因算法实现错误或密钥损坏导致的安全失效。",
+      "name": "支持算法与密钥检验",
+      "id": "req-support-algorithm-key-verification-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-010",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持软件版本升级，升级失败后支持版本回退",
+      "description": "原文：支持软件版本升级，升级失败后支持版本回退。简化：该需求要求模块支持远程或本地软件更新功能，并且在升级过程出现故障时，能够自动或手动恢复到之前可用的稳定版本，保证服务的连续性和可靠性。",
+      "name": "支持软件升级与回退",
+      "id": "req-support-software-upgrade-rollback-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-011",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持安全访问控制及安全存储",
+      "description": "原文：支持安全访问控制及安全存储。简化：该需求要求模块对内部敏感信息（如密钥）的访问进行严格控制，并通过加密等方式安全存储，防止未授权访问和明文泄露。",
+      "name": "支持安全访问与存储",
+      "id": "req-support-secure-access-storage-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-012",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "支持工作日志记录",
+      "description": "原文：支持工作日志记录。简化：该需求要求模块记录系统运行中的重要事件、操作和异常，形成审计日志，便于问题追溯、状态查询和安全分析。",
+      "name": "支持工作日志记录",
+      "id": "req-support-operation-logging-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-013",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "基于eSIM芯片实现入网鉴权功能",
+      "description": "原文：基于eSIM芯片实现入网鉴权功能。简化：该需求要求模块利用eSIM芯片的安全特性来完成终端接入网络时的身份认证和密钥派生，将核心鉴权逻辑置于硬件安全环境中，提升整体安全性。",
+      "name": "基于eSIM实现入网鉴权",
+      "id": "req-support-esim-authentication-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-015",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "上行业务机密性、完整性保护能力≥200Mbps",
+      "description": "原文：上行业务机密性、完整性保护能力≥200Mbps。简化：该性能需求规定了模块对上行（终端到网络）业务数据进行加密和完整性保护处理的最小吞吐率，确保满足高带宽业务场景的需求。",
+      "name": "上行业务保护性能要求",
+      "id": "req-uplink-throughput-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-016",
+      "parentId": "pkg-functional-req-uuid",
+      "text": "下行业务机密性、完整性保护能力≥200Mbps",
+      "description": "原文：下行业务机密性、完整性保护能力≥200Mbps。简化：该性能需求规定了模块对下行（网络到终端）业务数据进行解密和完整性验证处理的最小吞吐率，确保满足高带宽业务场景的需求。",
+      "name": "下行业务保护性能要求",
+      "id": "req-downlink-throughput-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-018",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "text": "安全模块外形尺寸不超过120mm×70mm×25mm（公差小于±0.5mm）",
+      "description": "原文：安全模块外形尺寸不超过120mm×70mm×25mm（公差小于±0.5mm）。简化：该物理约束需求限定了模块的最大外形尺寸，确保其能够集成到目标终端设备中。",
+      "name": "物理尺寸要求",
+      "id": "req-physical-dimensions-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-019",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "text": "重量要求不超过500g",
+      "description": "原文：重量要求不超过500g。简化：该物理约束需求限定了模块的最大重量，主要影响终端的便携性和整体重量分配。",
+      "name": "重量要求",
+      "id": "req-weight-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-021",
+      "parentId": "pkg-nonfunctional-req-uuid",
+      "text": "工作温度：-40℃~60℃；存贮温度：-55℃~70℃",
+      "description": "原文：工作温度：-40℃~60℃；存贮温度：-55℃~70℃。简化：该环境适应性需求规定了模块在运行和非运行状态下必须能够承受的极端温度范围，确保其在恶劣环境下仍能正常工作或安全存储。",
+      "name": "工作与存储温度要求",
+      "id": "req-temperature-range-uuid",
+      "type": "Requirement"
+    },
+    {
+      "reqId": "REQ-022",
+      "parentId": "pkg-design-constraint-uuid",
+      "text": "基于MBSE开展系统工程模型设计",
+      "description": "原文：基于MBSE开展系统工程模型设计，整个研发过程以概念设计阶段开始，并持续贯穿于开发和后期的生命周期阶段的系统需求、设计、分析、验证和确认活动的正规化建模应用。简化：该过程约束需求要求采用基于模型的系统工程方法进行研发，确保需求、设计、验证的可追溯性和一致性。",
+      "name": "基于MBSE开发",
+      "id": "req-mbse-development-uuid",
+      "type": "Requirement"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：业务信息加解密/完保处理模块同时记录和统计帧计数、流量统计等状态。职责：负责对通过SGMII接口的业务数据（话音、数据）进行实时加解密和完整性保护处理，并统计处理状态。组成：包含FPGA逻辑实现的处理流水线。技术：调用算法IP核，独占资源，处理性能满足≥200Mbps要求。",
+      "name": "业务信息加解密/完保处理模块",
+      "id": "blk-traffic-encryption-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：日志管理模块主要对终端安全模块运行中的重要事件、异常情况以及调试信息等工作情况进行日志记录。职责：负责采集、存储和管理系统运行日志，支持查询。组成：软件模块，运行于处理器。",
+      "name": "日志管理模块",
+      "id": "blk-log-management-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "pkg-functional-req-uuid",
+      "description": "原文：支持上电自检和周期自检，自检项主要包括：随机数自",
+      "name": "自检管理模块",
+      "id": "blk-self-test-management-module-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：设备有限状态模型。设备上电后，设备管理模块对各模块进行初始化处理...简化：主应用包，包含设备管理模块、状态机及其相关元素。",
+      "name": "设备管理包",
+      "id": "pkg-device-management-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：软件采用分类故障判断及恢复的设计措施...简化：行为库包，存储所有被状态和转换调用的具体恢复、自检、销毁等操作活动。",
+      "name": "设备行为库",
+      "id": "pkg-device-behaviors-uuid",
+      "type": "Package"
+    },
+    {
+      "classifierBehaviorId": "sm-device-fsm-uuid",
+      "parentId": "pkg-device-management-uuid",
+      "description": "原文：设备上电后，设备管理模块对各模块进行初始化处理，同时根据设备有限状态转换模型，对设备进行配装管理。简化：负责设备整体状态管理和控制的模块，其行为由状态机定义。",
+      "name": "设备管理模块",
+      "id": "blk-device-manager-uuid",
+      "type": "Block"
+    },
+    {
+      "parentId": "blk-device-manager-uuid",
+      "description": "原文：图2-10设备有限状态模型。...同时根据设备有限状态转换模型，对设备进行配装管理。简化：定义设备管理模块生命周期和状态转换逻辑的状态机。",
+      "name": "设备有限状态机",
+      "id": "sm-device-fsm-uuid",
+      "type": "StateMachine"
+    },
+    {
+      "parentId": "sm-device-fsm-uuid",
+      "description": "原文：设备上电后...设备有限状态转换模型。简化：状态机的主要活动区域，包含设备的核心状态（如初始化、服务、异常等）。",
+      "name": "主区域",
+      "id": "region-device-main-uuid",
+      "type": "Region"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：设备上电后。简化：状态机的起始点，代表设备上电事件。",
+      "kind": "initial",
+      "id": "ps-main-initial-uuid",
+      "type": "Pseudostate"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：设备上电后，设备管理模块对各模块进行初始化处理。简化：设备启动后的第一个状态，执行系统及各模块的初始化操作。",
+      "name": "初始化",
+      "doActivity": {
+        "wrapperActivityId": "wrapper-do-initializing-uuid",
+        "calledBehaviorId": "act-perform-module-initialization-uuid"
+      },
+      "id": "state-initializing-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：不在提供服务；...停止提供随机数服务；...停止服务并进行异常告警。简化：设备正常运行并提供服务的稳定状态。根据描述，此状态下包含自检处理（开机、周期、实时）和销毁处理（在线、离线）等子行为，因此是复合状态。",
+      "name": "服务中",
+      "doActivity": {
+        "wrapperActivityId": "wrapper-do-in-service-uuid",
+        "calledBehaviorId": "act-perform-periodic-realtime-selfcheck-uuid"
+      },
+      "isComposite": true,
+      "id": "state-in-service-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：自检不通过设备异常退出；...异常时停止提供随机数服务，并上报异常状态；...多次获取异常则进行停止服务并进行异常告警。简化：设备检测到故障或异常后进入的状态，停止服务并可能进行告警。",
+      "entry": {
+        "wrapperActivityId": "wrapper-entry-fault-uuid",
+        "calledBehaviorId": "act-execute-fault-alarm-report-uuid"
+      },
+      "name": "异常",
+      "id": "state-fault-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：销毁处理模块支持在线销毁和离线销毁。简化：设备执行销毁流程（数据擦除、功能禁用等）的临时状态。",
+      "name": "销毁中",
+      "doActivity": {
+        "wrapperActivityId": "wrapper-do-destroying-uuid",
+        "calledBehaviorId": "act-execute-destruction-procedure-uuid"
+      },
+      "id": "state-destroying-uuid",
+      "type": "State"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：自检不通过设备异常退出，不在提供服务。简化：设备生命周期的终止状态，可能由异常退出或销毁完成导致。",
+      "name": "最终状态",
+      "id": "state-final-uuid",
+      "type": "FinalState"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：自检不通过设备异常退出；自检通过后再使用。简化：用于根据自检结果（通过/不通过）决定后续路径（继续服务或进入异常）的决策点。",
+      "kind": "choice",
+      "id": "ps-selfcheck-choice-uuid",
+      "type": "Pseudostate"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：自检不通过则重新获取，多次获取异常则进行停止服务并进行异常告警。简化：用于实现“重新获取”循环和“多次失败后停止服务”逻辑的路径汇合与分支点。",
+      "kind": "junction",
+      "id": "ps-reacquire-junction-uuid",
+      "type": "Pseudostate"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：设备上电后，设备管理模块对各模块进行初始化处理。简化：设备上电后自动进入初始化状态的转换。",
+      "targetId": "state-initializing-uuid",
+      "sourceId": "ps-main-initial-uuid",
+      "id": "trans-initial-to-initializing-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "guard": {
+        "expression": "初始化完成 == true",
+        "language": "English"
+      },
+      "description": "原文：（隐含）初始化完成后，设备进入提供服务状态。简化：初始化成功完成后，设备转换到正常服务状态。",
+      "targetId": "state-in-service-uuid",
+      "sourceId": "state-initializing-uuid",
+      "id": "trans-initializing-to-in-service-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "triggerIds": [
+        "event-need-random-number-uuid"
+      ],
+      "description": "原文：实时自检为使用时从噪声源芯片获取随机数时进行随机数实时自检。简化：在服务过程中触发实时自检的转换（例如，当需要获取随机数时）。",
+      "targetId": "ps-selfcheck-choice-uuid",
+      "sourceId": "state-in-service-uuid",
+      "id": "trans-service-to-selfcheck-choice-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "guard": {
+        "expression": "实时自检结果 == 通过",
+        "language": "English"
+      },
+      "description": "原文：自检通过后再使用。简化：自检通过后，设备继续保持在或返回服务状态。",
+      "targetId": "state-in-service-uuid",
+      "sourceId": "ps-selfcheck-choice-uuid",
+      "id": "trans-choice-pass-to-service-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "guard": {
+        "expression": "实时自检结果 == 不通过",
+        "language": "English"
+      },
+      "description": "原文：自检不通过设备异常退出；...异常时停止提供随机数服务。简化：自检失败导致设备退出服务，进入异常状态。",
+      "targetId": "state-fault-uuid",
+      "sourceId": "ps-selfcheck-choice-uuid",
+      "id": "trans-choice-fail-to-fault-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "triggerIds": [
+        "event-reinitialize-command-uuid"
+      ],
+      "effect": {
+        "wrapperActivityId": "wrapper-effect-t6-uuid",
+        "calledBehaviorId": "act-perform-app-reinitialization-uuid"
+      },
+      "description": "原文：当发生异常工作时采用重新初始化应用程序。简化：从异常状态恢复的一种方式，通过重新初始化应用程序尝试恢复服务。",
+      "targetId": "state-initializing-uuid",
+      "sourceId": "state-fault-uuid",
+      "id": "trans-fault-to-initializing-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "triggerIds": [
+        "event-destruction-command-uuid"
+      ],
+      "description": "原文：销毁处理模块支持在线销毁和离线销毁。简化：接收到销毁命令（在线或离线）后，从服务状态转换到销毁状态。",
+      "targetId": "state-destroying-uuid",
+      "sourceId": "state-in-service-uuid",
+      "id": "trans-service-to-destroying-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：（隐含）销毁流程执行完毕。简化：销毁操作完成后，设备进入最终状态。",
+      "targetId": "state-final-uuid",
+      "sourceId": "state-destroying-uuid",
+      "id": "trans-destroying-to-final-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "description": "原文：自检不通过设备异常退出，不在提供服务。简化：某些严重异常导致设备无法恢复，直接退出到最终状态。",
+      "targetId": "state-final-uuid",
+      "sourceId": "state-fault-uuid",
+      "id": "trans-fault-to-final-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "effect": {
+        "wrapperActivityId": "wrapper-effect-t10-uuid",
+        "calledBehaviorId": "act-reacquire-random-number-uuid"
+      },
+      "guard": {
+        "expression": "重新获取次数 < 最大重试次数",
+        "language": "English"
+      },
+      "description": "原文：自检不通过则重新获取。简化：实现“重新获取随机数并再次自检”的循环路径。",
+      "targetId": "ps-selfcheck-choice-uuid",
+      "sourceId": "ps-reacquire-junction-uuid",
+      "id": "trans-reacquire-loop-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "region-device-main-uuid",
+      "guard": {
+        "expression": "重新获取次数 >= 最大重试次数",
+        "language": "English"
+      },
+      "description": "原文：多次获取异常则进行停止服务并进行异常告警。简化：重新获取达到最大次数后仍失败，则进入异常状态。",
+      "targetId": "state-fault-uuid",
+      "sourceId": "ps-reacquire-junction-uuid",
+      "id": "trans-reacquire-fail-to-fault-uuid",
+      "type": "Transition"
+    },
+    {
+      "parentId": "pkg-device-management-uuid",
+      "description": "原文：实时自检为使用时从噪声源芯片获取随机数时进行随机数实时自检。简化：表示设备需要获取随机数（例如，用于加密操作）的内部或外部事件。",
+      "name": "需要获取随机数事件",
+      "id": "event-need-random-number-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-device-management-uuid",
+      "description": "原文：当发生异常工作时采用重新初始化应用程序。简化：触发从异常状态恢复的重新初始化操作的事件或命令。",
+      "name": "重新初始化命令",
+      "id": "event-reinitialize-command-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-device-management-uuid",
+      "description": "原文：销毁处理模块支持在线销毁和离线销毁。简化：触发设备销毁流程的命令事件，可能包含在线或离线模式参数。",
+      "name": "销毁命令",
+      "id": "event-destruction-command-uuid",
+      "type": "Event"
+    },
+    {
+      "parentId": "pkg-device-behaviors-uuid",
+      "description": "原文：设备管理模块对各模块进行初始化处理。简化：对设备所有子模块进行上电初始化的具体活动。",
+      "name": "执行各模块初始化",
+      "id": "act-perform-module-initialization-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-device-behaviors-uuid",
+      "description": "原文：周期自检时对随机数部分自检项进行自检；实时自检为使用时从噪声源芯片获取随机数时进行随机数实时自检。简化：在服务状态下持续或按需执行的周期性及实时性自检活动。",
+      "name": "执行周期自检与实时自检",
+      "id": "act-perform-periodic-realtime-selfcheck-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-device-behaviors-uuid",
+      "description": "原文：并上报异常状态；...并进行异常告警。简化：进入异常状态时触发告警和上报故障信息的具体活动。",
+      "name": "执行异常告警与状态上报",
+      "id": "act-execute-fault-alarm-report-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-device-behaviors-uuid",
+      "description": "原文：销毁处理模块支持在线销毁和离线销毁。简化：执行数据销毁、功能失效等安全销毁操作的具体活动。",
+      "name": "执行销毁流程",
+      "id": "act-execute-destruction-procedure-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-device-behaviors-uuid",
+      "description": "原文：当发生异常工作时采用重新初始化应用程序。简化：具体执行应用程序重启和状态重置的恢复活动。",
+      "name": "执行应用程序重新初始化",
+      "id": "act-perform-app-reinitialization-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-device-behaviors-uuid",
+      "description": "原文：自检不通过则重新获取。简化：从硬件噪声源重新采集随机数的具体活动。",
+      "name": "重新从噪声源获取随机数",
+      "id": "act-reacquire-random-number-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "pkg-device-behaviors-uuid",
+      "description": "原文：开机自检时对随机数进行全面的自检。简化：设备启动后执行的一次性全面自检活动。",
+      "name": "执行开机自检",
+      "id": "act-perform-power-on-selfcheck-uuid",
+      "type": "Activity"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：机载融合终端安全模块案例。简化：包含机载融合终端安全模块的所有核心运行时用例和参与者。",
+      "name": "主要用例",
+      "id": "pkg-avionics-security-main-uuid",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：卫星终端与机载融合终端安全模块通过内部接口交互定制协议报文。简化：通过内部接口与安全模块进行协议交互的外部设备。",
+      "name": "卫星终端",
+      "id": "actor-satellite-terminal-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：软件版本升级（参与者：外部系统/用户）。简化：负责发起软件远程更新流程的外部实体。",
+      "name": "外部系统/用户",
+      "id": "actor-external-system-user-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：入网鉴权（参与者：网络）。简化：提供网络接入服务，并执行对终端入网鉴权的实体。",
+      "name": "网络",
+      "id": "actor-network-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：业务数据加解密/完整性保护（参与者：终端）。简化：通过SGMII接口与安全模块交互业务数据的终端设备。",
+      "name": "终端",
+      "id": "actor-terminal-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：工作日志查询（参与者：管理员）。简化：负责查询安全模块运行状态和日志信息的管理人员。",
+      "name": "管理员",
+      "id": "actor-administrator-uuid",
+      "type": "Actor"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：卫星终端与机载融合终端安全模块通过内部接口交互定制协议报文。简化：与卫星终端进行特定协议的数据交换。",
+      "name": "交互定制协议报文",
+      "id": "uc-interact-protocol-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：入网鉴权...场景：基于eSIM芯片存储的信息完成鉴权和密钥派生。简化：利用eSIM信息完成网络接入鉴权和密钥生成。",
+      "name": "入网鉴权",
+      "id": "uc-network-auth-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：业务数据加解密/完整性保护...场景：通过SGMII接口发送业务数据，终端安全模块进行加密/解密或完保处理并返回结果。简化：对终端业务数据进行加密、解密或完整性保护处理。",
+      "name": "业务数据加解密/完整性保护",
+      "id": "uc-data-crypto-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：工作日志查询...场景：查询终端安全模块运行状态、事件和异常信息。简化：查询安全模块的运行日志和状态信息。",
+      "name": "工作日志查询",
+      "id": "uc-query-logs-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：处理器软件主要实现...设备管理。简化：管理安全模块自身设备状态和配置。",
+      "name": "实现设备管理",
+      "id": "uc-implement-device-mgmt-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：处理器软件主要实现...密码管理。简化：管理密码算法、密钥等安全材料。",
+      "name": "实现密码管理",
+      "id": "uc-implement-crypto-mgmt-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：处理器软件主要实现...安全态势感知。简化：感知并评估系统的安全状态。",
+      "name": "实现安全态势感知",
+      "id": "uc-implement-security-posture-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：软件版本升级...场景：发送待升级软件版本，触发升级流程，接收升级成功/失败响应。简化：执行完整的软件版本升级流程。",
+      "name": "软件版本升级",
+      "id": "uc-software-version-upgrade-uuid",
+      "type": "UseCase"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：卫星终端与机载融合终端安全模块通过内部接口交互定制协议报文。简化：卫星终端发起与安全模块的协议交互。",
+      "targetId": "uc-interact-protocol-uuid",
+      "sourceId": "actor-satellite-terminal-uuid",
+      "id": "assoc-satellite-interact-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：软件版本升级（参与者：外部系统/用户）。简化：外部系统/用户触发远程更新流程。",
+      "targetId": "uc-support-remote-update-uuid",
+      "sourceId": "actor-external-system-user-uuid",
+      "id": "assoc-external-update-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：入网鉴权（参与者：网络）。简化：网络侧执行对终端的入网鉴权流程。",
+      "targetId": "uc-network-auth-uuid",
+      "sourceId": "actor-network-uuid",
+      "id": "assoc-network-auth-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：业务数据加解密/完整性保护（参与者：终端）。简化：终端向安全模块发送业务数据以请求安全处理。",
+      "targetId": "uc-data-crypto-uuid",
+      "sourceId": "actor-terminal-uuid",
+      "id": "assoc-terminal-data-crypto-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：工作日志查询（参与者：管理员）。简化：管理员执行日志查询操作。",
+      "targetId": "uc-query-logs-uuid",
+      "sourceId": "actor-administrator-uuid",
+      "id": "assoc-admin-query-logs-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：软件具有远程更新功能，支持远程软件更新升级。软件版本升级...触发升级流程。简化：“支持远程软件更新升级”是能力描述，其具体的执行过程包含“软件版本升级”这个用例。",
+      "targetId": "uc-software-version-upgrade-uuid",
+      "sourceId": "uc-support-remote-update-uuid",
+      "id": "include-remote-update-version-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：处理器软件主要实现设备管理。工作日志查询...查询终端安全模块运行状态。简化：设备管理功能包含对设备运行状态和日志的查询，即“工作日志查询”。",
+      "targetId": "uc-query-logs-uuid",
+      "sourceId": "uc-implement-device-mgmt-uuid",
+      "id": "include-device-mgmt-query-logs-uuid",
+      "type": "Include"
+    },
+    {
+      "parentId": "pkg-avionics-security-main-uuid",
+      "description": "原文：处理器软件主要实现安全态势感知。工作日志查询...查询...事件和异常信息。简化：查询工作日志（特别是事件和异常信息）可以为“实现安全态势感知”提供数据输入，是其一个可选的扩展信息来源。",
+      "targetId": "uc-implement-security-posture-uuid",
+      "sourceId": "uc-query-logs-uuid",
+      "id": "extend-security-posture-query-logs-uuid",
+      "type": "Extend"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：包含安全通信设备及其所有子系统和约束。简化：主包，容纳了设备块、约束块以及它们之间的参数关系。",
+      "name": "SecurityDevice",
+      "id": "pkg_main",
+      "type": "Package"
+    },
+    {
+      "parentId": "pkg_main",
+      "description": "原文：外形尺寸不超过120mm×70mm×25mm（公差小于±0.5mm）。重量不超过500g。功耗不超过20W。工作温度：-40℃~60℃ 存贮温度：-55℃~70℃。简化：代表整个安全通信设备，定义了其物理、环境和功耗约束。",
+      "name": "SecurityCommunicationDevice",
+      "id": "block_device",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：外形尺寸不超过120mm×70mm×25mm。简化：设备长度，单位mm。",
+      "name": "length",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_length",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：外形尺寸不超过120mm×70mm×25mm。简化：设备宽度，单位mm。",
+      "name": "width",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_width",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：外形尺寸不超过120mm×70mm×25mm。简化：设备高度，单位mm。",
+      "name": "height",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_height",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：重量不超过500g。简化：设备重量，单位g。",
+      "name": "weight",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_weight",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：功耗不超过20W。简化：设备功耗，单位W。",
+      "name": "power_consumption",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_power",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：工作温度：-40℃~60℃。简化：设备最低工作温度，单位℃。",
+      "name": "operating_temp_min",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_op_temp_min",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：工作温度：-40℃~60℃。简化：设备最高工作温度，单位℃。",
+      "name": "operating_temp_max",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_op_temp_max",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：存贮温度：-55℃~70℃。简化：设备最低存储温度，单位℃。",
+      "name": "storage_temp_min",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_storage_temp_min",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：存贮温度：-55℃~70℃。简化：设备最高存储温度，单位℃。",
+      "name": "storage_temp_max",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_storage_temp_max",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：工作电压12V。简化：设备工作电压，单位V。",
+      "name": "operating_voltage",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_voltage",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：认证鉴权处理时延≤200ms。简化：代表设备内部的认证鉴权处理单元，负责处理认证请求并产生时延。",
+      "name": "AuthenticationSubsystem",
+      "id": "block_auth",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_auth",
+      "description": "原文：认证鉴权处理时延≤200ms。简化：认证鉴权总处理时延，单位ms。",
+      "name": "authentication_delay_total",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_auth_delay_total",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_auth",
+      "description": "原文：消息传输开销≤1ms。简化：认证消息传输时延，单位ms。",
+      "name": "authentication_delay_message",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_auth_delay_msg",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_auth",
+      "description": "原文：认证鉴权处理运算时延≤50ms。简化：认证运算处理时延，单位ms。",
+      "name": "authentication_delay_computation",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_auth_delay_comp",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：SM4-GCM和ZUC-256算法IP处理性能不小于800Mbps。上行业务机密性、完整性保护能力≥200Mbps；下行业务机密性、完整性保护能力≥200Mbps。简化：代表设备内部的密码算法处理单元，负责数据的加解密和完整性保护，并具有性能指标。",
+      "name": "CryptographicSubsystem",
+      "id": "block_crypto",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_crypto",
+      "description": "原文：SM4-GCM和ZUC-256算法IP处理性能不小于800Mbps。简化：密码算法核的理论处理性能，单位Mbps。",
+      "name": "crypto_performance_algorithm",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_crypto_perf_algo",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_crypto",
+      "description": "原文：上行业务机密性、完整性保护能力≥200Mbps。简化：上行链路实际加解密保护能力，单位Mbps。",
+      "name": "crypto_performance_uplink",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_crypto_perf_up",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_crypto",
+      "description": "原文：下行业务机密性、完整性保护能力≥200Mbps。简化：下行链路实际加解密保护能力，单位Mbps。",
+      "name": "crypto_performance_downlink",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_crypto_perf_down",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_crypto",
+      "description": "原文：理论接口速率千兆。简化：系统理论接口速率，假设为1000Mbps。",
+      "name": "interface_rate",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_if_rate",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：本地密码资源销毁时间≤60s。密钥包括NAS层加密密钥和完整性保护密钥、RRC加密和完整性保护密钥、用户平面加密和完整性保护密钥。简化：代表设备内部的密钥管理单元，负责密钥的存储、使用和销毁。",
+      "name": "KeyManagementSubsystem",
+      "id": "block_key_mgmt",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_key_mgmt",
+      "description": "原文：本地密码资源销毁时间≤60s。简化：本地密钥销毁所需时间，单位s。",
+      "name": "key_destruction_time",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_key_destruction_time",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_key_mgmt",
+      "description": "原文：评估值：<10.2s。简化：密钥销毁时间的评估值，单位s。",
+      "name": "key_destruction_time_estimated",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_key_destruction_time_est",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：CPU计算资源使用率不超过10%，内存使用率不超过10%，存储空间占用率不超过5%...FPGA计算资源LUTs和FFs使用率分别为23.3%和11.8%...RAM空间使用率约50%。简化：代表设备的计算资源（CPU、FPGA、内存、存储）及其使用率约束。",
+      "name": "ComputationalResourceSubsystem",
+      "id": "block_resource",
+      "type": "Block"
+    },
+    {
+      "parentId": "block_resource",
+      "description": "原文：CPU计算资源使用率不超过10%。简化：CPU使用率，百分比。",
+      "name": "cpu_usage",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_cpu_usage",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_resource",
+      "description": "原文：内存使用率不超过10%。简化：内存使用率，百分比。",
+      "name": "memory_usage",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_mem_usage",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_resource",
+      "description": "原文：存储空间占用率不超过5%。简化：存储空间使用率，百分比。",
+      "name": "storage_usage",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_storage_usage",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_resource",
+      "description": "原文：FPGA计算资源LUTs...使用率分别为23.3%。简化：FPGA LUT资源使用率，百分比。",
+      "name": "fpga_lut_usage",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_fpga_lut_usage",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_resource",
+      "description": "原文：FPGA计算资源...FFs使用率分别为...11.8%。简化：FPGA FF资源使用率，百分比。",
+      "name": "fpga_ff_usage",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_fpga_ff_usage",
+      "type": "Property"
+    },
+    {
+      "parentId": "block_resource",
+      "description": "原文：RAM空间使用率约50%。简化：FPGA RAM资源使用率，百分比。",
+      "name": "fpga_ram_usage",
+      "typeId": "Real",
+      "propertyKind": "value",
+      "id": "prop_fpga_ram_usage",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg_main",
+      "description": "原文：外形尺寸不超过120mm×70mm×25mm。重量不超过500g。功耗不超过20W。简化：约束设备的物理尺寸、重量和功耗上限。",
+      "name": "PhysicalConstraints",
+      "specification": {
+        "expression": "length <= 120 and width <= 70 and height <= 25 and weight <= 500 and power_consumption <= 20",
+        "language": "Math"
+      },
+      "id": "cb_physical",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：物理和环境约束。简化：应用于设备块的物理约束属性。",
+      "name": "physical_constraints",
+      "typeId": "cb_physical",
+      "propertyKind": "constraint",
+      "id": "cp_physical",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg_main",
+      "description": "原文：工作温度：-40℃~60℃ 存贮温度：-55℃~70℃。简化：约束设备的工作和存储温度范围。",
+      "name": "TemperatureConstraints",
+      "specification": {
+        "expression": "operating_temp_min >= -40 and operating_temp_max <= 60 and storage_temp_min >= -55 and storage_temp_max <= 70",
+        "language": "Math"
+      },
+      "id": "cb_temp",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb_temp",
+      "description": "原文：存贮温度：-55℃~70℃。简化：约束中的最高存储温度参数。",
+      "name": "storage_temp_max",
+      "typeId": "Real",
+      "id": "param_storage_temp_max",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "block_device",
+      "description": "原文：温度约束。简化：应用于设备块的温度约束属性。",
+      "name": "temperature_constraints",
+      "typeId": "cb_temp",
+      "propertyKind": "constraint",
+      "id": "cp_temp",
+      "type": "Property"
+    },
+    {
+      "parentId": "pkg_main",
+      "description": "原文：认证鉴权处理时延≤200ms。简化：约束认证鉴权总时延的上限。",
+      "name": "AuthDelayTotalConstraint",
+      "specification": {
+        "expression": "authentication_delay_total <= 200",
+        "language": "Math"
+      },
+      "id": "cb_auth_total",
+      "type": "ConstraintBlock"
+    },
+    {
+      "parentId": "cb_auth_total",
+      "description": "原文：认证鉴权处理时延。简化：约束中的总时延参数。",
+      "name": "authentication_delay_total",
+      "typeId": "Real",
+      "id": "param_auth_total",
+      "type": "ConstraintParameter"
+    },
+    {
+      "parentId": "master-model",
+      "description": "原文：无直接引用。简化：用于容纳本序列图描述的核心交互及其相关类、操作的包。",
+      "name": "核心交互包",
+      "id": "pkg-core-interactions-uuid",
+      "type": "Package"
+    },
+    {
+      "classifierBehaviorId": "interaction-terminal-sm-interaction-uuid",
+      "parentId": "pkg-core-interactions-uuid",
+      "ownedOperationIds": [
+        "op-forward-sec-msg-uuid",
+        "op-initiate-sec-req-uuid"
+      ],
+      "description": "原文：卫星终端向机载融合终端安全模块申请临时身份标识SUCI；终端收到网络发送的鉴权请求消息后，向安全模块发起鉴权请求。简化：卫星通信中的用户设备，负责发起安全请求、转发网络消息并与安全模块交互。",
+      "name": "卫星终端",
+      "ownedAttributeIds": [
+        "prop-terminal-sm-uuid"
+      ],
+      "id": "cls-sat-terminal-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-core-interactions-uuid",
+      "description": "原文：伺机向核心网认证鉴权系统发起认证鉴权申请；认证鉴权系统与机载融合终端安全模块进行双向身份认证。简化：网络侧负责用户身份认证与鉴权的系统。",
+      "name": "认证鉴权系统",
+      "id": "cls-auth-system-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-core-interactions-uuid",
+      "description": "原文：卫星终端与卫星网络的传输链路建立后；认证鉴权流程：终端 -> 终端安全模块 -> 接入网。简化：卫星通信的无线接入网络。",
+      "name": "接入网",
+      "id": "cls-access-network-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-core-interactions-uuid",
+      "description": "原文：NAS安全模式建立流程：核心网（计算并派生KNASint/KNASenc） -> 发起开启安全模式。简化：负责网络层安全控制与管理的核心网络实体。",
+      "name": "核心网",
+      "id": "cls-core-network-uuid",
+      "type": "Class"
+    },
+    {
+      "parentId": "pkg-core-interactions-uuid",
+      "description": "原文：AS安全模式建立流程：核心网（派生KgNB） -> 星载基站（派生KgNB, KRRCint, KRRCenc）。简化：卫星上的基站设备，负责接入层安全。",
+      "name": "星载基站",
+      "id": "cls-sat-base-station-uuid",
+      "type": "Class"
+    },
+    {
+      "aggregation": "composite",
+      "parentId": "cls-sat-terminal-uuid",
+      "description": "原文：卫星终端与机载融合终端安全模块通过内部接口交互定制协议报文。简化：卫星终端内部包含的安全模块属性，代表强组合关系。",
+      "name": "securityModule",
+      "typeId": "cls-security-module-uuid",
+      "id": "prop-terminal-sm-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-security-module-uuid",
+      "description": "原文：卫星终端与机载融合终端安全模块通过内部接口交互定制协议报文。简化：安全模块所属的终端属性，代表关联的另一端。",
+      "name": "hostTerminal",
+      "typeId": "cls-sat-terminal-uuid",
+      "id": "prop-sm-in-terminal-uuid",
+      "type": "Property"
+    },
+    {
+      "parentId": "cls-sat-terminal-uuid",
+      "description": "原文：处理器软件收到入网鉴权类消息后，通过7816转发给eSIM芯片进行处理。简化：终端将接收到的网络侧安全协议消息转发给内部安全模块。",
+      "name": "转发安全消息",
+      "id": "op-forward-sec-msg-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-sat-terminal-uuid",
+      "description": "原文：卫星终端向机载融合终端安全模块申请临时身份标识SUCI。简化：终端主动向安全模块发起各类安全功能请求。",
+      "name": "发起安全请求",
+      "id": "op-initiate-sec-req-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-security-module-uuid",
+      "description": "原文：安全模块收到鉴权请求消息后，验证鉴权参数是否正确。简化：验证来自网络的鉴权挑战参数。",
+      "name": "验证鉴权参数",
+      "id": "op-verify-auth-params-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-security-module-uuid",
+      "description": "原文：认证遵循5G AKA协议。简化：执行5G AKA协议规定的双向认证流程。",
+      "name": "执行5G AKA认证",
+      "id": "op-perform-5g-aka-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-security-module-uuid",
+      "description": "原文：认证通过后按照5G密钥派生方法派生出后续所需密钥；终端安全模块（收到指令，派生KNASint/KNASenc）。简化：根据输入参数派生NAS层或AS层安全密钥。",
+      "name": "派生密钥",
+      "id": "op-derive-keys-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "cls-security-module-uuid",
+      "description": "原文：安全模块收到命令后执行相应操作。简化：执行来自终端或网络的各类安全管理命令。",
+      "name": "处理安全管理命令",
+      "id": "op-process-mgmt-cmd-uuid",
+      "type": "Operation"
+    },
+    {
+      "parentId": "pkg-core-interactions-uuid",
+      "description": "原文：卫星终端与机载融合终端安全模块通过内部接口交互定制协议报文。简化：卫星终端内部包含一个安全模块，二者通过专用接口关联。",
+      "name": "终端包含安全模块",
+      "memberEndIds": [
+        "prop-terminal-sm-uuid",
+        "prop-sm-in-terminal-uuid"
+      ],
+      "id": "assoc-terminal-has-sm-uuid",
+      "type": "Association"
+    },
+    {
+      "parentId": "cls-sat-terminal-uuid",
+      "lifelineIds": [
+        "ll-terminal-uuid",
+        "ll-sm-uuid",
+        "ll-auth-sys-uuid",
+        "ll-access-net-uuid",
+        "ll-core-net-uuid",
+        "ll-sat-bs-uuid"
+      ],
+      "fragmentIds": [
+        "frag-send-req-suci-uuid",
+        "frag-recv-req-suci-uuid",
+        "frag-send-return-suci-uuid",
+        "frag-recv-return-suci-uuid",
+        "frag-send-forward-auth-req-uuid",
+        "frag-recv-forward-auth-req-uuid",
+        "cf-auth-verify-alt-uuid"
+      ],
+      "description": "原文：图2-11 eSIM交互流程图。简化：描述卫星终端与机载融合终端安全模块之间，围绕认证鉴权、密钥管理、状态查询等安全功能进行交互的完整序列。",
+      "name": "终端与安全模块交互",
+      "messageIds": [
+        "msg-request-suci-uuid",
+        "msg-return-suci-uuid",
+        "msg-forward-auth-req-uuid",
+        "msg-auth-response-uuid",
+        "msg-auth-failure-uuid",
+        "msg-key-update-req-uuid",
+        "msg-key-update-resp-uuid",
+        "msg-key-delete-req-uuid",
+        "msg-key-delete-resp-uuid",
+        "msg-ctx-store-req-uuid",
+        "msg-ctx-store-resp-uuid",
+        "msg-user-id-req-uuid",
+        "msg-status-query-uuid",
+        "msg-status-response-uuid",
+        "msg-sm-mgmt-cmd-uuid",
+        "msg-sm-mgmt-resp-uuid",
+        "msg-security-posture-cfg-uuid"
+      ],
+      "id": "interaction-terminal-sm-interaction-uuid",
+      "type": "Interaction"
+    },
+    {
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "representsId": "cls-sat-terminal-uuid",
+      "description": "原文：终端收到网络发送的鉴权请求消息后，向安全模块发起鉴权请求。简化：代表卫星终端实例的生命线，是大多数交互的发起方或转发方。",
+      "name": "L1-终端",
+      "id": "ll-terminal-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "representsId": "cls-security-module-uuid",
+      "description": "原文：安全模块收到鉴权请求消息后，验证鉴权参数是否正确。简化：代表机载融合终端安全模块实例的生命线，执行核心安全计算与验证。",
+      "name": "L2-安全模块",
+      "id": "ll-sm-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "representsId": "cls-auth-system-uuid",
+      "description": "原文：认证鉴权系统与机载融合终端安全模块进行双向身份认证。简化：代表网络侧认证鉴权系统的生命线，参与双向认证流程。",
+      "name": "L3-认证鉴权系统",
+      "id": "ll-auth-sys-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "representsId": "cls-access-network-uuid",
+      "description": "原文：认证鉴权流程：终端 -> 终端安全模块 -> 接入网。简化：代表卫星接入网的生命线。",
+      "name": "L4-接入网",
+      "id": "ll-access-net-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "representsId": "cls-core-network-uuid",
+      "description": "原文：NAS安全模式建立流程：核心网（计算并派生KNASint/KNASenc） -> 发起开启安全模式。简化：代表核心网的生命线，负责网络层安全。",
+      "name": "L5-核心网",
+      "id": "ll-core-net-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "representsId": "cls-sat-base-station-uuid",
+      "description": "原文：AS安全模式建立流程：核心网（派生KgNB） -> 星载基站（派生KgNB, KRRCint, KRRCenc）。简化：代表星载基站的生命线，负责接入层安全。",
+      "name": "L6-星载基站",
+      "id": "ll-sat-bs-uuid",
+      "type": "Lifeline"
+    },
+    {
+      "coveredId": "ll-terminal-uuid",
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "description": "原文：卫星终端向...申请。简化：终端发起SUCI申请请求的发送事件。",
+      "messageId": "msg-request-suci-uuid",
+      "id": "frag-send-req-suci-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-sm-uuid",
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "description": "原文：向机载融合终端安全模块申请。简化：安全模块接收SUCI申请请求的事件。",
+      "messageId": "msg-request-suci-uuid",
+      "id": "frag-recv-req-suci-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "signatureId": "op-generate-suci-uuid",
+      "description": "原文：将加密后的临时身份标识SUCI发送给卫星终端。简化：安全模块将加密生成的SUCI返回给终端。",
+      "sendEventId": "frag-send-return-suci-uuid",
+      "name": "返回SUCI",
+      "messageSort": "reply",
+      "receiveEventId": "frag-recv-return-suci-uuid",
+      "id": "msg-return-suci-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-sm-uuid",
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "description": "原文：将加密后的临时身份标识SUCI发送给卫星终端。简化：安全模块发送SUCI的发送事件。",
+      "messageId": "msg-return-suci-uuid",
+      "id": "frag-send-return-suci-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-terminal-uuid",
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "description": "原文：发送给卫星终端。简化：终端接收SUCI的接收事件。",
+      "messageId": "msg-return-suci-uuid",
+      "id": "frag-recv-return-suci-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "signatureId": "op-forward-sec-msg-uuid",
+      "description": "原文：终端收到网络发送的鉴权请求消息后，向安全模块发起鉴权请求。简化：终端将来自网络的鉴权请求消息转发给安全模块处理。",
+      "sendEventId": "frag-send-forward-auth-req-uuid",
+      "name": "转发鉴权请求",
+      "messageSort": "asynchCall",
+      "receiveEventId": "frag-recv-forward-auth-req-uuid",
+      "id": "msg-forward-auth-req-uuid",
+      "type": "Message"
+    },
+    {
+      "coveredId": "ll-terminal-uuid",
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "description": "原文：终端收到网络发送的鉴权请求消息后，向安全模块发起鉴权请求。简化：终端转发鉴权请求的发送事件。",
+      "messageId": "msg-forward-auth-req-uuid",
+      "id": "frag-send-forward-auth-req-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "coveredId": "ll-sm-uuid",
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "description": "原文：向安全模块发起鉴权请求。简化：安全模块接收鉴权请求的接收事件。",
+      "messageId": "msg-forward-auth-req-uuid",
+      "id": "frag-recv-forward-auth-req-uuid",
+      "type": "MessageOccurrenceSpecification"
+    },
+    {
+      "parentId": "interaction-terminal-sm-interaction-uuid",
+      "description": "原文：安全模块收到鉴权请求消息后，验证鉴权参数是否正确，如果验证成功，则...如果验证失败，则...。简化：根据鉴权参数验证结果进行分支处理。",
+      "name": "鉴权验证分支",
+      "interactionOperator": "alt",
+      "operandIds": [
+        "operand-success-uuid",
+        "operand-failure-uuid"
+      ],
+      "coveredLifelineIds": [
+        "ll-sm-uuid",
+        "ll-terminal-uuid"
+      ],
+      "id": "cf-auth-verify-alt-uuid",
+      "type": "CombinedFragment"
+    },
+    {
+      "description": " 元素：Unnamed（自动生成）",
+      "id": "oper",
+      "type": "UnknownType"
+    }
+  ]
+}

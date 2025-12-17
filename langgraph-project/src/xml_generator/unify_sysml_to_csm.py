@@ -246,12 +246,15 @@ def build_element_tree(parent_id, parent_xml_element):
             if parent_type in ["Class", "Block", "Interaction"]: tag = "ownedAttribute"
             elif parent_type == "Association": tag = "ownedEnd"
             
+            assoc_id = elem_data.get('associationId')
+            # 只有当关联元素存在于输入中时才挂 association，避免悬挂引用
+            assoc_value = assoc_id if assoc_id and assoc_id in elements_by_id else None
             attrs = {
                 'xmi:id': elem_id, 'name': elem_name,
                 'xmi:type': 'uml:Port' if "Port" in elem_type or elem_type == "ConstraintParameter" else 'uml:Property',
                 'visibility': elem_data.get('visibility', 'public'),
                 'aggregation': 'composite' if "Port" in elem_type else elem_data.get('aggregation', 'none'),
-                'association': elem_data.get('associationId')
+                'association': assoc_value
             }
             xml_elem = create_element(tag, attrs, parent_xml_element)
             type_id = elem_data.get('typeId')
@@ -421,18 +424,13 @@ def build_element_tree(parent_id, parent_xml_element):
                 if "language" in spec_data: create_element("language", text=spec_data["language"], parent=spec_elem)
         
         else:
-            if elem_type == "Event":
-                # UML ReceiveEvent 放在顶层在部分工具中不被接受；此处跳过避免生成无父容器事件
-                print(f"跳过 Event '{elem_id}'，避免生成顶层 ReceiveEvent")
-                xml_elem = None
-                continue
             base_attrs = {'xmi:id': elem_id, 'name': elem_name}
             
             packaged_element_types = {
                 "Package": "uml:Package", "Block": "uml:Class", "InterfaceBlock": "uml:Class", "Class": "uml:Class",
                 "Requirement": "uml:Class", "ConstraintBlock": "uml:Class", "ValueType": "uml:DataType",
                 "Enumeration": "uml:Enumeration", "Signal": "uml:Signal", "SignalEvent": "uml:SignalEvent",
-                "Actor": "uml:Actor", "UseCase": "uml:UseCase", "TimeEvent": "uml:TimeEvent"
+                "Event": "uml:SignalEvent", "Actor": "uml:Actor", "UseCase": "uml:UseCase", "TimeEvent": "uml:TimeEvent"
             }
             if elem_type in packaged_element_types:
                 base_attrs['xmi:type'] = packaged_element_types[elem_type]
@@ -834,7 +832,7 @@ def generate_unified_xmi(json_data):
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-    json_file_path = './fused_model_20251210_174327.json'
+    json_file_path = './fused_model_20251217_134048.json'
     output_xmi_file_path = 'output.xmi'
 
     try:
